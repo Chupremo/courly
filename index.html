@@ -278,13 +278,27 @@ body.page-home #publicApp{display:none!important}
 
 .owner-nav-demo{display:inline-flex;align-items:center;justify-content:center;background:#f0dfb1;color:#17244a;border-radius:22px;padding:10px 16px;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap}
 @media(max-width:700px){.topbar{height:auto;min-height:54px;flex-wrap:wrap;padding:12px 16px}.topbar .nav{gap:12px;flex-wrap:wrap}.owner-nav-demo{padding:9px 12px}}
+
+/* Owner registration form */
+.owner-signup{background:#fff;padding:72px 22px 78px;color:#152044;border-top:1px solid #e4e8f0}
+.owner-signup-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:.82fr 1.18fr;gap:38px;align-items:start}
+.owner-signup-copy .label{font-size:10px;letter-spacing:.14em;font-weight:900;color:#315eb2}
+.owner-signup-copy h2{font-size:clamp(32px,4vw,46px);line-height:1.05;letter-spacing:-.055em;margin:15px 0}
+.owner-signup-copy p{font-size:13px;line-height:1.8;color:#69758c}
+.signup-perks{display:grid;gap:10px;margin-top:24px}.signup-perks span{font-size:12px;font-weight:800}.signup-perks span:before{content:'✓';display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e3f5eb;color:#187c53;margin-right:9px}
+.owner-signup-form{border:1px solid #dce3ef;border-radius:20px;padding:26px;background:#fbfcff;box-shadow:0 16px 45px #132a520c}
+.signup-form-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.signup-form-head h3{font-size:20px;margin:0}.signup-form-head span{font-size:9px;font-weight:900;color:#2455a5;background:#eaf0ff;border-radius:20px;padding:7px 10px}
+.signup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.signup-field{display:block;min-width:0}.signup-field.full{grid-column:1/-1}.signup-field label{display:block;font-size:10px;font-weight:900;color:#52617c;margin-bottom:7px}.signup-field input,.signup-field select,.signup-field textarea{display:block;width:100%;min-width:0;border:1px solid #d4dceb;border-radius:9px;background:white;color:#152044;padding:12px;font:inherit;font-size:12px;outline:none}.signup-field input:focus,.signup-field select:focus,.signup-field textarea:focus{border-color:#315eb2;box-shadow:0 0 0 3px #315eb21a}.signup-field textarea{resize:vertical}.signup-submit{width:100%;border:0;border-radius:10px;background:#1747ad;color:#fff;font-size:12px;font-weight:900;padding:14px;margin-top:17px;cursor:pointer}.signup-submit:hover{background:#123b91}.signup-note{font-size:10px;line-height:1.7;color:#7b879d;margin:12px 0 0}.signup-message{display:none;border:1px solid #b8e2cb;background:#eaf8f0;color:#17623f;padding:12px;border-radius:9px;font-size:12px;line-height:1.6;margin-top:14px}.signup-message.show{display:block}
+@media(max-width:760px){.owner-signup-inner{grid-template-columns:1fr;gap:25px}.owner-signup{padding:52px 17px}.owner-signup-form{padding:19px}}
+@media(max-width:460px){.signup-grid{grid-template-columns:1fr}.signup-field.full{grid-column:auto}.signup-form-head{align-items:flex-start;flex-direction:column}}
+
 </style>
 </head>
 <body class="page-home">
 <header class="topbar">
  <a class="brand" id="brandLogo" href="/" aria-label="Courtly home" style="text-decoration:none"><span class="courtly-mark">C</span> COURT<span>LY</span></a>
- <nav class="nav"><a href="/features.html">Features</a><a href="/pricing.html">Pricing</a><a href="/clubs.html">For clubs</a><a href="/courts.html">Find a court</a></nav>
- <nav class="nav"><a class="admin-link" href="/owner-portal.html" style="text-decoration:none;display:inline-flex;align-items:center">View demo ↗</a><button onclick="window.location.href='/owner-portal.html'">Owner portal →</button></nav>
+ <nav class="nav"><a href="/features.html">Features</a><a href="/pricing.html">Pricing</a><a href="/clubs.html">For clubs</a><a href="/courts.html">Find a court</a><a href="#owner-signup">Sign up</a></nav>
+ <nav class="nav"><a class="admin-link" href="/owner-portal.html" style="text-decoration:none;display:inline-flex;align-items:center">View demo ↗</a><button onclick="document.getElementById('owner-signup').scrollIntoView({behavior:'smooth'})">Sign up your venue →</button></nav>
 </header>
 <section class="hero">
  <div class="eyebrow">● BUILT FOR COURT OWNERS</div><h1>Run your venue.<br>Not your spreadsheets.</h1>
@@ -304,7 +318,7 @@ body.page-home #publicApp{display:none!important}
           <a class="owner-btn primary" href="/owner-portal">View owner demo <span>↗</span></a>
           <a class="owner-btn secondary" href="/pricing">See simple pricing <span>→</span></a>
         </div>
-        <div class="owner-points"><span>Built for court owners</span><span>Mobile-friendly booking pages</span><span>Clear transaction fees</span></div>
+        <div class="owner-points"><span>₱10 per booked court-hour</span><span>₱0 monthly fees</span><span>Mobile-friendly booking pages</span></div>
       </div>
       <div class="owner-dashboard" aria-label="Illustration of the Courtly owner dashboard">
         <div class="owner-dash-top"><span class="owner-dash-logo">C</span><strong>COURTLY OWNER</strong><small>● DEMO OVERVIEW</small></div>
@@ -322,13 +336,13 @@ body.page-home #publicApp{display:none!important}
       </div>
     </div>
   </div>
-  <div class="owner-strip"><div><strong>₱0 monthly</strong><span>No fixed monthly platform fee</span></div><div><strong>₱10 per successful booking</strong><span>Simple usage-based pricing</span></div><div><strong>Your venue, your rates</strong><span>Set prices and court details</span></div><div><strong>Made for mobile</strong><span>Players can book on the go</span></div></div>
+  <div class="owner-strip"><div><strong>₱0 monthly fees</strong><span>No monthly subscription</span></div><div><strong>₱10 per booked hour</strong><span>Simple usage-based pricing</span></div><div><strong>Your venue, your rates</strong><span>Set prices and court details</span></div><div><strong>Made for mobile</strong><span>Players can book on the go</span></div></div>
   <section class="owner-section">
     <div class="owner-section-heading"><div class="label">BUILT AROUND YOUR BUSINESS</div><h2>Spend less time coordinating.<br>Get back to running your venue.</h2><p>Courtly is designed to make the everyday tasks of managing a court venue feel more organized—for you and your players.</p></div>
     <div class="owner-benefit-grid">
       <article class="owner-benefit"><div class="icon">▦</div><h3>Online bookings</h3><p>Give players a public booking page where they can explore available times and review the price before reserving.</p></article>
       <article class="owner-benefit"><div class="icon">◷</div><h3>Availability at a glance</h3><p>Keep reservations easier to review with a schedule view that helps you see which time slots are occupied.</p></article>
-      <article class="owner-benefit"><div class="icon">₱</div><h3>Transparent fees</h3><p>Know the platform fee model upfront: ₱10 per successful transaction, with no fixed monthly platform charge in the current plan.</p></article>
+      <article class="owner-benefit"><div class="icon">₱</div><h3>Transparent fees</h3><p>Know the platform fee model upfront: ₱10 per booked court-hour, with no monthly platform fee.</p></article>
       <article class="owner-benefit"><div class="icon">⚙</div><h3>Venue settings</h3><p>Manage key venue information such as your venue name, court rates, location and payment instructions.</p></article>
       <article class="owner-benefit"><div class="icon">▤</div><h3>Reservation records</h3><p>Review demo booking details and statuses in the owner workspace. Live shared records require the production database connection.</p></article>
       <article class="owner-benefit"><div class="icon">▣</div><h3>QR payment instructions</h3><p>Show customers where and how to pay. Real payment confirmation must be connected to a supported provider before launch.</p></article>
@@ -336,8 +350,8 @@ body.page-home #publicApp{display:none!important}
   </section>
   <section class="owner-pricing-band">
     <div class="owner-pricing-inner">
-      <div><div class="label">STRAIGHTFORWARD PRICING</div><h2>Start without a monthly platform fee.</h2><p>Keep the starting decision simple for independent court owners and growing sports venues. Courtly's current model is ₱10 for each successful transaction. Payment processing charges, if any, are separate and depend on your provider.</p><a class="owner-btn secondary" href="/pricing">Review pricing details →</a></div>
-      <div class="owner-price-card"><small>COURTLY PLATFORM FEE</small><strong>₱10 <span>/ successful transaction</span></strong><p>₱0 monthly platform subscription in the current pricing model. Try the demo to explore the owner workflow before deciding.</p><a href="/owner-portal">Explore owner demo ↗</a></div>
+      <div><div class="label">STRAIGHTFORWARD PRICING</div><h2>₱10 per hour booked. ₱0 monthly fees.</h2><p>Join Courtly without a monthly platform subscription. Courtly charges ₱10 for each booked court-hour. Any third-party payment processing charges are separate and depend on your provider.</p><a class="owner-btn secondary" href="/pricing">Review pricing details →</a></div>
+      <div class="owner-price-card"><small>COURTLY PLATFORM FEE</small><strong>₱10 <span>/ booked court-hour</span></strong><p>₱0 monthly platform fees. No monthly subscription to maintain your venue booking page.</p><a href="/owner-portal">Explore owner demo ↗</a></div>
     </div>
   </section>
   <section class="owner-section" style="padding-top:0">
@@ -348,7 +362,32 @@ body.page-home #publicApp{display:none!important}
       <article class="owner-how"><b>STEP 03</b><h3>Prepare your venue</h3><p>Before accepting real bookings, connect shared storage, owner sign-in, payment verification and notifications.</p></article>
     </div>
   </section>
-  <section class="owner-final-cta"><h2>Ready to see Courtly from the owner's side?</h2><p>Explore the owner dashboard demo and see how a more organized booking workflow could look for your venue.</p><a class="owner-btn primary" href="/owner-portal">View the owner demo ↗</a></section>
+  <section class="owner-final-cta"><h2>Ready to bring your venue online?</h2><p>Sign up your business to get started with Courtly. ₱10 per booked court-hour and ₱0 monthly fees.</p><a class="owner-btn primary" href="#owner-signup">Sign up your venue ↗</a></section>
+</section>
+<section class="owner-signup" id="owner-signup">
+ <div class="owner-signup-inner">
+  <div class="owner-signup-copy"><div class="label">COURTLY OWNER SIGN-UP</div><h2>Let's get your venue on the map.</h2><p>Tell us a little about yourself and your sports facility. We'll use these details to prepare your owner account and venue setup.</p><div class="signup-perks"><span>₱10 per booked court-hour</span><span>₱0 monthly platform fees</span><span>Public booking page for your venue</span><span>Manage courts and reservations in one place</span></div></div>
+  <form class="owner-signup-form" id="ownerSignupForm">
+   <div class="signup-form-head"><h3>Business owner registration</h3><span>NO MONTHLY FEES</span></div>
+   <div class="signup-grid">
+    <div class="signup-field"><label for="signupPersonalName">Personal name *</label><input id="signupPersonalName" name="personalName" autocomplete="name" required placeholder="Your full name"></div>
+    <div class="signup-field"><label for="signupEmail">Email address *</label><input id="signupEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+    <div class="signup-field"><label for="signupPhone">Contact number *</label><input id="signupPhone" name="phone" type="tel" autocomplete="tel" required placeholder="e.g. 09XX XXX XXXX"></div>
+    <div class="signup-field"><label for="signupBusinessName">Business / venue name *</label><input id="signupBusinessName" name="businessName" required placeholder="Your sports facility"></div>
+    <div class="signup-field full"><label for="signupAddress">Business address *</label><textarea id="signupAddress" name="businessAddress" rows="2" autocomplete="street-address" required placeholder="Street, barangay, city, province"></textarea></div>
+    <div class="signup-field"><label for="signupSport">Main sport *</label><select id="signupSport" name="sport" required><option value="">Select sport</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Tennis</option><option>Volleyball</option><option>Football / Futsal</option><option>Multi-sport</option><option>Other</option></select></div>
+    <div class="signup-field"><label for="signupCourts">Number of courts *</label><select id="signupCourts" name="courtCount" required><option value="">Select number</option><option>1</option><option>2</option><option>3</option><option>4–5</option><option>6–10</option><option>11+</option></select></div>
+    <div class="signup-field"><label for="signupFacebook">Facebook page</label><input id="signupFacebook" name="facebook" type="url" placeholder="https://facebook.com/yourpage"></div>
+    <div class="signup-field"><label for="signupInstagram">Instagram</label><input id="signupInstagram" name="instagram" placeholder="@yourvenue or profile URL"></div>
+    <div class="signup-field"><label for="signupWebsite">Website (optional)</label><input id="signupWebsite" name="website" type="url" placeholder="https://yourvenue.com"></div>
+    <div class="signup-field"><label for="signupRole">Your role</label><select id="signupRole" name="role"><option>Owner</option><option>Manager</option><option>Authorized representative</option></select></div>
+    <div class="signup-field full"><label for="signupNotes">Anything else we should know? (optional)</label><textarea id="signupNotes" name="notes" rows="3" placeholder="Venue opening hours, number of locations, or questions"></textarea></div>
+   </div>
+   <button class="signup-submit" type="submit">Submit owner sign-up request →</button>
+   <p class="signup-note">Demo notice: this form currently saves the request in this browser only. It does not yet create a secure login or send the application to Courtly. Connect Supabase and an email notification service before accepting real registrations.</p>
+   <div class="signup-message" id="signupMessage" role="status" aria-live="polite"></div>
+  </form>
+ </div>
 </section>
 
 <main id="publicApp">
@@ -453,7 +492,7 @@ body.page-home #publicApp{display:none!important}
   <div class="pricing-hero">
     <div class="pricing-kicker"><i></i> COURTLY PRICING</div>
     <h2>Simple pricing.<br><em>No monthly subscription.</em></h2>
-    <p>Get your courts online, accept reservations, and manage bookings in one place. Courtly charges a small fee only when a booking is successful.</p>
+    <p>Get your courts online, accept reservations, and manage bookings in one place. Courtly charges ₱10 per booked court-hour, with no monthly platform fee.</p>
     <div class="pricing-proof"><span>No setup fee</span><span>No monthly commitment</span><span>Pay as you book</span></div>
   </div>
   <div class="pricing-layout">
@@ -462,7 +501,7 @@ body.page-home #publicApp{display:none!important}
         <div class="pricing-card-label">ONE SIMPLE PLAN</div>
         <div class="pricing-price-line"><div class="pricing-price">₱0</div><div class="pricing-per">to get started</div></div>
         <p>Start with the tools you need to publish your court booking page and manage reservations, without a recurring subscription.</p>
-        <div class="pricing-highlight"><div class="coin">₱</div><div><b>₱10 per successful transaction</b><small>A clear platform fee for each completed booking.</small></div></div>
+        <div class="pricing-highlight"><div class="coin">₱</div><div><b>₱10 per booked court-hour</b><small>For example, a 2-hour booking has a ₱20 Courtly fee.</small></div></div>
         <ul class="pricing-list">
           <li>Public booking page for your venue</li>
           <li>Court availability and reservation schedule</li>
@@ -503,13 +542,13 @@ body.page-home #publicApp{display:none!important}
       <div class="pricing-compare-row"><span>Court and hourly rate settings</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
       <div class="pricing-compare-row"><span>Owner dashboard</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
       <div class="pricing-compare-row"><span>QR payment instructions</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
-      <div class="pricing-compare-row"><span>Courtly platform fee</span><span>₱10 per successful transaction</span><span>Usage-based</span></div>
+      <div class="pricing-compare-row"><span>Courtly platform fee</span><span>₱10 per booked court-hour</span><span>Usage-based</span></div>
     </div>
   </div>
   <div class="pricing-faq" id="pricing-faq">
     <div class="pricing-section-heading"><div class="pricing-kicker"><i></i> GOOD TO KNOW</div><h3>Pricing, without the guesswork.</h3><p>A few quick answers about how Courtly pricing is designed to work.</p></div>
     <div class="pricing-faq-grid">
-      <article><h4>Is there a monthly subscription?</h4><p>No monthly subscription is included in this pricing model. The platform fee is ₱10 per successful transaction.</p></article>
+      <article><h4>Is there a monthly subscription?</h4><p>No monthly subscription is included in this pricing model. The platform fee is ₱10 per booked court-hour.</p></article>
       <article><h4>When is the ₱10 fee applied?</h4><p>It is intended to apply to each successful booking transaction. The calculator above helps illustrate how fees can add up with booking volume.</p></article>
       <article><h4>Can I set my own court rates?</h4><p>Yes. The owner workspace in this prototype includes editable hourly rates and venue settings.</p></article>
       <article><h4>Does the demo accept real payments?</h4><p>No. The current prototype demonstrates the booking and QR-payment flow only. Live payment processing and automated production notifications require a connected backend and payment provider.</p></article>
@@ -606,6 +645,11 @@ function savePayments(){config.paymentName=$("editPayName").value.trim();config.
 function resetDemo(){if(!confirm("Reset all Courtly demo bookings and settings in this browser?"))return;bookings=[];config={...defaultConfig};save();selected=null;renderVenue();renderAdmin();toast("Demo reset.")}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 let toastTimer;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
+
+// Owner sign-up form prototype: local-only until Supabase/auth/email are connected.
+const ownerSignupForm=document.getElementById("ownerSignupForm");
+if(ownerSignupForm){ownerSignupForm.addEventListener("submit",function(e){e.preventDefault();if(!ownerSignupForm.reportValidity())return;const data=Object.fromEntries(new FormData(ownerSignupForm).entries());data.applicationId="OWN-"+Math.random().toString(36).slice(2,8).toUpperCase();data.submittedAt=new Date().toISOString();try{const existing=JSON.parse(localStorage.getItem("courtly_owner_signup_requests")||"[]");existing.push(data);localStorage.setItem("courtly_owner_signup_requests",JSON.stringify(existing));const msg=document.getElementById("signupMessage");msg.textContent="Your sign-up request was saved in this browser demo (reference: "+data.applicationId+"). It has not been sent to Courtly yet. A backend connection is needed to submit it securely.";msg.classList.add("show");ownerSignupForm.reset();}catch(err){const msg=document.getElementById("signupMessage");msg.textContent="This browser could not save the demo request. Please try again or connect the form to the Courtly backend.";msg.classList.add("show");}});}
+
 renderVenue();drawQr();
 </script>
 </body></html>

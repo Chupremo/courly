@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Manage court bookings, availability, rates and venue details with Courtly. Explore the owner demo and straightforward per-successful-transaction pricing.">
+<title>Courtly — Court Booking & Venue Management for Owners</title>
+<style>
+:root{--navy:#101a38;--blue:#0645c7;--blue2:#367ce8;--cream:#f6f0e3;--ink:#152044;--panel:#171a22;--muted:#8d98b7;--line:#29344d;--gold:#f0e2bd}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #73a7ff;outline-offset:2px}
+.topbar{height:54px;background:#202b4c;color:#dce5ff;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,calc((100% - 1120px)/2));gap:18px;position:sticky;top:0;z-index:10;border-bottom:1px solid #34405e}.brand{font-weight:950;font-size:20px;letter-spacing:-1px;color:white}.brand span{color:#4d91ff}.nav{display:flex;gap:24px;align-items:center;font-size:12px}.nav a{color:#dce5ff;text-decoration:none}.nav button{background:#0645c7;color:white;border-radius:22px;padding:10px 18px;font-weight:800}
+.hero{background:linear-gradient(125deg,#0643bd,#07317e);color:white;text-align:center;padding:54px 20px 30px;position:relative;overflow:hidden}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 5%,#ffffff0d 5.1%,transparent 5.2%,transparent 48%,#ffffff0d 48.1%,transparent 48.2%,transparent 91%,#ffffff0d 91.1%,transparent 91.2%);pointer-events:none}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#dce7ff}.hero h1{font-size:clamp(38px,5vw,58px);line-height:.99;letter-spacing:-2.5px;margin:22px auto 18px;max-width:680px;font-weight:950}.hero p{max-width:510px;margin:0 auto 24px;color:#d8e5ff;line-height:1.7}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:850px;margin:0 auto}.step{border:1px solid #52638c;border-radius:10px;background:#0e2356a8;padding:12px;text-align:left;display:flex;gap:9px;font-size:10px;color:#dce5ff}.step strong{display:block;color:white;font-size:11px;margin-bottom:3px}.step b{border:1px solid #6e82ae;border-radius:50%;height:20px;min-width:20px;display:grid;place-items:center}.step.active{border-color:var(--gold)}.wrap{max-width:1120px;margin:0 auto;padding:0 22px}.venue{margin:0 auto 50px;background:#0b1634;color:white;border-radius:0 0 18px 18px;overflow:hidden;box-shadow:0 20px 55px #17244a30}.browserbar{height:38px;background:#14151b;display:flex;align-items:center;padding:0 14px;gap:6px;color:#aaa;font-size:10px}.dot{width:7px;height:7px;border-radius:50%;background:#45464e}.address{margin:auto;background:#28292f;border-radius:20px;padding:5px 65px}.demo-pill{background:var(--gold);color:#172044;padding:4px 9px;border-radius:14px;font-size:9px;font-weight:900}
+.venue-head{padding:22px 26px 20px;background:linear-gradient(120deg,#123d83,#071c51);display:grid;grid-template-columns:170px 1fr;gap:24px;align-items:center}.venue-mark{height:150px;border-radius:36px;background:linear-gradient(145deg,#245aa0,#14274d);display:grid;place-items:center;font-size:64px;color:var(--gold)}.venue-head h2{font-size:30px;letter-spacing:-1.2px;margin:0 0 4px}.meta{font-size:11px;color:#d5e3ff;margin:4px 0}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.chip{border:1px solid #3e5c90;background:#16376d;border-radius:18px;padding:5px 9px;font-size:10px}.tagline{font-size:21px;font-style:italic;font-weight:800;margin-top:12px}
+.booking-area{background:#111319;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:12px}.date-row{display:flex;gap:7px;overflow:auto;padding:10px;background:#17191f;border:1px solid #292b34;border-radius:13px;margin-bottom:10px}.datebtn{min-width:51px;border:1px solid #2c3546;border-radius:10px;background:#191d26;color:#bfc8db;padding:10px 6px;font-size:9px;font-weight:800}.datebtn strong{display:block;font-size:15px;color:white}.datebtn.active{background:#1252d7;color:white;border-color:#397cff}.datebtn.active strong{color:white}.datebtn.more{min-width:65px}
+.legend{display:flex;gap:12px;justify-content:flex-end;color:#7d8aa7;font-size:9px;padding:8px 4px}.gridwrap{overflow:auto;border:1px solid #242a36;border-radius:12px}.schedule{width:100%;border-collapse:separate;border-spacing:4px;min-width:520px}.schedule th{color:#4388ff;font-size:11px;padding:12px 6px}.schedule td:first-child{color:#c6cada;font-size:10px;font-weight:800;width:45px;text-align:center}.slot{width:100%;min-height:38px;border:1px solid #333640;background:linear-gradient(135deg,#26272d,#191b22);color:#4388ff;border-radius:9px;font-size:10px;padding:8px}.slot.booked{color:#a1a7b6;background:#1a1d25;border-color:#263046}.slot.past{color:#666b77}.slot.selected{border-color:#4b91ff;background:#142c57;color:#9fc3ff}.slot:hover:not(:disabled){border-color:#478dff}.slot:disabled{cursor:not-allowed;opacity:.7}
+.sidebox{background:#17191f;border:1px solid #282b34;border-radius:14px;padding:14px;margin-bottom:10px}.sidebox h3{font-size:12px;margin:0 0 6px}.muted{color:#8992a8;font-size:10px}.empty{padding:20px 8px;text-align:center;color:#9ba5ba;font-size:10px}.empty .big{font-size:28px;color:#4388ff;margin:8px}.bluebtn{background:var(--blue2);color:white;padding:11px 14px;border-radius:9px;font-size:11px;font-weight:900;width:100%}.bluebtn:hover{filter:brightness(1.08)}.feature{display:flex;gap:8px;margin:10px 0;font-size:10px}.feature .ico{color:#4c93ff;border:1px solid #2d4265;background:#132541;padding:4px;border-radius:7px;height:27px}.feature strong{display:block;font-size:10px;color:#e3e8f4}.feature small{color:#8d96a8;font-size:9px}
+.below{padding:24px 0 70px}.owner{background:white;border:1px solid #e6dcc7;border-radius:15px;padding:24px;box-shadow:0 5px 18px #101a3810}.owner h2{font-size:24px;letter-spacing:-.8px;margin:8px 0}.owner-top{display:flex;justify-content:space-between;align-items:start;gap:20px}.outline{border:1px solid #d8c7a4;border-radius:20px;background:white;color:#1b284e;padding:9px 13px;font-size:10px;font-weight:800}.benefits{margin-top:65px}.benefits h2{font-size:32px;letter-spacing:-1.2px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:white;border:1px solid #e4d9c4;border-radius:14px;padding:18px;box-shadow:0 5px 16px #1520440b}.card .ico{display:grid;place-items:center;background:#0645c7;color:white;width:32px;height:32px;border-radius:9px;margin-bottom:12px}.card strong{font-size:12px}.card p{font-size:11px;color:#6d7897;margin-bottom:0}
+.cta{background:#07348f;color:white;text-align:center;padding:76px 20px 50px;margin-top:0}.cta h2{font-size:42px;line-height:1.08;letter-spacing:-2px;max-width:520px;margin:18px auto}.cta p{max-width:470px;margin:0 auto 22px;color:#d4e0ff}.cta button{border-radius:25px;padding:13px 20px;font-weight:900;background:var(--gold);color:#142044}.footer-slogan{font-size:clamp(30px,7vw,56px);font-style:italic;font-weight:950;margin-top:70px;letter-spacing:-2px}
+.drawer-backdrop{position:fixed;inset:0;background:#080e22a8;z-index:30;display:none}.drawer-backdrop.open{display:block}.drawer{position:absolute;right:0;top:0;height:100%;width:min(400px,100%);overflow:auto;background:#20232c;color:#f6f7fb;padding:24px;box-shadow:-20px 0 60px #0004}.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.drawer h2{font-size:20px;margin:0}.xbtn{background:#30333c;color:white;border-radius:50%;width:28px;height:28px}.progress{display:flex;gap:5px;margin:12px 0 18px}.progress span{height:4px;background:#3d4658;border-radius:4px;flex:1}.progress span.on{background:#3f8cff}.summary{background:#15171d;border:1px solid #343741;border-radius:12px;padding:14px;margin-bottom:14px}.summary .kicker{font-size:9px;color:#448cff;font-weight:900;letter-spacing:.08em}.summaryrow{display:flex;justify-content:space-between;gap:10px;margin:9px 0;font-size:11px}.summaryrow.total{border-top:1px solid #343741;padding-top:10px;font-weight:900}.summaryrow.total b{color:#438cff;font-size:15px}.field{display:block;margin:12px 0}.field label{display:block;font-size:10px;color:#a9b0c0;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #363b49;border-radius:8px;background:#17191f;color:white;padding:11px}.hint{font-size:10px;color:#9ba4b5;margin:10px 0}.qr{width:150px;height:150px;background:white;border-radius:10px;margin:15px auto;display:grid;place-items:center;padding:8px}.qr svg{width:100%;height:100%}.center{text-align:center}.success{border:1px solid #31527c;background:#172b45;border-radius:12px;padding:15px;margin:10px 0;font-size:12px}.success strong{display:block;font-size:14px;margin-bottom:5px}.hidden{display:none!important}
+.admin-link{background:transparent;color:#dbe5ff;border:1px solid #53617e;border-radius:18px;padding:8px 12px;font-size:10px}.admin{display:none;background:#f7f8fb;min-height:100vh;color:#172044}.admin.show{display:block}.admin-shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 54px)}.admin-side{background:#121c38;color:white;padding:22px}.admin-side button{display:block;width:100%;text-align:left;background:transparent;color:#c5cde0;padding:11px;border-radius:8px;margin:5px 0}.admin-side button.active,.admin-side button:hover{background:#1f3f80;color:white}.admin-main{padding:26px;min-width:0}.admin-main h1{margin:0 0 5px}.admin-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.stat{background:white;border:1px solid #e4e8f0;border-radius:12px;padding:16px}.stat small{color:#77819a}.stat strong{display:block;font-size:24px;margin-top:8px}.admin-panel{background:white;border:1px solid #e1e6ef;border-radius:12px;padding:18px;margin-bottom:16px;overflow:auto}.admin-panel h2{font-size:17px;margin-top:0}.editgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.editgrid label{display:block;font-size:11px;color:#67718a}.editgrid input,.editgrid select,.editgrid textarea{width:100%;padding:10px;border:1px solid #d9deea;border-radius:7px;margin-top:5px;color:#182348;background:white}.admin table{width:100%;border-collapse:collapse;font-size:12px}.admin th,.admin td{text-align:left;padding:11px;border-bottom:1px solid #edf0f5}.status{font-size:10px;border-radius:12px;background:#e2f7eb;color:#16854a;padding:4px 8px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#152044;color:white;border-radius:12px;padding:12px 18px;z-index:50;box-shadow:0 8px 30px #0003;display:none}.toast.show{display:block}
+
+/* Courtly feature page */
+.brand .courtly-mark{color:#142044}.courtly-mark{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:8px;background:linear-gradient(145deg,#f0e2bd,#d3b873);color:#142044;font-size:15px;font-weight:1000;letter-spacing:0;margin-right:5px;vertical-align:middle}
+.features-page{background:#f7f5ef;color:#152044;padding:0 0 70px;overflow:hidden}.features-hero{padding:78px 22px 70px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#dbe6ff 0,transparent 52%),linear-gradient(180deg,#fbfaf7,#f4f1e8);position:relative}.features-kicker{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:900;letter-spacing:.15em;color:#2455a5}.kicker-dot{width:7px;height:7px;border-radius:50%;background:#c5a75b;box-shadow:0 0 0 4px #c5a75b20}.features-hero h2,.feature-intro h2,.feature-bottom-cta h2{font-size:clamp(38px,5.4vw,66px);line-height:1.02;letter-spacing:-.055em;margin:22px auto 17px;font-weight:900}.features-hero h2 em,.feature-intro h2 em,.feature-bottom-cta h2 em{font-style:normal;color:#315eb2}.features-hero>p{max-width:650px;margin:0 auto;color:#64708a;font-size:15px;line-height:1.8}.features-hero-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:25px 0 20px}.feature-primary,.feature-secondary{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;border-radius:28px;padding:13px 19px;font-size:12px;font-weight:850}.feature-primary{background:#1747ad;color:white;box-shadow:0 8px 20px #1747ad24}.feature-primary:hover{background:#0c348b;transform:translateY(-1px)}.feature-secondary{background:white;color:#17244a;border:1px solid #d7deea}.feature-secondary:hover{border-color:#9baccb;background:#f9fbff}.feature-proof{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;color:#68748b;font-size:10px;font-weight:700}.feature-proof span::first-letter{color:#2c8c67}.hero-ui-preview{max-width:960px;margin:47px auto 0;border:1px solid #d8deea;border-radius:17px;background:white;box-shadow:0 25px 75px #142b5830;text-align:left;overflow:hidden;transform:translateZ(0)}.preview-top{height:52px;display:flex;align-items:center;gap:15px;padding:0 18px;border-bottom:1px solid #e7eaf1}.preview-brand{font-weight:950;letter-spacing:-.05em;font-size:12px;color:#16254b}.preview-mark,.payment-symbol{display:inline-grid;place-items:center;background:#142b59;color:#f0dfb1;border-radius:7px;width:23px;height:23px;margin-right:5px}.preview-live{font-size:8px;font-weight:900;letter-spacing:.1em;color:#71809b;margin-left:auto}.preview-live i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#35b57d;margin-right:5px}.preview-avatar{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#e8edfa;color:#264b91;font-size:9px;font-weight:900}.preview-body{display:grid;grid-template-columns:165px 1fr;min-height:320px}.preview-sidebar{background:#111d3a;color:#aebbd7;padding:18px 11px;display:flex;flex-direction:column;gap:9px;font-size:10px}.preview-sidebar b{font-size:8px;letter-spacing:.12em;color:#7587ad;padding:0 9px 5px}.preview-sidebar span{padding:10px;border-radius:7px}.preview-sidebar .sel{background:#244b9d;color:white}.preview-dashboard{padding:22px;min-width:0}.preview-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.preview-heading small,.calendar-title small,.settings-main>small{font-size:8px;color:#7b86a0;font-weight:800;letter-spacing:.09em}.preview-heading h3{font-size:18px;letter-spacing:-.04em;margin:5px 0 14px}.preview-date{border:1px solid #e0e5ef;border-radius:7px;padding:7px 9px;font-size:9px;color:#6d7892}.preview-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.preview-stats>div{border:1px solid #e4e8f1;border-radius:9px;padding:12px;min-width:0}.preview-stats small{display:block;font-size:9px;color:#79849a}.preview-stats strong{display:block;font-size:clamp(14px,2vw,23px);margin:5px 0;color:#17244a;letter-spacing:-.04em}.preview-stats em{font-size:8px;font-style:normal;color:#299269}.preview-stats .amber{color:#b58a35}.preview-lower{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}.preview-chart,.preview-next{border:1px solid #e4e8f1;border-radius:9px;padding:12px;min-width:0}.preview-chart>b,.preview-next>b{font-size:10px}.chart-bars{height:75px;display:flex;align-items:end;gap:8px;padding:8px 3px 0}.chart-bars i{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#8eaff4,#2858b3);min-width:4px}.chart-labels{display:flex;justify-content:space-between;font-size:7px;color:#8791a7}.preview-next>div{display:flex;align-items:center;gap:7px;margin-top:10px}.mini-avatar{width:24px;height:24px;flex:none;display:grid;place-items:center;border-radius:50%;background:#e3edff;color:#2c58a4;font-size:8px;font-weight:900}.mini-avatar.gold{background:#f5ead0;color:#8d6a27}.preview-next strong,.preview-next small{display:block;font-size:8px}.preview-next small{color:#8490a6;margin-top:2px}.preview-next i{font-style:normal;margin-left:auto;color:#17865c;background:#e7f7ee;padding:4px;border-radius:5px;font-size:7px}.preview-next i.pending{color:#9a6c15;background:#fff4d8}.feature-trust{max-width:1000px;margin:0 auto;padding:24px 22px 54px;display:flex;justify-content:center;align-items:center;gap:clamp(15px,4vw,45px);flex-wrap:wrap;border-bottom:1px solid #e2e2dc;color:#7a8498}.feature-trust span{font-size:9px;letter-spacing:.12em;font-weight:900}.feature-trust b{font-size:12px;color:#475674}.feature-intro{text-align:center;max-width:780px;margin:0 auto;padding:82px 22px 30px}.feature-intro h2{font-size:clamp(32px,4.5vw,49px);margin:16px auto}.feature-intro>p{color:#6f7b92;max-width:560px;margin:0 auto;line-height:1.8;font-size:13px}.feature-showcase{max-width:1060px;margin:0 auto;padding:0 22px}.feature-row{display:grid;grid-template-columns:.88fr 1.12fr;align-items:center;gap:clamp(30px,6vw,78px);padding:60px 0}.feature-row.reverse .feature-copy{order:2}.feature-row.reverse .feature-visual{order:1}.feature-number{font-size:9px;letter-spacing:.13em;font-weight:900;color:#4165a6}.feature-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;margin:17px 0 13px;background:#e5ebfb;color:#214da4;font-size:20px}.feature-copy h3{font-size:clamp(27px,3vw,38px);line-height:1.08;letter-spacing:-.045em;margin:0 0 13px}.feature-copy>p{font-size:12px;line-height:1.85;color:#66728b}.feature-copy ul{list-style:none;padding:0;margin:18px 0 20px}.feature-copy li{font-size:11px;color:#4f5c75;margin:11px 0;padding-left:23px;position:relative}.feature-copy li:before{content:'✓';position:absolute;left:0;top:-1px;width:16px;height:16px;display:grid;place-items:center;border-radius:50%;background:#e0f3e8;color:#19845b;font-size:9px;font-weight:900}.feature-text-link{font-size:11px;font-weight:900;color:#214da4;text-decoration:none}.feature-text-link span{margin-left:5px}.feature-note{font-size:10px!important;padding:10px 12px;border-left:2px solid #c6a95e;background:#f0ebdf;color:#6c624b!important}.feature-visual{min-width:0;border:1px solid #dce2ec;border-radius:17px;padding:clamp(15px,3vw,27px);background:radial-gradient(ellipse at 50% 0%,#dfe8fc,transparent 60%),#f0f3fa;box-shadow:0 15px 40px #1b2f5d0b}.mock-window{max-width:560px;margin:0 auto;border:1px solid #dfe3eb;border-radius:12px;background:white;padding:17px;box-shadow:0 12px 30px #17294d12}.mock-window-head{display:flex;align-items:center;gap:9px;border-bottom:1px solid #edf0f5;padding-bottom:13px}.mock-logo{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#142b59;color:#f2e1b5;font-weight:950}.mock-window-head b,.mock-window-head small{display:block}.mock-window-head b{font-size:11px}.mock-window-head small{font-size:8px;color:#7d879c;margin-top:2px}.open-label{margin-left:auto;color:#16895e;background:#e7f7ef;border-radius:6px;padding:5px 7px;font-size:7px;font-weight:900}.mock-date-head{display:flex;justify-content:space-between;margin:16px 0 10px;font-size:10px}.mock-date-head span{color:#73809a;font-size:8px}.mock-days{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.mock-days span{text-align:center;border:1px solid #e5e8ef;border-radius:7px;padding:8px 2px;color:#7b8599;font-size:7px}.mock-days b{display:block;font-size:13px;color:#263452;margin-top:4px}.mock-days .chosen{background:#1948ad;border-color:#1948ad;color:white}.mock-days .chosen b{color:white}.mock-court-row{display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:center;border-bottom:1px solid #edf0f5;padding:13px 0}.mock-court-row>div:first-child b,.mock-court-row small{display:block}.mock-court-row>div:first-child b{font-size:9px}.mock-court-row small{font-size:7px;color:#8993a7;margin-top:3px}.mock-slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.mock-slots span{border:1px solid #e0e5ef;border-radius:5px;text-align:center;padding:8px 2px;font-size:7px;color:#52617c}.mock-slots .chosen{background:#e8efff;border-color:#4675d3;color:#1948ad;font-weight:900}.mock-slots .busy{background:#f1f2f5;color:#a1a7b4;text-decoration:line-through}.mock-total{display:flex;justify-content:space-between;font-size:9px;padding:14px 0}.mock-total b{font-size:12px}.mock-continue{background:#1747ad;color:white;text-align:center;border-radius:7px;padding:11px;font-size:9px;font-weight:900}.calendar-visual{background:radial-gradient(ellipse at 50% 0%,#dce8fc,transparent 58%),#eff3fa}.calendar-card{background:white;border:1px solid #dfe4ee;border-radius:12px;padding:17px;box-shadow:0 12px 30px #17294d12}.calendar-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}.calendar-title h4{font-size:16px;letter-spacing:-.04em;margin:4px 0}.calendar-title>span{font-size:8px;border:1px solid #e0e5ef;padding:8px;border-radius:7px;color:#65718b}.calendar-grid{display:grid;grid-template-columns:43px repeat(4,minmax(0,1fr));gap:5px}.calendar-cell{height:52px;border:1px solid #edf0f5;border-radius:5px;min-width:0;padding:4px}.calendar-cell.label{border:0;color:#8290a7;font-size:8px;display:flex;align-items:center}.calendar-cell.day{text-align:center;height:48px;font-size:7px;color:#71809a;border:0}.calendar-cell.day small{display:block;font-size:12px;color:#243252;font-weight:900;margin-top:3px}.calendar-cell.active-day{background:#eaf0ff;border-radius:7px;color:#214da4}.booking-block{display:block;border-radius:4px;padding:5px 2px;font-size:7px;font-style:normal;text-align:center;overflow:hidden;white-space:nowrap}.booking-block.blue{background:#e7eeff;color:#315db0}.booking-block.green{background:#e2f6ed;color:#23815d}.booking-block.gold{background:#fbf0d7;color:#9b7628}.calendar-legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:14px;color:#74819a;font-size:8px}.calendar-legend i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}.blue-dot{background:#527ed5}.green-dot{background:#3da779}.gold-dot{background:#d4a94e}.payment-visual{background:radial-gradient(ellipse at 50% 0%,#d9e8ff,transparent 55%),#edf3fb}.payment-card{max-width:360px;margin:auto;border-radius:15px;background:white;border:1px solid #e0e5ef;padding:20px;box-shadow:0 15px 40px #17294d16}.payment-head{display:flex;gap:9px;align-items:center;border-bottom:1px solid #edf0f5;padding-bottom:14px}.payment-head small,.payment-head b{display:block}.payment-head small{font-size:7px;letter-spacing:.1em;color:#75829a}.payment-head b{font-size:11px;margin-top:4px}.payment-amount{text-align:center;padding:18px 0 13px}.payment-amount small,.payment-amount strong,.payment-amount span{display:block}.payment-amount small{font-size:8px;color:#7a869c;letter-spacing:.1em}.payment-amount strong{font-size:28px;letter-spacing:-.05em;margin:5px 0}.payment-amount span{font-size:8px;color:#8994a8}.fake-qr{position:relative;width:120px;height:120px;margin:0 auto 15px;background-color:white;background-image:repeating-conic-gradient(#15284d 0% 25%,transparent 0% 50%);background-size:12px 12px;border:8px solid white;outline:1px solid #e1e6ef;display:grid;place-items:center}.fake-qr:before,.fake-qr:after,.fake-qr i{content:'';position:absolute;width:28px;height:28px;background:white;border:6px solid #15284d;box-shadow:inset 0 0 0 4px white;top:0;left:0}.fake-qr:after{left:auto;right:0}.fake-qr i:nth-child(1){top:auto;bottom:0}.fake-qr i:nth-child(2),.fake-qr i:nth-child(3){display:none}.fake-qr b{position:relative;background:white;padding:4px;font-size:8px;letter-spacing:.08em}.payment-instructions{display:grid;gap:7px;border-top:1px solid #edf0f5;padding-top:13px}.payment-instructions b{font-size:10px}.payment-instructions span{font-size:8px;color:#6e7a91}.payment-foot{text-align:center;color:#8792a7;font-size:7px;margin-top:13px}.settings-visual{background:radial-gradient(ellipse at 50% 0%,#dce8fc,transparent 60%),#eef2f8}.settings-card{display:grid;grid-template-columns:135px 1fr;max-width:560px;min-height:330px;margin:auto;background:white;border:1px solid #dfe4ed;border-radius:11px;overflow:hidden;box-shadow:0 12px 30px #17294d12}.settings-sidebar{background:#111d3a;color:#b4bfd7;padding:14px 9px;display:flex;flex-direction:column;gap:12px;font-size:8px}.settings-brand{color:white;font-weight:950;font-size:9px;margin-bottom:9px}.settings-brand span{display:inline-grid;place-items:center;background:#d9c38b;color:#142044;width:19px;height:19px;border-radius:5px;margin-right:4px}.settings-sidebar small{font-size:7px;color:#7284aa;letter-spacing:.1em}.settings-sidebar b,.settings-sidebar>span{padding:8px 6px;border-radius:5px}.settings-sidebar b{background:#244b9d;color:white}.settings-main{padding:18px;min-width:0}.settings-main h4{font-size:17px;margin:5px 0 14px}.settings-cover{height:56px;background:linear-gradient(120deg,#163e84,#6d8dc7);border-radius:6px;color:white;display:flex;align-items:center;justify-content:space-between;padding:10px;font-size:8px;margin-bottom:13px}.settings-cover b{border:1px solid #ffffff70;border-radius:5px;padding:4px 7px}.settings-main label{display:block;font-size:8px;color:#7b869b;margin:9px 0 4px}.settings-input{border:1px solid #e0e5ef;border-radius:5px;padding:8px;font-size:8px;color:#3d4b68}.settings-two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.settings-save{background:#1747ad;color:white;text-align:center;border-radius:6px;padding:9px;margin-top:13px;font-size:8px;font-weight:900}.feature-grid-section{background:#fff;border-top:1px solid #e8e5dd;border-bottom:1px solid #e8e5dd;padding:76px 22px;text-align:center}.feature-grid-section h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.05em;margin:17px 0 10px}.feature-grid-lead{font-size:12px;color:#748098;margin:0 auto;max-width:520px;line-height:1.8}.feature-grid-cards{max-width:1000px;margin:34px auto 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;text-align:left}.feature-grid-cards article{border:1px solid #e4e7ed;border-radius:13px;padding:22px;background:linear-gradient(150deg,#fff,#fbfaf7);transition:transform .2s,box-shadow .2s,border-color .2s}.feature-grid-cards article:hover{transform:translateY(-3px);box-shadow:0 12px 28px #17294d10;border-color:#c9d4e8}.feature-grid-cards article>span{display:grid;place-items:center;width:34px;height:34px;background:#e8eefc;color:#2856a9;border-radius:10px;font-size:17px;margin-bottom:17px}.feature-grid-cards h3{font-size:14px;margin:0 0 8px}.feature-grid-cards p{font-size:11px;line-height:1.8;color:#748098;margin:0}.feature-bottom-cta{max-width:1060px;margin:65px auto 0;border-radius:20px;background:linear-gradient(120deg,#101c3b,#183c7e);color:white;padding:clamp(25px,5vw,54px);display:flex;align-items:center;justify-content:space-between;gap:28px}.feature-bottom-cta .features-kicker{color:#d7e3ff}.feature-bottom-cta h2{font-size:clamp(29px,4vw,45px);margin:16px 0}.feature-bottom-cta h2 em{color:#e4d09b}.feature-bottom-cta p{color:#c8d4ec;font-size:11px;line-height:1.8;max-width:490px}.feature-bottom-actions{display:flex;flex-direction:column;gap:10px;min-width:175px}.feature-bottom-actions .feature-primary{background:#f0dfb1;color:#17244a;white-space:nowrap}.feature-bottom-actions .feature-secondary{white-space:nowrap}.features-page~.cta{margin-top:0}
+@media(max-width:800px){.preview-body{grid-template-columns:120px 1fr}.preview-dashboard{padding:15px}.preview-lower{grid-template-columns:1fr}.feature-row{gap:28px}.feature-grid-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-bottom-cta{margin-left:22px;margin-right:22px}}
+@media(max-width:600px){.features-hero{padding:55px 16px 45px}.features-hero h2{font-size:39px}.features-hero>p{font-size:13px}.feature-proof{gap:10px}.hero-ui-preview{margin-top:30px;border-radius:12px}.preview-top{padding:0 10px}.preview-body{grid-template-columns:1fr}.preview-sidebar{display:none}.preview-dashboard{padding:12px}.preview-heading h3{font-size:15px}.preview-stats{gap:5px}.preview-stats>div{padding:8px}.preview-stats small{font-size:8px}.preview-lower{grid-template-columns:1fr}.feature-trust{padding:25px 16px 35px;gap:15px}.feature-intro{padding:60px 18px 20px}.feature-row,.feature-row.reverse{grid-template-columns:1fr;padding:37px 0;gap:22px}.feature-row.reverse .feature-copy,.feature-row.reverse .feature-visual{order:initial}.feature-copy h3{font-size:30px}.feature-visual{padding:13px}.mock-window{padding:10px}.mock-court-row{grid-template-columns:65px 1fr}.mock-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.mock-slots span{padding:7px 1px}.calendar-card{padding:10px}.calendar-grid{grid-template-columns:30px repeat(4,minmax(0,1fr));gap:3px}.calendar-cell{height:45px;padding:2px}.calendar-block{font-size:6px}.calendar-title h4{font-size:13px}.calendar-title>span{font-size:7px;padding:6px}.settings-card{grid-template-columns:95px 1fr}.settings-sidebar{padding:10px 5px;font-size:7px}.settings-main{padding:11px}.settings-two{grid-template-columns:1fr}.feature-grid-section{padding:55px 16px}.feature-grid-cards{grid-template-columns:1fr}.feature-grid-cards article{padding:18px}.feature-bottom-cta{margin:42px 16px 0;display:block;padding:25px 20px}.feature-bottom-cta h2{font-size:30px}.feature-bottom-actions{margin-top:20px}.feature-bottom-actions .feature-primary,.feature-bottom-actions .feature-secondary{width:100%}}
+
+@media(max-width:800px){.nav a{display:none}.steps{grid-template-columns:repeat(2,1fr)}.venue-head{grid-template-columns:100px 1fr;padding:16px}.venue-mark{height:100px;border-radius:25px;font-size:42px}.venue-head h2{font-size:24px}.tagline{font-size:15px}.booking-area{grid-template-columns:1fr}.booking-side{display:grid;grid-template-columns:1fr 1fr;gap:10px}.booking-side .sidebox{margin:0}.cards{grid-template-columns:1fr}.admin-cards{grid-template-columns:repeat(2,1fr)}.admin-shell{grid-template-columns:1fr}.admin-side{display:flex;overflow:auto;gap:5px;padding:10px}.admin-side button{white-space:nowrap;width:auto}.editgrid{grid-template-columns:1fr}.topbar{padding:0 16px}.hero h1{letter-spacing:-1.5px}}
+@media(max-width:500px){.booking-side{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.step{padding:9px}.hero{padding-top:40px}.venue-head{grid-template-columns:1fr;text-align:center}.venue-mark{display:none}.chips{justify-content:center}.venue-head h2{font-size:26px}.address{padding:5px 20px}.owner-top{display:block}.owner-top button{margin-top:10px}.benefits h2{font-size:27px}.cta h2{font-size:34px}.admin-main{padding:15px}}
+
+/* Courtly pricing page */
+.pricing-page{background:#f7f5ef;color:#152044;overflow:hidden;padding-bottom:70px}
+.pricing-hero{position:relative;text-align:center;padding:78px 22px 42px;background:radial-gradient(ellipse at 50% 0%,#dbe6ff 0,transparent 54%),linear-gradient(180deg,#fbfaf7,#f7f5ef)}
+.pricing-kicker{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:900;letter-spacing:.15em;color:#2455a5;text-transform:uppercase}
+.pricing-kicker i{width:7px;height:7px;border-radius:50%;background:#c5a75b;box-shadow:0 0 0 4px #c5a75b20}
+.pricing-hero h2{font-size:clamp(40px,5.5vw,68px);line-height:1.02;letter-spacing:-.06em;margin:22px auto 17px;font-weight:950;max-width:820px}
+.pricing-hero h2 em,.pricing-bottom h2 em{font-style:normal;color:#315eb2}
+.pricing-hero>p{max-width:630px;margin:0 auto;color:#64708a;font-size:15px;line-height:1.8}
+.pricing-proof{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:23px auto 0;color:#64708a;font-size:10px;font-weight:800}
+.pricing-proof span:before{content:'✓';color:#25865e;margin-right:6px}
+.pricing-layout{max-width:1030px;margin:30px auto 0;padding:0 22px;display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
+.pricing-card{background:white;border:1px solid #dce2ed;border-radius:20px;box-shadow:0 18px 55px #142b5810;overflow:hidden}
+.pricing-card-main{padding:30px}
+.pricing-card-label{font-size:10px;letter-spacing:.14em;font-weight:900;color:#315eb2;text-transform:uppercase}
+.pricing-price-line{display:flex;align-items:baseline;gap:9px;margin:17px 0 6px}
+.pricing-price{font-size:clamp(44px,5vw,60px);font-weight:950;letter-spacing:-.07em;line-height:1;color:#142044}
+.pricing-per{font-size:12px;color:#75819a;font-weight:700}
+.pricing-card-main>p{font-size:12px;line-height:1.8;color:#68748b;margin:12px 0 20px}
+.pricing-highlight{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:#f0f4ff;border:1px solid #dfe8ff;margin:20px 0}
+.pricing-highlight .coin{display:grid;place-items:center;flex:none;width:39px;height:39px;border-radius:12px;background:#1747ad;color:white;font-size:19px;font-weight:900}
+.pricing-highlight b,.pricing-highlight small{display:block}
+.pricing-highlight b{font-size:13px}
+.pricing-highlight small{font-size:10px;color:#68748b;margin-top:3px}
+.pricing-list{list-style:none;padding:0;margin:22px 0 24px;display:grid;gap:13px}
+.pricing-list li{font-size:11px;color:#4f5c75;display:flex;align-items:flex-start;gap:9px}
+.pricing-list li:before{content:'✓';display:grid;place-items:center;flex:none;width:17px;height:17px;border-radius:50%;background:#e0f3e8;color:#19845b;font-size:10px;font-weight:900}
+.pricing-action{display:flex;gap:10px;flex-wrap:wrap}
+.pricing-action .feature-primary,.pricing-action .feature-secondary{font-size:11px;padding:13px 17px;cursor:pointer}
+.pricing-footnote{font-size:9px!important;color:#8992a5!important;margin-top:14px!important}
+.pricing-side{display:flex;flex-direction:column;gap:14px}
+.pricing-side-card{background:#142348;color:white;border-radius:18px;padding:24px;position:relative;overflow:hidden}
+.pricing-side-card:after{content:'C';position:absolute;right:-4px;bottom:-50px;font-size:180px;font-weight:950;line-height:1;color:#ffffff08;pointer-events:none}
+.pricing-side-card h3{font-size:22px;letter-spacing:-.04em;margin:10px 0}
+.pricing-side-card p{font-size:11px;line-height:1.8;color:#c2cce2;max-width:330px}
+.pricing-side-card .mini-pill{display:inline-block;border:1px solid #52638b;border-radius:20px;padding:6px 9px;color:#e8d9b0;font-size:9px;font-weight:900}
+.pricing-side-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:19px}
+.pricing-side-stats div{background:#ffffff0b;border:1px solid #ffffff16;border-radius:10px;padding:12px}
+.pricing-side-stats b{display:block;font-size:17px;color:#f0dfb1}
+.pricing-side-stats small{font-size:9px;color:#c2cce2}
+.pricing-calc{background:white;border:1px solid #dce2ed;border-radius:18px;padding:22px;box-shadow:0 10px 30px #142b5808}
+.pricing-calc h3{font-size:16px;letter-spacing:-.03em;margin:0 0 6px}
+.pricing-calc>p{font-size:10px;color:#75819a;line-height:1.7;margin:0 0 18px}
+.pricing-calc label{font-size:10px;font-weight:800;color:#52617c;display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}
+.pricing-calc input[type=range]{width:100%;accent-color:#1747ad}
+.pricing-calc-output{display:flex;justify-content:space-between;align-items:end;border-top:1px solid #e8ebf1;margin-top:17px;padding-top:16px}
+.pricing-calc-output small{display:block;color:#75819a;font-size:9px;margin-bottom:4px}
+.pricing-calc-output strong{font-size:25px;letter-spacing:-.05em;color:#142044}
+.pricing-calc-output .fee-out{text-align:right}
+.pricing-calc-output .fee-out strong{font-size:17px;color:#315eb2}
+.pricing-compare{max-width:990px;margin:72px auto 0;padding:0 22px}
+.pricing-section-heading{text-align:center;margin:0 auto 26px;max-width:600px}
+.pricing-section-heading h3{font-size:clamp(28px,4vw,42px);letter-spacing:-.05em;line-height:1.08;margin:14px 0}
+.pricing-section-heading p{font-size:12px;line-height:1.8;color:#68748b}
+.pricing-compare-table{background:white;border:1px solid #dce2ed;border-radius:16px;overflow:hidden}
+.pricing-compare-row{display:grid;grid-template-columns:1.3fr .85fr .85fr;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid #edf0f5;font-size:11px;color:#53617b}
+.pricing-compare-row:last-child{border-bottom:0}
+.pricing-compare-row.header{background:#142348;color:white;font-weight:900}
+.pricing-compare-row b{color:#152044;font-size:11px}
+.pricing-compare-row.header b{color:#f0dfb1}
+.pricing-compare-row span:not(:first-child){text-align:center}
+.pricing-yes{color:#20855e;font-weight:900}
+.pricing-no{color:#9aa3b4}
+.pricing-faq{max-width:850px;margin:70px auto 0;padding:0 22px}
+.pricing-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pricing-faq article{padding:20px;background:#fff;border:1px solid #dce2ed;border-radius:13px}
+.pricing-faq h4{font-size:13px;margin:0 0 8px;letter-spacing:-.02em}
+.pricing-faq p{font-size:10px;line-height:1.8;color:#68748b;margin:0}
+.pricing-bottom{max-width:990px;margin:68px auto 0;padding:35px;display:flex;justify-content:space-between;align-items:center;gap:25px;background:linear-gradient(120deg,#e7edfc,#f5f0e5);border:1px solid #dce2ed;border-radius:20px}
+.pricing-bottom h2{font-size:clamp(25px,3.5vw,39px);line-height:1.1;letter-spacing:-.05em;margin:12px 0}
+.pricing-bottom p{font-size:11px;line-height:1.8;color:#68748b;max-width:500px;margin:0}
+.pricing-bottom .feature-primary{white-space:nowrap;flex:none}
+@media(max-width:760px){.pricing-layout{grid-template-columns:1fr}.pricing-hero{padding:58px 17px 32px}.pricing-card-main{padding:23px}.pricing-bottom{margin-left:18px;margin-right:18px;padding:25px;display:block}.pricing-bottom .feature-primary{margin-top:20px}.pricing-faq-grid{grid-template-columns:1fr}.pricing-compare-row{grid-template-columns:1.15fr .8fr .8fr;padding:13px 12px;font-size:9px}.pricing-compare-row b{font-size:9px}.pricing-side-card{padding:22px}}
+
+
+/* Courtly clubs and court discovery */
+.clubs-page,.courts-page{padding:70px 22px;background:#f7f5ef;color:#152044}
+.clubs-inner,.courts-inner{max-width:1080px;margin:0 auto}
+.clubs-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:center;padding:12px 0 45px}
+.club-kicker{display:inline-flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.15em;font-size:10px;font-weight:900;color:#315eb2}
+.club-kicker:before{content:"";width:7px;height:7px;background:#c5a75b;border-radius:50%;box-shadow:0 0 0 4px #c5a75b20}
+.clubs-hero h2,.courts-heading h2{font-size:clamp(39px,5vw,62px);line-height:1.01;letter-spacing:-.065em;font-weight:950;margin:19px 0}
+.clubs-hero h2 em,.courts-heading h2 em{font-style:normal;color:#315eb2}
+.clubs-hero p,.courts-heading p{font-size:13px;line-height:1.9;color:#68748b;max-width:510px}
+.club-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.club-actions .feature-primary,.club-actions .feature-secondary{font-size:11px;padding:13px 17px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.club-benefits{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;color:#62708a;font-size:10px;font-weight:800}
+.club-benefits span:before{content:"✓";color:#22845e;margin-right:6px}
+.club-preview{border-radius:22px;background:#142348;padding:20px;color:#fff;box-shadow:0 22px 55px #172b551c;position:relative;overflow:hidden}
+.club-preview:before{content:"";position:absolute;width:280px;height:280px;right:-100px;top:-110px;border-radius:50%;border:1px solid #ffffff15;box-shadow:0 0 0 28px #ffffff06,0 0 0 56px #ffffff04}
+.club-preview-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative}
+.club-preview-brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:12px}
+.club-preview-mark{width:35px;height:35px;display:grid;place-items:center;background:#f0dfb1;color:#142348;border-radius:11px;font-size:17px}
+.club-live{font-size:9px;font-weight:900;color:#a7e6c5;background:#1a493f;border-radius:20px;padding:6px 9px}
+.club-preview h3{font-size:25px;line-height:1.1;letter-spacing:-.04em;margin:28px 0 7px;position:relative}
+.club-preview>p{font-size:10px;color:#c4cde0;line-height:1.8;position:relative}
+.club-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:19px;position:relative}
+.club-preview-tile{padding:14px;border-radius:12px;background:#ffffff0b;border:1px solid #ffffff15}
+.club-preview-tile small{display:block;font-size:9px;color:#c4cde0;margin-bottom:7px}
+.club-preview-tile b{font-size:16px;color:#f0dfb1}
+.club-preview-bar{margin-top:15px;padding:12px;border-radius:11px;background:#f0dfb1;color:#142348;font-size:10px;font-weight:900;position:relative;display:flex;justify-content:space-between;gap:10px}
+.clubs-section-head{text-align:center;max-width:620px;margin:35px auto 26px}
+.clubs-section-head h3{font-size:clamp(27px,4vw,39px);letter-spacing:-.05em;line-height:1.1;margin:14px 0}
+.clubs-section-head p{font-size:12px;line-height:1.8;color:#68748b}
+.club-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.club-feature{padding:21px;background:white;border:1px solid #dce2ed;border-radius:15px;min-height:155px}
+.club-feature-icon{width:38px;height:38px;border-radius:12px;background:#eaf0ff;color:#315eb2;display:grid;place-items:center;font-size:18px;margin-bottom:15px}
+.club-feature h4{font-size:13px;margin:0 0 8px;letter-spacing:-.02em}
+.club-feature p{font-size:10px;color:#68748b;line-height:1.8;margin:0}
+.club-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:14px}
+.club-step{padding:20px;border-radius:15px;border:1px solid #dce2ed;background:#f0f3fb}
+.club-step .num{font-size:10px;color:#315eb2;font-weight:950;letter-spacing:.1em}
+.club-step h4{font-size:13px;margin:9px 0 7px}
+.club-step p{font-size:10px;color:#68748b;line-height:1.8;margin:0}
+.clubs-cta{margin-top:25px;border-radius:18px;padding:25px 28px;background:#142348;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.clubs-cta h3{font-size:23px;letter-spacing:-.04em;margin:0 0 7px}
+.clubs-cta p{font-size:10px;line-height:1.8;color:#c4cde0;margin:0;max-width:570px}
+.clubs-cta .feature-primary{flex:none;white-space:nowrap}
+.courts-page{background:#fff;padding-top:66px}
+.courts-heading{text-align:center;max-width:690px;margin:0 auto 28px}
+.courts-heading p{margin-left:auto;margin-right:auto}
+.court-search-panel{max-width:950px;margin:0 auto 24px;padding:16px;background:#f7f5ef;border:1px solid #e0e4ed;border-radius:16px;display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end}
+.court-field label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;color:#66738d;margin:0 0 7px}
+.court-field input,.court-field select{width:100%;height:42px;padding:0 12px;border:1px solid #d5dcea;border-radius:9px;background:white;color:#152044;font-size:11px;min-width:0}
+.court-search-btn{height:42px;padding:0 17px;border-radius:9px;background:#1747ad;color:white;font-size:11px;font-weight:900}
+.court-results-meta{max-width:950px;margin:0 auto 13px;display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:10px;color:#71809a}
+.court-results-meta strong{color:#152044}
+.court-card-grid{max-width:950px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.court-card{background:white;border:1px solid #dce2ed;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px #172b5508;display:flex;flex-direction:column;min-width:0}
+.court-card-art{height:142px;padding:15px;display:flex;align-items:flex-end;justify-content:space-between;color:white;position:relative;overflow:hidden;background:linear-gradient(140deg,#1a4687,#101b3a)}
+.court-card-art:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 32px,#ffffff12 33px 34px),repeating-linear-gradient(0deg,transparent 0 32px,#ffffff12 33px 34px);transform:perspective(180px) rotateX(20deg) scale(1.5)}
+.court-card:nth-child(2) .court-card-art{background:linear-gradient(140deg,#357b78,#102e43)}
+.court-card:nth-child(3) .court-card-art{background:linear-gradient(140deg,#ba8a48,#47321f)}
+.court-art-icon,.court-type-pill{position:relative;z-index:1}
+.court-art-icon{font-size:28px;text-shadow:0 3px 15px #0003}
+.court-type-pill{background:#ffffffed;color:#152044;border-radius:20px;padding:6px 9px;font-size:8px;font-weight:900}
+.court-card-body{padding:17px;display:flex;flex-direction:column;flex:1}
+.court-card-location{font-size:9px;color:#71809a;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.court-card h3{font-size:16px;letter-spacing:-.03em;margin:8px 0 7px}
+.court-card p{font-size:10px;color:#68748b;line-height:1.7;margin:0 0 13px;min-height:34px}
+.court-card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:15px}
+.court-card-tags span{background:#f0f3fa;border-radius:20px;padding:5px 7px;font-size:8px;color:#5e6c86}
+.court-card-bottom{margin-top:auto;border-top:1px solid #edf0f5;padding-top:13px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.court-price strong{display:block;font-size:17px;letter-spacing:-.04em}
+.court-price small{display:block;font-size:8px;color:#71809a;margin-top:2px}
+.court-card-bottom button{padding:10px 11px;border-radius:8px;background:#1747ad;color:white;font-size:9px;font-weight:900}
+.court-empty{display:none;max-width:950px;margin:12px auto 0;padding:25px;border:1px dashed #cfd7e5;border-radius:14px;text-align:center;color:#68748b;font-size:12px}
+.court-demo-note{max-width:950px;margin:15px auto 0;color:#8791a5;font-size:9px;line-height:1.7}
+@media(max-width:850px){.clubs-hero{grid-template-columns:1fr;gap:25px}.club-feature-grid,.court-card-grid{grid-template-columns:repeat(2,1fr)}.court-search-panel{grid-template-columns:1fr 1fr}.court-search-btn{width:100%}.club-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.clubs-page,.courts-page{padding:50px 16px}.club-feature-grid,.court-card-grid,.club-steps{grid-template-columns:1fr}.clubs-cta{display:block;padding:23px}.clubs-cta .feature-primary{margin-top:17px}.court-search-panel{grid-template-columns:1fr}.court-results-meta{align-items:flex-start;flex-direction:column}.club-preview{padding:17px}}
+
+
+@media(max-width:760px){.topbar{height:auto;min-height:54px;flex-wrap:wrap;padding:12px 16px}.topbar .nav{gap:12px;flex-wrap:wrap}.topbar .nav a{font-size:10px}.topbar .nav button{padding:8px 10px;font-size:10px}}
+
+
+/* Each primary navigation item has its own standalone page */
+body.page-home #features,body.page-home #clubs,body.page-home #courts,body.page-home #pricing{display:none!important}
+body.page-features .hero,body.page-features #venue,body.page-features #clubs,body.page-features #courts,body.page-features #pricing{display:none!important}
+body.page-pricing .hero,body.page-pricing #venue,body.page-pricing #features,body.page-pricing #clubs,body.page-pricing #courts{display:none!important}
+body.page-clubs .hero,body.page-clubs #venue,body.page-clubs #features,body.page-clubs #courts,body.page-clubs #pricing{display:none!important}
+body.page-courts .hero,body.page-courts #venue,body.page-courts #features,body.page-courts #clubs,body.page-courts #pricing{display:none!important}
+.topbar .nav a[aria-current="page"]{color:#fff;font-weight:950;position:relative}
+.topbar .nav a[aria-current="page"]:after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;border-radius:2px;background:#f0dfb1}
+@media(max-width:760px){.topbar .nav a[aria-current="page"]:after{bottom:-4px}}
+
+
+/* Owner-first conversion-focused homepage */
+body.page-home{background:#f7f5ef;color:#152044}
+body.page-home>.hero{display:none!important}
+body.page-home #publicApp{display:none!important}
+.owner-home{background:#f7f5ef;color:#152044;overflow:hidden}
+.owner-hero{position:relative;background:radial-gradient(ellipse at 78% 20%,#2c4f94 0,transparent 37%),linear-gradient(120deg,#101a38,#142e65 68%,#0c2453);color:#fff;padding:76px 22px 68px}
+.owner-hero-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:center}
+.owner-kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff35;background:#ffffff0c;border-radius:24px;padding:8px 12px;color:#e6d7aa;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.owner-kicker i{width:7px;height:7px;border-radius:50%;background:#e4cf8e}
+.owner-hero h1{font-size:clamp(42px,5.3vw,68px);line-height:.98;letter-spacing:-.065em;margin:22px 0 20px;max-width:620px;font-weight:950}
+.owner-hero h1 em{font-style:normal;color:#e6d6a7}
+.owner-hero-copy>p{max-width:525px;color:#d1dbf0;font-size:15px;line-height:1.85;margin:0 0 25px}
+.owner-actions{display:flex;gap:11px;flex-wrap:wrap}
+.owner-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 19px;border-radius:28px;text-decoration:none;font-size:12px;font-weight:900;transition:transform .18s,filter .18s}
+.owner-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.owner-btn.primary{background:#f0dfb1;color:#17244a;box-shadow:0 10px 28px #050d2540}
+.owner-btn.secondary{border:1px solid #ffffff50;color:#fff;background:#ffffff0b}
+.owner-points{display:flex;gap:15px;flex-wrap:wrap;margin-top:23px;color:#dbe5f8;font-size:10px}
+.owner-points span:before{content:'✓';color:#e6d6a7;font-weight:900;margin-right:6px}
+.owner-dashboard{border:1px solid #ffffff30;border-radius:18px;background:#fdfdfd;color:#17244a;box-shadow:0 30px 85px #03091e65;overflow:hidden;transform:rotate(1deg)}
+.owner-dash-top{height:49px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid #e7eaf0}
+.owner-dash-logo{display:grid;place-items:center;width:25px;height:25px;border-radius:7px;background:#142b59;color:#f0dfb1;font-weight:950}
+.owner-dash-top strong{font-size:11px;letter-spacing:.02em}
+.owner-dash-top small{margin-left:auto;color:#25815e;font-size:8px;font-weight:900}
+.owner-dash-body{display:grid;grid-template-columns:118px 1fr;min-height:300px}
+.owner-dash-side{background:#111d3a;color:#b5c1db;padding:18px 10px;font-size:9px;display:flex;flex-direction:column;gap:7px}
+.owner-dash-side b{color:#7185ad;font-size:7px;letter-spacing:.1em;margin:0 7px 7px}
+.owner-dash-side span{padding:10px 9px;border-radius:7px}
+.owner-dash-side .active{background:#244b9d;color:#fff}
+.owner-dash-main{padding:19px;min-width:0}
+.owner-dash-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.owner-dash-heading h3{font-size:18px;letter-spacing:-.04em;margin:3px 0 14px}
+.owner-dash-heading small{font-size:7px;color:#7a869d;font-weight:900;letter-spacing:.1em}
+.owner-dash-heading span{border:1px solid #e0e5ef;border-radius:6px;padding:7px;font-size:7px;color:#64718b}
+.owner-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.owner-metrics div{border:1px solid #e6e9f0;border-radius:8px;padding:10px;min-width:0}
+.owner-metrics small{display:block;color:#7d879a;font-size:7px}
+.owner-metrics strong{display:block;color:#17244a;font-size:clamp(13px,1.7vw,21px);letter-spacing:-.04em;margin:6px 0}
+.owner-metrics em{font-size:7px;color:#27875f;font-style:normal}
+.owner-dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.owner-mini-card{border:1px solid #e6e9f0;border-radius:8px;padding:11px;min-width:0}
+.owner-mini-card>b{font-size:8px}
+.owner-bars{height:69px;display:flex;align-items:end;gap:6px;margin-top:8px}
+.owner-bars i{display:block;flex:1;min-width:4px;background:linear-gradient(#91b2f4,#2858b3);border-radius:3px 3px 0 0}
+.owner-res-row{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:7px}
+.owner-res-avatar{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#e5edff;color:#2858a8;font-weight:900}
+.owner-res-row small{display:block;color:#7d879a;margin-top:2px}
+.owner-status{margin-left:auto;color:#19835b;background:#e5f7ed;padding:4px 5px;border-radius:4px}
+.owner-strip{max-width:1080px;margin:-1px auto 0;padding:24px 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;border-bottom:1px solid #e5e0d5}
+.owner-strip div{text-align:center;padding:6px}
+.owner-strip strong{display:block;font-size:14px;color:#17244a}
+.owner-strip span{display:block;font-size:10px;color:#758098;margin-top:4px}
+.owner-section{max-width:1080px;margin:0 auto;padding:76px 22px}
+.owner-section-heading{text-align:center;max-width:680px;margin:0 auto 34px}
+.owner-section-heading .label{font-size:9px;font-weight:900;letter-spacing:.15em;color:#315eb2}
+.owner-section-heading h2{font-size:clamp(31px,4vw,47px);line-height:1.05;letter-spacing:-.055em;margin:15px 0}
+.owner-section-heading p{color:#69758c;font-size:12px;line-height:1.85;margin:0}
+.owner-benefit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.owner-benefit{border:1px solid #e2e5eb;border-radius:15px;background:#fff;padding:23px;box-shadow:0 8px 25px #17294d07}
+.owner-benefit .icon{display:grid;place-items:center;width:39px;height:39px;border-radius:11px;background:#e9efff;color:#214da4;font-size:18px;margin-bottom:17px}
+.owner-benefit h3{font-size:15px;margin:0 0 9px}
+.owner-benefit p{font-size:11px;line-height:1.8;color:#6f7b91;margin:0}
+.owner-pricing-band{max-width:1080px;margin:0 auto 74px;padding:0 22px}
+.owner-pricing-inner{border-radius:19px;padding:clamp(26px,5vw,48px);background:linear-gradient(120deg,#101b39,#1b3c7c);color:#fff;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:30px}
+.owner-pricing-inner .label{color:#e4d3a0;font-size:9px;font-weight:900;letter-spacing:.14em}
+.owner-pricing-inner h2{font-size:clamp(29px,4vw,43px);line-height:1.06;letter-spacing:-.05em;margin:13px 0}
+.owner-pricing-inner p{font-size:11px;color:#d0daf0;line-height:1.85;max-width:530px}
+.owner-price-card{background:#fff;color:#17244a;border-radius:13px;padding:23px}
+.owner-price-card small{font-size:9px;color:#7b869d;font-weight:900;letter-spacing:.1em}
+.owner-price-card strong{display:block;font-size:37px;letter-spacing:-.06em;margin:6px 0}
+.owner-price-card strong span{font-size:12px;letter-spacing:0;color:#5d6983}
+.owner-price-card p{font-size:10px;color:#69758c;line-height:1.7;margin:0 0 15px}
+.owner-price-card a{display:block;text-align:center;border-radius:22px;background:#1747ad;color:#fff;text-decoration:none;font-weight:900;font-size:10px;padding:12px}
+.owner-how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.owner-how{padding:22px;border-top:2px solid #d9c68f;background:#fff;border-radius:0 0 12px 12px}
+.owner-how b{display:block;color:#315eb2;font-size:10px;letter-spacing:.1em}
+.owner-how h3{font-size:14px;margin:11px 0 7px}
+.owner-how p{font-size:11px;color:#6f7b91;line-height:1.8;margin:0}
+.owner-final-cta{background:#eaeff9;border-top:1px solid #dce3f0;padding:54px 22px;text-align:center}
+.owner-final-cta h2{font-size:clamp(31px,4vw,45px);letter-spacing:-.055em;margin:0 0 13px}
+.owner-final-cta p{font-size:12px;color:#69758c;line-height:1.8;max-width:550px;margin:0 auto 23px}
+.owner-final-cta .owner-btn.primary{background:#1747ad;color:white}
+@media(max-width:800px){.owner-hero-inner{grid-template-columns:1fr;gap:34px}.owner-hero{padding:55px 18px 48px}.owner-hero-copy{text-align:center}.owner-hero-copy>p{margin-left:auto;margin-right:auto}.owner-actions,.owner-points{justify-content:center}.owner-dashboard{max-width:640px;width:100%;margin:auto;transform:none}.owner-strip{grid-template-columns:repeat(2,1fr)}.owner-pricing-inner{grid-template-columns:1fr}.owner-benefit-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.owner-hero h1{font-size:43px}.owner-dash-body{grid-template-columns:76px 1fr;min-height:260px}.owner-dash-side{padding:13px 6px;font-size:8px}.owner-dash-side span{padding:8px 5px}.owner-dash-main{padding:12px}.owner-dash-heading h3{font-size:14px}.owner-metrics div{padding:7px}.owner-metrics small{font-size:6px}.owner-dash-bottom{grid-template-columns:1fr}.owner-mini-card:nth-child(2){display:none}.owner-benefit-grid,.owner-how-grid{grid-template-columns:1fr}.owner-strip strong{font-size:12px}.owner-strip span{font-size:9px}.owner-section{padding:55px 17px}.owner-pricing-band{padding:0 16px;margin-bottom:52px}.owner-price-card strong{font-size:32px}}
+
+.owner-nav-demo{display:inline-flex;align-items:center;justify-content:center;background:#f0dfb1;color:#17244a;border-radius:22px;padding:10px 16px;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap}
+@media(max-width:700px){.topbar{height:auto;min-height:54px;flex-wrap:wrap;padding:12px 16px}.topbar .nav{gap:12px;flex-wrap:wrap}.owner-nav-demo{padding:9px 12px}}
+</style>
+</head>
+<body class="page-home">
+<header class="topbar">
+ <a class="brand" id="brandLogo" href="/" aria-label="Courtly home" style="text-decoration:none"><span class="courtly-mark">C</span> COURT<span>LY</span></a>
+ <nav class="nav"><a href="/features.html">Features</a><a href="/pricing.html">Pricing</a><a href="/clubs.html">For clubs</a><a href="/courts.html">Find a court</a></nav>
+ <nav class="nav"><a class="admin-link" href="/owner-portal.html" style="text-decoration:none;display:inline-flex;align-items:center">View demo ↗</a><button onclick="window.location.href='/owner-portal.html'">Owner portal →</button></nav>
+</header>
+<section class="hero">
+ <div class="eyebrow">● BUILT FOR COURT OWNERS</div><h1>Run your venue.<br>Not your spreadsheets.</h1>
+ <p>Manage courts, set hourly rates, review reservations, and explore the Courtly owner dashboard in an interactive demo built for sports facility businesses.</p>
+ <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:0 auto 26px"><a class="feature-primary" href="/owner-portal.html" style="text-decoration:none">View owner portal demo →</a><a class="feature-secondary" href="/pricing.html" style="text-decoration:none">Explore pricing</a></div>
+ <div class="steps"><div class="step active"><b>1</b><div><strong>Pick a time</strong>Tap open hours on any court.</div></div><div class="step"><b>2</b><div><strong>Reserve</strong>Hold the court while you check out.</div></div><div class="step"><b>3</b><div><strong>Pay with QR</strong>Scan your configured payment QR.</div></div><div class="step"><b>4</b><div><strong>Confirmed</strong>Booking status updates in the dashboard.</div></div></div>
+</section>
+
+<section class="owner-home" aria-label="Courtly for court owners">
+  <div class="owner-hero">
+    <div class="owner-hero-inner">
+      <div class="owner-hero-copy">
+        <div class="owner-kicker"><i></i> Court management, made simpler</div>
+        <h1>Your courts.<br>Your bookings.<br><em>One simple dashboard.</em></h1>
+        <p>Give players an easier way to book online while you manage court availability, hourly rates, reservations and venue details in one place.</p>
+        <div class="owner-actions">
+          <a class="owner-btn primary" href="/owner-portal">View owner demo <span>↗</span></a>
+          <a class="owner-btn secondary" href="/pricing">See simple pricing <span>→</span></a>
+        </div>
+        <div class="owner-points"><span>Built for court owners</span><span>Mobile-friendly booking pages</span><span>Clear transaction fees</span></div>
+      </div>
+      <div class="owner-dashboard" aria-label="Illustration of the Courtly owner dashboard">
+        <div class="owner-dash-top"><span class="owner-dash-logo">C</span><strong>COURTLY OWNER</strong><small>● DEMO OVERVIEW</small></div>
+        <div class="owner-dash-body">
+          <aside class="owner-dash-side"><b>WORKSPACE</b><span class="active">▦ Overview</span><span>▤ Calendar</span><span>▣ Reservations</span><span>₱ Transactions</span><span>⚙ Settings</span></aside>
+          <div class="owner-dash-main">
+            <div class="owner-dash-heading"><div><small>OWNER WORKSPACE</small><h3>Your venue at a glance</h3></div><span>This week⌄</span></div>
+            <div class="owner-metrics"><div><small>Reservations</small><strong>24</strong><em>Demo data</em></div><div><small>Booking value</small><strong>₱8,400</strong><em>Demo data</em></div><div><small>Needs review</small><strong>03</strong><em style="color:#a77b20">Demo data</em></div></div>
+            <div class="owner-dash-bottom">
+              <div class="owner-mini-card"><b>Weekly booking activity</b><div class="owner-bars"><i style="height:38%"></i><i style="height:56%"></i><i style="height:43%"></i><i style="height:77%"></i><i style="height:61%"></i><i style="height:92%"></i><i style="height:69%"></i></div></div>
+              <div class="owner-mini-card"><b>Upcoming reservations</b><div class="owner-res-row"><span class="owner-res-avatar">JM</span><span>Jordan M.<small>Court 1 · 10:00 AM</small></span><i class="owner-status">Demo</i></div><div class="owner-res-row"><span class="owner-res-avatar">AL</span><span>Alex L.<small>Court 2 · 11:00 AM</small></span><i class="owner-status">Demo</i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="owner-strip"><div><strong>₱0 monthly</strong><span>No fixed monthly platform fee</span></div><div><strong>₱10 per successful booking</strong><span>Simple usage-based pricing</span></div><div><strong>Your venue, your rates</strong><span>Set prices and court details</span></div><div><strong>Made for mobile</strong><span>Players can book on the go</span></div></div>
+  <section class="owner-section">
+    <div class="owner-section-heading"><div class="label">BUILT AROUND YOUR BUSINESS</div><h2>Spend less time coordinating.<br>Get back to running your venue.</h2><p>Courtly is designed to make the everyday tasks of managing a court venue feel more organized—for you and your players.</p></div>
+    <div class="owner-benefit-grid">
+      <article class="owner-benefit"><div class="icon">▦</div><h3>Online bookings</h3><p>Give players a public booking page where they can explore available times and review the price before reserving.</p></article>
+      <article class="owner-benefit"><div class="icon">◷</div><h3>Availability at a glance</h3><p>Keep reservations easier to review with a schedule view that helps you see which time slots are occupied.</p></article>
+      <article class="owner-benefit"><div class="icon">₱</div><h3>Transparent fees</h3><p>Know the platform fee model upfront: ₱10 per successful transaction, with no fixed monthly platform charge in the current plan.</p></article>
+      <article class="owner-benefit"><div class="icon">⚙</div><h3>Venue settings</h3><p>Manage key venue information such as your venue name, court rates, location and payment instructions.</p></article>
+      <article class="owner-benefit"><div class="icon">▤</div><h3>Reservation records</h3><p>Review demo booking details and statuses in the owner workspace. Live shared records require the production database connection.</p></article>
+      <article class="owner-benefit"><div class="icon">▣</div><h3>QR payment instructions</h3><p>Show customers where and how to pay. Real payment confirmation must be connected to a supported provider before launch.</p></article>
+    </div>
+  </section>
+  <section class="owner-pricing-band">
+    <div class="owner-pricing-inner">
+      <div><div class="label">STRAIGHTFORWARD PRICING</div><h2>Start without a monthly platform fee.</h2><p>Keep the starting decision simple for independent court owners and growing sports venues. Courtly's current model is ₱10 for each successful transaction. Payment processing charges, if any, are separate and depend on your provider.</p><a class="owner-btn secondary" href="/pricing">Review pricing details →</a></div>
+      <div class="owner-price-card"><small>COURTLY PLATFORM FEE</small><strong>₱10 <span>/ successful transaction</span></strong><p>₱0 monthly platform subscription in the current pricing model. Try the demo to explore the owner workflow before deciding.</p><a href="/owner-portal">Explore owner demo ↗</a></div>
+    </div>
+  </section>
+  <section class="owner-section" style="padding-top:0">
+    <div class="owner-section-heading"><div class="label">GETTING STARTED</div><h2>Three steps to see how Courtly fits.</h2><p>Explore the workflow first, then decide what your venue needs for a real launch.</p></div>
+    <div class="owner-how-grid">
+      <article class="owner-how"><b>STEP 01</b><h3>Explore the owner demo</h3><p>Open the dashboard and review venue settings, rates and the sample reservation workflow.</p></article>
+      <article class="owner-how"><b>STEP 02</b><h3>Check the pricing</h3><p>See how the per-successful-transaction fee could work for your venue's booking volume.</p></article>
+      <article class="owner-how"><b>STEP 03</b><h3>Prepare your venue</h3><p>Before accepting real bookings, connect shared storage, owner sign-in, payment verification and notifications.</p></article>
+    </div>
+  </section>
+  <section class="owner-final-cta"><h2>Ready to see Courtly from the owner's side?</h2><p>Explore the owner dashboard demo and see how a more organized booking workflow could look for your venue.</p><a class="owner-btn primary" href="/owner-portal">View the owner demo ↗</a></section>
+</section>
+
+<main id="publicApp">
+<div class="wrap"><section class="venue" id="venue">
+ <div class="browserbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="address">⌁ courtly.app / demo-venue</div><span class="demo-pill">LIVE DEMO</span></div>
+ <div class="venue-head"><div class="venue-mark">◉〰</div><div><h2 id="venueName">Kalinaw Courts</h2><div class="meta">⌖ <span id="venueLocation">Demo venue · Davao City</span></div><div class="meta">◷ Today 6:00 AM – 12:00 AM</div><div class="meta">ϟ Outdoor & covered</div><div class="chips"><span class="chip">♧ Parking Available</span><span class="chip">♧ Restrooms</span><span class="chip">✣ Food & Drinks</span><span class="chip">◉ Wi-Fi Access</span><span class="chip">♙ Spectator Seating</span></div></div></div>
+ <div class="booking-area"><div class="booking-main"><div class="date-row" id="dateRow"></div><div class="legend">▧ Available　▣ Booked　▣ Peak　▧ Off-Peak</div><div class="gridwrap"><table class="schedule"><thead><tr><th></th><th>Court 1</th><th>Court 2</th><th>Court 3</th></tr></thead><tbody id="scheduleBody"></tbody></table></div></div>
+ <aside class="booking-side"><div class="sidebox"><h3>▣ Your Booking</h3><div class="muted">Select a time slot to get started</div><div id="selectedSummary" class="empty"><div class="big">▢</div><strong>No time selected yet</strong><br>Select an available slot from the schedule to see your booking details here.</div><div id="continueBox" class="hidden"><div class="summaryrow"><span id="selectionLabel">Court 1</span><strong id="selectionPrice">₱350</strong></div><button class="bluebtn" onclick="openBooking()">Review & continue</button></div></div>
+ <div class="sidebox"><h3>Why play at <span id="venueName2">Kalinaw Courts</span>?</h3><div class="feature"><span class="ico">ϟ</span><div><strong>Premium outdoor & covered courts</strong><small>Well-maintained and match-ready</small></div></div><div class="feature"><span class="ico">✓</span><div><strong>Clean & comfortable</strong><small>Restrooms and shower facilities</small></div></div><div class="feature"><span class="ico">♙</span><div><strong>Food & drinks</strong><small>Refuel and hang out between games</small></div></div><div class="feature"><span class="ico">⌖</span><div><strong>Easy parking</strong><small>Parking available on site</small></div></div></div>
+ <div class="sidebox"><strong>See you on court!</strong><div class="muted">— The Courtly team</div></div></aside></div>
+</section>
+<section class="features-page" id="features">
+  <div class="features-hero">
+    <div class="features-kicker"><span class="kicker-dot"></span> THE COURTLY PLATFORM</div>
+    <h2>Everything you need to<br><em>run your courts.</em></h2>
+    <p>From the first booking to the final transaction, Courtly brings your court schedule, reservations, payments, and venue settings together in one simple workspace.</p>
+    <div class="features-hero-actions"><a href="#feature-booking" class="feature-primary">Explore features <span>↓</span></a><a class="feature-secondary" href="/owner-portal">Open owner portal ↗</a></div>
+    <div class="feature-proof"><span>✓ Simple for players</span><span>✓ Built for court owners</span><span>✓ Designed for every screen</span></div>
+    <div class="hero-ui-preview" aria-label="Courtly dashboard preview">
+      <div class="preview-top"><div class="preview-brand"><span class="preview-mark">C</span> COURTLY</div><span class="preview-live"><i></i> LIVE OVERVIEW</span><span class="preview-avatar">KO</span></div>
+      <div class="preview-body"><aside class="preview-sidebar"><b>WORKSPACE</b><span class="sel">▦ &nbsp; Overview</span><span>▦ &nbsp; Calendar</span><span>▣ &nbsp; Reservations</span><span>▤ &nbsp; Transactions</span><span>⚙ &nbsp; Settings</span></aside><div class="preview-dashboard"><div class="preview-heading"><div><small>MONDAY, OCTOBER 26</small><h3>Your courts at a glance</h3></div><span class="preview-date">This week⌄</span></div><div class="preview-stats"><div><small>Bookings</small><strong>128</strong><em>↗ 12.8%</em></div><div><small>Gross revenue</small><strong>₱48,650</strong><em>↗ 8.4%</em></div><div><small>Pending</small><strong>06</strong><em class="amber">Needs review</em></div></div><div class="preview-lower"><div class="preview-chart"><b>Booking activity</b><div class="chart-bars"><i style="height:34%"></i><i style="height:48%"></i><i style="height:42%"></i><i style="height:70%"></i><i style="height:57%"></i><i style="height:88%"></i><i style="height:66%"></i></div><div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div><div class="preview-next"><b>Upcoming bookings</b><div><span class="mini-avatar">JM</span><span><strong>Jordan M.</strong><small>Court 1 · 10:00 AM</small></span><i>Confirmed</i></div><div><span class="mini-avatar gold">AL</span><span><strong>Alex L.</strong><small>Court 2 · 11:00 AM</small></span><i class="pending">Pending</i></div></div></div></div></div>
+    </div>
+  </div>
+  <div class="feature-trust"><span>ONE WORKSPACE</span><b>Bookings</b><b>Availability</b><b>Payments</b><b>Venue management</b></div>
+  <div class="feature-intro" id="feature-booking"><div class="features-kicker"><span class="kicker-dot"></span> MADE FOR THE WAY YOU PLAY</div><h2>A better booking experience.<br><em>A simpler way to manage.</em></h2><p>Give players a clear way to reserve their time, while you stay in control of your venue behind the scenes.</p></div>
+  <div class="feature-showcase">
+    <article class="feature-row"><div class="feature-copy"><span class="feature-number">01 / ONLINE BOOKING</span><div class="feature-icon">▦</div><h3>Let players book on their own time.</h3><p>A public booking page gives players a straightforward way to choose a date, pick a court, select an available time, and review the cost before checkout.</p><ul><li>Clear court and time-slot selection</li><li>Upfront pricing before checkout</li><li>Responsive layout for mobile and desktop</li></ul><a href="/#venue" class="feature-text-link">Try the booking demo <span>→</span></a></div><div class="feature-visual booking-visual"><div class="mock-window"><div class="mock-window-head"><span class="mock-logo">C</span><div><b>Kalinaw Courts</b><small>Davao City · Pickleball</small></div><span class="open-label">● OPEN</span></div><div class="mock-date-head"><b>Choose a date</b><span>October 2026⌄</span></div><div class="mock-days"><span>MON<b>26</b></span><span class="chosen">TUE<b>27</b></span><span>WED<b>28</b></span><span>THU<b>29</b></span><span>FRI<b>30</b></span></div><div class="mock-court-row"><div><b>Court 1</b><small>₱350 / hour</small></div><div class="mock-slots"><span>9:00 AM</span><span class="busy">10:00 AM</span><span class="chosen">11:00 AM</span><span>12:00 PM</span></div></div><div class="mock-court-row"><div><b>Court 2</b><small>₱350 / hour</small></div><div class="mock-slots"><span>9:00 AM</span><span>10:00 AM</span><span class="busy">11:00 AM</span><span>12:00 PM</span></div></div><div class="mock-total"><span>1 hour · Court 1</span><b>₱350.00</b></div><div class="mock-continue">Review booking →</div></div></div></article>
+    <article class="feature-row reverse"><div class="feature-copy"><span class="feature-number">02 / SCHEDULE CONTROL</span><div class="feature-icon">▤</div><h3>Know what is booked at a glance.</h3><p>Keep reservations organized and make it easier to see which courts and time slots are available, booked, or awaiting confirmation.</p><ul><li>Calendar and reservation views</li><li>Booking status at a glance</li><li>Help reduce accidental double bookings</li></ul></div><div class="feature-visual calendar-visual"><div class="calendar-card"><div class="calendar-title"><div><small>OWNER WORKSPACE</small><h4>Booking calendar</h4></div><span>‹ &nbsp; This week &nbsp; ›</span></div><div class="calendar-grid"><div class="calendar-cell label"></div><div class="calendar-cell day">MON<small>26</small></div><div class="calendar-cell day active-day">TUE<small>27</small></div><div class="calendar-cell day">WED<small>28</small></div><div class="calendar-cell day">THU<small>29</small></div><div class="calendar-cell label">9 AM</div><div class="calendar-cell"><i class="booking-block blue">Court 1</i></div><div class="calendar-cell"><i class="booking-block green">Court 2</i></div><div class="calendar-cell"></div><div class="calendar-cell"><i class="booking-block blue">Court 1</i></div><div class="calendar-cell label">10 AM</div><div class="calendar-cell"></div><div class="calendar-cell"><i class="booking-block blue">Court 1</i></div><div class="calendar-cell"><i class="booking-block gold">Court 3</i></div><div class="calendar-cell"></div><div class="calendar-cell label">11 AM</div><div class="calendar-cell"><i class="booking-block green">Court 2</i></div><div class="calendar-cell"></div><div class="calendar-cell"><i class="booking-block blue">Court 1</i></div><div class="calendar-cell"><i class="booking-block green">Court 2</i></div><div class="calendar-cell label">12 PM</div><div class="calendar-cell"></div><div class="calendar-cell"><i class="booking-block gold">Court 3</i></div><div class="calendar-cell"></div><div class="calendar-cell"><i class="booking-block blue">Court 1</i></div></div><div class="calendar-legend"><span><i class="blue-dot"></i> Confirmed</span><span><i class="green-dot"></i> Paid</span><span><i class="gold-dot"></i> Pending</span></div></div></div></article>
+    <article class="feature-row"><div class="feature-copy"><span class="feature-number">03 / QR PAYMENT FLOW</span><div class="feature-icon">▦</div><h3>Make payment instructions easy to follow.</h3><p>Present payment details and a QR image during checkout, then give players a clear booking reference to use when paying.</p><ul><li>Venue payment settings</li><li>QR image area and payment instructions</li><li>Booking reference in the confirmation flow</li></ul><p class="feature-note">Live payment verification requires a connected payment provider or server-side verification.</p></div><div class="feature-visual payment-visual"><div class="payment-card"><div class="payment-head"><span class="payment-symbol">C</span><div><small>COURTLY CHECKOUT</small><b>Complete your payment</b></div></div><div class="payment-amount"><small>AMOUNT DUE</small><strong>₱360.00</strong><span>Booking CT-8K29QX</span></div><div class="fake-qr" aria-label="Decorative QR illustration"><i></i><i></i><i></i><b>COURTLY</b></div><div class="payment-instructions"><b>How to pay</b><span>1. Scan your venue's official QR code.</span><span>2. Pay the exact amount shown.</span><span>3. Keep your booking reference.</span></div><div class="payment-foot">Secure payment experience · Demo preview</div></div></div></article>
+    <article class="feature-row reverse"><div class="feature-copy"><span class="feature-number">04 / VENUE MANAGEMENT</span><div class="feature-icon">⌂</div><h3>Keep your venue details in your hands.</h3><p>Update the information players need before they arrive, from venue name and location to hourly rates, court details, and payment instructions.</p><ul><li>Venue profile and location details</li><li>Editable rates and court settings</li><li>One place for key venue preferences</li></ul></div><div class="feature-visual settings-visual"><div class="settings-card"><div class="settings-sidebar"><div class="settings-brand"><span>C</span> COURTLY</div><small>SETTINGS</small><b>▣ Venue profile</b><span>▤ Courts & rates</span><span>₱ Payment settings</span><span>✉ Notifications</span></div><div class="settings-main"><small>YOUR VENUE</small><h4>Venue profile</h4><div class="settings-cover"><span>Venue cover image</span><b>＋</b></div><label>Venue name</label><div class="settings-input">Kalinaw Courts</div><label>Location</label><div class="settings-input">Davao City, Philippines</div><div class="settings-two"><div><label>Sport type</label><div class="settings-input">Pickleball⌄</div></div><div><label>Number of courts</label><div class="settings-input">3 courts⌄</div></div></div><div class="settings-save">Save changes</div></div></div></div></article>
+  </div>
+  <div class="feature-grid-section"><div class="features-kicker"><span class="kicker-dot"></span> BUILT FOR THE DETAILS</div><h2>Small details. Smoother days.</h2><p class="feature-grid-lead">The practical tools that help a busy court operation feel more manageable.</p><div class="feature-grid-cards"><article><span>↗</span><h3>Revenue visibility</h3><p>Review booking totals and keep gross amounts, platform fees, and owner earnings distinct in your reporting.</p></article><article><span>◷</span><h3>Flexible durations</h3><p>Support players who need more than one hour, with booking durations that can fit longer sessions.</p></article><article><span>✉</span><h3>Booking updates</h3><p>Keep booking references and status details easy to find during the reservation flow.</p></article><article><span>▣</span><h3>Reservation history</h3><p>Review reservation records and their current status from the owner workspace.</p></article><article><span>⌘</span><h3>Clear player journey</h3><p>Guide customers from choosing a court through reviewing details and checkout.</p></article><article><span>◉</span><h3>One Courtly identity</h3><p>A consistent branded experience across the public booking page and owner workspace.</p></article></div></div>
+  <div class="feature-bottom-cta"><div><span class="features-kicker"><span class="kicker-dot"></span> YOUR COURTS, MORE ORGANIZED</span><h2>Spend less time managing bookings.<br><em>Make more room for the game.</em></h2><p>Explore the booking experience or open the owner workspace to try the Courtly demo.</p></div><div class="feature-bottom-actions"><a href="/#venue" class="feature-primary">Try booking demo →</a><a class="feature-secondary" href="/owner-portal">Open owner portal ↗</a></div></div>
+</section></div>
+
+<section class="clubs-page" id="clubs">
+ <div class="clubs-inner">
+  <div class="clubs-hero">
+   <div>
+    <div class="club-kicker">FOR CLUBS & COURT OWNERS</div>
+    <h2>Your courts.<br>Your community.<br><em>One simple system.</em></h2>
+    <p>Give players an easy way to discover your venue and request a booking, while you keep court schedules, rates, and reservations organized in one owner workspace.</p>
+    <div class="club-actions"><button class="feature-primary" onclick="toggleAdmin()">Manage your venue →</button><a class="feature-secondary" href="/courts.html">See the player experience ↓</a></div>
+    <div class="club-benefits"><span>Set your own rates</span><span>Manage reservations</span><span>Mobile-friendly</span></div>
+   </div>
+   <div class="club-preview">
+    <div class="club-preview-top"><div class="club-preview-brand"><div class="club-preview-mark">C</div><span>COURTLY OWNER</span></div><span class="club-live">● VENUE OVERVIEW</span></div>
+    <h3>Your venue, at a glance.</h3>
+    <p>Keep bookings, court settings, and payment instructions together in one simple workspace.</p>
+    <div class="club-preview-grid"><div class="club-preview-tile"><small>Reservations</small><b>One clear schedule</b></div><div class="club-preview-tile"><small>Court pricing</small><b>Your rates, your rules</b></div><div class="club-preview-tile"><small>Payments</small><b>QR instructions</b></div><div class="club-preview-tile"><small>Transactions</small><b>Easy to review</b></div></div>
+    <div class="club-preview-bar"><span>Manage your courts in one place</span><span>↗</span></div>
+   </div>
+  </div>
+  <div class="clubs-section-head"><div class="club-kicker">BUILT FOR YOUR DAY-TO-DAY</div><h3>Less back-and-forth.<br>More time for your players.</h3><p>Courtly brings the key pieces of court booking into one straightforward experience.</p></div>
+  <div class="club-feature-grid">
+   <article class="club-feature"><div class="club-feature-icon">▦</div><h4>Online booking page</h4><p>Give players a clear place to view your venue and start a reservation without relying on endless message threads.</p></article>
+   <article class="club-feature"><div class="club-feature-icon">◷</div><h4>Court schedules</h4><p>Review reservations and availability by court and time so your team can keep the day organized.</p></article>
+   <article class="club-feature"><div class="club-feature-icon">₱</div><h4>Your rates and durations</h4><p>Configure hourly pricing and let customers choose a booking duration that fits their game.</p></article>
+   <article class="club-feature"><div class="club-feature-icon">▧</div><h4>QR payment instructions</h4><p>Show your payment QR and instructions as part of the demo checkout flow. Live payment verification needs an integration.</p></article>
+   <article class="club-feature"><div class="club-feature-icon">☷</div><h4>Booking records</h4><p>Keep customer reservation details and booking statuses visible from the owner dashboard.</p></article>
+   <article class="club-feature"><div class="club-feature-icon">⌘</div><h4>Made for every screen</h4><p>Provide a responsive experience for players booking on a phone, tablet, or desktop.</p></article>
+  </div>
+  <div class="clubs-section-head"><div class="club-kicker">GETTING STARTED</div><h3>From venue setup to your first booking.</h3></div>
+  <div class="club-steps">
+   <article class="club-step"><div class="num">STEP 01</div><h4>Set up your venue</h4><p>Add venue details, courts, operating hours, prices, and payment instructions.</p></article>
+   <article class="club-step"><div class="num">STEP 02</div><h4>Share your booking page</h4><p>Help players find your venue and open the booking experience from a link.</p></article>
+   <article class="club-step"><div class="num">STEP 03</div><h4>Manage reservations</h4><p>Use your owner dashboard to review bookings and check transaction details.</p></article>
+  </div>
+  <div class="clubs-cta"><div><h3>Ready to bring your courts online?</h3><p>Open the Courtly owner dashboard demo to explore venue settings, court pricing, reservations, and QR payment instructions.</p></div><a class="feature-primary" href="/owner-portal">Explore owner portal →</a></div>
+ </div>
+</section>
+<section class="courts-page" id="courts">
+ <div class="courts-inner">
+  <div class="courts-heading"><div class="club-kicker">FIND A COURT</div><h2>Your next game<br>starts <em>right here.</em></h2><p>Explore sample court listings, narrow your search, and try the Courtly booking experience. Listings below are demo content, not live availability.</p></div>
+  <div class="court-search-panel">
+   <div class="court-field"><label for="courtSearch">Search venue or city</label><input id="courtSearch" type="search" placeholder="e.g. Davao, pickleball" oninput="filterCourtCards()"></div>
+   <div class="court-field"><label for="courtSport">Sport</label><select id="courtSport" onchange="filterCourtCards()"><option value="">All sports</option><option value="pickleball">Pickleball</option><option value="badminton">Badminton</option><option value="basketball">Basketball</option></select></div>
+   <div class="court-field"><label for="courtBudget">Hourly budget</label><select id="courtBudget" onchange="filterCourtCards()"><option value="">Any price</option><option value="300">Up to ₱300</option><option value="500">Up to ₱500</option><option value="800">Up to ₱800</option></select></div>
+   <button class="court-search-btn" onclick="filterCourtCards()">Search courts</button>
+  </div>
+  <div class="court-results-meta"><span><strong id="courtResultCount">3 demo venues</strong> to explore</span><span>Sample listings · Illustrative rates</span></div>
+  <div class="court-card-grid" id="courtCardGrid">
+   <article class="court-card" data-search="kalinaw courts davao city pickleball outdoor covered parking" data-sport="pickleball" data-price="350">
+    <div class="court-card-art"><span class="court-art-icon">⌁</span><span class="court-type-pill">PICKLEBALL</span></div>
+    <div class="court-card-body"><div class="court-card-location">Davao City · Demo listing</div><h3>Kalinaw Courts</h3><p>Covered and outdoor courts for casual games and friendly matches.</p><div class="court-card-tags"><span>Parking</span><span>Restrooms</span><span>Covered court</span></div><div class="court-card-bottom"><div class="court-price"><strong>₱350</strong><small>per court / hour · sample</small></div><button onclick="openCourtBooking('Kalinaw Courts')">Try booking →</button></div></div>
+   </article>
+   <article class="court-card" data-search="summit pickleball club quezon city pickleball indoor lighting" data-sport="pickleball" data-price="500">
+    <div class="court-card-art"><span class="court-art-icon">▤</span><span class="court-type-pill">PICKLEBALL</span></div>
+    <div class="court-card-body"><div class="court-card-location">Quezon City · Demo listing</div><h3>Summit Pickleball Club</h3><p>A sample indoor venue listing with a clean, court-first booking layout.</p><div class="court-card-tags"><span>Indoor</span><span>Lighting</span><span>Changing area</span></div><div class="court-card-bottom"><div class="court-price"><strong>₱500</strong><small>per court / hour · sample</small></div><button onclick="openCourtBooking('Summit Pickleball Club')">Try booking →</button></div></div>
+   </article>
+   <article class="court-card" data-search="riverside sports hub cebu city badminton basketball multipurpose" data-sport="badminton" data-price="280">
+    <div class="court-card-art"><span class="court-art-icon">▦</span><span class="court-type-pill">BADMINTON</span></div>
+    <div class="court-card-body"><div class="court-card-location">Cebu City · Demo listing</div><h3>Riverside Sports Hub</h3><p>A sample multi-court venue concept for badminton sessions and group games.</p><div class="court-card-tags"><span>Indoor</span><span>Water station</span><span>Group friendly</span></div><div class="court-card-bottom"><div class="court-price"><strong>₱280</strong><small>per court / hour · sample</small></div><button onclick="openCourtBooking('Riverside Sports Hub')">Try booking →</button></div></div>
+   </article>
+  </div>
+  <div class="court-empty" id="courtEmpty">No demo courts match those filters. Try another city, sport, or price range.</div>
+  <p class="court-demo-note">Important: these are illustrative listings and sample prices to demonstrate the interface. The current prototype's booking calendar is connected to the Kalinaw Courts demo venue; other cards are previews only. A production version needs real venue data, geolocation/search indexing, and a shared backend for live availability.</p>
+ </div>
+</section>
+
+<section class="pricing-page" id="pricing">
+  <div class="pricing-hero">
+    <div class="pricing-kicker"><i></i> COURTLY PRICING</div>
+    <h2>Simple pricing.<br><em>No monthly subscription.</em></h2>
+    <p>Get your courts online, accept reservations, and manage bookings in one place. Courtly charges a small fee only when a booking is successful.</p>
+    <div class="pricing-proof"><span>No setup fee</span><span>No monthly commitment</span><span>Pay as you book</span></div>
+  </div>
+  <div class="pricing-layout">
+    <article class="pricing-card">
+      <div class="pricing-card-main">
+        <div class="pricing-card-label">ONE SIMPLE PLAN</div>
+        <div class="pricing-price-line"><div class="pricing-price">₱0</div><div class="pricing-per">to get started</div></div>
+        <p>Start with the tools you need to publish your court booking page and manage reservations, without a recurring subscription.</p>
+        <div class="pricing-highlight"><div class="coin">₱</div><div><b>₱10 per successful transaction</b><small>A clear platform fee for each completed booking.</small></div></div>
+        <ul class="pricing-list">
+          <li>Public booking page for your venue</li>
+          <li>Court availability and reservation schedule</li>
+          <li>Editable court details and hourly pricing</li>
+          <li>Booking records and transaction visibility</li>
+          <li>QR payment instructions for customers</li>
+          <li>Owner dashboard to manage your venue</li>
+          <li>Responsive booking experience for mobile and desktop</li>
+        </ul>
+        <div class="pricing-action"><a class="feature-primary" href="/owner-portal">View owner portal demo →</a><a class="feature-secondary" href="#pricing-faq">Pricing questions ↓</a></div>
+        <p class="pricing-footnote">Demo note: the current prototype simulates checkout in your browser. QR payment is illustrative and does not process live payments.</p>
+      </div>
+    </article>
+    <div class="pricing-side">
+      <article class="pricing-side-card">
+        <span class="mini-pill">MADE FOR COURT OWNERS</span>
+        <h3>Keep your focus on the game.</h3>
+        <p>Give players a straightforward way to book. Keep your schedule, rates, and reservation details organized in one owner workspace.</p>
+        <div class="pricing-side-stats"><div><b>₱0</b><small>Monthly subscription</small></div><div><b>₱10</b><small>Per successful booking</small></div></div>
+      </article>
+      <article class="pricing-calc">
+        <h3>Estimate your Courtly fee</h3>
+        <p>Adjust the number of successful bookings to see an example of the platform fee. This is an estimate, not a revenue forecast.</p>
+        <label for="pricingBookings"><span>Successful bookings per month</span><strong id="pricingBookingsLabel">100</strong></label>
+        <input id="pricingBookings" type="range" min="0" max="1000" step="10" value="100" oninput="updatePricingCalc()">
+        <label for="pricingAverage" style="margin-top:17px"><span>Average booking value</span><strong id="pricingAverageLabel">₱500</strong></label>
+        <input id="pricingAverage" type="range" min="100" max="3000" step="50" value="500" oninput="updatePricingCalc()">
+        <div class="pricing-calc-output"><div><small>Example booking value total</small><strong id="pricingGross">₱50,000</strong></div><div class="fee-out"><small>Estimated Courtly fees</small><strong id="pricingFee">₱1,000</strong></div></div>
+      </article>
+    </div>
+  </div>
+  <div class="pricing-compare">
+    <div class="pricing-section-heading"><div class="pricing-kicker"><i></i> WHAT'S INCLUDED</div><h3>The essentials to get your court online.</h3><p>Clear tools for players and owners, with no complicated tiers to decode.</p></div>
+    <div class="pricing-compare-table">
+      <div class="pricing-compare-row header"><b>Feature</b><span>Included</span><span>Extra monthly fee</span></div>
+      <div class="pricing-compare-row"><span>Public booking page</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
+      <div class="pricing-compare-row"><span>Schedule and reservation records</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
+      <div class="pricing-compare-row"><span>Court and hourly rate settings</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
+      <div class="pricing-compare-row"><span>Owner dashboard</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
+      <div class="pricing-compare-row"><span>QR payment instructions</span><span class="pricing-yes">✓ Included</span><span class="pricing-no">None</span></div>
+      <div class="pricing-compare-row"><span>Courtly platform fee</span><span>₱10 per successful transaction</span><span>Usage-based</span></div>
+    </div>
+  </div>
+  <div class="pricing-faq" id="pricing-faq">
+    <div class="pricing-section-heading"><div class="pricing-kicker"><i></i> GOOD TO KNOW</div><h3>Pricing, without the guesswork.</h3><p>A few quick answers about how Courtly pricing is designed to work.</p></div>
+    <div class="pricing-faq-grid">
+      <article><h4>Is there a monthly subscription?</h4><p>No monthly subscription is included in this pricing model. The platform fee is ₱10 per successful transaction.</p></article>
+      <article><h4>When is the ₱10 fee applied?</h4><p>It is intended to apply to each successful booking transaction. The calculator above helps illustrate how fees can add up with booking volume.</p></article>
+      <article><h4>Can I set my own court rates?</h4><p>Yes. The owner workspace in this prototype includes editable hourly rates and venue settings.</p></article>
+      <article><h4>Does the demo accept real payments?</h4><p>No. The current prototype demonstrates the booking and QR-payment flow only. Live payment processing and automated production notifications require a connected backend and payment provider.</p></article>
+    </div>
+  </div>
+  <div class="pricing-bottom">
+    <div><div class="pricing-kicker"><i></i> READY WHEN YOU ARE</div><h2>Make court bookings<br><em>easier to manage.</em></h2><p>Explore the customer booking flow or open the owner dashboard to try Courtly's editable venue settings.</p></div>
+    <button class="feature-primary" onclick="toggleAdmin()">Explore the owner dashboard →</button>
+  </div>
+</section>
+</main>
+<section class="admin" id="adminApp">
+ <div class="admin-shell"><aside class="admin-side"><div class="brand" style="margin:0 0 22px">COURT<span>LY</span></div><button class="active" data-page="overview" onclick="adminPage('overview',this)">▦ Overview</button><button data-page="bookings" onclick="adminPage('bookings',this)">▣ Bookings</button><button data-page="courts" onclick="adminPage('courts',this)">⌂ Courts & pricing</button><button data-page="settings" onclick="adminPage('settings',this)">⚙ Venue settings</button><button data-page="payments" onclick="adminPage('payments',this)">▤ Payment settings</button><button onclick="toggleAdmin()">← Back to booking site</button></aside>
+ <div class="admin-main"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div class="eyebrow" style="color:#0645c7">COURTLY OWNER CONSOLE</div><h1 id="adminTitle">Overview</h1><div style="color:#77819a;font-size:12px">Manage your venue and demo reservations.</div></div><button class="outline" onclick="toggleAdmin()">View booking page ↗</button></div><div id="adminContent"></div></div></div>
+</section>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="backdropClose(event)"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" onclick="event.stopPropagation()"><div class="drawer-head"><h2 id="drawerTitle">Book this court</h2><button class="xbtn" onclick="closeDrawer()" aria-label="Close">×</button></div><div class="progress"><span class="on" id="prog1"></span><span id="prog2"></span><span id="prog3"></span></div>
+ <div id="bookingForm"><div class="summary"><div class="kicker">YOUR SELECTION</div><div class="summaryrow"><strong id="drawerCourt">Court 1</strong><strong id="drawerPrice">₱350.00</strong></div><div class="muted" id="drawerDate">Fri · 12:00 PM – 1:00 PM</div><div class="summaryrow"><span>Court reservation (1 hr)</span><span id="basePrice">₱350.00</span></div><div class="summaryrow"><span>Booking fee</span><span>₱10.00</span></div><div class="summaryrow total"><span>Total</span><b id="drawerTotal">₱360.00</b></div></div>
+ <div class="field"><label for="customerName">Full name</label><input id="customerName" value="" placeholder="Your full name" autocomplete="name" required></div><div class="field"><label for="customerEmail">Email for confirmation</label><input id="customerEmail" type="email" placeholder="you@example.com" autocomplete="email" required></div><div class="field"><label for="customerPhone">Mobile number</label><input id="customerPhone" type="tel" placeholder="09XX XXX XXXX"></div><div class="hint">Demo only: information stays in this browser and is not sent to an admin or email service.</div><button class="bluebtn" onclick="reserveAndPay()">Reserve & Pay →</button></div>
+ <div id="paymentPane" class="hidden"><div class="summary"><div class="kicker">SECURE CHECKOUT · DEMO</div><div class="summaryrow"><span>Reservation total</span><b id="payTotal">₱360.00</b></div><div class="muted">Scan your venue's configured QR in a production version. This sample QR is decorative and does not accept payments.</div><div class="qr" aria-label="Decorative sample QR code"><svg viewBox="0 0 21 21" id="qrSvg"></svg></div><div class="center"><strong>Pay <span id="qrAmount">₱360.00</span> via QR</strong><p class="muted">Configure a real QR image and payment provider in Payment settings before going live.</p></div></div><button class="bluebtn" onclick="simulatePayment()">Simulate QR payment ✓</button><button class="outline" style="width:100%;margin-top:8px" onclick="backToForm()">Back to details</button></div>
+ <div id="successPane" class="hidden"><div class="success"><strong>✓ You're booked!</strong><span id="successMessage">Your demo payment is confirmed and your slot is now marked booked.</span></div><div class="summary"><div class="kicker">RESERVATION DETAILS</div><div class="summaryrow"><strong id="successCourt">Court 1</strong><span class="status">PAYMENT CONFIRMED</span></div><div class="muted" id="successWhen"></div><div class="summaryrow"><span>Booking reference</span><b id="successRef"></b></div><div class="summaryrow total"><span>Amount paid</span><b id="successAmount">₱360.00</b></div></div><button class="bluebtn" onclick="closeDrawer()">Back to schedule grid</button></div>
+ </div></div><div class="toast" id="toast" role="status"></div>
+<script>
+const $=id=>document.getElementById(id);
+const defaultConfig={venueName:"Kalinaw Courts",venueLocation:"Demo venue · Davao City",currency:"₱",fee:10,offPeak:350,peak:450,adminEmail:"owner@example.com",paymentName:"QR Ph / PayMongo",paymentInstructions:"Scan the venue's official QR code. Confirm payment through your provider.",logoText:"COURTLY"};
+let config={...defaultConfig,...JSON.parse(localStorage.getItem("courtlyConfig")||"{}")};
+let bookings=JSON.parse(localStorage.getItem("courtlyBookings")||"[]");
+let selected=null, activeDate=0, drawerStep=1, currentBooking=null, adminCurrent="overview";
+const dates=Array.from({length:7},(_,i)=>{let d=new Date();d.setDate(d.getDate()+i);return d});
+const times=["11AM","12PM","1PM","2PM","3PM","4PM","5PM","6PM","7PM","8PM","9PM","10PM","11PM"];
+const courts=["Court 1","Court 2","Court 3"];
+function save(){localStorage.setItem("courtlyConfig",JSON.stringify(config));localStorage.setItem("courtlyBookings",JSON.stringify(bookings))}
+function money(n){return config.currency+Number(n).toFixed(2)}
+function dayKey(d){return d.toISOString().slice(0,10)}
+function slotId(date,court,time){return `${date}|${court}|${time}`}
+function slotBooking(date,court,time){return bookings.find(b=>b.date===date&&b.court===court&&b.time===time&&b.status!=="Cancelled")}
+function renderDates(){ $("dateRow").innerHTML=dates.map((d,i)=>`<button class="datebtn ${i===activeDate?'active':''}" onclick="setDate(${i})">${i===0?'TODAY':d.toLocaleDateString('en',{weekday:'short'}).toUpperCase()}<strong>${d.getDate()}</strong>${d.toLocaleDateString('en',{month:'short'})}</button>`).join("")+`<button class="datebtn more" onclick="toast('Demo calendar shows the next 7 days.')">▦<strong>More</strong>Dates</button>`}
+function filterCourtCards(){
+ const query=($("courtSearch")?.value||"").trim().toLowerCase();
+ const sport=($("courtSport")?.value||"").toLowerCase();
+ const budget=Number($("courtBudget")?.value||0);
+ let count=0;
+ document.querySelectorAll(".court-card").forEach(card=>{
+  const matchesQuery=!query||(card.dataset.search||"").toLowerCase().includes(query);
+  const matchesSport=!sport||(card.dataset.sport||"")===sport;
+  const matchesBudget=!budget||Number(card.dataset.price||0)<=budget;
+  const visible=matchesQuery&&matchesSport&&matchesBudget;
+  card.style.display=visible?"flex":"none";
+  if(visible)count++;
+ });
+ if($("courtResultCount"))$("courtResultCount").textContent=count+" demo venue"+(count===1?"":"s");
+ if($("courtEmpty"))$("courtEmpty").style.display=count?"none":"block";
+}
+function openCourtBooking(venueName){
+ if(venueName!=="Kalinaw Courts"){
+  alert("This is a sample listing preview. The current booking calendar is connected to the Kalinaw Courts demo only.");
+ }
+ window.location.href="/#venue";
+}
+function updatePricingCalc(){
+ const bookings=Number($("pricingBookings")?.value||100), average=Number($("pricingAverage")?.value||500);
+ if($("pricingBookingsLabel"))$("pricingBookingsLabel").textContent=bookings.toLocaleString("en-PH");
+ if($("pricingAverageLabel"))$("pricingAverageLabel").textContent="₱"+average.toLocaleString("en-PH");
+ if($("pricingGross"))$("pricingGross").textContent="₱"+(bookings*average).toLocaleString("en-PH");
+ if($("pricingFee"))$("pricingFee").textContent="₱"+(bookings*10).toLocaleString("en-PH");
+}
+function renderSchedule(){const date=dayKey(dates[activeDate]);$("scheduleBody").innerHTML=times.map((t,i)=>`<tr><td>${t}<br><span style="color:#6f7789">${(i+12)%12||12}${i<1?'PM':'PM'}</span></td>${courts.map((c,j)=>{const b=slotBooking(date,c,t);const isPast=activeDate===0&&i===0;const peak=i>=6&&i<=10;const price=peak?config.peak:config.offPeak;const isSelected=selected&&selected.date===date&&selected.court===c&&selected.time===t;let label=b?(b.status==="Pending"?"Held":"♙ Booked"):(isPast?"Passed":`${money(price)} · ${peak?'PEAK':'OFF-PEAK'}`);return `<td><button class="slot ${b?'booked':''} ${isPast?'past':''} ${isSelected?'selected':''}" ${b||isPast?'disabled':''} onclick="chooseSlot('${date}','${c}','${t}',${price})" title="${b?'Unavailable':isPast?'Past slot':'Select '+c+' at '+t}">${label}</button></td>`}).join("")}</tr>`).join("")}
+function renderVenue(){["venueName","venueName2"].forEach(id=>$(id).textContent=config.venueName);$("venueLocation").textContent=config.venueLocation;$("brandLogo").innerHTML=(config.logoText||"COURTLY").replace(/LY$/,'<span>LY</span>');renderDates();renderSchedule();renderAdmin()}
+function setDate(i){activeDate=i;selected=null;renderDates();renderSchedule();updateSelection()}
+function chooseSlot(date,court,time,price){selected={date,court,time,price};renderSchedule();updateSelection();$("continueBox").classList.remove("hidden");$("selectedSummary").classList.add("hidden");$("selectionLabel").textContent=court+" · "+time;$("selectionPrice").textContent=money(price)}
+function updateSelection(){if(!selected){$("continueBox").classList.add("hidden");$("selectedSummary").classList.remove("hidden")}}
+function openBooking(){if(!selected)return;drawerStep=1;currentBooking=null;$("drawerBackdrop").classList.add("open");$("bookingForm").classList.remove("hidden");$("paymentPane").classList.add("hidden");$("successPane").classList.add("hidden");$("drawerTitle").textContent="Book this court";$("prog1").classList.add("on");$("prog2").classList.remove("on");$("prog3").classList.remove("on");$("drawerCourt").textContent=selected.court;$("drawerPrice").textContent=money(selected.price);$("basePrice").textContent=money(selected.price);$("drawerTotal").textContent=money(selected.price+Number(config.fee));$("drawerDate").textContent=new Date(selected.date+"T12:00:00").toLocaleDateString("en",{weekday:"short",month:"short",day:"numeric",year:"numeric"})+" · "+selected.time+" – "+nextTime(selected.time);$("customerName").focus()}
+function nextTime(t){let i=times.indexOf(t);return times[i+1]||"12AM"}
+function closeDrawer(){$("drawerBackdrop").classList.remove("open")}
+function backdropClose(e){if(e.target===$("drawerBackdrop"))closeDrawer()}
+function reserveAndPay(){const name=$("customerName").value.trim(),email=$("customerEmail").value.trim();if(!name||!email||!$("customerEmail").checkValidity()){toast("Please enter your name and a valid email.");return}if(slotBooking(selected.date,selected.court,selected.time)){toast("That slot is no longer available.");closeDrawer();renderSchedule();return}currentBooking={id:"CT-"+Math.random().toString(36).slice(2,8).toUpperCase(),name,email,phone:$("customerPhone").value.trim(),...selected,total:selected.price+Number(config.fee),status:"Pending",created:new Date().toISOString()};bookings.push(currentBooking);save();$("bookingForm").classList.add("hidden");$("paymentPane").classList.remove("hidden");$("prog2").classList.add("on");$("drawerTitle").textContent="Complete payment";["payTotal","qrAmount"].forEach(id=>$(id).textContent=money(currentBooking.total));drawQr();renderSchedule();renderAdmin()}
+function backToForm(){if(currentBooking){bookings=bookings.filter(b=>b.id!==currentBooking.id);save()}$("paymentPane").classList.add("hidden");$("bookingForm").classList.remove("hidden");$("drawerTitle").textContent="Book this court";$("prog2").classList.remove("on");renderSchedule()}
+function drawQr(){let s=$("qrSvg");let html='<rect width="21" height="21" fill="white"/>';function finder(x,y){html+=`<rect x="${x}" y="${y}" width="7" height="7" fill="#111d42"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="white"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#111d42"/>`}finder(0,0);finder(14,0);finder(0,14);for(let y=0;y<21;y++)for(let x=0;x<21;x++){if((x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12))continue;if(((x*7+y*11+x*y)%5)<2)html+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#111d42"/>`}s.innerHTML=html}
+function simulatePayment(){if(!currentBooking)return;currentBooking.status="Confirmed";currentBooking.paidAt=new Date().toISOString();bookings=bookings.map(b=>b.id===currentBooking.id?currentBooking:b);save();$("paymentPane").classList.add("hidden");$("successPane").classList.remove("hidden");$("drawerTitle").textContent="Booking confirmed";$("prog3").classList.add("on");$("successCourt").textContent=currentBooking.court;$("successWhen").textContent=currentBooking.date+" · "+currentBooking.time;$("successRef").textContent=currentBooking.id;$("successAmount").textContent=money(currentBooking.total);$("successMessage").textContent="Your simulated payment is confirmed. This prototype does not send an email.";renderSchedule();renderAdmin();toast("Demo booking confirmed.")}
+function toggleAdmin(){const a=$("adminApp"),p=$("publicApp");let show=!a.classList.contains("show");a.classList.toggle("show",show);p.style.display=show?"none":"block";window.scrollTo({top:0,behavior:"smooth"});if(show)renderAdmin()}
+function adminPage(page,btn){adminCurrent=page;document.querySelectorAll(".admin-side button[data-page]").forEach(b=>b.classList.toggle("active",b===btn));renderAdmin()}
+function renderAdmin(){if(!$("adminContent"))return;const host=$("adminContent");const confirmed=bookings.filter(b=>b.status==="Confirmed"),pending=bookings.filter(b=>b.status==="Pending"),revenue=confirmed.reduce((a,b)=>a+b.total,0);$("adminTitle").textContent=({overview:"Overview",bookings:"Bookings",courts:"Courts & pricing",settings:"Venue settings",payments:"Payment settings"})[adminCurrent]||"Overview";
+if(adminCurrent==="overview"){host.innerHTML=`<div class="admin-cards"><div class="stat"><small>Confirmed bookings</small><strong>${confirmed.length}</strong></div><div class="stat"><small>Pending payments</small><strong>${pending.length}</strong></div><div class="stat"><small>Demo revenue</small><strong>${money(revenue)}</strong></div><div class="stat"><small>Courts</small><strong>3</strong></div></div><div class="admin-panel"><h2>Recent reservations</h2>${bookingTable(bookings.slice().reverse().slice(0,6))}<p style="color:#77819a;font-size:11px">Data is saved in this browser only. Connect a backend before accepting real bookings.</p></div>`}
+else if(adminCurrent==="bookings"){host.innerHTML=`<div class="admin-panel"><h2>All reservations</h2>${bookingTable(bookings.slice().reverse())}</div>`}
+else if(adminCurrent==="courts"){host.innerHTML=`<div class="admin-panel"><h2>Hourly pricing</h2><div class="editgrid"><label>Off-peak rate (${config.currency}/hour)<input type="number" id="editOffPeak" value="${config.offPeak}"></label><label>Peak rate (${config.currency}/hour)<input type="number" id="editPeak" value="${config.peak}"></label><label>Booking fee (${config.currency})<input type="number" id="editFee" value="${config.fee}"></label><label>Number of courts<select id="editCourtCount"><option selected>3</option></select></label></div><p><button class="bluebtn" style="max-width:200px;margin-top:15px" onclick="savePricing()">Save pricing</button></p></div><div class="admin-panel"><h2>Court availability</h2><p style="color:#77819a;font-size:12px">Court 1, Court 2, and Court 3 are shown in the customer schedule. Confirmed and pending reservations block their selected slot.</p></div>`}
+else if(adminCurrent==="settings"){host.innerHTML=`<div class="admin-panel"><h2>Venue details</h2><div class="editgrid"><label>Venue name<input id="editVenueName" value="${esc(config.venueName)}"></label><label>Location subtitle<input id="editLocation" value="${esc(config.venueLocation)}"></label><label>Brand name / logo text<input id="editLogo" value="${esc(config.logoText)}"></label><label>Admin notification email<input type="email" id="editAdminEmail" value="${esc(config.adminEmail)}"></label><label>Currency symbol<input id="editCurrency" value="${esc(config.currency)}"></label></div><p><button class="bluebtn" style="max-width:200px;margin-top:15px" onclick="saveSettings()">Save venue settings</button></p><p style="font-size:11px;color:#77819a">Admin email is stored as a setting only. Actual email notifications require a server and email provider integration.</p></div>`}
+else if(adminCurrent==="payments"){host.innerHTML=`<div class="admin-panel"><h2>QR payment setup</h2><div class="editgrid"><label>Payment method label<input id="editPayName" value="${esc(config.paymentName)}"></label><label>Payment instructions<textarea id="editPayInstructions" rows="3">${esc(config.paymentInstructions)}</textarea></label></div><p><label style="font-size:11px">QR image (prototype only)<input type="file" accept="image/*" id="qrUpload" style="display:block;margin-top:8px"></label></p><p><button class="bluebtn" style="max-width:200px" onclick="savePayments()">Save payment settings</button></p><div class="success" style="color:#20304e;background:#f0f5ff;border-color:#cfddf7"><strong>Before launch</strong>Replace the decorative QR with your official merchant QR, connect a payment provider or verification process, and use server-side webhooks to confirm payments. The simulate button is not a real payment.</div></div>`}
+}
+function bookingTable(items){if(!items.length)return '<p style="color:#77819a;font-size:12px">No reservations yet. Try booking a court from the customer page.</p>';return `<table><thead><tr><th>Ref / Customer</th><th>Court / Time</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${items.map(b=>`<tr><td><strong>${esc(b.id)}</strong><br>${esc(b.name)}<br><small>${esc(b.email)}</small></td><td>${esc(b.court)}<br>${esc(b.date)} · ${esc(b.time)}</td><td>${money(b.total)}</td><td><span class="status" style="${b.status==='Pending'?'background:#fff0cf;color:#95600b':b.status==='Cancelled'?'background:#fce3e3;color:#9b3030':''}">${esc(b.status)}</span></td><td>${b.status==='Pending'?`<button class="outline" onclick="adminConfirm('${b.id}')">Confirm demo</button>`:''} ${b.status!=='Cancelled'?`<button class="outline" onclick="adminCancel('${b.id}')">Cancel</button>`:''}</td></tr>`).join("")}</tbody></table>`}
+function adminConfirm(id){bookings=bookings.map(b=>b.id===id?{...b,status:"Confirmed",paidAt:new Date().toISOString()}:b);save();renderSchedule();renderAdmin();toast("Demo booking marked confirmed.")}
+function adminCancel(id){bookings=bookings.map(b=>b.id===id?{...b,status:"Cancelled"}:b);save();renderSchedule();renderAdmin();toast("Booking cancelled in demo.")}
+function savePricing(){config.offPeak=Math.max(0,Number($("editOffPeak").value)||0);config.peak=Math.max(0,Number($("editPeak").value)||0);config.fee=Math.max(0,Number($("editFee").value)||0);save();renderVenue();adminPage("courts",document.querySelector('[data-page="courts"]'));toast("Pricing saved.")}
+function saveSettings(){config.venueName=$("editVenueName").value.trim()||"Courtly Venue";config.venueLocation=$("editLocation").value.trim();config.logoText=$("editLogo").value.trim()||"COURTLY";config.adminEmail=$("editAdminEmail").value.trim();config.currency=$("editCurrency").value.trim()||"₱";save();renderVenue();adminPage("settings",document.querySelector('[data-page="settings"]'));toast("Venue settings saved.")}
+function savePayments(){config.paymentName=$("editPayName").value.trim();config.paymentInstructions=$("editPayInstructions").value.trim();save();renderAdmin();toast("Payment settings saved.")}
+function resetDemo(){if(!confirm("Reset all Courtly demo bookings and settings in this browser?"))return;bookings=[];config={...defaultConfig};save();selected=null;renderVenue();renderAdmin();toast("Demo reset.")}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let toastTimer;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
+renderVenue();drawQr();
+</script>
+</body></html>

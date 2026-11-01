@@ -293,7 +293,13 @@ main{max-width:1140px;width:94%;margin:auto}
 <div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div>
 <div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div>
 <div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" maxlength="40" autocomplete="tel"></div>
-<div class="payment-field"><label for="paymentScreenshot">GCash payment screenshot * (max 10 MB)</label><input id="paymentScreenshot" type="file" accept="image/*" required><small>Accepted image formats. Maximum original file size: 10 MB.</small><div id="paymentImagePreview"></div></div>
+<div class="payment-field"><label for="paymentScreenshot">GCash payment screenshot * (max 10 MB)</label><input
+  id="paymentScreenshot"
+  type="file"
+  accept="image/*"
+  required
+>
+<small>Accepted image formats. Maximum original file size: 100 MB.</small><div id="paymentImagePreview"></div></div>
 <button class="payment-submit" type="submit">Submit payment reference &amp; reserve time</button>
 </form>
 <p class="payment-note">Prototype notice: this saves the reservation in this browser. Sending the screenshot to the owner's email requires a configured backend/email service.</p>

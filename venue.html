@@ -773,7 +773,7 @@ document.getElementById('paymentScreenshot').addEventListener('change', e => {
 
   if (!file) return;
 
-  if (file.size > 10 * 1024 * 1024) {
+  if (file.size > 100 * 1024 * 1024) {
     alert('Payment screenshot must be 10 MB or smaller.');
     e.target.value = '';
     return;

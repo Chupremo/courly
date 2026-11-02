@@ -1,18 +1,14 @@
-
 {
-  "name": "courtly",
-  "private": true,
+  "name": "courtly-vercel-supabase",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.57.4"
-  },
+  "dependencies": {"@supabase/supabase-js": "^2.57.0"},
   "devDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.4.1"
   }
 }

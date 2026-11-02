@@ -198,7 +198,7 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 <div class="side-bottom">COURTLY OWNER PORTAL<br><span>Demo workspace · local browser only</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div><div class="crumb">COURTLY / OWNER PORTAL</div><h2 id="pageTitle">Overview</h2></div><div class="topright"><span class="owner-email muted small" id="headerVenue">Kalinaw Courts</span><div class="avatar" id="avatar">KO</div></div></header>
+<header class="topbar"><div><div class="crumb">COURTLY / OWNER PORTAL</div><h2 id="pageTitle">Overview</h2></div><div class="topright"><span class="owner-email muted small" id="headerVenue">Kalinaw Courts</span><a href="/login.html" onclick="return ownerLogout()" style="font-size:12px;font-weight:800;color:#b7c7e7;text-decoration:none">Log out</a><div class="avatar" id="avatar">KO</div></div></header>
 <div class="content" id="content"></div>
 </main>
 </div>
@@ -207,6 +207,8 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 const KEY='courtlyOwnerPortalV1',FEE=10;
 const seed={venue:{id:'kalinaw',name:'Kalinaw Courts',owner:'Demo Owner',email:'owner@courtly.demo',phone:'0917 123 4567',location:'Davao City, Philippines',sport:'Pickleball',description:'Premium pickleball courts for casual games, training, and group play.',slug:'kalinaw-courts',hoursOpen:'08:00',hoursClose:'22:00',baseRate:350,peakRate:450,courtCount:3,courtImages:[],logoData:'',coverData:'',paymentName:'QR Ph',paymentAccount:'Kalinaw Courts',paymentInstructions:'Please scan the venue QR code and include your booking reference in the payment note.',qrData:'',notifyEmail:true,notifyPending:true,notifyCancelled:true},bookings:[]};
 let db=load(),view='overview',calendarDate=new Date(),calendarCourt='All courts';
+try{const email=localStorage.getItem('courtly_owner_session_demo');const profile=JSON.parse(localStorage.getItem('courtly_owner_profile_demo')||'null');if(email&&profile){db.venue={...db.venue,id:'owner-'+email.replace(/[^a-z0-9]/g,''),name:profile.businessName||'My Venue',owner:profile.personalName||'Owner',email:profile.email||email,phone:profile.phone||'',location:profile.businessAddress||'',sport:profile.sport||'Pickleball',description:'Welcome to your Courtly venue. Add a description in Venue Profile.',slug:(profile.businessName||'my-venue').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),courtCount:parseInt(profile.courtCount,10)||1,...db.venue};db.venue.name=profile.businessName||db.venue.name;db.venue.owner=profile.personalName||db.venue.owner;db.venue.email=profile.email||email;db.venue.phone=profile.phone||'';db.venue.location=profile.businessAddress||'';db.venue.sport=profile.sport||'Pickleball';db.venue.slug=(profile.businessName||'my-venue').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');db.venue.courtCount=parseInt(profile.courtCount,10)||1;persist();}}catch(e){}
+function ownerLogout(){localStorage.removeItem('courtly_owner_session_demo');localStorage.removeItem('courtly_owner_profile_demo');return true;}
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||structuredClone(seed)}catch(e){return JSON.parse(JSON.stringify(seed))}}
 function persist(){localStorage.setItem(KEY,JSON.stringify(db))}
 function $(id){return document.getElementById(id)}
@@ -273,5 +275,26 @@ window.addEventListener('message',function(event){
 });
 render();
 </script>
+
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+const url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_ANON_KEY;
+if(url&&key){
+ const supabase=createClient(url,key);
+ const {data:{session}}=await supabase.auth.getSession();
+ if(session){
+  const {data:venue}=await supabase.from('venues').select('id,name,slug').eq('owner_id',session.user.id).maybeSingle();
+  if(venue){
+   const bar=document.createElement('section');
+   bar.style.cssText='margin:14px 22px;padding:16px 18px;border:1px solid #dce5f3;border-radius:14px;background:#f7faff;color:#15264a;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap';
+   const link=`${location.origin}/v/${venue.slug}`;
+   bar.innerHTML=`<div><strong style="display:block;font-size:13px">Your public booking link</strong><span style="font-size:12px;color:#52627f">${link}</span></div><button type="button" id="copyCourtlyBookingLink" style="border:0;border-radius:8px;padding:10px 14px;background:#1747ad;color:white;font-weight:800;cursor:pointer">Copy booking link</button>`;
+   document.querySelector('header.topbar')?.after(bar);
+   bar.querySelector('button').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(link);bar.querySelector('button').textContent='Copied!';}catch(e){bar.querySelector('button').textContent='Copy unavailable';}});
+  }
+ }
+}
+</script>
+
 </body>
 </html>

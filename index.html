@@ -297,8 +297,8 @@ body.page-home #publicApp{display:none!important}
 <body class="page-home">
 <header class="topbar">
  <a class="brand" id="brandLogo" href="/" aria-label="Courtly home" style="text-decoration:none"><span class="courtly-mark">C</span> COURT<span>LY</span></a>
- <nav class="nav"><a href="/features.html">Features</a><a href="/pricing.html">Pricing</a><a href="/clubs.html">For clubs</a><a href="/courts.html">Find a court</a><a href="#owner-signup">Sign up</a></nav>
- <nav class="nav"><a class="admin-link" href="/owner-portal.html" style="text-decoration:none;display:inline-flex;align-items:center">View demo ↗</a><button onclick="document.getElementById('owner-signup').scrollIntoView({behavior:'smooth'})">Sign up your venue →</button></nav>
+ <nav class="nav"><a href="/features.html">Features</a><a href="/pricing.html">Pricing</a><a href="/clubs.html">For clubs</a><a href="/courts.html">Find a court</a><a href="#owner-signup">Sign up</a><a href="/login.html">Owner login</a></nav>
+ <nav class="nav"><a class="admin-link" href="/login.html" style="text-decoration:none;display:inline-flex;align-items:center">View demo ↗</a><button onclick="document.getElementById('owner-signup').scrollIntoView({behavior:'smooth'})">Sign up your venue →</button></nav>
 </header>
 <section class="hero">
  <div class="eyebrow">● BUILT FOR COURT OWNERS</div><h1>Run your venue.<br>Not your spreadsheets.</h1>
@@ -373,6 +373,8 @@ body.page-home #publicApp{display:none!important}
     <div class="signup-field"><label for="signupPersonalName">Personal name *</label><input id="signupPersonalName" name="personalName" autocomplete="name" required placeholder="Your full name"></div>
     <div class="signup-field"><label for="signupEmail">Email address *</label><input id="signupEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
     <div class="signup-field"><label for="signupPhone">Contact number *</label><input id="signupPhone" name="phone" type="tel" autocomplete="tel" required placeholder="e.g. 09XX XXX XXXX"></div>
+    <div class="signup-field"><label for="signupPassword">Create password *</label><input id="signupPassword" name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></div>
+    <div class="signup-field"><label for="signupPasswordConfirm">Confirm password *</label><input id="signupPasswordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="Repeat password"></div>
     <div class="signup-field"><label for="signupBusinessName">Business / venue name *</label><input id="signupBusinessName" name="businessName" required placeholder="Your sports facility"></div>
     <div class="signup-field full"><label for="signupAddress">Business address *</label><textarea id="signupAddress" name="businessAddress" rows="2" autocomplete="street-address" required placeholder="Street, barangay, city, province"></textarea></div>
     <div class="signup-field"><label for="signupSport">Main sport *</label><select id="signupSport" name="sport" required><option value="">Select sport</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Tennis</option><option>Volleyball</option><option>Football / Futsal</option><option>Multi-sport</option><option>Other</option></select></div>
@@ -383,8 +385,8 @@ body.page-home #publicApp{display:none!important}
     <div class="signup-field"><label for="signupRole">Your role</label><select id="signupRole" name="role"><option>Owner</option><option>Manager</option><option>Authorized representative</option></select></div>
     <div class="signup-field full"><label for="signupNotes">Anything else we should know? (optional)</label><textarea id="signupNotes" name="notes" rows="3" placeholder="Venue opening hours, number of locations, or questions"></textarea></div>
    </div>
-   <button class="signup-submit" type="submit">Submit owner sign-up request →</button>
-   <p class="signup-note">Demo notice: this form currently saves the request in this browser only. It does not yet create a secure login or send the application to Courtly. Connect Supabase and an email notification service before accepting real registrations.</p>
+   <button class="signup-submit" type="submit">Create owner account & open portal →</button>
+   <p class="signup-note">Your account and venue will be created securely. Your booking link is generated automatically from your business name.</p>
    <div class="signup-message" id="signupMessage" role="status" aria-live="polite"></div>
   </form>
  </div>
@@ -646,10 +648,59 @@ function resetDemo(){if(!confirm("Reset all Courtly demo bookings and settings i
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 let toastTimer;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
 
-// Owner sign-up form prototype: local-only until Supabase/auth/email are connected.
-const ownerSignupForm=document.getElementById("ownerSignupForm");
-if(ownerSignupForm){ownerSignupForm.addEventListener("submit",function(e){e.preventDefault();if(!ownerSignupForm.reportValidity())return;const data=Object.fromEntries(new FormData(ownerSignupForm).entries());data.applicationId="OWN-"+Math.random().toString(36).slice(2,8).toUpperCase();data.submittedAt=new Date().toISOString();try{const existing=JSON.parse(localStorage.getItem("courtly_owner_signup_requests")||"[]");existing.push(data);localStorage.setItem("courtly_owner_signup_requests",JSON.stringify(existing));const msg=document.getElementById("signupMessage");msg.textContent="Your sign-up request was saved in this browser demo (reference: "+data.applicationId+"). It has not been sent to Courtly yet. A backend connection is needed to submit it securely.";msg.classList.add("show");ownerSignupForm.reset();}catch(err){const msg=document.getElementById("signupMessage");msg.textContent="This browser could not save the demo request. Please try again or connect the form to the Courtly backend.";msg.classList.add("show");}});}
+// Supabase-backed owner registration. Venue + starter courts are created by the database trigger.
+
 
 renderVenue();drawQr();
 </script>
+
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const form = document.getElementById('ownerSignupForm');
+if (form) {
+  const msg = document.getElementById('signupMessage');
+  const submit = form.querySelector('button[type="submit"]');
+  const show = (text, ok=false) => { msg.textContent = text; msg.classList.add('show'); msg.style.background = ok ? '#eaf8ef' : '#fff0f0'; msg.style.color = ok ? '#17623a' : '#a72a2a'; };
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    if (!supabaseUrl || !supabaseKey) { show('Courtly registration is not connected yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel Environment Variables, then redeploy.'); return; }
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (data.password !== data.passwordConfirm) { show('Your passwords do not match.'); return; }
+    submit.disabled = true; submit.textContent = 'Creating your account…';
+    try {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const email = data.email.trim().toLowerCase();
+      const { data: authData, error } = await supabase.auth.signUp({
+        email, password: data.password,
+        options: { data: {
+          personal_name: data.personalName.trim(), phone: data.phone.trim(),
+          business_name: data.businessName.trim(), business_address: data.businessAddress.trim(),
+          sport: data.sport, court_count: data.courtCount,
+          facebook: data.facebook || '', instagram: data.instagram || '', website: data.website || '',
+          owner_role: data.role || 'Owner', notes: data.notes || ''
+        }, emailRedirectTo: `${window.location.origin}/login.html` }
+      });
+      if (error) throw error;
+      if (authData.session) {
+        const { data: venue, error: venueError } = await supabase.from('venues').select('id,name,slug').eq('owner_id', authData.user.id).maybeSingle();
+        if (venueError) throw venueError;
+        const bookingLink = venue ? `${window.location.origin}/v/${venue.slug}` : '';
+        if (bookingLink) localStorage.setItem('courtly_new_booking_link', bookingLink);
+        show(bookingLink ? `Your Courtly account is ready! Your booking link: ${bookingLink}` : 'Your account is created. Your venue is being prepared; log in to view your booking link.', true);
+        setTimeout(() => { window.location.href = '/owner-portal.html'; }, 1800);
+      } else {
+        show('Registration started! Please check your email and confirm your address. Your venue and unique booking link are created automatically. After confirmation, log in to access your owner portal.', true);
+      }
+      form.reset();
+    } catch (error) {
+      console.error('Courtly registration error:', error);
+      show(error.message || 'Could not create your account. Please try again.');
+    } finally { submit.disabled = false; submit.textContent = 'Create owner account & open portal →'; }
+  });
+}
+</script>
+
 </body></html>

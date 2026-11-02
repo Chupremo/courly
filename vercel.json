@@ -8,6 +8,7 @@
     { "source": "/clubs", "destination": "/clubs.html" },
     { "source": "/courts", "destination": "/courts.html" },
     { "source": "/owner-portal", "destination": "/owner-portal.html" },
+    { "source": "/login", "destination": "/login.html" },
     { "source": "/v/:slug", "destination": "/venue.html?slug=:slug" }
   ]
 }

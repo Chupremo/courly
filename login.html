@@ -192,8 +192,9 @@
 
   <script type="module">
     (async function initializeLoginPage() {
-    import { createClient } from
-      "https://esm.sh/@supabase/supabase-js@2";
+    const { createClient } = await import(
+      "https://esm.sh/@supabase/supabase-js@2"
+    );
 
     // COURTLY SUPABASE CONFIGURATION
     const SUPABASE_URL =

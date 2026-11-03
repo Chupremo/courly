@@ -3,12 +3,41 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/features", "destination": "/features.html" },
-    { "source": "/pricing", "destination": "/pricing.html" },
-    { "source": "/clubs", "destination": "/clubs.html" },
-    { "source": "/courts", "destination": "/courts.html" },
-    { "source": "/owner-portal", "destination": "/owner-portal.html" },
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/v/:slug", "destination": "/venue.html?slug=:slug" }
+    {
+      "source": "/features",
+      "destination": "/features.html"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/pricing.html"
+    },
+    {
+      "source": "/clubs",
+      "destination": "/clubs.html"
+    },
+    {
+      "source": "/courts",
+      "destination": "/courts.html"
+    },
+    {
+      "source": "/owner-portal",
+      "destination": "/owner-portal.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/v/:slug",
+      "destination": "/venue.html?slug=:slug"
+    },
+    {
+      "source": "/booking-confirmation",
+      "destination": "/booking-confirmation.html"
+    },
+    {
+      "source": "/my-bookings",
+      "destination": "/my-bookings.html"
+    }
   ]
 }

@@ -44,3 +44,16 @@ Note: this package preserves the business registration implementation from the s
 - If the database has no registered venues, the directory shows an empty state rather than inventing businesses.
 - Interface text is regular weight; semantic headings remain bold.
 - `login.html` is included in the Vite multi-page build input.
+
+
+## Demo player directory data
+
+To populate the player directory with clearly labelled fictional venues and courts, follow `DEMO_DATA_SETUP.md` and run `supabase/demo-seed.sql` once in the Supabase SQL Editor.
+
+
+## Booking confirmation and player history
+Successful receipt submissions now route to `/booking-confirmation.html`; customers can then open `/my-bookings.html`. See `BOOKING_CONFIRMATION_AND_MY_BOOKINGS.md` for current prototype limitations.
+
+
+## Open Play announcements
+See `OPEN_PLAY_SETUP.md` and `supabase/open-play-events.sql`. Current prototype sync is same-browser localStorage only.

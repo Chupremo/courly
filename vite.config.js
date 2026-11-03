@@ -16,7 +16,9 @@ export default defineConfig({
         clubs: resolve(process.cwd(), 'clubs.html'),
         courts: resolve(process.cwd(), 'courts.html'),
         ownerPortal: resolve(process.cwd(), 'owner-portal.html'),
-        venue: resolve(process.cwd(), 'venue.html')
+        venue: resolve(process.cwd(), 'venue.html'),
+        bookingConfirmation: resolve(process.cwd(), 'booking-confirmation.html'),
+        myBookings: resolve(process.cwd(), 'my-bookings.html')
       }
     }
   }

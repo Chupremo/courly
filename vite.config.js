@@ -13,7 +13,6 @@ export default defineConfig({
         clubs: resolve(process.cwd(), 'clubs.html'),
         courts: resolve(process.cwd(), 'courts.html'),
         ownerPortal: resolve(process.cwd(), 'owner-portal.html'),
-        login: resolve(process.cwd(), 'login.html'),
         venue: resolve(process.cwd(), 'venue.html')
       }
     }

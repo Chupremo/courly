@@ -386,7 +386,7 @@ body.page-home #publicApp{display:none!important}
     <div class="signup-field full"><label for="signupNotes">Anything else we should know? (optional)</label><textarea id="signupNotes" name="notes" rows="3" placeholder="Venue opening hours, number of locations, or questions"></textarea></div>
    </div>
    <button class="signup-submit" type="submit">Create owner account & open portal →</button>
-   <p class="signup-note">Your account and venue will be created securely. Your booking link is generated automatically from your business name.</p>
+   <p class="signup-note">Prototype mode: this creates a demo login in this browser and redirects to the owner portal. Accounts are not yet securely stored across devices. Connect Supabase Auth before accepting real registrations. Do not reuse a sensitive password here.</p>
    <div class="signup-message" id="signupMessage" role="status" aria-live="polite"></div>
   </form>
  </div>
@@ -648,59 +648,10 @@ function resetDemo(){if(!confirm("Reset all Courtly demo bookings and settings i
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 let toastTimer;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
 
-// Supabase-backed owner registration. Venue + starter courts are created by the database trigger.
-
+// Local-only owner registration prototype. Replace with Supabase Auth before production.
+const ownerSignupForm=document.getElementById("ownerSignupForm");
+if(ownerSignupForm){ownerSignupForm.addEventListener("submit",function(e){e.preventDefault();if(!ownerSignupForm.reportValidity())return;const data=Object.fromEntries(new FormData(ownerSignupForm).entries());const msg=document.getElementById("signupMessage");if(data.password!==data.passwordConfirm){msg.textContent="Your passwords do not match. Please check and try again.";msg.classList.add("show");return;}try{const email=data.email.trim().toLowerCase();const accounts=JSON.parse(localStorage.getItem("courtly_owner_accounts_demo")||"{}");if(accounts[email]){msg.textContent="An owner account with this email already exists. Please log in instead.";msg.classList.add("show");return;}data.applicationId="OWN-"+Math.random().toString(36).slice(2,8).toUpperCase();data.submittedAt=new Date().toISOString();data.passwordConfirm=undefined;accounts[email]=data;localStorage.setItem("courtly_owner_accounts_demo",JSON.stringify(accounts));localStorage.setItem("courtly_owner_session_demo",email);localStorage.setItem("courtly_owner_profile_demo",JSON.stringify(data));window.location.href="/owner-portal.html";}catch(err){msg.textContent="This browser could not create the demo account. Please try again.";msg.classList.add("show");}});}
 
 renderVenue();drawQr();
 </script>
-
-<script type="module">
-import { createClient } from '@supabase/supabase-js';
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const form = document.getElementById('ownerSignupForm');
-if (form) {
-  const msg = document.getElementById('signupMessage');
-  const submit = form.querySelector('button[type="submit"]');
-  const show = (text, ok=false) => { msg.textContent = text; msg.classList.add('show'); msg.style.background = ok ? '#eaf8ef' : '#fff0f0'; msg.style.color = ok ? '#17623a' : '#a72a2a'; };
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (!form.reportValidity()) return;
-    if (!supabaseUrl || !supabaseKey) { show('Courtly registration is not connected yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel Environment Variables, then redeploy.'); return; }
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (data.password !== data.passwordConfirm) { show('Your passwords do not match.'); return; }
-    submit.disabled = true; submit.textContent = 'Creating your account…';
-    try {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const email = data.email.trim().toLowerCase();
-      const { data: authData, error } = await supabase.auth.signUp({
-        email, password: data.password,
-        options: { data: {
-          personal_name: data.personalName.trim(), phone: data.phone.trim(),
-          business_name: data.businessName.trim(), business_address: data.businessAddress.trim(),
-          sport: data.sport, court_count: data.courtCount,
-          facebook: data.facebook || '', instagram: data.instagram || '', website: data.website || '',
-          owner_role: data.role || 'Owner', notes: data.notes || ''
-        }, emailRedirectTo: `${window.location.origin}/login.html` }
-      });
-      if (error) throw error;
-      if (authData.session) {
-        const { data: venue, error: venueError } = await supabase.from('venues').select('id,name,slug').eq('owner_id', authData.user.id).maybeSingle();
-        if (venueError) throw venueError;
-        const bookingLink = venue ? `${window.location.origin}/v/${venue.slug}` : '';
-        if (bookingLink) localStorage.setItem('courtly_new_booking_link', bookingLink);
-        show(bookingLink ? `Your Courtly account is ready! Your booking link: ${bookingLink}` : 'Your account is created. Your venue is being prepared; log in to view your booking link.', true);
-        setTimeout(() => { window.location.href = '/owner-portal.html'; }, 1800);
-      } else {
-        show('Registration started! Please check your email and confirm your address. Your venue and unique booking link are created automatically. After confirmation, log in to access your owner portal.', true);
-      }
-      form.reset();
-    } catch (error) {
-      console.error('Courtly registration error:', error);
-      show(error.message || 'Could not create your account. Please try again.');
-    } finally { submit.disabled = false; submit.textContent = 'Create owner account & open portal →'; }
-  });
-}
-</script>
-
 </body></html>

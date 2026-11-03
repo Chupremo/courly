@@ -39,7 +39,7 @@ create table if not exists public.bookings (
   ends_at timestamptz not null,
   duration_hours integer not null default 1 check (duration_hours between 1 and 8),
   subtotal numeric(10,2) not null check (subtotal >= 0),
-  platform_fee numeric(10,2) not null default 10 check (platform_fee >= 0),
+  platform_fee numeric(10,2) not null default 0 check (platform_fee >= 0),
   total numeric(10,2) not null check (total >= 0),
   status text not null default 'pending' check (status in ('pending','confirmed','cancelled','rejected')),
   payment_status text not null default 'unpaid' check (payment_status in ('unpaid','pending','paid','failed','refunded')),

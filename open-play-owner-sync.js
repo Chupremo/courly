@@ -68,7 +68,6 @@ setInterval(() => { refreshOpenPlayRegistrationCounts(); loadOpenPlayTransaction
 
 async function loadOpenPlayTransactions() {
   const revenue = document.getElementById('opEarnRevenue');
-  if (!revenue) return;
   const note = document.getElementById('opEarnNote');
   let host = document.getElementById('opRecentTransactions');
   if (!host) {
@@ -77,7 +76,14 @@ async function loadOpenPlayTransactions() {
     host.className = 'panel';
     host.style.marginTop = '16px';
     host.innerHTML = '<div class="panelhead"><h3>Recent Open Play transactions</h3><span class="pill">Payment review</span></div><div id="opTxnBody" class="muted small">Loading registrations…</div>';
-    revenue.closest('.panel')?.insertAdjacentElement('afterend', host);
+    const overviewPanel = [...document.querySelectorAll('.panel')].find(panel => panel.querySelector('.panelhead h3')?.textContent?.trim() === 'Recent reservations');
+    const earningsPanel = revenue?.closest('.panel');
+    (overviewPanel || earningsPanel || document.querySelector('main') || document.body)?.insertAdjacentElement('afterend', host);
+  }
+  if (!host.isConnected) {
+    const overviewPanel = [...document.querySelectorAll('.panel')].find(panel => panel.querySelector('.panelhead h3')?.textContent?.trim() === 'Recent reservations');
+    const earningsPanel = revenue?.closest('.panel');
+    (overviewPanel || earningsPanel || document.querySelector('main') || document.body)?.insertAdjacentElement('afterend', host);
   }
   const body = document.getElementById('opTxnBody');
   try {
@@ -105,7 +111,7 @@ async function loadOpenPlayTransactions() {
        <div class="muted small">${esc(row.event_title)} · ${esc(row.event_date)} · ${esc(row.event_time)}</div>
        <div class="muted small">${esc(row.player_email)}${row.player_phone?' · '+esc(row.player_phone):''}</div>
        <div style="margin-top:6px">${money(row.fee)} · <strong>${status}</strong> · ${receipt||'Receipt unavailable'}</div></div>
-       <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">${pending?`<button class="btn" data-op-review="confirmed" data-op-id="${esc(row.id)}">Confirm payment</button><button class="btn" data-op-review="rejected" data-op-id="${esc(row.id)}" style="background:#fff;color:#b42318;border:1px solid #f0c8c8">Reject</button>`:''}</div>
+       <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">${pending?`<button class="btn" data-op-review="confirmed" data-op-id="${esc(row.id)}">Verify payment</button><button class="btn" data-op-review="rejected" data-op-id="${esc(row.id)}" style="background:#fff;color:#b42318;border:1px solid #f0c8c8">Reject</button>`:''}</div>
       </article>`;
     }));
     body.innerHTML = rendered.join('');

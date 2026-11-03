@@ -33,3 +33,7 @@ Run `supabase/open-play-owner-transactions.sql` in Supabase SQL Editor. This cre
 After deploying, open Owner Portal → Earnings & transactions. A **Recent Open Play transactions** section appears beneath the Open Play earnings summary. Owners can open the uploaded receipt and confirm/reject pending payments. Confirmed registrations feed the earnings RPC, so revenue updates after review.
 
 The page refreshes transaction status and earnings every 30 seconds. Receipt links are short-lived signed links (10 minutes). The storage bucket must be `courtly-payment-receipts`, and the existing owner-only receipt read policy must be installed.
+
+
+## Overview transaction visibility (new)
+The Open Play payment-review list is now also mounted directly beneath the Overview's Recent reservations panel. Owners can click **Verify payment** there without navigating to Earnings. It uses the same owner-authenticated review function; confirming updates the registration and feeds the confirmed Open Play earnings total. The list refreshes on its 30-second polling cycle.

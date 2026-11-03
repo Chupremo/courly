@@ -10,9 +10,9 @@
 ## Supabase prerequisites
 Run these SQL files in order if they have not already been applied:
 1. `supabase/schema.sql`
-2. `owner-registration.sql`
-3. `open-play-registrations.sql`
-4. `open-play-earnings.sql`
+2. `supabase/owner-registration.sql`
+3. `supabase/open-play-registrations.sql`
+4. `supabase/open-play-earnings.sql`
 
 If the owner already has a Supabase Auth account and an existing unclaimed venue row, edit `supabase/link-existing-owner-venue.sql`, replace `REPLACE_WITH_OWNER_EMAIL` with the exact Auth email in both places, and run it in SQL Editor. It only links a venue with a matching `admin_email` where `owner_id` is currently NULL.
 
@@ -26,7 +26,7 @@ This fixes the Auth-to-venue lookup used by Open Play Earnings. It does not migr
 
 
 ## Open Play recent transaction review (new)
-Run `supabase/open-play-owner-transactions.sql` in Supabase SQL Editor. This creates:
+Run `supabase/open-play-owner-transactions.sql` in Supabase SQL Editor after the four prerequisite scripts above. This creates:
 - `get_owner_open_play_transactions`: returns only the signed-in owner's registration rows.
 - `review_open_play_payment`: lets that owner confirm or reject a submitted receipt.
 

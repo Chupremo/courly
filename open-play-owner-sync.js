@@ -45,7 +45,7 @@ async function refreshOpenPlayRegistrationCounts() {
       .eq('owner_id', user.id)
       .maybeSingle();
     if (venueError) throw venueError;
-    if (!venue?.slug) throw new Error('No venue is linked to this owner account. Run owner-registration.sql or link the existing venue to this Auth user.');
+    if (!venue?.slug) throw new Error('No venue is linked to this owner account. Run supabase/owner-registration.sql or link the existing venue to this Auth user.');
 
     const { data, error } = await supabase.rpc('get_owner_open_play_earnings', { p_venue_slug: venue.slug });
     if (error) throw error;

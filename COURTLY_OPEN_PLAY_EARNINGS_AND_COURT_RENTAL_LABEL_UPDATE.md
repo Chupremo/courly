@@ -10,10 +10,10 @@
 ## Supabase SQL required
 Run these in Supabase SQL Editor if they have not already been applied, in this order:
 1. `supabase/schema.sql`
-2. `owner-registration.sql`
+2. `supabase/owner-registration.sql`
 3. `supabase/open-play-registrations.sql`
 4. `supabase/payment-receipts-storage.sql`
-5. `open-play-earnings.sql`
+5. `supabase/open-play-earnings.sql`
 6. `supabase/open-play-owner-transactions.sql`
 
 If an existing venue is not linked to the signed-in owner account, follow `supabase/link-existing-owner-venue.sql` and replace the email placeholder with the exact Auth email before running it.

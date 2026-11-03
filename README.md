@@ -36,3 +36,11 @@ The public venue booking calendar initializes from the visitor browser current d
 - Vite is configured to build both new HTML entry points.
 
 Note: this package preserves the business registration implementation from the supplied ZIP. Review its signup flow before accepting live registrations; a working Supabase login page does not automatically make the signup form Supabase-backed.
+
+
+## Player directory prototype (November 2026)
+- `players.html` now reads every registered venue from `public.venues` and its related active records from `public.courts` using the configured Supabase project. It includes keyword, sport, and city filters and links each listing to its venue booking page.
+- In the current schema, a registered business is represented by a row in `public.venues`; there is no separate businesses table. The directory therefore lists all venues/businesses currently registered in that table.
+- If the database has no registered venues, the directory shows an empty state rather than inventing businesses.
+- Interface text is regular weight; semantic headings remain bold.
+- `login.html` is included in the Vite multi-page build input.

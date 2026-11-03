@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: resolve(process.cwd(), 'index.html'),
+        login: resolve(process.cwd(), 'login.html'),
         players: resolve(process.cwd(), 'players.html'),
         business: resolve(process.cwd(), 'business.html'),
         features: resolve(process.cwd(), 'features.html'),

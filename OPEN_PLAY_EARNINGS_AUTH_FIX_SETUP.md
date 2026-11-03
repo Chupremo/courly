@@ -23,3 +23,13 @@ Replace the repository files with this ZIP and push to `main`. Keep the existing
 
 ## Important
 This fixes the Auth-to-venue lookup used by Open Play Earnings. It does not migrate old demo/localStorage bookings or old locally stored Open Play event announcements into Supabase. The complete Vite production build has not been verified in this environment.
+
+
+## Open Play recent transaction review (new)
+Run `supabase/open-play-owner-transactions.sql` in Supabase SQL Editor. This creates:
+- `get_owner_open_play_transactions`: returns only the signed-in owner's registration rows.
+- `review_open_play_payment`: lets that owner confirm or reject a submitted receipt.
+
+After deploying, open Owner Portal → Earnings & transactions. A **Recent Open Play transactions** section appears beneath the Open Play earnings summary. Owners can open the uploaded receipt and confirm/reject pending payments. Confirmed registrations feed the earnings RPC, so revenue updates after review.
+
+The page refreshes transaction status and earnings every 30 seconds. Receipt links are short-lived signed links (10 minutes). The storage bucket must be `courtly-payment-receipts`, and the existing owner-only receipt read policy must be installed.

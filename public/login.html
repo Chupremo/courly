@@ -1,0 +1,347 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1530">
+  <title>Owner Login | Courtly</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #0a1530;
+      color: #f7f9ff;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    .card {
+      width: min(100%, 460px);
+      padding: 34px;
+      background: #fff;
+      color: #172342;
+      border-radius: 20px;
+      box-shadow: 0 24px 80px #0005;
+    }
+
+    .brand {
+      font-weight: 950;
+      font-size: 24px;
+      letter-spacing: -1px;
+      color: #122b61;
+      text-decoration: none;
+    }
+
+    .brand span { color: #e0474b; }
+
+    h1 {
+      margin: 26px 0 8px;
+      font-size: 30px;
+      letter-spacing: -.8px;
+    }
+
+    p {
+      color: #65718a;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .field { margin: 18px 0; }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #d7deeb;
+      border-radius: 10px;
+      font: inherit;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #1747ad;
+      box-shadow: 0 0 0 3px #1747ad18;
+    }
+
+    .submit {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 14px;
+      background: #1747ad;
+      color: white;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      display: none;
+      padding: 12px;
+      margin-top: 14px;
+      border-radius: 9px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .msg.show { display: block; }
+
+    .msg.error {
+      background: #fff0f0;
+      color: #a72a2a;
+    }
+
+    .msg.success {
+      background: #eaf8ef;
+      color: #176b37;
+    }
+
+    .links {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .links a {
+      color: #1747ad;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .note {
+      font-size: 11px;
+      color: #65718a;
+      background: #f2f5fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <a class="brand" href="/">COURT<span>LY</span></a>
+
+    <h1>Welcome back</h1>
+    <p>Log in to manage your venue, courts, bookings, and earnings.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email address</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          autocomplete="username"
+          placeholder="you@example.com"
+        >
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          placeholder="Your password"
+        >
+      </div>
+
+      <button class="submit" id="loginButton" type="submit">
+        Log in to owner portal →
+      </button>
+
+      <div id="msg" class="msg" role="alert" aria-live="polite"></div>
+    </form>
+
+    <div class="links">
+      <a href="#" id="forgotPassword">Forgot your password?</a>
+      <br>
+      New to Courtly?
+      <a href="/#owner-signup">Create an owner account</a>
+    </div>
+
+    <div class="note">
+      Secure sign-in powered by Supabase. Your account can be accessed
+      across devices. Email confirmation may be required before login.
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from
+      "https://esm.sh/@supabase/supabase-js@2";
+
+    // COURTLY SUPABASE CONFIGURATION
+    const SUPABASE_URL =
+      "https://pklrvpnnkmdwgqoyvhsb.supabase.co";
+
+    // Replace this with your Supabase Publishable key
+    // (or legacy anon key). Never use the service_role key here.
+    const SUPABASE_ANON_KEY =
+      "PASTE_YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY_HERE";
+
+    const form = document.getElementById("loginForm");
+    const button = document.getElementById("loginButton");
+    const message = document.getElementById("msg");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+
+    const showMessage = (text, type = "error") => {
+      message.textContent = text;
+      message.className = `msg show ${type}`;
+    };
+
+    if (
+      !SUPABASE_ANON_KEY ||
+      SUPABASE_ANON_KEY.includes("PASTE_YOUR")
+    ) {
+      showMessage(
+        "Supabase is not configured. Please add your Supabase Publishable key to login.html."
+      );
+      button.disabled = true;
+    } else {
+      const supabase = createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
+      );
+
+      // Redirect an already authenticated owner.
+      const { data: sessionData } =
+        await supabase.auth.getSession();
+
+      if (sessionData.session) {
+        window.location.replace("/owner-portal.html");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value;
+
+        message.className = "msg";
+        button.disabled = true;
+        button.textContent = "Signing in...";
+
+        try {
+          const { data, error } =
+            await supabase.auth.signInWithPassword({
+              email,
+              password
+            });
+
+          if (error) {
+            if (
+              error.message.toLowerCase().includes("email not confirmed")
+            ) {
+              throw new Error(
+                "Please confirm your email address before logging in. Check your inbox for the confirmation email."
+              );
+            }
+
+            if (
+              error.message.toLowerCase().includes("invalid login credentials")
+            ) {
+              throw new Error(
+                "Incorrect email or password. Please check your details and try again."
+              );
+            }
+
+            throw error;
+          }
+
+          if (!data.session) {
+            throw new Error(
+              "Login could not be completed. Please try again."
+            );
+          }
+
+          showMessage("Login successful! Opening your dashboard...", "success");
+
+          window.location.replace("/owner-portal.html");
+
+        } catch (error) {
+          console.error("Courtly login error:", error);
+
+          showMessage(
+            error.message || "Unable to log in. Please try again."
+          );
+
+          button.disabled = false;
+          button.textContent = "Log in to owner portal →";
+        }
+      });
+
+      // Password recovery
+      document.getElementById("forgotPassword")
+        .addEventListener("click", async (event) => {
+          event.preventDefault();
+
+          const email = emailInput.value.trim().toLowerCase();
+
+          if (!email) {
+            showMessage(
+              "Enter your email address first, then click Forgot your password."
+            );
+            emailInput.focus();
+            return;
+          }
+
+          button.disabled = true;
+          message.className = "msg";
+
+          try {
+            const { error } =
+              await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + "/login.html"
+              });
+
+            if (error) throw error;
+
+            showMessage(
+              "If an account exists for this email, a password reset link will be sent. Please check your inbox.",
+              "success"
+            );
+
+          } catch (error) {
+            showMessage(
+              error.message || "Unable to send the password reset email."
+            );
+          } finally {
+            button.disabled = false;
+          }
+        });
+    }
+  </script>
+</body>
+</html>

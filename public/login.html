@@ -191,6 +191,7 @@
   </main>
 
   <script type="module">
+    (async function initializeLoginPage() {
     import { createClient } from
       "https://esm.sh/@supabase/supabase-js@2";
 
@@ -342,6 +343,10 @@
           }
         });
     }
+    })().catch((error) => {
+      const message = document.getElementById("msg");
+      if (message) { message.textContent = error.message || "Unable to initialize login."; message.className = "msg show error"; }
+    });
   </script>
 </body>
 </html>

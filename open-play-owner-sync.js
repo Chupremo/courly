@@ -1,6 +1,6 @@
 import { supabase } from './supabase-client.js';
 
-// Refresh aggregate Open Play counts without exposing player personal information.
+// Refresh public event registration counts and authenticated owner's earnings.
 async function refreshOpenPlayRegistrationCounts() {
   const nodes = [...document.querySelectorAll('[data-op-count]')];
   if (nodes.length) {
@@ -29,30 +29,38 @@ async function refreshOpenPlayRegistrationCounts() {
     }
   }
 
-  // Earnings are available only to the authenticated owner of this venue.
   const revenue = document.getElementById('opEarnRevenue');
-  if (revenue) {
-    const note = document.getElementById('opEarnNote');
-    try {
-      const stored = JSON.parse(localStorage.getItem('courtlyOwnerPortalV1') || '{}');
-      const slug = stored.venue && stored.venue.slug;
-      if (!slug) throw new Error('Venue slug is missing from the owner profile.');
-      const { data, error } = await supabase.rpc('get_owner_open_play_earnings', { p_venue_slug: slug });
-      if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
-      const fmt = value => '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      document.getElementById('opEarnRegistrations').textContent = Number(row?.registration_count || 0).toLocaleString('en-PH');
-      document.getElementById('opEarnPaidCount').textContent = Number(row?.paid_count || 0).toLocaleString('en-PH');
-      document.getElementById('opEarnPendingCount').textContent = Number(row?.awaiting_count || 0).toLocaleString('en-PH');
-      revenue.textContent = fmt(row?.confirmed_revenue);
-      if (note) note.textContent = 'Revenue includes confirmed Open Play payments only. Pending receipts are excluded until verified.';
-    } catch (error) {
-      if (note) note.textContent = 'Could not load Open Play earnings. Run supabase/open-play-earnings.sql and make sure the venue owner is signed in.';
-      console.warn('Open Play earnings could not be refreshed:', error.message || error);
-    }
+  if (!revenue) return;
+  const note = document.getElementById('opEarnNote');
+  try {
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    const user = authData?.user;
+    if (!user) throw new Error('You are not signed in with Supabase Auth. Please log out and sign in again.');
+
+    // Resolve the venue from the authenticated owner ID; do not trust a browser-stored slug.
+    const { data: venue, error: venueError } = await supabase
+      .from('venues')
+      .select('slug,name')
+      .eq('owner_id', user.id)
+      .maybeSingle();
+    if (venueError) throw venueError;
+    if (!venue?.slug) throw new Error('No venue is linked to this owner account. Run owner-registration.sql or link the existing venue to this Auth user.');
+
+    const { data, error } = await supabase.rpc('get_owner_open_play_earnings', { p_venue_slug: venue.slug });
+    if (error) throw error;
+    const row = Array.isArray(data) ? data[0] : data;
+    const fmt = value => '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('opEarnRegistrations').textContent = Number(row?.registration_count || 0).toLocaleString('en-PH');
+    document.getElementById('opEarnPaidCount').textContent = Number(row?.paid_count || 0).toLocaleString('en-PH');
+    document.getElementById('opEarnPendingCount').textContent = Number(row?.awaiting_count || 0).toLocaleString('en-PH');
+    revenue.textContent = fmt(row?.confirmed_revenue);
+    if (note) note.textContent = `${venue.name}: confirmed Open Play payments only. Pending receipts are excluded until verified.`;
+  } catch (error) {
+    if (note) note.textContent = error.message || 'Could not load Open Play earnings. Check Supabase Auth, venue ownership, and the earnings SQL migration.';
+    console.warn('Open Play earnings could not be refreshed:', error.message || error);
   }
 }
-
 window.refreshOpenPlayRegistrationCounts = refreshOpenPlayRegistrationCounts;
 refreshOpenPlayRegistrationCounts();
 setInterval(refreshOpenPlayRegistrationCounts, 30000);

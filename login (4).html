@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1530"><title>Owner Login | Courtly</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#0a1530;color:#172342;font-family:Inter,Arial,sans-serif}
+.card{width:min(100%,480px);padding:34px;background:#fff;border-radius:20px;box-shadow:0 24px 80px #0005}
+.brand{font-size:24px;letter-spacing:-1px;color:#122b61;text-decoration:none}.brand span{color:#e0474b}
+h1{margin:26px 0 8px;font-size:30px}p{color:#65718a;line-height:1.6;font-size:14px}
+.field{margin:15px 0}.field label{display:block;font-size:12px;margin-bottom:7px}.field input,.field select{width:100%;padding:13px 14px;border:1px solid #d7deeb;border-radius:10px;font:inherit}
+button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;color:white;font-weight:700;font-size:14px;cursor:pointer;margin-top:8px}
+.secondary{background:#f2f5fa;color:#1747ad;border:1px solid #d7deeb}.msg{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:13px;line-height:1.5}.msg.show{display:block}.error{background:#fff0f0;color:#a72a2a}.success{background:#eaf8ef;color:#176b37}.links{margin-top:18px;text-align:center;font-size:13px}.links a{color:#1747ad;cursor:pointer}.hidden{display:none}
+</style>
+</head>
+<body>
+<main class="card">
+<a class="brand" href="/">COURT<span>LY</span></a>
+<h1 id="heading">Welcome back</h1>
+<p id="intro">Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.</p>
+<form id="authForm">
+<div id="signupFields" class="hidden">
+<div class="field"><label for="business">Venue / business name</label><input id="business" autocomplete="organization" placeholder="Your venue name"></div>
+<div class="field"><label for="address">Venue address</label><input id="address" autocomplete="street-address" placeholder="City, province"></div>
+<div class="field"><label for="sport">Main sport</label><input id="sport" placeholder="Pickleball, badminton, basketball..."></div>
+<div class="field"><label for="courtCount">Number of courts</label><input id="courtCount" type="number" min="1" max="50" value="1"></div>
+</div>
+<div class="field"><label for="email">Email address</label><input id="email" type="email" required autocomplete="username" placeholder="you@example.com"></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" required minlength="8" autocomplete="current-password" placeholder="At least 8 characters"></div>
+<button id="submitButton" type="submit">Log in to owner portal →</button>
+<div id="msg" class="msg" role="alert" aria-live="polite"></div>
+</form>
+<div class="links"><span id="modePrompt">New to Courtly? </span><a id="toggleMode">Create an owner account</a></div>
+</main>
+<script type="module">
+import { supabase } from './supabase-client.js';
+const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton');
+let signup=false;
+function message(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
+function setMode(next){signup=next;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
+document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
+(async()=>{const {data:{session}}=await supabase.auth.getSession();if(session)location.replace('/owner-portal.html');})().catch(e=>message(e.message));
+form.addEventListener('submit',async e=>{
+ e.preventDefault();button.disabled=true;button.textContent=signup?'Creating account...':'Signing in...';msg.className='msg';
+ const email=document.getElementById('email').value.trim().toLowerCase(),password=document.getElementById('password').value;
+ try{
+  if(signup){
+   const business=document.getElementById('business').value.trim();
+   if(!business)throw new Error('Please enter your venue or business name.');
+   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{business_name:business,business_address:document.getElementById('address').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
+   if(error)throw error;
+   if(data.session){message('Account created. Opening your owner portal...','success');location.replace('/owner-portal.html');}
+   else message('Account created. Please confirm your email, then return here to log in.','success');
+  }else{
+   const {data,error}=await supabase.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   if(!data.session)throw new Error('Login did not create a session. Please try again.');
+   message('Login successful. Opening your dashboard...','success');location.replace('/owner-portal.html');
+  }
+ }catch(err){message(err.message||'Unable to continue. Please try again.');}
+ finally{button.disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
+});
+</script>
+</body></html>

@@ -27,3 +27,12 @@ The homepage owner registration now collects a password, creates a browser-local
 
 ### Booking date and time behavior
 The public venue booking calendar initializes from the visitor browser current date/time, disables past calendar dates, disables hourly slots that have already started on the current day, allows remaining same-day slots, and refreshes the time availability display every 30 seconds. For production-grade live availability and double-booking prevention across devices, connect the booking flow to Supabase/server-side checks.
+
+## Audience-specific homepages (November 2026)
+- `/` is the new audience selector for players and business owners.
+- `/players.html` is the player information page. Players book through the venue's shared booking URL.
+- `/business.html` retains the existing business-owner website and registration content from the previous homepage.
+- `/login.html` and `/owner-portal.html` remain separate owner routes.
+- Vite is configured to build both new HTML entry points.
+
+Note: this package preserves the business registration implementation from the supplied ZIP. Review its signup flow before accepting live registrations; a working Supabase login page does not automatically make the signup form Supabase-backed.

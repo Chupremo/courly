@@ -23,3 +23,15 @@ Owner portal Open Play count refresh reads Supabase counts for event IDs availab
 
 ## Build verification
 A full Vite production build was not completed in the patch environment because dependency installation timed out. JavaScript syntax checks for the new Open Play module and the updated venue page passed. Check the Vercel build log after deployment.
+
+## Open Play earnings visibility (new)
+- The owner Earnings page now has a separate **Open Play earnings** panel.
+- It displays total active registrations, confirmed payments, payments awaiting verification, and confirmed Open Play revenue.
+- Only registrations with `payment_status = 'confirmed'` contribute to revenue. Awaiting-verification receipts are shown separately and are not counted as collected revenue.
+- Open Play revenue is kept separate from court-booking gross, transaction fees, and owner net earnings. The existing ₱10 fee is per court-hour and is not automatically deducted from a standalone Open Play player fee.
+
+### Additional SQL migration
+Run `supabase/open-play-earnings.sql` after `supabase/open-play-registrations.sql`. It creates a protected aggregate RPC that only returns totals to the authenticated owner of the venue. It does not expose player names, email addresses, phone numbers, or receipt paths.
+
+### Owner authentication requirement
+The current Owner Portal still uses a browser-local demo session, not a Supabase Auth session. The protected earnings RPC therefore cannot return live totals until the owner portal is connected to Supabase Auth and each venue's `venues.owner_id` is linked to that authenticated user. Do not remove the authorization check or expose the registration table publicly to work around this limitation.

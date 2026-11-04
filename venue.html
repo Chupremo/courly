@@ -344,6 +344,23 @@ function showOpenPlayConfirmation(reference) {
   setText('confirmationDetails', selectedOpenPlay?.title || 'Open Play registration');
   $('confirmationModal').hidden = false;
 }
+async function prefillPlayerCheckout() {
+  if (!supabase) return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.user_metadata?.account_type !== 'player') return;
+    const { data: profile, error } = await supabase.from('player_profiles')
+      .select('full_name,player_name,email,phone').eq('id', user.id).maybeSingle();
+    if (error) throw error;
+    if (!profile) return;
+    if ($('playerName') && !$('playerName').value) $('playerName').value = profile.player_name || profile.full_name || '';
+    if ($('playerEmail') && !$('playerEmail').value) $('playerEmail').value = profile.email || user.email || '';
+    if ($('playerPhone') && !$('playerPhone').value) $('playerPhone').value = profile.phone || '';
+  } catch (error) {
+    console.warn('Courtly could not prefill the signed-in player details:', error);
+  }
+}
+
 async function submitPayment(event) {
   event.preventDefault();
   const file = $('paymentScreenshot')?.files?.[0];
@@ -538,7 +555,7 @@ $('gcashForm')?.addEventListener('submit', submitPayment);
 $('confirmationClose')?.addEventListener('click', () => { $('confirmationModal').hidden = true; selectedOpenPlay = null; });
 
 (async () => {
-  try { await loadVenue(); }
+  try { await prefillPlayerCheckout(); await loadVenue(); }
   catch (error) {
     console.error('Venue page could not load:', error);
     const name = $('venueName'); if (name) name.textContent = 'Venue unavailable';

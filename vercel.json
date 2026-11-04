@@ -4,6 +4,22 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/player/register",
+      "destination": "/player-register.html"
+    },
+    {
+      "source": "/player/login",
+      "destination": "/player-login.html"
+    },
+    {
+      "source": "/player/dashboard/:view",
+      "destination": "/player-dashboard.html?view=:view"
+    },
+    {
+      "source": "/player/dashboard",
+      "destination": "/player-dashboard.html?view=home"
+    },
+    {
       "source": "/features",
       "destination": "/features.html"
     },

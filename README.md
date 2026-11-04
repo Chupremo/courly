@@ -64,3 +64,7 @@ The supplied Courtly Supabase project uses this project root URL:
 `https://pklrvpnnkmdwgqoyvhsb.supabase.co`
 
 Use the root URL in `VITE_SUPABASE_URL`; do not append `/rest/v1/`. Copy `.env.example` to `.env.local` and add the Supabase publishable key locally. In Vercel, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` under Project Settings → Environment Variables, then redeploy. The publishable key is suitable for browser use only when the database's RLS policies and function permissions are configured correctly. Never expose a Supabase secret/service-role key in frontend code.
+
+## Player-facing experience
+
+Courtly now includes a separate player registration/login and dashboard flow. See `PLAYER_DASHBOARD_SETUP.md` and apply `supabase/migrations/002_player_accounts_and_dashboard.sql` after the existing complete backend migration before deploying the player pages. Player and owner authentication flows are separate; the owner portal remains on `login.html`.

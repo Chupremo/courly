@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1733">
+  <meta name="description" content="Create your Courtly player account to discover sports venues, book courts and join Open Play.">
+  <title>Create Player Account | Courtly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0b1733;--blue:#2454c6;--red:#df454d;--ink:#17233e;--muted:#718099;--line:#e2e8f1;--paper:#f5f7fb;--green:#16845b}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f8f9fc,#f1f4f9);font-family:Inter,Arial,sans-serif;color:var(--ink)}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+    .page{width:min(760px,calc(100% - 34px));margin:0 auto;padding:34px 0 58px}.brand-wrap{text-align:center;margin-bottom:25px}.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy);font:800 28px Poppins,sans-serif;letter-spacing:-1.3px}.mark{height:40px;width:40px;border-radius:13px;display:grid;place-items:center;background:var(--navy);color:white;font:800 24px Poppins;position:relative;overflow:hidden}.mark:after{content:"";position:absolute;width:24px;height:5px;background:var(--red);border-radius:9px;right:-4px;bottom:7px;transform:rotate(-35deg)}.brand span{color:var(--red)}
+    .intro{text-align:center;margin-bottom:27px}.intro h1{font:700 clamp(27px,4vw,36px) Poppins,sans-serif;letter-spacing:-1.1px;margin:0 0 7px;color:#101d3b}.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
+    .login-cta{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:10px;background:linear-gradient(105deg,#2454c6,#183f9e);color:white;font-size:13px;font-weight:700;box-shadow:0 9px 22px #2454c626;margin:0 0 11px}.login-cta:hover{background:#183f9e;text-decoration:none}.login-caption{text-align:center;font-size:13px;color:var(--muted);margin:0 0 25px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:19px;padding:25px;box-shadow:0 18px 52px rgba(23,43,80,.07)}.avatar-area{text-align:center;padding:0 0 20px;border-bottom:1px solid #edf0f5;margin-bottom:17px}.avatar-label{display:block;font-size:13px;font-weight:600;margin-bottom:12px}.avatar-preview{height:94px;width:94px;border-radius:50%;margin:0 auto 12px;background:#f1f4f9;border:2px dashed #cbd4e2;display:grid;place-items:center;overflow:hidden;color:#8290a7;font-size:28px}.avatar-preview img{width:100%;height:100%;object-fit:cover}.upload{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid #dce3ee;border-radius:9px;background:#fff;color:var(--navy);font-size:12px;font-weight:600;cursor:pointer}.upload:hover{border-color:var(--blue);background:#f8faff}.upload input{display:none}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;margin:0 0 7px;font-size:12px;font-weight:600;color:#27334b}.field input,.field select{height:43px;width:100%;border:1px solid #cfd8e6;border-radius:9px;padding:0 12px;background:#fbfcfe;font:400 13px Inter;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2454c615;background:#fff}.field small{display:block;color:#8b96a9;font-size:10px;margin-top:6px;line-height:1.5}.password-note{font-size:10px;color:#8994a8;margin-top:6px}
+    .privacy{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:18px}.privacy h3{margin:0 0 6px;font-size:13px}.privacy p{margin:0;color:#65728a;font-size:12px;line-height:1.6}.switch{position:relative;width:46px;height:26px;flex:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#cbd3df;border-radius:30px;cursor:pointer;transition:.2s}.slider:before{content:"";height:20px;width:20px;position:absolute;left:3px;top:3px;background:white;border-radius:50%;box-shadow:0 1px 4px #18294a30;transition:.2s}.switch input:checked+.slider{background:var(--blue)}.switch input:checked+.slider:before{transform:translateX(20px)}
+    .terms{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:15px;color:#39465e;font-size:12px;line-height:1.6}.terms input{margin-top:2px;accent-color:var(--blue)}.terms a{color:var(--red);text-decoration:underline}.submit{width:100%;height:47px;border:0;border-radius:10px;background:var(--red);color:white;font:700 13px Inter;cursor:pointer;margin-top:17px;transition:.2s}.submit:hover{background:#c93540;transform:translateY(-1px)}.submit:disabled{opacity:.55;cursor:wait;transform:none}.message{display:none;padding:12px 14px;border-radius:10px;font-size:12px;line-height:1.55;margin-top:14px}.message.show{display:block}.message.error{background:#fff0f0;color:#a32730;border:1px solid #ffd5d8}.message.success{background:#eaf8f0;color:#176b44;border:1px solid #c9eed8}.bottom{text-align:center;color:#8893a6;font-size:11px;margin-top:20px;line-height:1.7}
+    .modal{position:fixed;inset:0;background:#0b1733a6;z-index:20;display:none;place-items:center;padding:20px}.modal.open{display:grid}.modal-card{width:min(560px,100%);max-height:80vh;overflow:auto;background:white;border-radius:16px;padding:24px}.modal-card h2{margin:0 0 12px;font:700 20px Poppins}.modal-card p,.modal-card li{font-size:12px;line-height:1.75;color:#596781}.modal-close{float:right;border:0;background:#f0f3f8;border-radius:8px;padding:7px 10px;cursor:pointer}
+    @media(max-width:620px){.page{padding-top:24px}.card{padding:18px}.grid{grid-template-columns:1fr;gap:13px}.field.full{grid-column:auto}.privacy{align-items:flex-start}.intro h1{font-size:28px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="brand-wrap"><a class="brand" href="/"><span class="mark">C</span><span>COURT<span>LY</span></span></a></div>
+    <section class="intro"><h1>Join Courtly as a Player</h1><p>Discover courts, book your next game and connect with your local sports community.</p></section>
+    <a class="login-cta" href="/player-login.html">Already have an account? Log in</a>
+    <p class="login-caption">Or create your player account below</p>
+    <form class="card" id="registerForm" novalidate>
+      <section class="avatar-area">
+        <label class="avatar-label" for="avatarFile">Profile Picture <span style="color:#8994a8;font-weight:400">(Optional)</span></label>
+        <div class="avatar-preview" id="avatarPreview" aria-label="Profile picture preview">◎</div>
+        <label class="upload">↑ &nbsp; Upload Photo<input id="avatarFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+        <div class="password-note">PNG, JPG or WEBP · Maximum 8 MB</div>
+      </section>
+      <div class="grid">
+        <div class="field"><label for="fullName">Full Name *</label><input id="fullName" autocomplete="name" maxlength="100" required placeholder="Your full name"></div>
+        <div class="field"><label for="playerName">Player Name *</label><input id="playerName" maxlength="40" required placeholder="Name shown to other players"></div>
+        <div class="field"><label for="email">Email Address *</label><input id="email" type="email" autocomplete="email" maxlength="200" required placeholder="you@example.com"></div>
+        <div class="field"><label for="confirmEmail">Confirm Email Address *</label><input id="confirmEmail" type="email" autocomplete="email" maxlength="200" required placeholder="Re-enter your email"></div>
+        <div class="field"><label for="phone">Contact Number *</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required placeholder="09XX XXX XXXX"></div>
+        <div class="field"><label for="skillLevel">Skill Level *</label><select id="skillLevel" required><option value="Beginner">Beginner</option><option value="Intermediate" selected>Intermediate</option><option value="Advanced">Advanced</option><option value="Professional">Professional</option></select></div>
+        <div class="field"><label for="password">Password *</label><input id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></div>
+        <div class="field"><label for="confirmPassword">Confirm Password *</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Re-enter your password"></div>
+      </div>
+      <section class="privacy">
+        <div><h3>◉ &nbsp; Privacy Settings</h3><p>Keep your profile private from other players. Your name and profile details won't be shown on public player listings.</p></div>
+        <label class="switch" aria-label="Make my player profile private"><input type="checkbox" id="isPrivate"><span class="slider"></span></label>
+      </section>
+      <label class="terms"><input type="checkbox" id="agreeTerms" required><span>I agree to Courtly's <a href="#" data-legal="terms">Terms &amp; Conditions</a> and acknowledge the <a href="#" data-legal="privacy">Privacy Notice</a>.</span></label>
+      <button class="submit" id="submitButton" type="submit">Create Player Account</button>
+      <div class="message" id="message" role="alert" aria-live="polite"></div>
+    </form>
+    <p class="bottom">Already manage a sports venue? <a href="/login.html">Go to the owner portal</a>.<br>© 2026 Courtly · Book. Play. Grow.</p>
+  </main>
+  <div class="modal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><section class="modal-card"><button class="modal-close" id="legalClose" type="button">Close</button><h2 id="legalTitle">Courtly notice</h2><div id="legalContent"></div><p><strong>Launch note:</strong> These are starter notices for the current player-account experience. Courtly should have its final Terms and Privacy Notice reviewed and approved before public launch.</p></section></div>
+  <script type="module">
+    import { supabase, supabaseConfigError } from './supabase-client.js';
+    const $ = (id) => document.getElementById(id);
+    const form = $('registerForm'), button = $('submitButton'), message = $('message');
+    let avatarFile = null;
+    const showMessage = (text, type='error') => { message.textContent=text; message.className=`message show ${type}`; };
+    const emailNorm = (value) => value.trim().toLowerCase();
+    $('avatarFile').addEventListener('change', (event) => {
+      const file = event.target.files?.[0]; avatarFile = file || null;
+      if (!file) { $('avatarPreview').innerHTML='◎'; return; }
+      if (!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size > 8*1024*1024) {
+        avatarFile=null; event.target.value=''; showMessage('Choose a PNG, JPG or WEBP image no larger than 8 MB.'); return;
+      }
+      $('avatarPreview').innerHTML = `<img alt="Profile picture preview" src="${URL.createObjectURL(file)}">`;
+    });
+    document.querySelectorAll('[data-legal]').forEach(link => link.addEventListener('click', event => {
+      event.preventDefault();
+      const type=link.dataset.legal;
+      $('legalTitle').textContent=type==='terms'?'Courtly Terms & Conditions':'Courtly Privacy Notice';
+      $('legalContent').innerHTML=type==='terms'
+        ? '<p>By creating a Courtly player account, you agree to provide accurate account details, keep your sign-in credentials secure, and use Courtly respectfully. Venue bookings and Open Play registrations are subject to the venue’s own schedules, payment instructions, cancellation rules and verification process.</p><ul><li>Submitting a payment receipt does not mean payment has been automatically verified.</li><li>Venue operators are responsible for confirming their own bookings and event registrations.</li><li>Do not use Courtly to impersonate another player or submit misleading information.</li><li>Contact the venue directly about changes, cancellations or refunds.</li></ul>'
+        : '<p>Courtly stores your account name, player name, email, contact number, skill level, optional profile image and privacy preference to provide your player account. Booking and Open Play details are associated with your account when you are signed in.</p><ul><li>Your profile settings are private to your signed-in account in this release.</li><li>Your profile image is stored in Courtly’s player-avatar storage bucket.</li><li>Venue owners receive the player information required to manage a booking or event registration.</li><li>Never share your password or payment credentials.</li></ul>';
+      $('legalModal').classList.add('open');
+    }));
+    $('legalClose').addEventListener('click', ()=>$('legalModal').classList.remove('open'));
+    $('legalModal').addEventListener('click',e=>{if(e.target===$('legalModal'))$('legalModal').classList.remove('open')});
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); message.className='message';
+      if (!supabase) { showMessage(supabaseConfigError); return; }
+      const fullName=$('fullName').value.trim(), playerName=$('playerName').value.trim(), email=emailNorm($('email').value), confirmEmail=emailNorm($('confirmEmail').value), phone=$('phone').value.trim(), skillLevel=$('skillLevel').value, password=$('password').value, confirmPassword=$('confirmPassword').value, isPrivate=$('isPrivate').checked;
+      if (!fullName || !playerName || !email || !phone) { showMessage('Please complete all required fields.'); return; }
+      if (email!==confirmEmail) { showMessage('Email addresses do not match.'); $('confirmEmail').focus(); return; }
+      if (password.length<8) { showMessage('Your password must contain at least 8 characters.'); $('password').focus(); return; }
+      if (password!==confirmPassword) { showMessage('Passwords do not match.'); $('confirmPassword').focus(); return; }
+      if (!$('agreeTerms').checked) { showMessage('Please agree to the Terms & Conditions and Privacy Notice.'); return; }
+      button.disabled=true; button.textContent='Creating your account…';
+      try {
+        const {data,error}=await supabase.auth.signUp({email,password,options:{
+          emailRedirectTo:`${location.origin}/player-dashboard.html`,
+          data:{account_type:'player',full_name:fullName,player_name:playerName,phone,skill_level:skillLevel,is_private:isPrivate}
+        }});
+        if(error) throw error;
+        if(data.session && data.user){
+          let avatarUrl=null;
+          if(avatarFile){
+            const ext=avatarFile.type==='image/png'?'png':avatarFile.type==='image/webp'?'webp':'jpg';
+            const path=`${data.user.id}/avatar-${Date.now()}.${ext}`;
+            const {error:uploadError}=await supabase.storage.from('courtly-player-avatars').upload(path,avatarFile,{upsert:true,contentType:avatarFile.type});
+            if(uploadError) throw new Error(`Account created, but profile photo upload failed: ${uploadError.message}`);
+            avatarUrl=path;
+          }
+          const profile={id:data.user.id,full_name:fullName,player_name:playerName,email,phone,skill_level:skillLevel,is_private:isPrivate,avatar_url:avatarUrl,updated_at:new Date().toISOString()};
+          const {error:profileError}=await supabase.from('player_profiles').upsert(profile,{onConflict:'id'});
+          if(profileError) throw profileError;
+          showMessage('Your player account is ready. Opening your Courtly dashboard…','success');
+          setTimeout(()=>location.replace('/player-dashboard.html'),650);
+        }else{
+          showMessage('Your account has been created. Please confirm your email using the link we sent, then log in to Courtly. You can upload a profile picture from your Profile page after signing in.','success');
+          button.textContent='Account created';
+        }
+      }catch(error){console.error('Player registration error:',error);showMessage(error.message||'We could not create your account. Please try again.');}
+      finally{if(button.textContent!=='Account created'){button.disabled=false;button.textContent='Create Player Account';}}
+    });
+  </script>
+</body>
+</html>

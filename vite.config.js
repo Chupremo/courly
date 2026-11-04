@@ -18,7 +18,10 @@ export default defineConfig({
         ownerPortal: resolve(process.cwd(), 'owner-portal.html'),
         venue: resolve(process.cwd(), 'venue.html'),
         bookingConfirmation: resolve(process.cwd(), 'booking-confirmation.html'),
-        myBookings: resolve(process.cwd(), 'my-bookings.html')
+        myBookings: resolve(process.cwd(), 'my-bookings.html'),
+        playerRegister: resolve(process.cwd(), 'player-register.html'),
+        playerLogin: resolve(process.cwd(), 'player-login.html'),
+        playerDashboard: resolve(process.cwd(), 'player-dashboard.html')
       }
     }
   }

@@ -126,3 +126,14 @@ Court bookings: Courtly fee = PHP 10 × booked court-hours. Open Play: Courtly f
 - Email notification preferences are saved but notification delivery still requires an email provider and server-side function.
 - The “My Bookings” list uses access tokens stored on the same browser/device used to book. Clearing browser storage removes the local shortcut; do not treat it as an account-wide booking history.
 - Test the migration against your actual Supabase version/schema. SQL has been reviewed statically in this environment, but no live Supabase project was connected to execute it.
+
+
+## Player accounts and player dashboard (new)
+
+After the complete backend migration has already been applied, run the additive migration below once in Supabase SQL Editor:
+
+`supabase/migrations/002_player_accounts_and_dashboard.sql`
+
+This creates private player profiles, player avatar storage, and account-scoped read access for court bookings and Open Play registrations. It also updates the owner signup trigger so new player accounts do not accidentally create a venue, and prevents player accounts from calling the owner venue bootstrap RPC.
+
+Do not rerun the full base migration for this update. Test with a newly registered player account. Existing guest bookings are not automatically attached to a player account; only new bookings made while signed in can be linked by the new database trigger.

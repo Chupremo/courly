@@ -211,6 +211,7 @@ async function renderTransactions() {
     const { data: ownedVenue, error: venueError } = await supabase.from('venues').select('slug,name').eq('owner_id', user.id).maybeSingle();
     if (venueError) throw venueError;
     if (!ownedVenue?.slug) throw new Error('Your account is not linked to a venue. Please contact Courtly support.');
+    syncPortalSlug(ownedVenue);
     const { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', { p_venue_slug: ownedVenue.slug });
     if (error) throw error;
     const safeRows = rows || [];
@@ -234,6 +235,26 @@ async function renderTransactions() {
     if (note) note.textContent = error.message || 'Could not load Open Play earnings.';
     console.warn('Open Play transactions could not be refreshed:', error);
   }
+}
+
+// Keep the owner portal's public booking slug identical to the slug stored in Supabase.
+// A mismatch makes /v/<slug> point at a venue the database does not know, and Open Play
+// registrations are rejected as "not linked to an active Courtly owner venue".
+function syncPortalSlug(ownedVenue) {
+  try {
+    const slug = String(ownedVenue?.slug || '').trim();
+    if (!slug || DEMO_VENUE_SLUGS.has(DEMO_REQUEST)) return;
+    const stored = portalState();
+    const current = stored.venue || {};
+    if (current.slug === slug && current.slugLocked) return;
+    stored.venue = { ...current, slug, slugLocked: true };
+    localStorage.setItem(PORTAL_KEY, JSON.stringify(stored));
+    if (typeof db !== 'undefined' && db && db.venue) {
+      db.venue.slug = slug;
+      db.venue.slugLocked = true;
+      if (typeof render === 'function') render();
+    }
+  } catch (error) { console.warn('Could not sync the public booking slug:', error); }
 }
 
 async function refreshOpenPlayRegistrationCounts() {

@@ -68,6 +68,16 @@ document.getElementById('paymentScreenshot').addEventListener('change',e=>{const
   try{
    const env=import.meta.env||{};const supabaseUrl=String(env.VITE_SUPABASE_URL||'').replace(/\/$/,'');const anonKey=env.VITE_SUPABASE_ANON_KEY;
    if(!supabaseUrl||!anonKey)throw new Error('Secure receipt storage is not configured. Please contact the venue owner.');
+   if(sessionStorage.getItem('courtlySelectedOpenPlayId')){
+    // Pre-flight: confirm this page's slug belongs to an owner-linked venue BEFORE uploading the receipt,
+    // so a failed registration never leaves an orphaned receipt in storage.
+    let linked=true;
+    try{
+     const chk=await fetch(supabaseUrl+'/rest/v1/rpc/venue_accepts_registrations',{method:'POST',headers:{apikey:anonKey,Authorization:'Bearer '+anonKey,'Content-Type':'application/json'},body:JSON.stringify({p_venue_slug:slug})});
+     if(chk.ok){linked=(await chk.json())!==false}
+    }catch(_){linked=true}
+    if(!linked){const e=new Error('This booking page ("'+slug+'") is not linked to an active Courtly owner venue, so your registration was not saved and your receipt was not uploaded. Please contact the venue owner.');throw e}
+   }
    const reference=nextCourtlyReference();const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const storagePath=slug+'/'+reference+'.'+ext;
    const upload=await fetch(supabaseUrl+'/storage/v1/object/courtly-payment-receipts/'+storagePath,{method:'POST',headers:{apikey:anonKey,Authorization:'Bearer '+anonKey,'Content-Type':file.type,'x-upsert':'false'},body:file});
    if(!upload.ok){let detail='Receipt upload failed.';try{const j=await upload.json();detail=j.message||j.error||detail}catch(_){}throw new Error(detail)}

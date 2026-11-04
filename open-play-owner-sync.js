@@ -136,10 +136,48 @@ function bindReview(rows, demo) {
   }));
 }
 
+
+function renderUnifiedRows(rows, demo = false) {
+  const tbody = document.getElementById('unifiedReservationRows');
+  if (!tbody) return false;
+  tbody.querySelector('#unifiedOpenPlayLoading')?.remove();
+  tbody.querySelectorAll('[data-openplay-row="true"]').forEach(node => node.remove());
+  const html = (rows || []).map(row => {
+    const status = row.payment_status === 'confirmed' ? 'Confirmed' : row.payment_status === 'rejected' ? 'Rejected' : 'Awaiting verification';
+    const pill = row.payment_status === 'confirmed' ? 'confirmed' : row.payment_status === 'rejected' ? 'rejected' : 'pending';
+    const fee = Number(row.fee || 0);
+    return `<tr data-openplay-row="true" data-reservation-status="${esc(status)}">
+      <td><span class="pill" style="background:#f3ecdc;color:#8a672b">Open Play</span></td>
+      <td><strong>${esc(row.registration_reference || row.id)}</strong><br>${esc(row.player_name)}<br><span class="muted">${esc(row.player_email || '')}</span></td>
+      <td>${esc(row.event_date || '')}<br>${esc(row.event_time || '')}</td>
+      <td>${esc(row.event_title || 'Open Play session')}</td>
+      <td>${fmtMoney(fee)}</td><td>${fmtMoney(0)}</td><td><strong>${fmtMoney(row.payment_status === 'confirmed' ? fee : 0)}</strong></td>
+      <td><span class="pill ${pill}">${status}</span>${row.receipt_path && !demo ? '<br><span class="muted small">Receipt uploaded</span>' : demo ? '<br><span class="muted small">Demo receipt</span>' : ''}</td>
+      <td><div class="actions">${row.payment_status === 'awaiting_verification' ? `<button class="btn primary sm" data-op-review="confirmed" data-op-id="${esc(row.id)}">${demo ? 'Mark paid (demo)' : 'Confirm paid'}</button><button class="btn danger sm" data-op-review="rejected" data-op-id="${esc(row.id)}">Reject</button>` : ''}</div></td>
+    </tr>`;
+  }).join('');
+  tbody.insertAdjacentHTML('beforeend', html || '<tr data-openplay-row="true"><td colspan="9" class="muted small">No Open Play reservations.</td></tr>');
+  tbody.querySelectorAll('[data-op-review]').forEach(button => button.addEventListener('click', async () => {
+    button.disabled = true;
+    const decision = button.dataset.opReview, id = button.dataset.opId;
+    try {
+      if (demo) {
+        saveDemoRows(demoRows().map(row => row.id === id ? { ...row, payment_status: decision, registration_status: decision === 'confirmed' ? 'confirmed' : 'reserved' } : row));
+      } else {
+        const { error } = await supabase.rpc('review_open_play_payment', { p_registration_id:id, p_decision:decision });
+        if (error) throw error;
+      }
+      await renderTransactions();
+    } catch (error) { alert(error.message || 'Unable to update Open Play payment.'); button.disabled = false; }
+  }));
+  return true;
+}
+
 async function renderTransactions() {
-  const host = ensureTransactionPanel();
-  const body = host.querySelector('#opTxnBody') || host.querySelector('div:last-child');
-  body.textContent = 'Loading Open Play transactions…';
+  const unifiedMode = !!document.getElementById('unifiedReservationRows');
+  const host = unifiedMode ? null : ensureTransactionPanel();
+  const body = unifiedMode ? null : (host.querySelector('#opTxnBody') || host.querySelector('div:last-child'));
+  if (body) body.textContent = 'Loading Open Play transactions…';
   const venue = venueContext();
   try {
     const { data: authData, error: authError } = DEMO_VENUE_SLUGS.has(DEMO_REQUEST)
@@ -148,6 +186,7 @@ async function renderTransactions() {
     // Demo portal access is strictly local. It never queries or exposes Supabase registrations.
     if (DEMO_VENUE_SLUGS.has(DEMO_REQUEST) || authError || !authData?.user) {
       if (!DEMO_VENUE_SLUGS.has(venue.slug)) {
+        if (unifiedMode) { const loading=document.getElementById('unifiedOpenPlayLoading'); if(loading) loading.innerHTML='<td colspan="9" class="muted small">Owner session missing. Please sign in again to load Open Play reservations.</td>'; return; }
         body.innerHTML = '<div class="notice" style="color:#b42318">Your owner session is missing. Please log in again. Demo transactions are available only inside the four Courtly demo venues.</div>';
         const note = document.getElementById('opEarnNote');
         if (note) note.textContent = 'Sign in with your owner account to view real Open Play transactions.';
@@ -155,6 +194,7 @@ async function renderTransactions() {
         return;
       }
       const rows = demoRows();
+      if (unifiedMode) { renderUnifiedRows(rows, true); updateMetrics(rows, venue.name, true); return; }
       body.innerHTML = '<div class="notice gold" style="margin:8px 0">DEMO MODE · Sample records only. Changes are saved in this browser and do not represent real payments.</div>' + transactionMarkup(rows, true);
       updateMetrics(rows, venue.name, true);
       bindReview(rows, true);
@@ -167,6 +207,7 @@ async function renderTransactions() {
     const { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', { p_venue_slug: ownedVenue.slug });
     if (error) throw error;
     const safeRows = rows || [];
+    if (unifiedMode) { renderUnifiedRows(safeRows, false); updateMetrics(safeRows, ownedVenue.name, false); return; }
     body.innerHTML = transactionMarkup(safeRows, false);
     updateMetrics(safeRows, ownedVenue.name, false);
     // Generate short-lived receipt links only for authenticated, venue-scoped records.
@@ -180,6 +221,7 @@ async function renderTransactions() {
     }
     bindReview(safeRows, false);
   } catch (error) {
+    if (unifiedMode) { const loading=document.getElementById('unifiedOpenPlayLoading'); if(loading) loading.innerHTML=`<td colspan="9" class="muted small">${esc(error.message || 'Could not load Open Play reservations.')}</td>`; console.warn('Open Play reservations could not be refreshed:', error); return; }
     body.innerHTML = `<div class="notice" style="color:#b42318">${esc(error.message || 'Could not load Open Play transactions.')}</div>`;
     const note = document.getElementById('opEarnNote');
     if (note) note.textContent = error.message || 'Could not load Open Play earnings.';

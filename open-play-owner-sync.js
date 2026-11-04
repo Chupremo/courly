@@ -55,13 +55,15 @@ function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function updateMetrics(rows, venueName, demo = false) {
-  const active = rows.filter(r => r.registration_status !== 'cancelled');
+  const safeRows = Array.isArray(rows) ? rows : [];
+  const active = safeRows.filter(r => r.registration_status !== 'cancelled');
   const confirmed = active.filter(r => r.payment_status === 'confirmed');
   const pending = active.filter(r => r.payment_status === 'awaiting_verification');
   const revenue = confirmed.reduce((sum, r) => sum + Number(r.fee || 0), 0);
-  // Keep the canonical totals in module state as well as the DOM. The owner
-  // portal replaces its HTML when switching tabs, so reading KPI values back
-  // from DOM nodes caused Open Play totals to fall back to zero.
+
+  // Canonical Open Play totals live independently of the rendered DOM.
+  // The owner portal's central KPI function combines these with confirmed
+  // court-rental transactions so every panel uses one calculation.
   latestOpenPlayMetrics = {
     registrations: active.length,
     confirmedCount: confirmed.length,
@@ -69,23 +71,24 @@ function updateMetrics(rows, venueName, demo = false) {
     revenue
   };
   window.getCourtlyOpenPlayMetrics = () => ({ ...latestOpenPlayMetrics });
-  const set = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
+
+  const set = (id, value) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  };
   set('opEarnRegistrations', active.length.toLocaleString('en-PH'));
   set('opEarnPaidCount', confirmed.length.toLocaleString('en-PH'));
   set('opEarnPendingCount', pending.length.toLocaleString('en-PH'));
   set('opEarnRevenue', fmtMoney(revenue));
-  set('overviewOpenPlayBookings', confirmed.length.toLocaleString('en-PH'));
-  const state = portalState();
-  const bookings = Array.isArray(state.bookings) ? state.bookings : [];
-  const courtGross = bookings.filter(b => b.status === 'Confirmed' && b.paymentStatus !== 'Unpaid').reduce((sum,b)=>sum+Number(b.price||0),0);
-  const courtFees = bookings.filter(b => b.status === 'Confirmed' && b.paymentStatus !== 'Unpaid').reduce((sum,b)=>sum+10*Math.max(1,Number(b.duration||b.hours||1)),0);
-  set('overviewCombinedGross', fmtMoney(courtGross + revenue));
-  set('overviewTotalGross', fmtMoney(courtGross + revenue + courtFees));
+
   const note = document.getElementById('opEarnNote');
   if (note) note.textContent = demo
     ? `${venueName}: sample Open Play transactions for demo purposes only. No real payments or receipts are represented.`
     : `${venueName}: confirmed Open Play payments only. Pending receipts are excluded until verified.`;
-  if (typeof window.updateOverviewGrossStats === 'function') window.updateOverviewGrossStats();
+
+  if (typeof window.updateOverviewGrossStats === 'function') {
+    window.updateOverviewGrossStats();
+  }
 }
 function transactionMarkup(rows, demo = false) {
   if (!rows.length) return '<div class="empty">No Open Play registrations have been submitted yet.</div>';
@@ -175,6 +178,10 @@ function renderUnifiedRows(rows, demo = false) {
 
 async function renderTransactions() {
   const unifiedMode = !!document.getElementById('unifiedReservationRows');
+  const hasTransactionPanel = !!document.getElementById('opRecentTransactions');
+  // Do not inject the transaction panel into unrelated views (calendar, venue, etc.).
+  // Overview and Earnings render the panel explicitly; Reservations renders unified rows.
+  if (!unifiedMode && !hasTransactionPanel) return;
   const host = unifiedMode ? null : ensureTransactionPanel();
   const body = unifiedMode ? null : (host.querySelector('#opTxnBody') || host.querySelector('div:last-child'));
   if (body) body.textContent = 'Loading Open Play transactions…';

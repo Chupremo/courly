@@ -9,6 +9,7 @@ const DEMO_VENUE_SLUGS = new Set([
   'demo-southside-sports-center'
 ]);
 const PORTAL_KEY = DEMO_VENUE_SLUGS.has(DEMO_REQUEST) ? `courtlyOwnerPortalDemoV1:${DEMO_REQUEST}` : 'courtlyOwnerPortalV1';
+let latestOpenPlayMetrics = { registrations: 0, confirmedCount: 0, pendingCount: 0, revenue: 0 };
 
 function portalState() {
   try { return JSON.parse(localStorage.getItem(PORTAL_KEY) || '{}'); }
@@ -58,6 +59,16 @@ function updateMetrics(rows, venueName, demo = false) {
   const confirmed = active.filter(r => r.payment_status === 'confirmed');
   const pending = active.filter(r => r.payment_status === 'awaiting_verification');
   const revenue = confirmed.reduce((sum, r) => sum + Number(r.fee || 0), 0);
+  // Keep the canonical totals in module state as well as the DOM. The owner
+  // portal replaces its HTML when switching tabs, so reading KPI values back
+  // from DOM nodes caused Open Play totals to fall back to zero.
+  latestOpenPlayMetrics = {
+    registrations: active.length,
+    confirmedCount: confirmed.length,
+    pendingCount: pending.length,
+    revenue
+  };
+  window.getCourtlyOpenPlayMetrics = () => ({ ...latestOpenPlayMetrics });
   const set = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
   set('opEarnRegistrations', active.length.toLocaleString('en-PH'));
   set('opEarnPaidCount', confirmed.length.toLocaleString('en-PH'));
@@ -74,7 +85,7 @@ function updateMetrics(rows, venueName, demo = false) {
   if (note) note.textContent = demo
     ? `${venueName}: sample Open Play transactions for demo purposes only. No real payments or receipts are represented.`
     : `${venueName}: confirmed Open Play payments only. Pending receipts are excluded until verified.`;
-  if (typeof window.updateOverviewGrossStats === 'function' && !demo) window.updateOverviewGrossStats();
+  if (typeof window.updateOverviewGrossStats === 'function') window.updateOverviewGrossStats();
 }
 function transactionMarkup(rows, demo = false) {
   if (!rows.length) return '<div class="empty">No Open Play registrations have been submitted yet.</div>';

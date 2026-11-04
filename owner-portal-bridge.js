@@ -179,8 +179,21 @@ async function persistOwnerWorkspace(state) {
   const { data: currentCourts, error: currentCourtError } = await supabase.from('courts').select('id,name').eq('venue_id', v.id);
   if (currentCourtError) throw currentCourtError;
   if (imageRows.length) {
-    const { error } = await supabase.from('courts').upsert(imageRows, { onConflict: 'venue_id,name' });
+    const { data: savedImageRows, error } = await supabase
+      .from('courts')
+      .upsert(imageRows, { onConflict: 'venue_id,name' })
+      .select('id,name,image_url,image_fit,is_active');
     if (error) throw error;
+    // Verify each uploaded image URL was actually persisted before the owner
+    // portal reports success. This catches storage/RLS/schema issues clearly.
+    const savedByName = new Map((savedImageRows || []).map((row) => [row.name, row]));
+    for (const expected of imageRows) {
+      const saved = savedByName.get(expected.name);
+      if (!saved) throw new Error(`${expected.name} was not returned after saving. Please retry.`);
+      if (expected.image_url && saved.image_url !== expected.image_url) {
+        throw new Error(`${expected.name} image did not synchronize to the database. Please retry.`);
+      }
+    }
   }
   const activeNames = imageRows.map((row) => row.name);
   const inactiveIds = (currentCourts || []).filter((row) => !activeNames.includes(row.name)).map((row) => row.id);

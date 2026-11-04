@@ -24,7 +24,7 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 </head>
 <body>
 <header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly">COURT<span>LY</span></div></div></header>
-<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><h1 id="venueName">Pickle Paul</h1><p class="location">♧ <span id="venueAddress">Davao City, Philippines</span></p><p class="desc" id="venueDescription">Premium pickleball courts for casual games, training, and group play.</p><div class="amenities"><div class="amenity"><div class="amenity-icon">▦</div><div><strong>4 Courts</strong><small>Available</small></div></div><div class="amenity"><div class="amenity-icon">🅿</div><div><strong>Parking</strong><small>On-site</small></div></div><div class="amenity"><div class="amenity-icon">♟</div><div><strong>Restrooms</strong><small>Available</small></div></div><div class="amenity"><div class="amenity-icon">♧</div><div><strong>Night Play</strong><small>With lights</small></div></div></div></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1300&q=85" alt="Pickleball court at night"></div><div class="thumbs"><button class="thumb active" data-photo="0" aria-label="Show photo 1"><img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=350&q=75" alt="Court photo 1"></button><button class="thumb" data-photo="1" aria-label="Show photo 2"><img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=350&q=75" alt="Court photo 2"></button><button class="thumb" data-photo="2" aria-label="Show photo 3"><img src="https://images.unsplash.com/photo-1574629810360-7ef36b1a2b13?auto=format&fit=crop&w=350&q=75" alt="Court photo 3"></button><button class="thumb" data-photo="3" aria-label="Show photo 4"><img src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=350&q=75" alt="Court photo 4"><span class="more">+3 photos</span></button></div></div></div></section>
+<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><h1 id="venueName">Pickle Paul</h1><p class="location">♧ <span id="venueAddress">Davao City, Philippines</span></p><p class="desc" id="venueDescription">Premium pickleball courts for casual games, training, and group play.</p><div class="amenities"><div class="amenity"><div class="amenity-icon">▦</div><div><strong>4 Courts</strong><small>Available</small></div></div><div class="amenity"><div class="amenity-icon">🅿</div><div><strong>Parking</strong><small>On-site</small></div></div><div class="amenity"><div class="amenity-icon">♟</div><div><strong>Restrooms</strong><small>Available</small></div></div><div class="amenity"><div class="amenity-icon">♧</div><div><strong>Night Play</strong><small>With lights</small></div></div></div></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1300&q=85" alt="Pickleball court at night"></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div></div></div></section>
 <main><div class="steps"><div class="step active" data-step="1"><span class="step-num">1</span><span>Select Date &amp; Time</span></div><div class="step-line"></div><div class="step" data-step="2"><span class="step-num">2</span><span>Choose Court</span></div><div class="step-line"></div><div class="step" data-step="3"><span class="step-num">3</span><span>Review Booking</span></div><div class="step-line"></div><div class="step" data-step="4"><span class="step-num">4</span><span>Payment</span></div></div>
 <section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><div class="booking-layout"><section class="panel date-panel" id="booking-calendar"><h2 class="section-title"><span class="title-icon">▦</span>1. Select Date &amp; Time</h2><div class="calendar"><div class="month-row"><button id="prevMonth" aria-label="Previous month">‹</button><span id="monthLabel">October 2026</span><button id="nextMonth" aria-label="Next month">›</button></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days" id="daysGrid"></div></div><div class="slot-area"><div class="slots-head"><div><h3>Available Time Slots</h3><p id="selectedDateLabel">Sunday, October 25, 2026</p></div><div class="legend"><span><i class="dot"></i>Available</span><span><i class="dot booked"></i>Booked</span><span><i class="dot chosen"></i>Selected</span></div></div><div class="time-selectors"><label class="time-field" for="startTime">Start time<select id="startTime" aria-label="Booking start time"></select></label><label class="time-field" for="endTime">End time<select id="endTime" aria-label="Booking end time"></select></label></div><p class="range-hint">Choose your start and end times independently. Every hourly slot within your selected range will be highlighted. Price: ₱200 per court, per hour.</p><div class="slots" id="slots"></div></div></section>
 </div>
@@ -430,6 +430,51 @@ async function loadVenueEvents() {
   }
   renderOpenPlay();
 }
+function venueGalleryImages(){
+  const items=[];
+  if(venue?.cover_url)items.push({url:venue.cover_url,alt:`${venue.name} venue cover`,fit:'cover'});
+  for(const court of courts||[]){
+    if(court.image_url&&!items.some(item=>item.url===court.image_url))items.push({url:court.image_url,alt:`${court.name} photo`,fit:court.image_fit||'cover'});
+  }
+  if(!items.length&&venue?.logo_url)items.push({url:venue.logo_url,alt:`${venue.name} logo`,fit:'contain'});
+  return items;
+}
+function renderVenueGallery(){
+  const items=venueGalleryImages();
+  const main=items[0];
+  if(main)setImage('mainPhoto',main.url,main.alt);
+  else setImage('mainPhoto','',`${venue?.name||'Venue'} photo`);
+  const thumbs=$('venueGalleryThumbs');
+  if(!thumbs)return;
+  thumbs.innerHTML=items.slice(0,6).map((item,index)=>`<button class="thumb${index===0?' active':''}" type="button" data-gallery-index="${index}" aria-label="Show ${esc(item.alt)}"><img src="${esc(item.url)}" alt="${esc(item.alt)}" style="object-fit:${item.fit==='contain'?'contain':'cover'}"></button>`).join('');
+  thumbs.onclick=(event)=>{
+    const button=event.target.closest('[data-gallery-index]');
+    if(!button)return;
+    const selected=items[Number(button.dataset.galleryIndex)];
+    if(!selected)return;
+    setImage('mainPhoto',selected.url,selected.alt);
+    thumbs.querySelectorAll('.thumb').forEach((node)=>node.classList.toggle('active',node===button));
+  };
+}
+async function refreshPublicVenueMedia(){
+  if(!venue?.id||!supabase||document.visibilityState==='hidden')return;
+  try{
+    const [{data:venueRow,error:venueError},{data:courtRows,error:courtError}]=await Promise.all([
+      supabase.from('venues').select('id,name,logo_url,cover_url,is_published').eq('id',venue.id).eq('is_published',true).maybeSingle(),
+      supabase.from('courts').select('id,name,sport,hourly_rate,off_peak_rate,peak_rate,is_active,image_url,image_fit,display_order').eq('venue_id',venue.id).eq('is_active',true).order('display_order',{ascending:true})
+    ]);
+    if(venueError)throw venueError;
+    if(courtError)throw courtError;
+    if(!venueRow)return;
+    venue={...venue,...venueRow};
+    courts=courtRows||[];
+    if(selectedCourtId&&!courts.some((court)=>court.id===selectedCourtId))selectedCourtId=null;
+    renderVenueGallery();
+    renderCourts();
+    updateSummary();
+  }catch(error){console.warn('Courtly venue image refresh failed:',error);}
+}
+
 async function loadVenue() {
   if (!supabase) throw new Error(supabaseConfigError);
   if (!slug || slug === 'venue') throw new Error('A venue URL is required. Please open a valid venue booking link.');
@@ -450,7 +495,7 @@ async function loadVenue() {
   setText('venueName', venue.name);
   setText('venueAddress', venue.address || venue.city || 'Location to be added');
   setText('venueDescription', venue.description || '');
-  setImage('mainPhoto', venue.cover_url || venue.logo_url || courts.find((court) => court.image_url)?.image_url || '', `${venue.name} venue`);
+  renderVenueGallery();
   const amenity = document.querySelector('.amenities .amenity strong');
   if (amenity) amenity.textContent = `${courts.length} ${courts.length === 1 ? 'Court' : 'Courts'}`;
   const hint = document.querySelector('.range-hint');
@@ -502,5 +547,8 @@ $('confirmationClose')?.addEventListener('click', () => { $('confirmationModal')
   }
 })();
 
+window.addEventListener('focus', () => { refreshPublicVenueMedia(); });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible')refreshPublicVenueMedia(); });
 setInterval(() => { if (venue) loadAvailability().catch((error) => console.warn('Availability refresh failed:', error)); }, 30000);
+setInterval(() => { if (venue) refreshPublicVenueMedia(); }, 60000);
 </script></body></html>

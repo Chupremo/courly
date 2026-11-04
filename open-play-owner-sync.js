@@ -55,6 +55,7 @@ async function refreshOpenPlayRegistrationCounts() {
     document.getElementById('opEarnPaidCount').textContent = Number(row?.paid_count || 0).toLocaleString('en-PH');
     document.getElementById('opEarnPendingCount').textContent = Number(row?.awaiting_count || 0).toLocaleString('en-PH');
     revenue.textContent = fmt(row?.confirmed_revenue);
+    if (typeof window.updateOverviewGrossStats === 'function') window.updateOverviewGrossStats();
     if (note) note.textContent = `${venue.name}: confirmed Open Play payments only. Pending receipts are excluded until verified.`;
   } catch (error) {
     if (note) note.textContent = error.message || 'Could not load Open Play earnings. Check Supabase Auth, venue ownership, and the earnings SQL migration.';

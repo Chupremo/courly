@@ -106,11 +106,12 @@ async function loadOpenPlayTransactions() {
       }
       const pending = row.payment_status === 'awaiting_verification';
       const status = row.payment_status === 'confirmed' ? 'Confirmed' : row.payment_status === 'rejected' ? 'Rejected' : 'Awaiting verification';
+      const statusClass = row.payment_status === 'confirmed' ? 'confirmed' : row.payment_status === 'rejected' ? 'rejected' : 'pending';
       return `<article style="border:1px solid #e5e9f1;border-radius:12px;padding:14px;margin:10px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center">
        <div><strong>${esc(row.player_name)}</strong> <span class="muted small">· ${esc(row.registration_reference)}</span>
        <div class="muted small">${esc(row.event_title)} · ${esc(row.event_date)} · ${esc(row.event_time)}</div>
        <div class="muted small">${esc(row.player_email)}${row.player_phone?' · '+esc(row.player_phone):''}</div>
-       <div style="margin-top:6px">${money(row.fee)} · <strong>${status}</strong> · ${receipt||'Receipt unavailable'}</div></div>
+       <div style="margin-top:6px">${money(row.fee)} · <span class="pill ${statusClass}">${status}</span> · ${receipt||'Receipt unavailable'}</div></div>
        <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">${pending?`<button class="btn" data-op-review="confirmed" data-op-id="${esc(row.id)}">Verify payment</button><button class="btn" data-op-review="rejected" data-op-id="${esc(row.id)}" style="background:#fff;color:#b42318;border:1px solid #f0c8c8">Reject</button>`:''}</div>
       </article>`;
     }));

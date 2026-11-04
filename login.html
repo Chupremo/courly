@@ -20,10 +20,13 @@ button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;co
 <p id="intro">Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.</p>
 <form id="authForm">
 <div id="signupFields" class="hidden">
+<div class="field"><label for="ownerName">Owner / manager name</label><input id="ownerName" autocomplete="name" placeholder="Your full name"></div>
+<div class="field"><label for="ownerPhone">Contact number</label><input id="ownerPhone" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
 <div class="field"><label for="business">Venue / business name</label><input id="business" autocomplete="organization" placeholder="Your venue name"></div>
-<div class="field"><label for="address">Venue address</label><input id="address" autocomplete="street-address" placeholder="City, province"></div>
+<div class="field"><label for="address">Venue address</label><input id="address" autocomplete="street-address" placeholder="Street, barangay"></div>
+<div class="field"><label for="city">City / province</label><input id="city" autocomplete="address-level2" placeholder="Lipa City, Batangas"></div>
 <div class="field"><label for="sport">Main sport</label><input id="sport" placeholder="Pickleball, badminton, basketball..."></div>
-<div class="field"><label for="courtCount">Number of courts</label><input id="courtCount" type="number" min="1" max="50" value="1"></div>
+<div class="field"><label for="courtCount">Number of courts</label><select id="courtCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4–5">4–5</option><option value="6–10">6–10</option><option value="11+">11+</option></select></div>
 </div>
 <div class="field"><label for="email">Email address</label><input id="email" type="email" required autocomplete="username" placeholder="you@example.com"></div>
 <div class="field"><label for="password">Password</label><input id="password" type="password" required minlength="8" autocomplete="current-password" placeholder="At least 8 characters"></div>
@@ -34,21 +37,34 @@ button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;co
 <section class="demo-box" aria-label="Explore demo owner portals"><h2>Explore a demo owner portal</h2><p style="margin:4px 0 0;font-size:12px">No login required. Sample bookings and Open Play transactions are fictional and saved only in this browser.</p><div class="demo-grid"><a href="/owner-portal.html?demo=demo-batangas-racquet-club">Batangas Racquet Club</a><a href="/owner-portal.html?demo=demo-lipa-pickleball-hub">Lipa Pickleball Hub</a><a href="/owner-portal.html?demo=demo-santos-pickleball-club">Santos Pickleball Club</a><a href="/owner-portal.html?demo=demo-southside-sports-center">Southside Sports Center</a></div></section>
 </main>
 <script type="module">
-import { supabase } from './supabase-client.js';
+import { supabase, supabaseConfigError } from './supabase-client.js';
 const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton');
 let signup=false;
+const signupParams=new URLSearchParams(location.search);
+function prefillSignup(){
+ document.getElementById('ownerName').value=signupParams.get('name')||'';
+ document.getElementById('ownerPhone').value=signupParams.get('phone')||'';
+ document.getElementById('business').value=signupParams.get('business')||'';
+ document.getElementById('address').value=signupParams.get('address')||'';
+ document.getElementById('city').value=signupParams.get('city')||'';
+ document.getElementById('sport').value=signupParams.get('sport')||'Multi-sport';
+ document.getElementById('email').value=signupParams.get('email')||'';
+ if(signupParams.get('courtCount')) document.getElementById('courtCount').value=signupParams.get('courtCount');
+}
 function message(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
 function setMode(next){signup=next;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
-(async()=>{const {data:{session}}=await supabase.auth.getSession();if(session)location.replace('/owner-portal.html');})().catch(e=>message(e.message));
+if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
+(async()=>{if(!supabase){message(supabaseConfigError);button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session)location.replace('/owner-portal.html');})().catch(e=>message(e.message));
 form.addEventListener('submit',async e=>{
  e.preventDefault();button.disabled=true;button.textContent=signup?'Creating account...':'Signing in...';msg.className='msg';
  const email=document.getElementById('email').value.trim().toLowerCase(),password=document.getElementById('password').value;
  try{
+  if(!supabase)throw new Error(supabaseConfigError);
   if(signup){
    const business=document.getElementById('business').value.trim();
    if(!business)throw new Error('Please enter your venue or business name.');
-   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{business_name:business,business_address:document.getElementById('address').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
+   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{owner_name:document.getElementById('ownerName').value.trim(),owner_phone:document.getElementById('ownerPhone').value.trim(),business_name:business,business_address:document.getElementById('address').value.trim(),city:document.getElementById('city').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
    if(error)throw error;
    if(data.session){message('Account created. Opening your owner portal...','success');location.replace('/owner-portal.html');}
    else message('Account created. Please confirm your email, then return here to log in.','success');

@@ -12,6 +12,7 @@ const PORTAL_KEY = DEMO_VENUE_SLUGS.has(DEMO_REQUEST) ? `courtlyOwnerPortalDemoV
 let latestOpenPlayMetrics = { registrations: 0, confirmedCount: 0, pendingCount: 0, revenue: 0 };
 
 function portalState() {
+  if (!DEMO_VENUE_SLUGS.has(DEMO_REQUEST) && window.courtlyOwnerState) return window.courtlyOwnerState;
   try { return JSON.parse(localStorage.getItem(PORTAL_KEY) || '{}'); }
   catch { return {}; }
 }
@@ -219,12 +220,11 @@ async function renderTransactions() {
     const ownedVenue = (ownedVenues || [])[0];
     if (!ownedVenue?.slug) throw new Error('Your account is not linked to a venue. Please contact Courtly support.');
     syncPortalSlug(ownedVenue);
-    // Owner-wide list (covers every venue this owner has). Fall back to the older per-slug
-    // function only if the newer one has not been deployed yet.
-    let { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions');
-    if (error && /could not find the function|schema cache|does not exist/i.test(error.message || '')) {
-      ({ data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', { p_venue_slug: ownedVenue.slug }));
-    }
+    // Request the report for the authenticated owner's actual venue slug.
+    // The RPC independently verifies ownership; the slug is only a selector.
+    const { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', {
+      p_venue_slug: ownedVenue.slug
+    });
     if (error) throw error;
     const safeRows = rows || [];
     if (unifiedMode) { renderUnifiedRows(safeRows, false); updateMetrics(safeRows, ownedVenue.name, false); return; }
@@ -260,11 +260,10 @@ function syncPortalSlug(ownedVenue) {
     const current = stored.venue || {};
     if (current.slug === slug && current.slugLocked) return;
     stored.venue = { ...current, slug, slugLocked: true };
-    localStorage.setItem(PORTAL_KEY, JSON.stringify(stored));
-    if (typeof db !== 'undefined' && db && db.venue) {
-      db.venue.slug = slug;
-      db.venue.slugLocked = true;
-      if (typeof render === 'function') render();
+    if (DEMO_VENUE_SLUGS.has(DEMO_REQUEST)) localStorage.setItem(PORTAL_KEY, JSON.stringify(stored));
+    if (window.courtlyOwnerState?.venue) {
+      window.courtlyOwnerState.venue.slug = slug;
+      window.courtlyOwnerState.venue.slugLocked = true;
     }
   } catch (error) { console.warn('Could not sync the public booking slug:', error); }
 }
@@ -288,7 +287,7 @@ async function refreshOpenPlayRegistrationCounts() {
       const spots = document.querySelector(`[data-op-spots="${CSS.escape(id)}"]`);
       if (spots) spots.textContent = `${Math.max(0, limit - count)} spots available`;
     });
-    stored.openPlays = events; localStorage.setItem(PORTAL_KEY, JSON.stringify(stored));
+    stored.openPlays = events; if (DEMO_VENUE_SLUGS.has(DEMO_REQUEST)) localStorage.setItem(PORTAL_KEY, JSON.stringify(stored));
   } catch (error) { console.warn('Open Play registration counts could not be refreshed:', error.message || error); }
 }
 

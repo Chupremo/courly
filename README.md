@@ -1,59 +1,58 @@
-# Courtly — Vercel + Supabase starter
+# Courtly — Supabase-backed Vercel app
 
-This project is a Vite multi-page Courtly website prepared for Vercel. HTML pages are at the repository root so the file layout matches the GitHub upload workflow.
+Courtly is a Vite multi-page website for players and sports-venue owners. The production app uses Supabase Auth, Postgres, Row Level Security (RLS), RPC functions, and Supabase Storage.
 
-## Local development
+## Quick start
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-## Production build
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local` before using authenticated or database-backed pages. The publishable/anon key is intended for browser use when RLS and function permissions are correctly configured. **Never put a Supabase `service_role` secret in a Vite environment variable or browser code.**
+
+## Supabase setup
+
+Follow [`SUPABASE_COMPLETE_SETUP.md`](SUPABASE_COMPLETE_SETUP.md). For a new project, run the base `schema.sql` once and then run `supabase/001_complete_supabase_backend.sql`. For a project that already has the base Courtly tables, back up the database and run only the consolidated migration. Do not run the older individual Open Play, owner-registration, receipt-storage, or hourly-fee SQL patches after the consolidated migration. Those historical files are stored under `archive/legacy-migrations/`.
+
+The consolidated migration provides:
+
+- Owner venue creation/linking through Supabase Auth.
+- Shared venue profiles, court catalog, operating hours, payment settings and image storage.
+- Database-backed availability, atomic reservation conflict checks, temporary unpaid holds and receipt submission.
+- Owner-scoped reservation review and cancellation.
+- Open Play events, registrations, capacity checks, receipt review and earnings.
+- Private customer receipts, public venue media, and RLS / least-privilege access.
+- Customer booking lookups through random access tokens rather than public email-only lookup.
+- A consistent platform fee rule: PHP 10 per reserved court-hour or Open Play registration is deducted from the venue owner's payout and is not added to the player's checkout total.
+
+## Main routes
+
+- `/` — Courtly homepage
+- `/players.html` — public venue directory
+- `/v/:slug` — venue booking page
+- `/login.html` — owner signup and login
+- `/owner-portal.html` — authenticated owner dashboard
+- `/booking-confirmation.html` — customer booking confirmation
+- `/my-bookings.html` — bookings stored in the customer's current browser
+
+## Build and deployment
 
 ```bash
 npm run build
 ```
 
-Vercel configuration is in `vercel.json`. The route `/v/:slug` rewrites to `venue.html?slug=:slug`; `venue.html` currently demonstrates the public venue page with a sample `picklepaul` profile.
+Vercel uses `vercel.json` and expects `dist` as the output directory. Add the two public Supabase environment variables to the Vercel project for Production, Preview, and Development as appropriate, then redeploy.
 
-The included `supabase/schema.sql` is a database schema starter. The current frontend does not yet read/write shared Supabase data, and booking/payment flows are not production-ready. Do not accept real bookings or payments until authentication, shared database reads/writes, booking conflict checks, payment verification, and notification handling are implemented and tested.
+## Important launch notes
 
+- Applying SQL in this repository does not change a remote Supabase project by itself. The migration must be executed in the correct Supabase project.
+- The migration has not been tested against your live database; back up existing data and test in a staging Supabase project first.
+- Manual GCash/QR receipt review is not an automated payment gateway. Owners must verify each receipt before confirming a booking.
+- Email notification preferences are stored, but delivery requires a separately configured email provider / server-side function.
+- Run the post-migration test checklist in `SUPABASE_COMPLETE_SETUP.md` before accepting live bookings.
 
-## Owner registration and login prototype
+## Demo mode
 
-The homepage owner registration now collects a password, creates a browser-local demo account, and redirects to `owner-portal.html`. Returning owners can use `login.html` to return to their portal. This is only a front-end prototype: credentials and account details are stored in localStorage and are not secure or shared across devices. Before public production use, replace this demo flow with Supabase Auth, server-side profile creation, and row-level security. Never use real/reused passwords in the prototype.
-
-
-### Booking date and time behavior
-The public venue booking calendar initializes from the visitor browser current date/time, disables past calendar dates, disables hourly slots that have already started on the current day, allows remaining same-day slots, and refreshes the time availability display every 30 seconds. For production-grade live availability and double-booking prevention across devices, connect the booking flow to Supabase/server-side checks.
-
-## Audience-specific homepages (November 2026)
-- `/` is the new audience selector for players and business owners.
-- `/players.html` is the player information page. Players book through the venue's shared booking URL.
-- `/business.html` retains the existing business-owner website and registration content from the previous homepage.
-- `/login.html` and `/owner-portal.html` remain separate owner routes.
-- Vite is configured to build both new HTML entry points.
-
-Note: this package preserves the business registration implementation from the supplied ZIP. Review its signup flow before accepting live registrations; a working Supabase login page does not automatically make the signup form Supabase-backed.
-
-
-## Player directory prototype (November 2026)
-- `players.html` now reads every registered venue from `public.venues` and its related active records from `public.courts` using the configured Supabase project. It includes keyword, sport, and city filters and links each listing to its venue booking page.
-- In the current schema, a registered business is represented by a row in `public.venues`; there is no separate businesses table. The directory therefore lists all venues/businesses currently registered in that table.
-- If the database has no registered venues, the directory shows an empty state rather than inventing businesses.
-- Interface text is regular weight; semantic headings remain bold.
-- `login.html` is included in the Vite multi-page build input.
-
-
-## Demo player directory data
-
-To populate the player directory with clearly labelled fictional venues and courts, follow `DEMO_DATA_SETUP.md` and run `supabase/demo-seed.sql` once in the Supabase SQL Editor.
-
-
-## Booking confirmation and player history
-Successful receipt submissions now route to `/booking-confirmation.html`; customers can then open `/my-bookings.html`. See `BOOKING_CONFIRMATION_AND_MY_BOOKINGS.md` for current prototype limitations.
-
-
-## Open Play announcements
-See `OPEN_PLAY_SETUP.md` and `supabase/open-play-events.sql`. Current prototype sync is same-browser localStorage only.
+The four owner demo portals and the business-page preview use fictional browser-local data for demonstration only. The real owner portal and player booking flow use Supabase. Demo records are not real reservations or payment records.

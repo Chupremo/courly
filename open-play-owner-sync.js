@@ -208,11 +208,17 @@ async function renderTransactions() {
       return;
     }
     const user = authData.user;
-    const { data: ownedVenue, error: venueError } = await supabase.from('venues').select('slug,name').eq('owner_id', user.id).maybeSingle();
+    const { data: ownedVenues, error: venueError } = await supabase.from('venues').select('slug,name').eq('owner_id', user.id).order('created_at', { ascending: true });
     if (venueError) throw venueError;
+    const ownedVenue = (ownedVenues || [])[0];
     if (!ownedVenue?.slug) throw new Error('Your account is not linked to a venue. Please contact Courtly support.');
     syncPortalSlug(ownedVenue);
-    const { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', { p_venue_slug: ownedVenue.slug });
+    // Owner-wide list (covers every venue this owner has). Fall back to the older per-slug
+    // function only if the newer one has not been deployed yet.
+    let { data: rows, error } = await supabase.rpc('get_owner_open_play_transactions');
+    if (error && /could not find the function|schema cache|does not exist/i.test(error.message || '')) {
+      ({ data: rows, error } = await supabase.rpc('get_owner_open_play_transactions', { p_venue_slug: ownedVenue.slug }));
+    }
     if (error) throw error;
     const safeRows = rows || [];
     if (unifiedMode) { renderUnifiedRows(safeRows, false); updateMetrics(safeRows, ownedVenue.name, false); return; }
@@ -284,3 +290,8 @@ window.refreshOpenPlayRegistrationCounts = refreshOpenPlayRegistrationCounts;
 window.loadOpenPlayTransactions = renderTransactions;
 renderTransactions();
 setInterval(() => { refreshOpenPlayRegistrationCounts(); renderTransactions(); }, 30000);
+
+// Refresh as soon as the owner returns to the tab, instead of waiting for the 30-second timer.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { refreshOpenPlayRegistrationCounts(); renderTransactions(); }
+});

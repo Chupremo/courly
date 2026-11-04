@@ -1,6 +1,449 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a1530"><meta name="description" content="Courtly connects players with sports venues and helps court owners manage bookings."><title>Courtly — Book a Court or Grow Your Venue</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>
-:root{--navy:#0a1530;--blue:#1747ad;--red:#e0474b;--ink:#172342;--muted:#68758e;--paper:#f6f8fc}*{box-sizing:border-box}body{margin:0;font-family:Poppins,Arial,sans-serif;color:var(--ink);background:var(--paper)}a{text-decoration:none;color:inherit}.shell{max-width:1160px;margin:auto;padding:0 24px}.top{height:78px;background:white;border-bottom:1px solid #e9edf5;display:flex;align-items:center}.nav{display:flex;align-items:center;justify-content:space-between;width:100%}.logo{font-size:27px;font-weight:900;letter-spacing:-1.5px;color:#122b61}.logo span{color:var(--red)}.navlinks{display:flex;gap:24px;align-items:center;font-size:13px;font-weight:600;color:#53617b}.login{padding:11px 18px;border:1px solid #d8dfec;border-radius:24px;color:var(--blue)}.hero{background:radial-gradient(ellipse at 80% 10%,#23478c 0,transparent 35%),linear-gradient(120deg,#09142d,#102b60 70%,#0b1d43);color:white;padding:82px 0 86px}.hero-inner{text-align:center;max-width:820px;margin:auto}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:800;color:#e7d7a8}.hero h1{font-size:clamp(38px,6vw,68px);line-height:1.06;letter-spacing:-2.8px;margin:18px 0}.hero p{max-width:650px;margin:0 auto;color:#d2def4;line-height:1.8;font-size:15px}.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:900px;margin:44px auto 0;text-align:left}.choice{background:white;color:var(--ink);border-radius:20px;padding:28px;box-shadow:0 20px 60px #02081755;display:flex;flex-direction:column;min-height:270px;transition:.2s}.choice:hover{transform:translateY(-5px)}.choice-icon{width:48px;height:48px;border-radius:14px;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-size:24px}.choice h2{font-size:23px;margin:19px 0 7px}.choice p{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 22px}.cta{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;background:var(--blue);color:white;border-radius:11px;padding:13px 18px;font-size:13px;font-weight:800}.choice.owner .choice-icon{background:#fff0f0;color:var(--red)}.choice.owner .cta{background:var(--red)}.trust{padding:54px 0;text-align:center}.trust h2{font-size:25px;margin:0 0 10px}.trust p{font-size:13px;color:var(--muted);margin:0 auto;max-width:650px;line-height:1.8}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px;text-align:left}.step{background:white;border:1px solid #e5eaf3;border-radius:14px;padding:20px}.step b{font-size:13px}.step p{font-size:12px;margin-top:8px}.footer{background:var(--navy);color:#bdc9df;padding:25px 0;font-size:11px}.footer .nav{flex-wrap:wrap;gap:12px}.footer a{color:white}@media(max-width:650px){.top{height:68px}.navlinks a:not(.login){display:none}.hero{padding:60px 0}.choice-grid,.steps{grid-template-columns:1fr}.choice{min-height:240px}.hero h1{letter-spacing:-1.8px}.shell{padding:0 18px}}
-</style>
-<style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
-</head><body><header class="top"><div class="shell nav"><a class="logo" href="/">COURT<span>LY</span></a><nav class="navlinks"><a href="/players.html">For Players</a><a href="/business.html">For Businesses</a><a class="login" href="/login.html">Owner Login</a></nav></div></header><main><section class="hero"><div class="shell hero-inner"><div class="eyebrow">ONE PLATFORM. TWO WAYS TO PLAY.</div><h1>Find your court.<br>Grow your game.</h1><p>Courtly makes sports court bookings easier for players and venue management simpler for business owners.</p><div class="choice-grid"><article class="choice"><div class="choice-icon">🏸</div><h2>I'm a Player</h2><p>Discover sports venues, explore courts, check availability and book your next game.</p><a class="cta" href="/players.html">Find a Court&nbsp; →</a></article><article class="choice owner"><div class="choice-icon">🏢</div><h2>I'm a Business Owner</h2><p>Bring your venue online, manage reservations, set your rates and keep track of bookings.</p><a class="cta" href="/business.html">Grow My Venue&nbsp; →</a></article></div></div></section><section class="trust"><div class="shell"><h2>Everything starts with a better booking experience.</h2><p>Whether you're looking for a place to play or managing a sports facility, Courtly gives you a clearer way to connect.</p><div class="steps"><article class="step"><b>For players</b><p>Find venues and choose a court and time that work for you.</p></article><article class="step"><b>For venue owners</b><p>Showcase your facility and organize bookings in one place.</p></article><article class="step"><b>Built for local sports</b><p>Designed around the way Filipino players and sports businesses book courts.</p></article></div></div></section></main><footer class="footer"><div class="shell nav"><span>© 2026 COURTLY. Book. Play. Grow.</span><span><a href="/players.html">Players</a>　·　<a href="/business.html">Business Owners</a>　·　<a href="/login.html">Owner Login</a></span></div></footer></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1733">
+  <meta name="description" content="Courtly connects players with sports venues and gives court owners one place to manage bookings, schedules, Open Play and venue operations.">
+  <meta property="og:title" content="Courtly — Every Court. Every Booking. One Platform.">
+  <meta property="og:description" content="Find courts, book your next game and manage your sports venue with Courtly.">
+  <meta property="og:type" content="website">
+  <title>Courtly — Every Court. Every Booking. One Platform.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0b1733;--navy-2:#13264f;--blue:#2454c6;--blue-2:#3973ed;--red:#df454d;
+      --ink:#15213b;--muted:#68758e;--muted-2:#8d98ad;--line:#e6eaf1;--paper:#f5f7fb;
+      --white:#fff;--green:#159b70;--shadow:0 24px 70px rgba(11,23,51,.12);--radius:22px;
+      --max:1200px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:92px}
+    body{margin:0;background:var(--white);color:var(--ink);font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    body.nav-open{overflow:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(var(--max),calc(100% - 48px));margin-inline:auto}
+    .section{padding:104px 0}
+    .section-soft{background:var(--paper)}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--blue);font-size:11px;line-height:1.2;font-weight:800;letter-spacing:1.7px;text-transform:uppercase}
+    .eyebrow:before{content:"";width:20px;height:2px;border-radius:5px;background:var(--red)}
+    h1,h2,h3,h4{font-family:Poppins,Inter,sans-serif;letter-spacing:-.045em}
+    .section-heading{max-width:730px;margin:0 auto 48px;text-align:center}
+    .section-heading h2{font-size:clamp(31px,4.1vw,48px);line-height:1.12;margin:15px 0 14px;color:var(--navy);font-weight:800}
+    .section-heading p{max-width:650px;margin:0 auto;color:var(--muted);font-size:15px;line-height:1.8}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;border:1px solid transparent;border-radius:12px;font-size:13px;font-weight:800;transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--blue);color:#fff;box-shadow:0 10px 24px rgba(36,84,198,.22)}
+    .btn-primary:hover{background:#1d46aa;box-shadow:0 14px 28px rgba(36,84,198,.26)}
+    .btn-light{background:#fff;color:var(--navy);border-color:#dfe5ef}
+    .btn-light:hover{background:#f6f8fc}
+    .btn-white{background:#fff;color:var(--navy)}
+    .btn-ghost{background:transparent;color:var(--navy);border-color:var(--line)}
+    .btn-arrow{font-size:17px;line-height:0}
+    .site-header{height:78px;position:sticky;top:0;z-index:50;background:rgba(255,255,255,.91);border-bottom:1px solid rgba(230,234,241,.85);backdrop-filter:blur(18px)}
+    .nav-wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:28px}
+    .brand{display:inline-flex;align-items:center;gap:9px;flex-shrink:0}
+    .brand-mark{width:35px;height:35px;display:grid;place-items:center;background:var(--navy);color:#fff;border-radius:11px;font-family:Poppins,sans-serif;font-size:19px;font-weight:900;letter-spacing:-2px;position:relative;overflow:hidden}
+    .brand-mark:after{content:"";position:absolute;width:22px;height:4px;bottom:6px;right:-4px;background:var(--red);transform:rotate(-38deg);border-radius:6px}
+    .brand-word{font-family:Poppins,sans-serif;font-weight:900;letter-spacing:-1.2px;font-size:23px;color:var(--navy)}
+    .brand-word span{color:var(--red)}
+    .nav-links{display:flex;align-items:center;gap:29px;margin-left:auto}
+    .nav-links a{font-size:12px;font-weight:700;color:#56627a;transition:color .2s}
+    .nav-links a:hover{color:var(--blue)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+    .nav-login{font-size:12px;font-weight:800;color:var(--navy);padding:12px 13px}
+    .nav-actions .btn{min-height:42px;padding-inline:16px}
+    .menu-toggle{display:none;width:43px;height:43px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--navy);font-size:20px}
+
+    /* Hero */
+    .hero{position:relative;overflow:hidden;background:linear-gradient(120deg,#f7f9fd 0%,#eef3fc 55%,#f7f8fc 100%);padding:83px 0 74px}
+    .hero:before{content:"";position:absolute;width:650px;height:650px;right:-180px;top:-285px;border-radius:50%;background:radial-gradient(circle,rgba(48,93,196,.16),rgba(48,93,196,0) 68%)}
+    .hero:after{content:"";position:absolute;width:420px;height:420px;left:-260px;bottom:-280px;border-radius:50%;background:radial-gradient(circle,rgba(223,69,77,.1),rgba(223,69,77,0) 70%)}
+    .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.91fr) minmax(520px,1.09fr);gap:56px;align-items:center}
+    .hero-copy{max-width:525px}
+    .hero-kicker{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;background:#fff;border:1px solid #e4eaf5;border-radius:30px;color:#465572;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;box-shadow:0 5px 18px rgba(18,39,82,.04)}
+    .kicker-dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px #df454d1c}
+    .hero h1{font-size:clamp(43px,5.5vw,68px);line-height:1.045;margin:24px 0 19px;color:var(--navy);font-weight:800;letter-spacing:-.065em}
+    .hero h1 .accent{color:var(--blue)}
+    .hero-copy>p{max-width:475px;color:#62708a;font-size:16px;line-height:1.85;margin:0}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:30px}
+    .hero-note{display:flex;align-items:center;gap:9px;margin-top:23px;color:#8792a6;font-size:11px;font-weight:600}
+    .hero-note svg{color:var(--green);flex-shrink:0}
+    .hero-visual{position:relative;min-width:0}
+    .visual-glow{position:absolute;inset:8% 2% 3%;background:linear-gradient(135deg,#244caa,#597fe0);filter:blur(62px);opacity:.18;border-radius:50%}
+    .app-window{position:relative;background:#fff;border:1px solid #e2e8f1;border-radius:19px;box-shadow:0 34px 90px rgba(16,34,72,.17);overflow:hidden;transform:perspective(1300px) rotateY(-5deg) rotateX(2deg)}
+    .window-top{height:47px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #edf0f5;background:#fff}
+    .window-dots{display:flex;gap:5px}.window-dots i{width:7px;height:7px;border-radius:50%;background:#d8deea}.window-title{font-size:10px;font-weight:800;color:#758198;letter-spacing:.4px}.window-user{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#e9efff;color:var(--blue);font-size:9px;font-weight:900}
+    .app-body{display:grid;grid-template-columns:130px 1fr;min-height:367px;background:#f7f9fc}
+    .app-side{padding:16px 10px;background:#102146;color:#aebbd4}
+    .app-side-logo{font-family:Poppins,sans-serif;color:#fff;font-size:13px;font-weight:900;letter-spacing:-.5px;margin:0 0 19px 8px}.app-side-logo span{color:#ff6970}
+    .side-item{display:flex;align-items:center;gap:8px;padding:9px 9px;border-radius:7px;font-size:8px;font-weight:700;margin:3px 0;color:#aebbd4}.side-item.active{background:#263e70;color:#fff}.side-ico{width:13px;text-align:center;font-size:11px}
+    .app-main{padding:18px 18px 16px;min-width:0}
+    .app-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.app-heading strong{display:block;font-family:Poppins,sans-serif;font-size:15px;color:#172544}.app-heading small{font-size:8px;color:#8994a7}.app-date{border:1px solid #e0e6ef;border-radius:6px;background:#fff;padding:7px 9px;color:#64718a;font-size:8px;font-weight:700}
+    .metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px}.metric{padding:10px 11px;background:#fff;border:1px solid #e8edf4;border-radius:8px}.metric label{display:block;color:#8994a7;font-size:7px;font-weight:700;margin-bottom:6px}.metric strong{font-family:Poppins,sans-serif;color:#142344;font-size:17px;letter-spacing:-.6px}.metric em{font-style:normal;font-size:7px;color:var(--green);font-weight:800;margin-left:3px}
+    .schedule-card{background:#fff;border:1px solid #e8edf4;border-radius:9px;padding:12px 11px}.schedule-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.schedule-top strong{font-size:9px;color:#253452}.schedule-top span{font-size:7px;color:#8994a7}.schedule-grid{display:grid;grid-template-columns:47px repeat(4,1fr);gap:5px;align-items:stretch}.schedule-grid .time{font-size:7px;color:#9aa4b5;padding-top:6px}.court-head{font-size:7px;color:#69768d;font-weight:800;text-align:center;padding:5px 1px;background:#f5f7fb;border-radius:4px}.slot{height:43px;border-radius:5px;padding:5px 4px;font-size:6px;line-height:1.4;color:#3158ad;background:#eaf0ff;border-left:2px solid #4775e0;overflow:hidden}.slot.green{color:#13744f;background:#e8f6ef;border-color:#36ab7c}.slot.red{color:#a63a45;background:#fff0f0;border-color:#e36a70}.slot.blank{background:#f8f9fc;border:1px dashed #edf0f5}
+    .floating-status{position:absolute;right:-23px;bottom:25px;padding:13px 16px;min-width:164px;background:#fff;border:1px solid #e7ebf2;border-radius:12px;box-shadow:0 16px 38px rgba(13,31,68,.13);display:flex;align-items:center;gap:10px}.status-icon{width:32px;height:32px;border-radius:9px;background:#e7f7ef;color:#159b70;display:grid;place-items:center;font-size:15px}.floating-status strong{display:block;color:#172544;font-size:10px}.floating-status small{display:block;color:#8994a7;font-size:8px;margin-top:3px}
+    .hero-proof{position:relative;z-index:2;margin-top:68px;border-top:1px solid #e1e7f0;padding-top:22px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.hero-proof-label{font-size:9px;color:#8a95a8;font-weight:800;text-transform:uppercase;letter-spacing:1.1px}.proof-items{display:flex;gap:26px;flex-wrap:wrap}.proof-item{display:flex;align-items:center;gap:8px;color:#50607d;font-size:10px;font-weight:800}.proof-item span{width:23px;height:23px;display:grid;place-items:center;background:#fff;border:1px solid #e4eaf3;border-radius:7px;color:var(--blue);font-size:11px}
+
+    /* Audience cards */
+    .audience-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .audience-card{position:relative;overflow:hidden;min-height:310px;padding:32px;border-radius:20px;border:1px solid #e7ebf2;background:#fff;box-shadow:0 12px 36px rgba(16,34,72,.045)}
+    .audience-card.owner{background:linear-gradient(135deg,#101e3d,#172d59);border-color:#172d59;color:#fff}
+    .audience-card:after{content:"";position:absolute;width:220px;height:220px;border:1px solid #eaf0fa;border-radius:50%;right:-80px;bottom:-115px;box-shadow:0 0 0 24px #f9fbfe,0 0 0 25px #eaf0fa,0 0 0 49px #fbfcfe,0 0 0 50px #eaf0fa;opacity:.7}
+    .audience-card.owner:after{border-color:#ffffff12;box-shadow:0 0 0 24px #ffffff08,0 0 0 25px #ffffff12,0 0 0 49px #ffffff06,0 0 0 50px #ffffff12}
+    .audience-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between}
+    .audience-icon{width:48px;height:48px;border-radius:14px;background:#edf2ff;display:grid;place-items:center;color:var(--blue)}
+    .owner .audience-icon{background:#ffffff15;color:#fff}
+    .audience-label{font-size:9px;color:#7c8aa2;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.owner .audience-label{color:#aebbd4}
+    .audience-card h3{position:relative;z-index:1;font-size:27px;line-height:1.2;margin:25px 0 11px;color:var(--navy)}.owner h3{color:#fff}
+    .audience-card p{position:relative;z-index:1;max-width:420px;margin:0;color:var(--muted);font-size:13px;line-height:1.8}.owner p{color:#c3cde0}
+    .audience-link{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;margin-top:25px;color:var(--blue);font-size:12px;font-weight:800}.owner .audience-link{color:#fff}.audience-link span{font-size:17px;transition:transform .2s}.audience-link:hover span{transform:translateX(4px)}
+
+    /* Product preview */
+    .product-section{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+    .product-section:before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;right:-260px;top:-260px;background:radial-gradient(circle,#244e9c66,transparent 70%)}
+    .product-layout{position:relative;z-index:1;display:grid;grid-template-columns:.72fr 1.28fr;gap:60px;align-items:center}
+    .product-copy .eyebrow{color:#9db7f8}.product-copy h2{font-size:clamp(32px,4vw,47px);line-height:1.1;margin:17px 0;color:#fff}.product-copy>p{font-size:14px;line-height:1.85;color:#b7c4dc;margin:0}
+    .product-points{display:grid;gap:17px;margin:30px 0}.product-point{display:flex;gap:12px;align-items:flex-start}.check{flex:0 0 23px;height:23px;display:grid;place-items:center;border-radius:7px;background:#ffffff13;color:#8eb1ff;font-size:12px;font-weight:900}.product-point strong{display:block;font-size:12px;color:#fff;margin-bottom:4px}.product-point small{display:block;color:#9fadc7;font-size:10px;line-height:1.6}
+    .product-copy .btn{background:#fff;color:var(--navy)}
+    .dashboard-preview{min-width:0;padding:14px;background:#dfe6f2;border:1px solid #ffffff22;border-radius:18px;box-shadow:0 30px 80px #02081766}
+    .dashboard-inner{background:#fff;border-radius:11px;overflow:hidden;color:var(--ink)}
+    .dashboard-bar{height:46px;border-bottom:1px solid #e8edf4;display:flex;align-items:center;justify-content:space-between;padding:0 16px}.dashboard-brand{font-family:Poppins,sans-serif;font-size:12px;font-weight:900;color:var(--navy)}.dashboard-brand span{color:var(--red)}.dashboard-nav{display:flex;gap:15px;color:#8793a8;font-size:8px;font-weight:700}.dashboard-admin{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#eaf0ff;color:var(--blue);font-size:8px;font-weight:900}
+    .dashboard-content{display:grid;grid-template-columns:125px 1fr;min-height:330px}.dashboard-menu{background:#f7f9fc;border-right:1px solid #e8edf4;padding:16px 10px}.menu-caption{font-size:7px;font-weight:800;color:#a2adbd;text-transform:uppercase;letter-spacing:.8px;margin:4px 8px 10px}.dashboard-menu a{display:flex;align-items:center;gap:7px;padding:8px;border-radius:6px;color:#728098;font-size:8px;font-weight:700;margin:3px 0}.dashboard-menu a.active{background:#eaf0ff;color:#214fbe}.dashboard-panel{padding:17px;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.panel-head h3{font-size:14px;color:#152443;margin:0}.panel-head small{font-size:8px;color:#8e99aa}.panel-controls{display:flex;gap:6px}.panel-controls span{padding:6px 8px;border:1px solid #e5eaf1;border-radius:5px;color:#8290a7;font-size:7px;font-weight:800}.panel-controls span.selected{background:#edf2ff;color:#2454c6;border-color:#d9e4ff}
+    .dashboard-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.kpi{border:1px solid #e8edf4;border-radius:7px;padding:9px}.kpi small{display:block;color:#929db0;font-size:7px;font-weight:700}.kpi b{display:block;margin-top:5px;color:#142344;font-family:Poppins,sans-serif;font-size:17px}.kpi em{font-style:normal;color:#159b70;font-size:7px;margin-left:3px}
+    .schedule-preview{border:1px solid #e8edf4;border-radius:7px;padding:11px}.schedule-preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.schedule-preview-head b{font-size:8px;color:#263654}.schedule-preview-head span{font-size:7px;color:#8f9aad}.week-grid{display:grid;grid-template-columns:42px repeat(4,minmax(0,1fr));gap:4px}.week-grid div{font-size:7px;min-width:0}.week-grid .day{background:#f4f6fa;color:#64718a;font-weight:800;text-align:center;padding:6px 2px;border-radius:4px}.week-grid .hour{color:#a0aabc;padding-top:7px}.event{height:37px;padding:5px 4px;border-radius:4px;font-size:6px;line-height:1.3;overflow:hidden;background:#eaf0ff;color:#3158ad;border-left:2px solid #4d78db}.event.open{background:#e8f7f0;color:#15754f;border-color:#35ac7b}.event.training{background:#fff1e5;color:#9a5b21;border-color:#e9a45e}.event.empty{background:#fafbfd;border:1px dashed #e9edf3}
+    .preview-foot{display:flex;gap:12px;margin-top:10px;color:#9aa5b6;font-size:7px}.preview-foot i{width:6px;height:6px;display:inline-block;border-radius:2px;background:#4d78db;margin-right:4px}.preview-foot .g i{background:#35ac7b}.preview-foot .o i{background:#e9a45e}
+
+    /* Feature blocks */
+    .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+    .feature-card{padding:25px 23px;border:1px solid #e7ebf2;border-radius:15px;background:#fff;transition:transform .2s,box-shadow .2s,border .2s}
+    .feature-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(16,34,72,.08);border-color:#d9e2f5}
+    .feature-icon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:#edf2ff;color:var(--blue);margin-bottom:19px}
+    .feature-card:nth-child(3n+2) .feature-icon{background:#fff0f0;color:var(--red)}
+    .feature-card h3{font-size:16px;color:var(--navy);letter-spacing:-.025em;margin:0 0 8px}
+    .feature-card p{font-size:11px;line-height:1.8;color:var(--muted);margin:0}
+
+    /* Player flow */
+    .player-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:65px;align-items:center}
+    .player-copy h2{font-size:clamp(31px,4vw,46px);line-height:1.12;color:var(--navy);margin:16px 0}
+    .player-copy>p{font-size:14px;line-height:1.85;color:var(--muted);margin:0}
+    .flow-list{display:grid;gap:17px;margin:27px 0 29px}.flow-item{display:flex;gap:13px;align-items:flex-start}.flow-number{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:9px;background:#eaf0ff;color:var(--blue);font-family:Poppins,sans-serif;font-size:11px;font-weight:900}.flow-item strong{display:block;color:var(--navy);font-size:12px;margin:2px 0 4px}.flow-item small{display:block;color:var(--muted);font-size:10px;line-height:1.6}
+    .venue-browser{background:#fff;border:1px solid #e5eaf2;border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+    .browser-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.browser-top strong{font-family:Poppins,sans-serif;font-size:12px;color:var(--navy)}.browser-top span{font-size:8px;color:#8d98aa}
+    .search-demo{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e5eaf1;border-radius:8px;color:#9aa4b4;font-size:9px;margin-bottom:12px}.search-demo b{color:#5b6b88;font-weight:700}
+    .venue-row{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center;padding:11px 0;border-top:1px solid #eef1f5}.venue-thumb{height:67px;border-radius:8px;background:linear-gradient(140deg,#d5e6fa,#78a3c7);position:relative;overflow:hidden}.venue-thumb:before,.venue-thumb:after{content:"";position:absolute;border:2px solid #ffffffbd;inset:11px 15px;transform:skewY(-12deg)}.venue-thumb:after{inset:20px 29px;border-color:#ffffff90}.venue-thumb.badminton{background:linear-gradient(135deg,#c2dbb9,#538a69)}.venue-thumb.basketball{background:linear-gradient(135deg,#f1c18f,#b46e42)}
+    .venue-info b{display:block;color:#1a2948;font-size:10px;margin-bottom:5px}.venue-info span{display:block;color:#8995a8;font-size:8px;margin-top:3px}.venue-info .rating{color:#bc8221}.venue-price{text-align:right}.venue-price b{display:block;color:var(--navy);font-family:Poppins,sans-serif;font-size:11px}.venue-price small{font-size:7px;color:#8c97a9}.browser-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #eef1f5}.browser-bottom small{font-size:8px;color:#9aa4b4}.browser-bottom a{font-size:9px;color:var(--blue);font-weight:800}
+
+    /* Sports */
+    .sports-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .sport-tile{padding:19px 14px;border:1px solid #e7ebf2;border-radius:13px;background:#fff;text-align:center}
+    .sport-symbol{width:38px;height:38px;margin:0 auto 10px;display:grid;place-items:center;border-radius:12px;background:#f0f4fc;color:var(--blue);font-size:18px}
+    .sport-tile b{display:block;color:#273653;font-size:10px}
+    .sports-note{text-align:center;font-size:10px;color:#8b96a9;margin-top:17px}
+
+    /* Onboarding + CTA */
+    .onboarding-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:how}
+    .onboarding-card{position:relative;background:#fff;border:1px solid #e6ebf2;border-radius:14px;padding:23px 19px;counter-increment:how}
+    .onboarding-card:before{content:"0" counter(how);display:block;color:var(--blue);font-family:Poppins,sans-serif;font-size:20px;font-weight:900;letter-spacing:-1px;margin-bottom:22px}
+    .onboarding-card h3{font-size:14px;color:var(--navy);margin:0 0 8px}.onboarding-card p{font-size:10px;color:var(--muted);line-height:1.75;margin:0}
+    .cta-band{padding:0 0 100px;background:var(--paper)}
+    .cta-panel{position:relative;overflow:hidden;padding:58px 60px;border-radius:22px;background:linear-gradient(115deg,#0b1733,#18356e);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:35px}
+    .cta-panel:after{content:"";position:absolute;width:370px;height:370px;right:15%;top:-250px;border-radius:50%;border:1px solid #ffffff18;box-shadow:0 0 0 30px #ffffff08,0 0 0 60px #ffffff06,0 0 0 90px #ffffff04}
+    .cta-panel-copy{position:relative;z-index:1;max-width:600px}.cta-panel .eyebrow{color:#a9c0fa}.cta-panel h2{font-size:clamp(29px,4vw,43px);line-height:1.12;margin:14px 0 10px}.cta-panel p{font-size:12px;line-height:1.8;color:#c0cce1;margin:0;max-width:520px}.cta-actions{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0}.cta-actions .btn-light{background:transparent;border-color:#ffffff4a;color:#fff}
+    .site-footer{background:#071126;color:#afbbd0;padding:58px 0 25px}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:42px;padding-bottom:42px}.footer-brand .brand-word{color:#fff}.footer-brand p{max-width:270px;color:#8f9db6;font-size:10px;line-height:1.8;margin:16px 0 0}.footer-col h4{font-family:Inter,sans-serif;font-size:10px;color:#fff;font-weight:800;margin:5px 0 16px;letter-spacing:.4px}.footer-col a{display:block;color:#97a5be;font-size:10px;margin:11px 0;transition:color .2s}.footer-col a:hover{color:#fff}.footer-bottom{border-top:1px solid #ffffff18;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:9px;color:#8290a8}.footer-bottom-links{display:flex;gap:17px}.footer-bottom a:hover{color:#fff}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}.reveal.visible{opacity:1;transform:none}
+    @media(max-width:1050px){.hero-grid{grid-template-columns:1fr;gap:48px}.hero-copy{max-width:720px;text-align:center;margin:auto}.hero-copy>p{margin-inline:auto}.hero-actions,.hero-note{justify-content:center}.hero-visual{width:min(760px,100%);margin:auto}.product-layout{grid-template-columns:1fr;gap:40px}.product-copy{max-width:680px}.player-layout{gap:35px}.floating-status{right:-10px}.nav-links{gap:18px}}
+    @media(max-width:780px){.section{padding:76px 0}.nav-links{display:none;position:fixed;inset:78px 0 auto;background:#fff;padding:16px 24px 23px;border-bottom:1px solid var(--line);box-shadow:0 20px 28px #0b17331a;flex-direction:column;align-items:stretch;gap:0}.nav-links.open{display:flex}.nav-links a{padding:13px 0;border-bottom:1px solid #f0f2f6}.nav-actions{margin-left:auto}.nav-actions .nav-login{display:none}.menu-toggle{display:inline-grid;place-items:center}.nav-wrap{gap:12px}.hero{padding:65px 0 50px}.hero-grid{gap:40px}.hero h1{font-size:clamp(40px,9vw,59px)}.hero-proof{margin-top:48px;justify-content:center;text-align:center}.proof-items{justify-content:center;gap:12px 18px}.audience-grid{grid-template-columns:1fr}.audience-card{min-height:270px}.player-layout{grid-template-columns:1fr;gap:36px}.feature-grid{grid-template-columns:repeat(2,1fr)}.onboarding-grid{grid-template-columns:repeat(2,1fr)}.sports-strip{grid-template-columns:repeat(3,1fr)}.cta-panel{padding:42px 30px;display:block}.cta-actions{margin-top:24px}.footer-grid{grid-template-columns:1.4fr 1fr;gap:30px}.dashboard-content{grid-template-columns:105px 1fr}}
+    @media(max-width:520px){.container{width:min(var(--max),calc(100% - 34px))}.site-header{height:68px}.nav-links{inset:68px 0 auto}.brand-mark{width:32px;height:32px}.brand-word{font-size:21px}.nav-actions>.btn{display:none}.hero{padding:56px 0 42px}.hero h1{font-size:41px;letter-spacing:-2.5px}.hero-copy>p{font-size:14px}.hero-actions{display:grid;grid-template-columns:1fr}.hero-actions .btn{width:100%}.hero-visual{width:calc(100% + 8px);margin-left:-4px}.app-window{transform:none}.app-body{grid-template-columns:91px 1fr;min-height:300px}.app-side{padding:12px 6px}.side-item{font-size:7px;padding:8px 5px}.app-main{padding:12px 9px}.app-heading strong{font-size:12px}.app-heading small{font-size:7px}.metric{padding:7px}.metric strong{font-size:13px}.metric label{font-size:6px}.schedule-grid{grid-template-columns:34px repeat(4,1fr);gap:3px}.schedule-grid .time,.court-head{font-size:6px}.slot{height:35px;font-size:5px;padding:4px 2px}.floating-status{right:2px;bottom:-20px;min-width:144px;padding:10px}.floating-status strong{font-size:9px}.hero-proof{margin-top:54px}.proof-item{font-size:9px}.section-heading{margin-bottom:32px}.section-heading h2{font-size:30px}.section-heading p{font-size:13px}.audience-card{padding:25px;min-height:260px}.audience-card h3{font-size:23px}.product-layout{gap:30px}.product-copy h2,.player-copy h2{font-size:32px}.dashboard-preview{padding:7px}.dashboard-content{grid-template-columns:82px 1fr;min-height:290px}.dashboard-menu{padding:12px 6px}.dashboard-menu a{font-size:7px;padding:7px 5px}.dashboard-panel{padding:11px 8px}.panel-head h3{font-size:12px}.panel-controls span{font-size:6px;padding:5px}.dashboard-kpis{gap:4px}.kpi{padding:6px}.kpi b{font-size:13px}.week-grid{grid-template-columns:32px repeat(4,minmax(0,1fr));gap:3px}.event{height:32px;font-size:5px;padding:4px 2px}.feature-grid{grid-template-columns:1fr}.feature-card{padding:21px}.venue-browser{padding:11px}.venue-row{grid-template-columns:70px 1fr auto;gap:8px}.venue-thumb{height:57px}.venue-info b{font-size:9px}.venue-info span{font-size:7px}.venue-price b{font-size:9px}.sports-strip{grid-template-columns:repeat(2,1fr)}.onboarding-grid{grid-template-columns:1fr 1fr;gap:9px}.onboarding-card{padding:18px 14px}.onboarding-card:before{margin-bottom:14px}.cta-panel{padding:34px 23px}.cta-panel h2{font-size:30px}.cta-actions{display:grid}.cta-actions .btn{width:100%}.footer-grid{grid-template-columns:1fr 1fr;gap:26px 17px}.footer-brand{grid-column:1/-1}.footer-bottom{align-items:flex-start;flex-direction:column}.footer-bottom-links{flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}*,*:before,*:after{transition:none!important;animation:none!important}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Courtly home">
+        <span class="brand-mark">C</span><span class="brand-word">COURT<span>LY</span></span>
+      </a>
+      <nav class="nav-links" id="main-nav" aria-label="Main navigation">
+        <a href="#players">For Players</a>
+        <a href="#venues">For Venues</a>
+        <a href="#platform">Platform</a>
+        <a href="#how-it-works">How It Works</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="nav-login" href="/login.html">Owner login</a>
+        <a class="btn btn-primary" href="/business.html">List your venue <span class="btn-arrow">↗</span></a>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-nav" id="menu-toggle">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="hero-kicker"><span class="kicker-dot"></span> The sports booking platform for the Philippines</div>
+            <h1>Every court.<br>Every booking.<br><span class="accent">One platform.</span></h1>
+            <p>Find a place to play, book your next game, or run your sports venue with less back-and-forth. Courtly brings players and court operators together.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="/players.html">Find a court <span class="btn-arrow">→</span></a>
+              <a class="btn btn-light" href="/business.html">Manage your venue <span class="btn-arrow">↗</span></a>
+            </div>
+            <div class="hero-note">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Built for players, clubs and independent sports venues.
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="Illustrative Courtly venue management dashboard preview">
+            <div class="visual-glow"></div>
+            <div class="app-window">
+              <div class="window-top"><div class="window-dots"><i></i><i></i><i></i></div><div class="window-title">COURTLY · VENUE OVERVIEW</div><div class="window-user">BM</div></div>
+              <div class="app-body">
+                <aside class="app-side">
+                  <div class="app-side-logo">COURT<span>LY</span></div>
+                  <div class="side-item active"><span class="side-ico">▦</span> Overview</div>
+                  <div class="side-item"><span class="side-ico">▦</span> Schedule</div>
+                  <div class="side-item"><span class="side-ico">▤</span> Reservations</div>
+                  <div class="side-item"><span class="side-ico">◉</span> Open Play</div>
+                  <div class="side-item"><span class="side-ico">₱</span> Earnings</div>
+                  <div class="side-item"><span class="side-ico">⚙</span> Settings</div>
+                </aside>
+                <div class="app-main">
+                  <div class="app-heading"><div><strong>Venue overview</strong><small>Here's what's happening at your venue.</small></div><div class="app-date">Today ▾</div></div>
+                  <div class="metric-row">
+                    <div class="metric"><label>Bookings today</label><strong>12</strong><em>●</em></div>
+                    <div class="metric"><label>Active courts</label><strong>4</strong><em>●</em></div>
+                    <div class="metric"><label>Pending review</label><strong>3</strong><em style="color:#d18b36">●</em></div>
+                  </div>
+                  <div class="schedule-card">
+                    <div class="schedule-top"><strong>Today's court schedule</strong><span>Sample preview · Week view</span></div>
+                    <div class="schedule-grid">
+                      <div></div><div class="court-head">COURT 1</div><div class="court-head">COURT 2</div><div class="court-head">COURT 3</div><div class="court-head">COURT 4</div>
+                      <div class="time">8:00 AM</div><div class="slot green">Open Play<br>8–10 AM</div><div class="slot blank"></div><div class="slot">Booking<br>8–9 AM</div><div class="slot blank"></div>
+                      <div class="time">10:00 AM</div><div class="slot blank"></div><div class="slot">Booking<br>10–12 PM</div><div class="slot blank"></div><div class="slot red">Reserved<br>10–11 AM</div>
+                      <div class="time">12:00 PM</div><div class="slot">Booking<br>12–1 PM</div><div class="slot blank"></div><div class="slot green">Open Play<br>12–2 PM</div><div class="slot blank"></div>
+                      <div class="time">2:00 PM</div><div class="slot blank"></div><div class="slot red">Reserved<br>2–4 PM</div><div class="slot blank"></div><div class="slot">Booking<br>2–3 PM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="floating-status"><div class="status-icon">✓</div><div><strong>Bookings in one place</strong><small>Illustrative product preview</small></div></div>
+          </div>
+        </div>
+        <div class="hero-proof">
+          <div class="hero-proof-label">Everything around your game</div>
+          <div class="proof-items">
+            <div class="proof-item"><span>◷</span>Court bookings</div>
+            <div class="proof-item"><span>▦</span>Schedules</div>
+            <div class="proof-item"><span>◎</span>Open Play</div>
+            <div class="proof-item"><span>₱</span>Payment tracking</div>
+            <div class="proof-item"><span>⌂</span>Venue profiles</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="platform">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">One platform. Two experiences.</span>
+          <h2>Made for the people who play — and the people who run the courts.</h2>
+          <p>Whether you're booking a game with friends or managing a busy sports facility, Courtly gives everyone a clearer way to get things done.</p>
+        </div>
+        <div class="audience-grid">
+          <article class="audience-card reveal" id="players">
+            <div class="audience-top"><div class="audience-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M7 5.8c2.2 1.5 3.5 3.4 4 6.2s-.2 4.8-2.1 6.6M17 5.8c-2.2 1.5-3.5 3.4-4 6.2s.2 4.8 2.1 6.6M3.5 10h17M3.5 14h17" stroke="currentColor" stroke-width="1.4"/></svg></div><span class="audience-label">For players</span></div>
+            <h3>Your next game<br>starts here.</h3>
+            <p>Discover nearby venues, compare courts, check available times and send your booking request without the usual message-and-wait routine.</p>
+            <a class="audience-link" href="/players.html">Explore courts <span>→</span></a>
+          </article>
+          <article class="audience-card owner reveal" id="venues">
+            <div class="audience-top"><div class="audience-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20V8.5L12 4l8 4.5V20H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 20v-6h8v6M8 9h.01M12 9h.01M16 9h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="audience-label">For venues & clubs</span></div>
+            <h3>Your venue.<br>Under control.</h3>
+            <p>Showcase your facility, organize court schedules, review reservations, manage Open Play and keep an eye on venue earnings from one portal.</p>
+            <a class="audience-link" href="/business.html">Grow your venue <span>→</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section product-section">
+      <div class="container product-layout">
+        <div class="product-copy reveal">
+          <span class="eyebrow">For venue owners</span>
+          <h2>Run your courts.<br>Not your group chat.</h2>
+          <p>Bring the everyday work of a sports venue into one organized workspace. Know what's booked, what needs attention and how your courts are being used.</p>
+          <div class="product-points">
+            <div class="product-point"><span class="check">✓</span><div><strong>See your schedule at a glance</strong><small>Keep court availability, bookings and blocked times organized.</small></div></div>
+            <div class="product-point"><span class="check">✓</span><div><strong>Review reservations and receipts</strong><small>Check incoming booking requests and verify submitted payment receipts.</small></div></div>
+            <div class="product-point"><span class="check">✓</span><div><strong>Keep venue activity together</strong><small>Manage court details, Open Play activity and your earnings records.</small></div></div>
+          </div>
+          <a class="btn btn-white" href="/login.html">Open owner portal <span class="btn-arrow">↗</span></a>
+        </div>
+        <div class="dashboard-preview reveal" aria-label="Illustrative Courtly owner dashboard">
+          <div class="dashboard-inner">
+            <div class="dashboard-bar"><div class="dashboard-brand">COURT<span>LY</span></div><div class="dashboard-nav"><span>Overview</span><span>Schedule</span><span>Reservations</span><span>Open Play</span></div><div class="dashboard-admin">BM</div></div>
+            <div class="dashboard-content">
+              <aside class="dashboard-menu"><div class="menu-caption">Workspace</div><a class="active" href="/owner-portal.html">▦ &nbsp; Overview</a><a href="/owner-portal.html">▦ &nbsp; Calendar</a><a href="/owner-portal.html">▤ &nbsp; Reservations</a><a href="/owner-portal.html">◉ &nbsp; Open Play</a><a href="/owner-portal.html">₱ &nbsp; Earnings</a><div class="menu-caption" style="margin-top:20px">Manage</div><a href="/owner-portal.html">⚙ &nbsp; Settings</a></aside>
+              <div class="dashboard-panel">
+                <div class="panel-head"><div><h3>Today's overview</h3><small>Sample dashboard data</small></div><div class="panel-controls"><span class="selected">Day</span><span>Week</span></div></div>
+                <div class="dashboard-kpis"><div class="kpi"><small>Bookings today</small><b>12</b></div><div class="kpi"><small>Pending requests</small><b>03</b></div><div class="kpi"><small>Open courts</small><b>02</b></div></div>
+                <div class="schedule-preview">
+                  <div class="schedule-preview-head"><b>Court schedule</b><span>Wednesday · Sample</span></div>
+                  <div class="week-grid">
+                    <div></div><div class="day">COURT 1</div><div class="day">COURT 2</div><div class="day">COURT 3</div><div class="day">COURT 4</div>
+                    <div class="hour">8 AM</div><div class="event open">Open Play<br>8–10</div><div class="event empty"></div><div class="event">Booking<br>8–9</div><div class="event empty"></div>
+                    <div class="hour">10 AM</div><div class="event empty"></div><div class="event">Booking<br>10–12</div><div class="event training">Training<br>10–11</div><div class="event empty"></div>
+                    <div class="hour">12 PM</div><div class="event">Booking<br>12–1</div><div class="event empty"></div><div class="event open">Open Play<br>12–2</div><div class="event">Booking<br>12–1</div>
+                    <div class="hour">2 PM</div><div class="event empty"></div><div class="event">Booking<br>2–4</div><div class="event empty"></div><div class="event open">Open Play<br>2–4</div>
+                  </div>
+                  <div class="preview-foot"><span><i></i>Booking</span><span class="g"><i></i>Open Play</span><span class="o"><i></i>Training</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">The Courtly platform</span>
+          <h2>Everything around the game, connected.</h2>
+          <p>Less switching between spreadsheets, messages and separate tools. A clearer home for the work that keeps your venue moving.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="3" y="4.5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 2.8v3.5M17 2.8v3.5M3 9h18M7 13h3M7 16.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Booking management</h3><p>Receive booking requests, review details and keep reservation statuses in one place.</p></article>
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 4v16M15 4v16" stroke="currentColor" stroke-width="1.5"/></svg></div><h3>Court schedules</h3><p>Organize courts, operating hours, rates and unavailable time blocks.</p></article>
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c.5-3.3 2.8-5.1 7-5.1s6.5 1.8 7 5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Player experience</h3><p>Help players discover venues, view court information and submit reservations.</p></article>
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Open Play</h3><p>Publish sessions, manage player registrations and track event activity.</p></article>
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16v12H4z" stroke="currentColor" stroke-width="1.8"/><path d="M8 10h8M8 14h4M7 3.5v3M17 3.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Payment review</h3><p>Review submitted GCash receipts and keep payment status connected to reservations.</p></article>
+          <article class="feature-card reveal"><div class="feature-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h17M8 16v-4M13 16V8M18 16V5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Earnings overview</h3><p>Review recorded bookings, platform fees and venue earnings in your owner portal.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="container player-layout">
+        <div class="player-copy reveal">
+          <span class="eyebrow">For players</span>
+          <h2>Spend less time searching. More time playing.</h2>
+          <p>Find a venue that fits your game, check the court details and send a booking request through one straightforward experience.</p>
+          <div class="flow-list">
+            <div class="flow-item"><span class="flow-number">01</span><div><strong>Find a venue</strong><small>Browse available sports venues and explore their facilities.</small></div></div>
+            <div class="flow-item"><span class="flow-number">02</span><div><strong>Choose your court and time</strong><small>Check the listed court information, rates and available schedule.</small></div></div>
+            <div class="flow-item"><span class="flow-number">03</span><div><strong>Submit your booking</strong><small>Follow the venue's payment instructions and track the booking status.</small></div></div>
+          </div>
+          <a class="btn btn-primary" href="/players.html">Browse venues <span class="btn-arrow">→</span></a>
+        </div>
+        <div class="venue-browser reveal" aria-label="Illustrative venue discovery preview">
+          <div class="browser-top"><strong>Find your next court</strong><span>Venue directory preview</span></div>
+          <div class="search-demo"><span>⌕</span><b>Search venues, sports or locations...</b></div>
+          <div class="venue-row"><div class="venue-thumb"></div><div class="venue-info"><b>Sample Pickleball Venue</b><span>Pickleball · Lipa City, Batangas</span><span>Venue card preview</span></div><div class="venue-price"><b>View rates</b><small>venue details</small></div></div>
+          <div class="venue-row"><div class="venue-thumb badminton"></div><div class="venue-info"><b>Sample Badminton Club</b><span>Badminton · Batangas</span><span>Venue card preview</span></div><div class="venue-price"><b>View rates</b><small>venue details</small></div></div>
+          <div class="venue-row"><div class="venue-thumb basketball"></div><div class="venue-info"><b>Sample Sports Center</b><span>Basketball · Calabarzon</span><span>Venue card preview</span></div><div class="venue-price"><b>View rates</b><small>venue details</small></div></div>
+          <div class="browser-bottom"><small>Illustrative venue cards — live listings come from Courtly venues.</small><a href="/players.html">See venues →</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Across your favorite sports</span>
+          <h2>One home for every kind of game.</h2>
+          <p>From quick after-work matches to weekend leagues, Courtly is designed to support the venues and communities that bring people together to play.</p>
+        </div>
+        <div class="sports-strip">
+          <div class="sport-tile reveal"><div class="sport-symbol">◉</div><b>Pickleball</b></div>
+          <div class="sport-tile reveal"><div class="sport-symbol">⌁</div><b>Badminton</b></div>
+          <div class="sport-tile reveal"><div class="sport-symbol">◍</div><b>Basketball</b></div>
+          <div class="sport-tile reveal"><div class="sport-symbol">◌</div><b>Tennis</b></div>
+          <div class="sport-tile reveal"><div class="sport-symbol">◎</div><b>Volleyball</b></div>
+        </div>
+        <div class="sports-note">Sports and features depend on the facilities and services offered by each venue.</div>
+      </div>
+    </section>
+
+    <section class="section" id="venue-onboarding">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">For venue owners</span>
+          <h2>Get your venue online in a few clear steps.</h2>
+          <p>Set up your venue, add your courts and configure how players book. Your Courtly workspace keeps the day-to-day details together.</p>
+        </div>
+        <div class="onboarding-grid">
+          <article class="onboarding-card reveal"><h3>Create your account</h3><p>Register your business and set up your owner profile.</p></article>
+          <article class="onboarding-card reveal"><h3>Add your venue and courts</h3><p>Upload your venue details, court photos and available facilities.</p></article>
+          <article class="onboarding-card reveal"><h3>Set your booking rules</h3><p>Configure operating hours, court rates and payment instructions.</p></article>
+          <article class="onboarding-card reveal"><h3>Publish and manage</h3><p>Share your public booking page and manage incoming reservations.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container">
+        <div class="cta-panel reveal">
+          <div class="cta-panel-copy"><span class="eyebrow">Your game. Your venue. Your Courtly.</span><h2>Ready to bring your courts online?</h2><p>Discover a better way to book and manage sports courts. Start with the experience that fits you.</p></div>
+          <div class="cta-actions"><a class="btn btn-white" href="/players.html">I'm a player <span class="btn-arrow">→</span></a><a class="btn btn-light" href="/business.html">I run a venue <span class="btn-arrow">↗</span></a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand"><a class="brand" href="/"><span class="brand-mark">C</span><span class="brand-word">COURT<span>LY</span></span></a><p>Connecting players and sports venues through a simpler court booking and management experience.</p></div>
+        <div class="footer-col"><h4>Explore</h4><a href="/players.html">Find a court</a><a href="#platform">How Courtly works</a><a href="#how-it-works">For players</a></div>
+        <div class="footer-col"><h4>For venues</h4><a href="/business.html">Grow your venue</a><a href="/login.html">Owner login</a><a href="#venue-onboarding">Getting started</a></div>
+        <div class="footer-col"><h4>Platform</h4><a href="#platform">Court bookings</a><a href="#platform">Open Play</a><a href="#platform">Venue management</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Courtly. Book. Play. Grow.</span><div class="footer-bottom-links"><a href="/players.html">Players</a><a href="/business.html">Businesses</a><a href="/login.html">Owner login</a></div></div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const toggle = document.getElementById('menu-toggle');
+      const nav = document.getElementById('main-nav');
+      if (toggle && nav) {
+        toggle.addEventListener('click', () => {
+          const open = nav.classList.toggle('open');
+          document.body.classList.toggle('nav-open', open);
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+          toggle.textContent = open ? '×' : '☰';
+        });
+        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+          nav.classList.remove('open');
+          document.body.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation');
+          toggle.textContent = '☰';
+        }));
+      }
+      const items = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        items.forEach(item => observer.observe(item));
+      } else {
+        items.forEach(item => item.classList.add('visible'));
+      }
+    })();
+  </script>
+</body>
+</html>

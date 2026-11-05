@@ -66,3 +66,7 @@
  .invite-dialog-actions{flex-direction:column-reverse}
  .invite-dialog-actions .btn{width:100%}
 }
+
+/* Simplified player cards: keep only the Follow / Following action. */
+.player-social-actions{grid-template-columns:minmax(0,1fr)}
+.player-social-actions .btn{width:100%}

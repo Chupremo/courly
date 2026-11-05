@@ -17,3 +17,52 @@
 @media(max-width:980px){.player-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.player-mini-grid,.player-directory-grid{grid-template-columns:1fr}.player-social-card{padding:12px}.player-directory-grid .player-social-card{min-height:78px}.player-directory-toolbar .subtle{width:100%}}
 @media(max-width:390px){.player-social-card{gap:8px}.player-social-avatar{width:40px;height:40px}.player-social-copy strong{font-size:11px}.player-social-card .btn{padding:8px 10px;font-size:10px}}
+
+/* Player network actions: consistent 2x2 touch targets on desktop and mobile. */
+.player-social-card{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;gap:9px 12px}
+.player-social-card .player-social-avatar{grid-row:1}
+.player-social-copy{grid-column:2;grid-row:1}
+.player-social-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.player-social-actions .btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 9px;font-size:10px;white-space:nowrap;line-height:1.2;border-radius:9px}
+.player-social-actions .social-follow{background:#8ed502;color:#102b00;border:1px solid #8ed502}
+.player-social-actions .social-chat{background:#edf2ff;color:#12376d;border:1px solid #dce6fb}
+.player-social-actions .social-invite{background:#fff;color:#12376d;border:1px solid #dce4ee}
+.player-social-actions .social-message{background:#12376d;color:#fff;border:1px solid #12376d}
+.player-social-actions .btn:hover{filter:brightness(.97)}
+.player-invite-dialog{width:min(460px,calc(100% - 28px));border:0;border-radius:18px;padding:0;box-shadow:0 24px 70px #071b4250;color:#172744}
+.player-invite-dialog::backdrop{background:#06152d80;backdrop-filter:blur(3px)}
+.player-invite-dialog form{padding:23px}
+.invite-dialog-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:17px}
+.invite-dialog-head .eyebrow{font-size:9px;letter-spacing:1.2px;color:#789f1b}
+.invite-dialog-head h2{font:700 21px Poppins;color:#001a47;margin:5px 0}
+.invite-dialog-head p{font-size:11px;line-height:1.5;color:#718099;margin:0}
+.invite-close{width:34px;height:34px;flex:none;border:1px solid #e2e8f1;border-radius:9px;background:#fff;color:#52617b;font-size:20px}
+.player-invite-dialog label{display:block;font-size:11px;font-weight:800;color:#34425c;margin-bottom:7px}
+.player-invite-dialog select{width:100%;height:45px;border:1px solid #d9e2ee;border-radius:9px;padding:0 11px;background:#fff;color:#172744;font:12px Inter}
+.invite-dialog-note{background:#f2f6ec;color:#5e722d;border-radius:9px;padding:10px 11px;font-size:9px;line-height:1.6;margin:12px 0 0}
+.invite-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
+.invite-dialog-actions .btn{min-height:42px;padding:9px 13px}
+.club-invite-list{display:grid;gap:10px}
+.club-invite-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #e3eaf2;background:#fff;border-radius:12px}
+.club-invite-mark{width:40px;height:40px;flex:none;border-radius:11px;background:#eff6e3;color:#507600;display:grid;place-items:center;font-size:18px}
+.club-invite-copy{min-width:0;flex:1}
+.club-invite-copy strong{display:block;font-size:12px;color:#001a47}
+.club-invite-copy span,.club-invite-copy small{display:block;font-size:9px;color:#74829a;margin-top:4px}
+.club-invite-actions{display:flex;gap:6px;flex-wrap:wrap}
+.club-invite-actions .btn{min-height:35px;padding:7px 10px;font-size:9px}
+.status-pill{display:inline-flex;padding:6px 8px;border-radius:20px;background:#fff1f1;color:#ac3640;font-size:9px;font-weight:800;text-transform:capitalize}
+.status-pill.accepted{background:#e9f7ee;color:#18724d}
+@media(max-width:760px){
+ .player-directory-grid .player-social-card{grid-template-columns:44px minmax(0,1fr);gap:9px}
+ .player-social-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .club-invite-card{align-items:flex-start;flex-wrap:wrap}
+ .club-invite-copy{min-width:calc(100% - 58px)}
+ .club-invite-actions{width:100%;padding-left:52px}
+}
+@media(max-width:390px){
+ .player-social-actions{gap:6px}
+ .player-social-actions .btn{font-size:9px;padding:8px 6px}
+ .player-invite-dialog form{padding:18px}
+ .invite-dialog-actions{flex-direction:column-reverse}
+ .invite-dialog-actions .btn{width:100%}
+}

@@ -4,6 +4,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/player/messages",
+      "destination": "/player-messages.html"
+    },
+    {
       "source": "/demo",
       "destination": "/demo.html"
     },

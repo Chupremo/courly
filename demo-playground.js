@@ -59,7 +59,9 @@ function sampleClubSessions(){return [
   {id:'cr8',playerId:'p2',player:'Paolo Reyes',status:'pending',applied:'Nov 5, 2026'}
  ]}
 ]}
-let data=load(),role='club',view='overview',toastTimer=null;
+const requestedDemoRole=new URLSearchParams(location.search).get('role');
+const initialDemoRole=['club','coach','player'].includes(requestedDemoRole)?requestedDemoRole:'club';
+let data=load(),role=initialDemoRole,view='overview',toastTimer=null;
 if(!Array.isArray(data.club.sessions))data.club.sessions=sampleClubSessions();
 function load(){try{const saved=localStorage.getItem(STORE);if(saved){const parsed=JSON.parse(saved);if(parsed&&parsed.club&&parsed.coach&&parsed.player&&Array.isArray(parsed.people))return parsed;}}catch(e){console.warn('Demo state could not be loaded',e)}return fresh()}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(data))}catch(e){console.warn('Demo state could not be saved',e)}}
@@ -172,5 +174,5 @@ document.getElementById('viewRoot').addEventListener('submit',e=>{
  if(kind==='coach-message'){data.coach.messages.push({from:data.coach.name,text:v.text,time:'Just now'});toast('Demo reply sent in the local conversation.');}
  save();render();
 });
-document.getElementById('resetDemo').addEventListener('click',()=>{if(!confirm('Reset all demo changes on this browser?'))return;data=fresh();data.club.sessions=sampleClubSessions();role='club';view='overview';try{localStorage.removeItem(STORE)}catch(e){}render();toast('Demo data reset to the original sample.')});
+document.getElementById('resetDemo').addEventListener('click',()=>{if(!confirm('Reset all demo changes on this browser?'))return;data=fresh();data.club.sessions=sampleClubSessions();role=initialDemoRole;view='overview';try{localStorage.removeItem(STORE)}catch(e){}render();toast('Demo data reset to the original sample.')});
 render();

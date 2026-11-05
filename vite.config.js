@@ -39,7 +39,8 @@ export default defineConfig({
         clubRegister: resolve(process.cwd(), 'club-register.html'),
         clubLogin: resolve(process.cwd(), 'club-login.html'),
         clubDashboard: resolve(process.cwd(), 'club-dashboard.html'),
-        demoPlayground: resolve(process.cwd(), 'demo.html')
+        demoPlayground: resolve(process.cwd(), 'demo.html'),
+        playerMessages: resolve(process.cwd(), 'player-messages.html')
       }
     }
   }

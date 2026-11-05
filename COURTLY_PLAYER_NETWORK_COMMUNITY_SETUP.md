@@ -103,3 +103,43 @@ The player registration Privacy Notice has been updated to explain that public p
 This is the first social/community release. It includes content reporting and private-profile handling, but it is not a full moderation console. Courtly should review `community_reports` regularly and establish moderation, blocking, retention and takedown procedures before promoting the feed broadly. Large video uploads above 25 MB are rejected in this version; larger media should use resumable uploads in a later release.
 
 The SQL migration has not been executed against the live Supabase project. Complete the migration and the test checklist before enabling the Community link for all users.
+
+## 6. Player-to-player messages and club invitations
+
+The launch-readiness update adds private one-to-one player messages and player-to-player invitations to published clubs. It requires the additive root migration:
+
+`017_player_messaging_and_club_invites.sql`
+
+Apply it only after these dependencies are installed:
+
+1. `002_player_accounts_and_dashboard.sql` — player profiles.
+2. `011_player_network_and_community.sql` — public player directory and follow/privacy helpers.
+3. `015_club_directory_and_registration.sql` — published club profiles.
+4. `016_club_dashboard_members_and_announcements.sql` — club membership table.
+
+Run the full `017_player_messaging_and_club_invites.sql` file in Supabase SQL Editor in one transaction. Back up the database or use a staging project first. Do not paste partial function fragments. The new tables are private and are accessed through authenticated RPC functions.
+
+### Player-to-player chat
+
+- From Player Dashboard → Players, use **Chat** to open a private conversation or **Message** to open the same conversation with the composer focused.
+- Conversations are one-to-one and can only be read or written by their two participants.
+- A player can start a conversation only with another public player profile. Private player profiles are not discoverable or messageable through this directory.
+
+### Invite a player to a club
+
+- From Player Dashboard → Players, choose **Invite to club**, select a published club and send the invitation.
+- The invitee sees the request under **Club invitations** and can accept or decline.
+- Accepting does not silently add a member. It creates a `pending` row in `club_members`; the club manager must still approve the membership in the Club Dashboard.
+- Invitations and chat are authenticated player-only actions. The migration does not send external email or push notifications; the invite is surfaced inside the recipient's dashboard.
+
+### Required verification before launch
+
+1. Sign in as Player A and start a chat with a second public player. Send a message, sign in as Player B in a separate browser and confirm the conversation and reply are visible.
+2. Try to read the same conversation as a third player. The database function must reject access.
+3. Sign in as Player A, invite Player B to a published club and check that the invite appears in Player B → Club invitations.
+4. Accept the invitation as Player B. Confirm a pending membership request appears for the correct club and that the club manager must approve it.
+5. Decline a separate invitation and confirm no membership row is created.
+6. Try using the invite and messaging actions as a coach or venue-owner account. The database functions must reject the action.
+7. Confirm a private player profile is excluded from the player directory, and is rejected by the conversation/invitation functions.
+
+The Vercel deploy does not apply database migrations. Complete this SQL step and the real-account checks above in a staging project before announcing the new social actions.

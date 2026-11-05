@@ -8,7 +8,8 @@ const money = (value) => '₱' + Number(value || 0).toLocaleString('en-PH', { ma
 const sports = [
   ['Pickleball','🏓'],['Basketball','🏀'],['Padel','🎾'],['Archery','🏹'],['Badminton','🏸'],['Lawn Tennis','🎾'],['Billiards','🎱'],['Dart','🎯'],['Golf','⛳'],['Boxing','🥊'],['Swimming','🏊'],['Muay Thai','🥊'],['Volleyball','🏐'],['Gym','🏋️'],['Gymnastics','🤸'],['Table Tennis','🏓'],['Yoga','🧘'],['Dance Studio','💃'],['Football','⚽'],['Futsal','⚽'],['Bowling','🎳'],['Other','＋']
 ];
-let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], playerDirectory = [];
+let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [];
+let inviteTargetPlayerId = null;
 let directorySearch = '';
 let view = new URLSearchParams(location.search).get('view') || 'home';
 let selectedSport = '', discoverSearch = '', discoverCity = '', discoverSport = '', discoverMode = new URLSearchParams(location.search).get('mode') === 'openplay' ? 'openplay' : 'list';
@@ -61,7 +62,7 @@ function setHeader() {
   $('sideName').textContent=name; $('topName').textContent=name; $('sideSkill').textContent=profile?.skill_level||'Player';
   const img=profileAvatarUrl; $('sideAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name)); $('topAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name));
   document.querySelectorAll('.nav-link').forEach(link=>link.classList.toggle('active',link.dataset.view===view));
-  $('crumbText').textContent=({home:'Home',discover:'Discover',players:'Players',tournaments:'My Tournaments',bookings:'My Bookings',memberships:'Memberships',profile:'Profile'})[view]||'Home';
+  $('crumbText').textContent=({home:'Home',discover:'Discover',players:'Players',tournaments:'My Tournaments',bookings:'My Bookings',memberships:'Memberships',invites:'Club Invitations',profile:'Profile'})[view]||'Home';
 }
 function renderHome() {
   const name=playerDisplayName(profile,user).split(' ')[0];
@@ -72,7 +73,7 @@ function renderHome() {
   const upcoming=normalizeBookings().filter(r=>r.starts_at&&new Date(r.starts_at)>=new Date()&&r.status!=='cancelled').slice(0,2);
   root.innerHTML=`${heading('PLAYER HOME',`Welcome back, ${name}`,current?`Your Courtly home feed is focused on ${current}. Find a venue, book a court or join an upcoming session.`:'Choose a sport to personalize your Courtly home feed.')}
     <section class="panel sport-panel"><div class="sport-top"><div><div class="eyebrow">PLAY ON</div><h2>${current?`Explore ${esc(current)}`:'Select your sport'}</h2><p>${current?'Your home feed is filtered for this sport.':'Pick a sport to unlock the home marketplace.'}</p></div><button class="btn light" id="openSportModal">${current?'Change sport':'Choose sport'}</button></div><div class="sport-chips">${chips}<button class="sport-chip more" id="openSportModal">＋ More sports</button></div></section>
-    <div class="quick-grid"><a class="quick-card" href="/player-dashboard.html?view=discover&amp;mode=openplay"><span class="quick-icon">◉</span><span><strong>Open Play</strong><small>Find social games and sessions</small></span></a><a class="quick-card" href="/player-dashboard.html?view=discover"><span class="quick-icon">▦</span><span><strong>Court Rental</strong><small>Choose a venue and timeslot</small></span></a><a class="quick-card" href="/player-dashboard.html?view=memberships"><span class="quick-icon">♛</span><span><strong>Memberships</strong><small>Explore venue member plans</small></span></a><a class="quick-card" href="/player-dashboard.html?view=tournaments"><span class="quick-icon">♜</span><span><strong>Tournaments</strong><small>Competition activity</small></span></a><a class="quick-card" href="/player-dashboard.html?view=discover"><span class="quick-icon">⌖</span><span><strong>Sports Hubs</strong><small>Discover nearby venues</small></span></a><a class="quick-card" href="/player-dashboard.html?view=bookings"><span class="quick-icon">▣</span><span><strong>My Bookings</strong><small>Manage reservations</small></span></a><a class="quick-card" href="/player-dashboard.html?view=profile"><span class="quick-icon">♙</span><span><strong>My Profile</strong><small>Personal details and privacy</small></span></a><a class="quick-card" href="/player-dashboard.html?view=players"><span class="quick-icon">♧</span><span><strong>Find Players</strong><small>Follow players and grow your network</small></span></a><a class="quick-card" href="/community.html"><span class="quick-icon">✦</span><span><strong>Community</strong><small>Share photos, videos and updates</small></span></a></div>
+    <div class="quick-grid"><a class="quick-card" href="/player-dashboard.html?view=discover&amp;mode=openplay"><span class="quick-icon">◉</span><span><strong>Open Play</strong><small>Find social games and sessions</small></span></a><a class="quick-card" href="/player-dashboard.html?view=discover"><span class="quick-icon">▦</span><span><strong>Court Rental</strong><small>Choose a venue and timeslot</small></span></a><a class="quick-card" href="/player-dashboard.html?view=memberships"><span class="quick-icon">♛</span><span><strong>Memberships</strong><small>Explore venue member plans</small></span></a><a class="quick-card" href="/player-dashboard.html?view=tournaments"><span class="quick-icon">♜</span><span><strong>Tournaments</strong><small>Competition activity</small></span></a><a class="quick-card" href="/player-dashboard.html?view=discover"><span class="quick-icon">⌖</span><span><strong>Sports Hubs</strong><small>Discover nearby venues</small></span></a><a class="quick-card" href="/player-dashboard.html?view=bookings"><span class="quick-icon">▣</span><span><strong>My Bookings</strong><small>Manage reservations</small></span></a><a class="quick-card" href="/player-dashboard.html?view=profile"><span class="quick-icon">♙</span><span><strong>My Profile</strong><small>Personal details and privacy</small></span></a><a class="quick-card" href="/player-dashboard.html?view=players"><span class="quick-icon">♧</span><span><strong>Find Players</strong><small>Follow players and grow your network</small></span></a><a class="quick-card" href="/player-messages.html"><span class="quick-icon">✉</span><span><strong>Messages</strong><small>Chat privately with players</small></span></a><a class="quick-card" href="/player-dashboard.html?view=invites"><span class="quick-icon">♧</span><span><strong>Club invitations</strong><small>Respond to invites from friends</small></span></a><a class="quick-card" href="/community.html"><span class="quick-icon">✦</span><span><strong>Community</strong><small>Share photos, videos and updates</small></span></a></div>
     <section class="section-block"><div class="section-title"><div><h2>Players to follow</h2><p>Discover public player profiles by nickname, sport and skill level.</p></div><a class="link" href="/player-dashboard.html?view=players">Find players →</a></div><div class="player-mini-grid">${playerDirectory.slice(0,4).map(playerCardMarkup).join('')||'<div class="venue-empty" style="grid-column:1/-1"><strong>No public player profiles to show yet</strong>Players who make their profiles public will appear here.</div>'}</div></section>
     <section class="section-block"><div class="section-title"><div><h2>Featured games</h2><p>Published Open Play sessions from Courtly venues.</p></div><a class="link" href="/player-dashboard.html?view=discover&amp;mode=openplay">Explore Open Play →</a></div><div class="venue-grid">${openPlayEvents.length?openPlayEvents.slice(0,3).map(eventCard).join(''):'<div class="venue-empty" style="grid-column:1/-1"><strong>No upcoming Open Play sessions yet</strong>When venues publish upcoming sessions, they will appear here.</div>'}</div></section>
     <section class="section-block"><div class="section-title"><div><h2>Must try this week</h2><p>Sports venues you can discover and book.</p></div><a class="link" href="/player-dashboard.html?view=discover">View all venues →</a></div><div class="venue-grid">${list.length?list.map(venueCard).join(''):'<div class="venue-empty" style="grid-column:1/-1"><strong>No venues match this sport yet</strong>Choose another sport or view all registered venues.</div>'}</div></section>
@@ -83,7 +84,10 @@ function renderHome() {
 }
 function playerCardMarkup(player) {
   const name=player.player_name||'Courtly Player';
-  return `<article class="player-social-card">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<div class="player-social-copy"><strong>${esc(name)}</strong><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></div><button class="btn ${player.is_following?'light':'social-follow'}" data-follow-player="${esc(player.player_id)}" data-following="${player.is_following?'1':'0'}">${player.is_following?'Following':'Follow'}</button></article>`;
+  const playerId=String(player.player_id||'');
+  const chatUrl='/player-messages.html?player='+encodeURIComponent(playerId);
+  const messageUrl=chatUrl+'&compose=1';
+  return `<article class="player-social-card">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<div class="player-social-copy"><strong>${esc(name)}</strong><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></div><div class="player-social-actions"><button type="button" class="btn ${player.is_following?'light':'social-follow'}" data-follow-player="${esc(playerId)}" data-following="${player.is_following?'1':'0'}">${player.is_following?'Following':'Follow'}</button><a class="btn social-chat" href="${chatUrl}">Chat</a><button type="button" class="btn social-invite" data-invite-player="${esc(playerId)}" data-player-name="${esc(name)}">Invite to club</button><a class="btn social-message" href="${messageUrl}">Message</a></div></article>`;
 }
 async function signPlayerAvatar(path) {
   if(!path)return '';
@@ -97,7 +101,59 @@ async function loadPlayerDirectory(search='') {
   if(error){playerDirectory=[];console.warn('Player directory unavailable:',error.message);return;}
   playerDirectory=await Promise.all((data||[]).map(async row=>({...row,avatar_url:await signPlayerAvatar(row.avatar_path)})));
 }
+async function loadClubInviteTargets() {
+  const {data,error}=await supabase.from('club_profiles').select('id,club_name,sport,city').eq('is_published',true).order('club_name');
+  if(error)throw error;
+  clubInviteTargets=data||[];
+}
+function ensureClubInviteDialog() {
+  let dialog=$('inviteClubDialog');
+  if(dialog)return dialog;
+  dialog=document.createElement('dialog');dialog.id='inviteClubDialog';dialog.className='player-invite-dialog';
+  dialog.innerHTML='<form id="inviteClubForm" method="dialog"><div class="invite-dialog-head"><div><div class="eyebrow">COURTLY PLAYER NETWORK</div><h2>Invite to a club</h2><p id="invitePlayerLabel">Invite this player to join a sports community.</p></div><button class="invite-close" type="button" id="closeInviteDialog" aria-label="Close">×</button></div><label for="inviteClubSelect">Choose a published club</label><select id="inviteClubSelect" required></select><p class="invite-dialog-note">The player receives an invitation and must accept it. The club manager then reviews the membership request.</p><div class="invite-dialog-actions"><button class="btn light" type="button" id="cancelInvite">Cancel</button><button class="btn social-follow" id="sendClubInvite" type="submit">Send invitation</button></div></form>';
+  document.body.appendChild(dialog);
+  $('closeInviteDialog').addEventListener('click',()=>dialog.close());
+  $('cancelInvite').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
+  $('inviteClubForm').addEventListener('submit',async e=>{
+    e.preventDefault();const button=$('sendClubInvite');const clubId=$('inviteClubSelect').value;
+    if(!inviteTargetPlayerId||!clubId)return;
+    button.disabled=true;button.textContent='Sending…';
+    try{const{error}=await supabase.rpc('invite_player_to_club',{p_club_id:clubId,p_invitee_id:inviteTargetPlayerId});if(error)throw error;dialog.close();notify('Club invitation sent. The player can accept it from Club Invitations.');}
+    catch(error){notify(error.message||'Could not send the club invitation.');}
+    finally{button.disabled=false;button.textContent='Send invitation';}
+  });
+  return dialog;
+}
+async function openClubInvite(playerId,playerName) {
+  inviteTargetPlayerId=playerId;
+  const dialog=ensureClubInviteDialog();
+  $('invitePlayerLabel').textContent='Invite '+playerName+' to join a sports community.';
+  $('inviteClubSelect').innerHTML='<option value="">Loading published clubs…</option>';
+  try{
+    await loadClubInviteTargets();
+    if(!clubInviteTargets.length){$('inviteClubSelect').innerHTML='<option value="">No published clubs available</option>';notify('There are no published clubs to invite this player to yet.');return;}
+    $('inviteClubSelect').innerHTML=clubInviteTargets.map(club=>'<option value="'+esc(club.id)+'">'+esc(club.club_name)+' · '+esc([club.sport,club.city].filter(Boolean).join(' / '))+'</option>').join('');
+    if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+  }catch(error){notify(error.message||'Could not load clubs to invite.');}
+}
+async function loadPlayerClubInvites(){
+  const{data,error}=await supabase.rpc('get_my_player_club_invites');
+  if(error)throw error;playerClubInvites=data||[];
+}
+function renderClubInvites(){
+  const pending=playerClubInvites.filter(invite=>invite.invite_status==='pending');
+  const history=playerClubInvites.filter(invite=>invite.invite_status!=='pending');
+  const card=invite=>'<article class="club-invite-card"><div class="club-invite-mark">♧</div><div class="club-invite-copy"><strong>'+esc(invite.club_name)+'</strong><span>'+esc([invite.club_sport,invite.inviter_name].filter(Boolean).join(' · '))+'</span><small>Invited '+esc(formatDate(invite.created_at))+'</small></div><div class="club-invite-actions">'+(invite.invite_status==='pending'?'<button type="button" class="btn social-follow" data-respond-club-invite="'+esc(invite.invite_id)+'" data-accept="true">Accept</button><button type="button" class="btn light" data-respond-club-invite="'+esc(invite.invite_id)+'" data-accept="false">Decline</button>':'<span class="status-pill '+(invite.invite_status==='accepted'?'accepted':'')+'">'+esc(invite.invite_status)+'</span>')+'</div></article>';
+  root.innerHTML=`${heading('YOUR SPORTS COMMUNITY','Club invitations','Accept an invitation from a friend, then the club manager can review your membership request.')}<section class="section-block"><div class="section-title"><div><h2>Waiting for your response</h2><p>${pending.length} pending invitation${pending.length===1?'':'s'}</p></div></div>${pending.length?'<div class="club-invite-list">'+pending.map(card).join('')+'</div>':'<div class="empty-state"><div class="empty-icon">♧</div><strong>No pending club invitations</strong><span>When another player invites you to a published club, it will appear here.</span><div style="margin-top:14px"><a class="btn" href="/browse-clubs.html">Browse clubs</a></div></div>'}</section>${history.length?'<section class="section-block"><div class="section-title"><div><h2>Invitation history</h2></div></div><div class="club-invite-list">'+history.map(card).join('')+'</div></section>':''}`;
+  root.querySelectorAll('[data-respond-club-invite]').forEach(button=>button.addEventListener('click',async()=>{
+    const inviteId=button.dataset.respondClubInvite,accept=button.dataset.accept==='true';button.disabled=true;
+    try{const{error}=await supabase.rpc('respond_to_player_club_invite',{p_invite_id:inviteId,p_accept:accept});if(error)throw error;await loadPlayerClubInvites();renderClubInvites();notify(accept?'Invitation accepted. Your request is now waiting for the club manager.':'Invitation declined.');}
+    catch(error){button.disabled=false;notify(error.message||'Could not update this invitation.');}
+  }));
+}
 function bindFollowButtons() {
+  root.querySelectorAll('[data-invite-player]').forEach(button=>button.addEventListener('click',()=>openClubInvite(button.dataset.invitePlayer,button.dataset.playerName||'this player')));
   root.querySelectorAll('[data-follow-player]').forEach(button=>button.addEventListener('click',async()=>{
     const playerId=button.dataset.followPlayer; const following=button.dataset.following==='1';
     button.disabled=true;
@@ -117,7 +173,7 @@ function bindFollowButtons() {
 }
 function renderPlayers() {
   const visible=playerDirectory.filter(p=>[p.player_name,p.preferred_sport,p.skill_level].join(' ').toLowerCase().includes(directorySearch.toLowerCase()));
-  root.innerHTML=`${heading('COURTLY NETWORK','Find players','Discover public player profiles, see their sport and skill level, and follow players you want to connect with.')}<section class="toolbar player-directory-toolbar"><div class="search"><input id="playerDirectorySearch" type="search" placeholder="Search player nickname, sport or skill level…" value="${esc(directorySearch)}"></div><span class="subtle">${visible.length} public ${visible.length===1?'player':'players'}</span></section><div class="player-directory-grid">${visible.length?visible.map(playerCardMarkup).join(''):'<div class="empty-state"><div class="empty-icon">♧</div><strong>No public players found</strong><span>Try another search. Players who choose a private profile are not shown in the public directory.</span></div>'}</div>`;
+  root.innerHTML=`${heading('COURTLY NETWORK','Find players','Discover public player profiles and connect with them: follow, chat, send a message or invite them to a published club.')}<section class="toolbar player-directory-toolbar"><div class="search"><input id="playerDirectorySearch" type="search" placeholder="Search player nickname, sport or skill level…" value="${esc(directorySearch)}"></div><span class="subtle">${visible.length} public ${visible.length===1?'player':'players'}</span></section><div class="player-directory-grid">${visible.length?visible.map(playerCardMarkup).join(''):'<div class="empty-state"><div class="empty-icon">♧</div><strong>No public players found</strong><span>Try another search. Players who choose a private profile are not shown in the public directory.</span></div>'}</div>`;
   $('playerDirectorySearch')?.addEventListener('input',e=>{directorySearch=e.target.value;renderPlayers();const field=$('playerDirectorySearch');field?.focus();field?.setSelectionRange(directorySearch.length,directorySearch.length);});
   bindFollowButtons();
 }
@@ -206,7 +262,7 @@ function renderProfile() {
   $('profileForm').addEventListener('submit',saveProfile);
   $('profileAvatarInput').addEventListener('change',uploadProfileAvatar);
 }
-function render() { setHeader(); if(view==='discover')return renderDiscover(); if(view==='players')return renderPlayers(); if(view==='tournaments')return renderTournaments(); if(view==='bookings')return renderBookings(); if(view==='memberships')return renderMemberships(); if(view==='profile')return renderProfile(); return renderHome(); }
+function render() { setHeader(); if(view==='discover')return renderDiscover(); if(view==='players')return renderPlayers(); if(view==='invites')return renderClubInvites(); if(view==='tournaments')return renderTournaments(); if(view==='bookings')return renderBookings(); if(view==='memberships')return renderMemberships(); if(view==='profile')return renderProfile(); return renderHome(); }
 function selectSport(sport) { selectedSport=sport; profile.preferred_sport=sport; supabase.from('player_profiles').update({preferred_sport:sport,updated_at:new Date().toISOString()}).eq('id',user.id).then(({error})=>{if(error)notify(error.message);}); renderHome(); }
 function openSportModal() { $('sportModal').classList.add('open'); $('sportModalSearch').value=''; renderSportOptions(); setTimeout(()=>$('sportModalSearch').focus(),80); }
 function renderSportOptions() { const q=$('sportModalSearch').value.toLowerCase(); $('sportModalGrid').innerHTML=sports.filter(([s])=>s.toLowerCase().includes(q)).map(([s,ico])=>`<button class="sport-option ${s===selectedSport?'active':''}" data-sport-option="${esc(s)}">${ico} &nbsp; ${esc(s)}</button>`).join(''); $('sportModalGrid').querySelectorAll('[data-sport-option]').forEach(btn=>btn.addEventListener('click',()=>{$('sportModal').classList.remove('open');selectSport(btn.dataset.sportOption); })); }
@@ -241,6 +297,7 @@ async function init() {
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
   await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerDirectory()]);
+  if(view==='invites')await loadPlayerClubInvites();
   render();
   const params = new URLSearchParams(location.search);
   if (params.get('welcome') === '1') {
@@ -282,8 +339,8 @@ mobileSidebar.setAttribute('aria-hidden', String(mobileViewport.matches));
 $('closeSportModal').addEventListener('click',()=>$('sportModal').classList.remove('open'));
 $('sportModal').addEventListener('click',e=>{if(e.target===$('sportModal'))$('sportModal').classList.remove('open')});
 $('sportModalSearch').addEventListener('input',renderSportOptions);
-document.querySelectorAll('.nav-link').forEach(link=>link.addEventListener('click',async e=>{if(link.dataset.external==='true')return;e.preventDefault();setMobileMenu(false);mobileMenuButton.focus();view=link.dataset.view;history.pushState({},'',`/player-dashboard.html?view=${view}`);if(view==='players')await loadPlayerDirectory(directorySearch);render();}));
-window.addEventListener('popstate',()=>{setMobileMenu(false);view=new URLSearchParams(location.search).get('view')||'home';render();});
+document.querySelectorAll('.nav-link').forEach(link=>link.addEventListener('click',async e=>{if(link.dataset.external==='true')return;e.preventDefault();setMobileMenu(false);mobileMenuButton.focus();view=link.dataset.view;history.pushState({},'',`/player-dashboard.html?view=${view}`);if(view==='players')await loadPlayerDirectory(directorySearch);if(view==='invites')await loadPlayerClubInvites();render();}));
+window.addEventListener('popstate',async()=>{setMobileMenu(false);view=new URLSearchParams(location.search).get('view')||'home';if(view==='players')await loadPlayerDirectory(directorySearch);if(view==='invites')await loadPlayerClubInvites();render();});
 $('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/player-login.html');});
 supabase?.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.replace('/player-login.html');});
 init().catch(error=>{console.error('Courtly player dashboard failed:',error);root.innerHTML=`<div class="empty-state"><div class="empty-icon">!</div><strong>We could not load your player dashboard</strong><span>${esc(error.message||'Please refresh the page. If this is a new deployment, run the player account SQL migration in Supabase first.')}</span></div>`;});

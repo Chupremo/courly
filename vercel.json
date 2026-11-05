@@ -62,6 +62,10 @@
     {
       "source": "/my-bookings",
       "destination": "/my-bookings.html"
+    },
+    {
+      "source": "/community",
+      "destination": "/community.html"
     }
   ],
   "crons": [

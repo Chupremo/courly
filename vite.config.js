@@ -22,6 +22,7 @@ export default defineConfig({
         playerRegister: resolve(process.cwd(), 'player-register.html'),
         playerLogin: resolve(process.cwd(), 'player-login.html'),
         playerDashboard: resolve(process.cwd(), 'player-dashboard.html'),
+        community: resolve(process.cwd(), 'community.html'),
         adminBilling: resolve(process.cwd(), 'admin-billing.html'),
         venueOwnerTerms: resolve(process.cwd(), 'venue-owner-terms.html')
       }

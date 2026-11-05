@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#001A47">
+  <meta name="description" content="Share your sports moments, follow players and connect with Courtly venues.">
+  <title>Courtly Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/courtly-brand.css">
+  <link rel="stylesheet" href="/courtly-responsive.css">
+  <link rel="stylesheet" href="/community.css?v=1">
+</head>
+<body>
+  <header class="community-topbar">
+    <a href="/" class="community-brand"><img src="/assets/courtly-logo.png" alt="Courtly"></a>
+    <nav aria-label="Community navigation">
+      <a href="/player-dashboard.html">Player dashboard</a>
+      <a href="/players.html">Find venues</a>
+      <a href="/owner-portal.html">Owner portal</a>
+    </nav>
+    <div class="community-user" id="communityUser">Loading account…</div>
+  </header>
+
+  <main class="community-layout">
+    <section class="community-intro">
+      <div class="eyebrow">COURTLY COMMUNITY</div>
+      <h1>Play together. Share the game.</h1>
+      <p>Connect with players and sports venues. Share match moments, discover local games and build your sports network.</p>
+    </section>
+
+    <section class="community-composer card" id="communityComposer" hidden>
+      <div class="composer-heading">
+        <div><span class="composer-kicker">YOUR COMMUNITY</span><h2>Share an update</h2></div>
+        <span class="community-role" id="communityRole">Player</span>
+      </div>
+      <form id="communityPostForm">
+        <textarea id="communityPostBody" maxlength="2000" rows="3" placeholder="What's happening on your court? Share a game, a highlight or an update…"></textarea>
+        <div class="community-media-preview" id="communityMediaPreview" hidden></div>
+        <div class="composer-actions">
+          <div class="composer-tools">
+            <label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label>
+            <span class="media-limit">Images up to 10 MB · Videos up to 25 MB</span>
+          </div>
+          <button class="community-primary" id="communityPostButton" type="submit">Post to community</button>
+        </div>
+        <div class="community-inline-message" id="communityPostMessage" aria-live="polite"></div>
+      </form>
+      <p class="privacy-reminder">Public community posts are visible to signed-in Courtly members. If your player profile is private, your posts are visible only to you.</p>
+    </section>
+
+    <section class="community-feed-section">
+      <div class="feed-toolbar">
+        <div><div class="eyebrow">THE COURTLY FEED</div><h2>Community posts</h2></div>
+        <button class="community-secondary" id="refreshCommunityFeed" type="button">↻ Refresh</button>
+      </div>
+      <div id="communityFeed" class="community-feed" aria-live="polite">
+        <div class="community-state">Loading community posts…</div>
+      </div>
+    </section>
+
+    <section class="community-signin card" id="communitySignin" hidden>
+      <div class="community-signin-icon">✦</div>
+      <h2>Join the Courtly community</h2>
+      <p>Sign in as a player or venue owner to share updates, like posts and comment.</p>
+      <div class="signin-actions"><a class="community-primary" href="/player-login.html">Player login</a><a class="community-secondary" href="/login.html">Owner login</a></div>
+    </section>
+  </main>
+
+  <div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>
+  <script type="module" src="/community.js"></script>
+</body>
+</html>

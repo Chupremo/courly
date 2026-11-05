@@ -34,7 +34,11 @@ export default defineConfig({
         coachPortal: resolve(process.cwd(), 'coach-portal.html'),
         coachTerms: resolve(process.cwd(), 'coach-owner-terms.html'),
         adminCoaches: resolve(process.cwd(), 'admin-coaches.html'),
-        myCoachingSessions: resolve(process.cwd(), 'my-coaching-sessions.html')
+        myCoachingSessions: resolve(process.cwd(), 'my-coaching-sessions.html'),
+        browseClubs: resolve(process.cwd(), 'browse-clubs.html'),
+        clubRegister: resolve(process.cwd(), 'club-register.html'),
+        clubLogin: resolve(process.cwd(), 'club-login.html'),
+        clubDashboard: resolve(process.cwd(), 'club-dashboard.html')
       }
     }
   }

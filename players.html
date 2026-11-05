@@ -17,9 +17,10 @@ header{background:#fff;border-bottom:1px solid var(--line)}.nav{height:72px;disp
 body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}
 @media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.nav{height:62px}nav{gap:12px}nav a{font-size:11px}.hero{padding:48px 0 65px}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.filters button{height:45px}.grid{grid-template-columns:1fr}.results-head{align-items:start;flex-direction:column}.cover{height:130px}}
 </style>
+<link rel="stylesheet" href="/courtly-brand.css">
 </head>
 <body>
-<header><div class="wrap nav"><a class="logo" href="/">COURT<span>LY</span></a><nav><a href="/">Home</a><a href="/player-login.html">Player Login</a><a href="/player-register.html">Join Courtly</a><a href="/business.html">For Businesses</a><a href="/login.html">Owner Login</a></nav></div></header>
+<header><div class="wrap nav"><a class="logo" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a><nav><a href="/">Home</a><a href="/player-login.html">Player Login</a><a href="/player-register.html">Join Courtly</a><a href="/business.html">For Businesses</a><a href="/login.html">Owner Login</a></nav></div></header>
 <section class="hero"><div class="wrap"><div class="eyebrow">DISCOVER · BOOK · PLAY</div><h1>Find your court.<br>Find your people.</h1><p>Explore sports venues and registered businesses on Courtly. Compare locations, sports and hourly rates, then open a venue page to check its booking details.</p></div></section>
 <main class="wrap">
 <section class="search-panel"><div class="filters"><input id="search" type="search" placeholder="Search venue, court or city…" aria-label="Search venue, court or city"><select id="sport"><option value="">All sports</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Tennis</option><option>Volleyball</option><option>Football</option><option>Other</option></select><select id="city"><option value="">All locations</option></select><button id="clear" type="button">Clear filters</button></div></section>

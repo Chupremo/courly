@@ -1,0 +1,199 @@
+/* Courtly unified brand system — Navy + Lime */
+:root{
+  --navy:#001A47 !important;
+  --navy-2:#082B61 !important;
+  --navy2:#082B61 !important;
+  --blue:#001A47 !important;
+  --blue-2:#8ED502 !important;
+  --blue2:#8ED502 !important;
+  --red:#8ED502 !important;
+  --lime:#8ED502 !important;
+  --lime-bright:#A3E52A !important;
+  --lime-soft:#F2FBDD !important;
+  --ink:#15213B !important;
+  --muted:#68758E !important;
+  --muted-2:#8995A8 !important;
+  --line:#E3E9F2 !important;
+  --paper:#F5F7FB !important;
+  --bg:#F5F7FB !important;
+  --cream:#F5F7FB !important;
+  --white:#FFFFFF !important;
+  --gold:#8ED502 !important;
+  --gold2:#A3E52A !important;
+  --goldsoft:#F2FBDD !important;
+  --emerald:#16845B !important;
+  --green:#16845B !important;
+  --ruby:#B42332 !important;
+  --serif:'Poppins',Inter,Arial,sans-serif !important;
+  --shadow:0 12px 34px rgba(0,26,71,.07) !important;
+}
+html{scroll-behavior:smooth}
+html body{font-family:'Inter',Arial,sans-serif !important;background:#F5F7FB;color:#15213B;-webkit-font-smoothing:antialiased}
+html body,html body *{font-family:'Inter',Arial,sans-serif !important;font-weight:400 !important}
+html body h1,html body h2,html body h3,html body h4,html body h5,html body h6,
+html body [role="heading"],html body .page-heading h1,html body .heading h1,
+html body .section-heading h2,html body .section-title h2,html body .panel-head h2,
+html body .panel-head h3,html body .topbar h2,html body .hero h1,
+html body .pricing-hero h2,html body .features-hero h2,html body .courts-heading h2,
+html body .page-heading h1,html body .status h1,html body .section-title h2,
+html body .heading h1,html body .pricing-section-heading h3,
+html body .sport-top h2,html body .venue-body h3,html body .quick-card h3,
+html body .profile-title,html body .dashboard-heading{
+  font-family:'Poppins',Inter,Arial,sans-serif !important;
+  font-weight:700 !important;
+  letter-spacing:-.035em;
+}
+html body button,html body input,html body select,html body textarea{font-family:'Inter',Arial,sans-serif !important;font-weight:400 !important}
+html body a{transition:color .18s ease,border-color .18s ease,background-color .18s ease}
+html body :focus-visible{outline:3px solid rgba(142,213,2,.55) !important;outline-offset:2px}
+
+/* Shared brand asset */
+.courtly-brand-logo{display:block;width:188px;height:auto;max-height:44px;object-fit:contain;object-position:left center;flex:0 0 auto}
+.brand .courtly-brand-logo,.logo .courtly-brand-logo{width:190px;max-width:100%;max-height:45px}
+.site-header .courtly-brand-logo,.topbar .courtly-brand-logo,header .courtly-brand-logo{width:188px;max-height:42px}
+#sidebarBrand .courtly-brand-logo,.side .courtly-brand-logo{width:190px;max-height:48px;background:#FFFFFF;padding:6px 8px;border-radius:7px}
+.app-side-logo .courtly-brand-logo,.dashboard-brand .courtly-brand-logo,.preview-brand .courtly-brand-logo,.settings-brand .courtly-brand-logo,.club-preview-brand .courtly-brand-logo{width:112px;max-height:28px;object-fit:contain;background:#FFFFFF;padding:3px 5px;border-radius:5px}
+.footer-brand .courtly-brand-logo{width:200px;max-height:48px;background:#FFFFFF;padding:6px 8px;border-radius:7px}
+.courtly-admin-brand .courtly-brand-logo{width:165px;max-height:42px}
+
+/* Primary palette: navy structure, lime interaction, soft cool-white surfaces */
+html body .btn-primary,html body .btn.primary,html body .primary,html body .bluebtn,
+html body .book,html body .submit,html body .feature-primary,
+html body .pricing-action .feature-primary,html body .toolbar button:not(.secondary),
+html body .empty a,html body .court-card-bottom button,html body .settings-save,
+html body .nav button,html body .btn:not(.light):not(.secondary):not(.ghost):not(.outline):not(.danger):not(.red){
+  background:#001A47 !important;color:#FFFFFF !important;border-color:#001A47 !important;
+  box-shadow:0 7px 18px rgba(0,26,71,.13);
+}
+html body .btn-primary:hover,html body .btn.primary:hover,html body .primary:hover,
+html body .bluebtn:hover,html body .book:hover,html body .submit:hover,
+html body .feature-primary:hover,html body .pricing-action .feature-primary:hover,
+html body .toolbar button:not(.secondary):hover,html body .empty a:hover,
+html body .court-card-bottom button:hover,html body .settings-save:hover{
+  background:#8ED502 !important;color:#001A47 !important;border-color:#8ED502 !important;
+}
+html body .btn.light,html body .btn-light,html body .btn-ghost,
+html body .secondary,html body .outline,html body .top-btn{
+  background:#FFFFFF !important;color:#001A47 !important;border:1px solid #DCE5F0 !important;
+}
+html body .eyebrow,html body .features-kicker,html body .pricing-kicker,
+html body .feature-number,html body .crumb{color:#001A47 !important}
+html body .eyebrow:before,html body .kicker-dot,html body .pricing-kicker i,
+html body .feature-icon,html body .feature-number:before{background:#8ED502 !important}
+html body .link,html body .nav-links a:hover,html body .footer-bottom a:hover{color:#001A47 !important}
+html body .nav-link.active,html body .navbtn.active,html body .sport-chip.active,
+html body .sport-chip[aria-pressed="true"],html body .datebtn.active,
+html body .segmented button.active,html body .tab.active,html body .quick-card.active{
+  background:#F2FBDD !important;color:#001A47 !important;border-color:#8ED502 !important;
+}
+html body .navbtn.active:before,html body .nav-link.active:before{background:#8ED502 !important}
+html body .quick-icon,html body .sport-badge,html body .brand-mark,
+html body .preview-mark,html body .courtly-mark{background:#001A47 !important;color:#FFFFFF !important}
+html body .brand-mark:after{background:#8ED502 !important}
+html body .skill-pill,html body .tag,html body .sport-label,html body .mini-pill{
+  background:#F2FBDD !important;color:#001A47 !important;border-color:#D6EDA6 !important;
+}
+
+/* Owner portal: replace former ivory/champagne palette with homepage navy/lime system. */
+html body .side{background:linear-gradient(180deg,#001A47 0%,#082B61 100%) !important;border-right:1px solid rgba(142,213,2,.18) !important}
+html body .side small{color:rgba(255,255,255,.58) !important}
+html body .navbtn{color:rgba(255,255,255,.78) !important}
+html body .navbtn:hover{background:rgba(255,255,255,.08) !important;color:#FFFFFF !important}
+html body .navbtn.active{background:rgba(142,213,2,.16) !important;color:#B4ED55 !important}
+html body .navbtn.active:before{background:#8ED502 !important}
+html body .side-bottom{border-top-color:rgba(255,255,255,.13) !important;color:rgba(255,255,255,.6) !important}
+html body .side-bottom span{color:#A3E52A !important}
+html body .topbar{background:rgba(255,255,255,.96) !important;border-bottom-color:#E3E9F2 !important}
+html body .topbar h2,html body .heading h1{color:#001A47 !important}
+html body .eyebrow{color:#001A47 !important}
+html body .panel,html body .stat,html body .card,html body .tablewrap,
+html body .settings-card,html body .owner,html body .pricing-card,
+html body .booking,html body .toolbar{border-color:#E3E9F2 !important}
+html body .pill,html body .chip{background:#F2FBDD !important;color:#001A47 !important;border-color:#D6EDA6 !important}
+html body .avatar{background:#EAF3D8 !important;color:#001A47 !important}
+html body .content,html body .main{color:#15213B}
+
+/* Player portal: make active navigation and sport selections match the same lime accent. */
+html body .sidebar{background:#FFFFFF !important;border-right-color:#E3E9F2 !important}
+html body .nav-link{color:#53617A !important}
+html body .nav-link.active{background:#F2FBDD !important;color:#001A47 !important;border-left:3px solid #8ED502 !important}
+html body .quick-icon{background:#F2FBDD !important;color:#001A47 !important}
+html body .sport-chip.active,html body .sport-chip:hover{background:#F2FBDD !important;color:#001A47 !important;border-color:#8ED502 !important}
+html body .side-user{border-bottom-color:#E3E9F2 !important}
+html body .topbar{background:#FFFFFF !important}
+
+/* Authentication and public pages */
+html body .hero,html body .features-hero{color:inherit}
+html body .hero:after{background:radial-gradient(circle,rgba(142,213,2,.15),rgba(142,213,2,0) 70%) !important}
+html body .hero h1 .accent{color:#5D8F00 !important}
+html body .hero .btn-primary,html body .hero .feature-primary{background:#001A47 !important}
+html body .hero .btn-primary:hover,html body .hero .feature-primary:hover{background:#8ED502 !important;color:#001A47 !important}
+html body .topbar,html body header:not(.site-header){background:#FFFFFF !important;color:#001A47 !important;border-bottom:1px solid #E3E9F2 !important}
+html body header a,html body .topbar a{color:#001A47 !important}
+html body .hero-kicker,html body .proof-item,html body .features-hero .features-kicker{border-color:#E3E9F2}
+html body .pricing-page{background:#F5F7FB !important;color:#15213B !important}
+html body .pricing-hero{background:linear-gradient(180deg,#F7F9FD 0%,#F5F7FB 100%) !important}
+html body .pricing-hero h2 em,html body .pricing-bottom h2 em{color:#8ED502 !important}
+html body .pricing-side-card,html body .feature-bottom-cta{background:linear-gradient(125deg,#001A47,#0A2D63) !important}
+html body .pricing-side-card b,html body .pricing-compare-row.header b{color:#B4ED55 !important}
+html body .pricing-compare-row.header{background:#001A47 !important;color:#FFFFFF !important}
+html body .pricing-highlight{background:#F2FBDD !important;border-color:#D6EDA6 !important}
+html body .pricing-highlight .coin{background:#001A47 !important;color:#FFFFFF !important}
+html body .pricing-calc input[type=range]{accent-color:#8ED502 !important}
+html body .feature-bottom-actions .feature-primary{background:#8ED502 !important;color:#001A47 !important;border-color:#8ED502 !important}
+html body .feature-bottom-actions .feature-primary:hover{background:#B4ED55 !important}
+html body .settings-save{background:#8ED502 !important;color:#001A47 !important;border-color:#8ED502 !important}
+html body .hero .steps .step.active{border-color:#8ED502 !important}
+html body .datebtn.active{background:#001A47 !important;color:#FFFFFF !important;border-color:#8ED502 !important}
+html body .slot.selected{border-color:#8ED502 !important;background:#F2FBDD !important;color:#001A47 !important}
+html body .status.confirmed,html body .check{background:#E8F7EE !important;color:#16845B !important}
+html body .status.cancelled,html body .status.rejected{background:#FFF0F0 !important;color:#B42332 !important}
+
+/* Smaller screens keep the same brand sizing without overflowing fixed sidebars. */
+@media(max-width:900px){
+  .courtly-brand-logo{width:164px;max-height:40px}
+  .brand .courtly-brand-logo,.logo .courtly-brand-logo{width:164px}
+}
+@media(max-width:600px){
+  .courtly-brand-logo{width:150px;max-height:36px}
+  .brand .courtly-brand-logo,.logo .courtly-brand-logo{width:150px}
+  .app-side-logo .courtly-brand-logo,.dashboard-brand .courtly-brand-logo{width:100px}
+}
+
+/* Extended page-specific alignment for the older product/marketing templates. */
+html body.page-home .hero{
+  background:linear-gradient(125deg,#001A47 0%,#082B61 100%) !important;
+  color:#FFFFFF !important;
+}
+html body.page-home .hero .eyebrow{color:#B4ED55 !important}
+html body.page-home .hero .venue-head{background:linear-gradient(120deg,#001A47,#0B326B) !important}
+html body.page-home .hero .venue{background:#001A47 !important}
+html body.page-home .hero .cta{background:linear-gradient(125deg,#001A47,#082B61) !important}
+html body.page-home .hero .step.active{border-color:#8ED502 !important}
+html body.page-home .step.active b{border-color:#8ED502 !important;color:#B4ED55 !important}
+html body.page-home .datebtn.active{background:#8ED502 !important;color:#001A47 !important;border-color:#8ED502 !important}
+html body.page-home .datebtn.active strong{color:#001A47 !important}
+html body.page-home .slot.selected{background:#F2FBDD !important;color:#001A47 !important;border-color:#8ED502 !important}
+html body.page-home .bluebtn,html body.page-home .cta button{background:#8ED502 !important;color:#001A47 !important;border:1px solid #8ED502 !important}
+html body.page-home .bluebtn:hover,html body.page-home .cta button:hover{background:#B4ED55 !important}
+html body.page-home .card .ico{background:#F2FBDD !important;color:#001A47 !important}
+html body.page-home .demo-pill{background:#8ED502 !important;color:#001A47 !important}
+html body.page-home .admin-side{background:#001A47 !important}
+html body.page-home .admin-side button.active,html body.page-home .admin-side button:hover{background:rgba(142,213,2,.18) !important;color:#B4ED55 !important}
+html body.page-home .courtly-admin-brand .courtly-brand-logo{background:#FFFFFF;padding:6px 8px;border-radius:7px}
+html body.page-features .features-hero,html body.page-clubs .clubs-hero,html body.page-courts .courts-hero{
+  background:linear-gradient(125deg,#001A47,#082B61) !important;
+}
+html body.page-features .features-hero .features-kicker,html body.page-clubs .clubs-hero .club-kicker,
+html body.page-courts .courts-hero .courts-kicker{color:#B4ED55 !important}
+html body .feature-visual .preview-mark,html body .feature-visual .club-preview-mark{background:#001A47 !important;color:#FFFFFF !important}
+html body .feature-icon,html body .club-preview-mark{background:#F2FBDD !important;color:#001A47 !important}
+html body .pricing-kicker i,html body .pricing-proof span:before{color:#5D8F00 !important;background:#8ED502 !important}
+html body .pricing-card-label,html body .pricing-calc label{color:#001A47 !important}
+html body .pricing-price,html body .pricing-compare-row b{color:#001A47 !important}
+html body .pricing-side-card .mini-pill{border-color:rgba(142,213,2,.5) !important;color:#B4ED55 !important;background:transparent !important}
+html body .pricing-side-stats b{color:#B4ED55 !important}
+html body .courtly-admin-brand .courtly-brand-logo{background:#FFFFFF;padding:6px 8px;border-radius:7px}
+html body .owner .outline,html body .outline{border-color:#D6EDA6 !important;color:#001A47 !important}
+html body .btn.soft{background:#F2FBDD !important;border-color:#D6EDA6 !important;color:#001A47 !important}
+html body .stat-icon{background:#F2FBDD !important;color:#001A47 !important}

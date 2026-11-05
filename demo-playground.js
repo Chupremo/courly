@@ -172,5 +172,5 @@ document.getElementById('viewRoot').addEventListener('submit',e=>{
  if(kind==='coach-message'){data.coach.messages.push({from:data.coach.name,text:v.text,time:'Just now'});toast('Demo reply sent in the local conversation.');}
  save();render();
 });
-document.getElementById('resetDemo').addEventListener('click',()=>{if(!confirm('Reset all demo changes on this browser?'))return;data=fresh();role='club';view='overview';try{localStorage.removeItem(STORE)}catch(e){}render();toast('Demo data reset to the original sample.')});
+document.getElementById('resetDemo').addEventListener('click',()=>{if(!confirm('Reset all demo changes on this browser?'))return;data=fresh();data.club.sessions=sampleClubSessions();role='club';view='overview';try{localStorage.removeItem(STORE)}catch(e){}render();toast('Demo data reset to the original sample.')});
 render();

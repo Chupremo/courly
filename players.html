@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Find Courts & Sports Venues | Courtly</title>
 <meta name="description" content="Discover registered sports courts and businesses on Courtly. Search venues, sports, locations and court rates.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,8 @@ body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}
 @media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.nav{height:62px}nav{gap:12px}nav a{font-size:11px}.hero{padding:48px 0 65px}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.filters button{height:45px}.grid{grid-template-columns:1fr}.results-head{align-items:start;flex-direction:column}.cover{height:130px}}
 </style>
 <link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body>
 <header><div class="wrap nav"><a class="logo" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a><nav><a href="/">Home</a><a href="/player-login.html">Player Login</a><a href="/player-register.html">Join Courtly</a><a href="/business.html">For Businesses</a><a href="/login.html">Owner Login</a></nav></div></header>
@@ -43,4 +45,6 @@ function setCities(){const cities=[...new Set(venues.map(v=>v.city).filter(Boole
 async function load(){if(!supabase){list.innerHTML='<div class="error">Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment, then redeploy.</div>';count.textContent='Listings unavailable';return}try{const {data,error}=await supabase.from('venues').select('id,slug,name,address,city,logo_url,cover_url,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url,image_fit)').eq('is_published',true).order('created_at',{ascending:false});if(error)throw error;venues=(data||[]).map(v=>({...v,courts:(v.courts||[]).filter(c=>c.is_active!==false)}));if(!venues.length&&SHOW_SAMPLES){venues=SAMPLE_VENUES;usingSamples=true}setCities();render();}catch(e){console.error(e);list.innerHTML=`<div class="error">Could not load registered venues. ${esc(e.message||'Please check your Supabase setup and public read policies.')}</div>`;count.textContent='Could not load listings'}}
 [search,sport,city].forEach(el=>el.addEventListener('input',render));document.getElementById('clear').addEventListener('click',()=>{search.value='';sport.value='';city.value='';render()});load();
 </script>
+
+<script type="module" src="/courtly-responsive.js"></script>
 </body></html>

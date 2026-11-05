@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Courtly — For Clubs</title>
 <style>
 :root{--navy:#101a38;--blue:#001A47;--blue2:#8ED502;--cream:#f6f0e3;--ink:#152044;--panel:#171a22;--muted:#8d98b7;--line:#29344d;--gold:#F2FBDD}
@@ -194,6 +194,8 @@ body.page-courts .hero,body.page-courts #venue,body.page-courts #features,body.p
 
 <style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body class="page-clubs">
 <header class="topbar">
@@ -463,4 +465,6 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 let toastTimer;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600)}
 renderVenue();drawQr();
 </script>
+
+<script type="module" src="/courtly-responsive.js"></script>
 </body></html>

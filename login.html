@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#001A47"><title>Owner Login | Courtly</title>
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#0a1530;color:#172342;font-family:Inter,Arial,sans-serif}
@@ -13,6 +13,8 @@ button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;co
 .secondary{background:#f2f5fa;color:#1747ad;border:1px solid #d7deeb}.msg{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:13px;line-height:1.5}.msg.show{display:block}.error{background:#fff0f0;color:#a72a2a}.success{background:#eaf8ef;color:#176b37}.links{margin-top:18px;text-align:center;font-size:13px}.demo-box{margin-top:24px;padding-top:20px;border-top:1px solid #e8edf5}.demo-box h2{font-size:15px;margin:0 0 6px}.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.demo-grid a{display:block;padding:11px 10px;border:1px solid #d7deeb;border-radius:10px;color:#1747ad;text-decoration:none;font-size:12px;font-weight:700;background:#f8faff}.demo-grid a:hover{border-color:#1747ad;background:#eef4ff}.links a{color:#1747ad;cursor:pointer}.hidden{display:none}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body>
 <main class="card">
@@ -80,4 +82,6 @@ form.addEventListener('submit',async e=>{
  finally{button.disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
 });
 </script>
+
+<script type="module" src="/courtly-responsive.js"></script>
 </body></html>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#001A47">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#001A47">
 <title>Pickle Paul | Courtly</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -22,6 +22,8 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 
 <style id="court-availability-states">.court-card.unavailable{opacity:.58;border-color:#f2b8b5;background:#fff7f6;cursor:not-allowed}.court-card.unavailable .radio{border-color:#b42318}.court-card.unavailable .available{color:#b42318!important}.court-card.unavailable .available i{background:#b42318!important}</style>
 <link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body>
 <header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></div></div></header>
@@ -569,4 +571,6 @@ window.addEventListener('focus', () => { refreshPublicVenueMedia(); });
 document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible')refreshPublicVenueMedia(); });
 setInterval(() => { if (venue) loadAvailability().catch((error) => console.warn('Availability refresh failed:', error)); }, 30000);
 setInterval(() => { if (venue) refreshPublicVenueMedia(); }, 60000);
-</script></body></html>
+</script>
+<script type="module" src="/courtly-responsive.js"></script>
+</body></html>

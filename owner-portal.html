@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Courtly Owner Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -215,6 +215,8 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 <style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}@media(max-width:680px){.content{padding:22px 14px 48px}.topbar{padding:0 14px;min-height:68px;height:auto}.heading{align-items:stretch;gap:12px;margin-bottom:20px}.heading>div:last-child,.heading .actions{width:100%;display:grid;grid-template-columns:1fr;gap:9px}.btn{width:100%;min-height:46px}.panel{min-width:0}.tablewrap{max-width:100%;overflow:visible}.table{min-width:0;table-layout:fixed}.table th,.table td{padding:9px 6px;font-size:11px}.table th{font-size:9px;letter-spacing:.04em}.table td .actions{display:grid;grid-template-columns:1fr;gap:5px}.table td .actions .btn{font-size:10px;padding:6px 4px;min-height:30px}.formgrid,.form-row{grid-template-columns:1fr!important}.statgrid,.stats{grid-template-columns:1fr 1fr!important;gap:10px}.stat{min-width:0;padding:13px}.navbtn{min-height:46px}.actions{display:grid;grid-template-columns:1fr;gap:8px}.actions .btn{width:100%}}
 </style>
 <link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body>
 <div class="app">
@@ -398,5 +400,7 @@ async function initializeOwnerPortal(){if(ACTIVE_DEMO){render();return;}try{if(!
 initializeOwnerPortal();
 </script>
 <script type="module" src="/open-play-owner-sync.js"></script>
+
+<script type="module" src="/courtly-responsive.js"></script>
 </body>
 </html>

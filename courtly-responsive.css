@@ -1,0 +1,1578 @@
+/* ==========================================================
+   COURTLY RESPONSIVE SYSTEM
+   Mobile-first polish for player, owner, public booking and
+   marketing pages. Desktop layouts are intentionally preserved.
+   Brand: Courtly Navy #001A47 + Lime #8ED502.
+   ========================================================== */
+
+:root{
+  --courtly-navy:#001A47;
+  --courtly-navy-2:#082B61;
+  --courtly-lime:#8ED502;
+  --courtly-lime-soft:#F2FBDD;
+  --courtly-ink:#15213B;
+  --courtly-muted:#56657D;
+  --courtly-line:#E1E7F0;
+  --courtly-paper:#F5F7FB;
+  --courtly-surface:#FFFFFF;
+  --courtly-shadow:0 12px 32px rgba(0,26,71,.07);
+}
+
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  scroll-padding-top:78px;
+}
+html,body{
+  width:100%;
+  max-width:100%;
+}
+body{
+  color:var(--courtly-ink);
+  background:var(--courtly-paper);
+  -webkit-font-smoothing:antialiased;
+}
+*,*::before,*::after{box-sizing:border-box}
+img,video,canvas,svg{max-width:100%}
+button,a,input,select,textarea{touch-action:manipulation}
+button,input,select,textarea{max-width:100%}
+:focus-visible{
+  outline:3px solid rgba(142,213,2,.58);
+  outline-offset:2px;
+}
+::placeholder{color:#77849A;opacity:1}
+
+/* Small and medium screens */
+@media (max-width: 760px){
+  html,body{
+    overflow-x:hidden;
+    overscroll-behavior-x:none;
+  }
+  body{
+    font-size:14px;
+    line-height:1.55;
+  }
+  body main,body section,body article,body form,body header,body footer,
+  body .content,body .main,body .wrap,body .container{
+    min-width:0;
+  }
+  body h1,body h2,body h3,body h4{
+    max-width:100%;
+    overflow-wrap:break-word;
+  }
+  body h1{line-height:1.14}
+  body p{line-height:1.6}
+  body button,body .btn,body input[type="button"],body input[type="submit"]{
+    min-height:44px;
+  }
+  body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  body select,body textarea{
+    font-size:16px !important; /* avoids iOS input zoom */
+    min-width:0;
+    max-width:100%;
+  }
+  body .btn,body button{
+    max-width:100%;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  body .panel,body .card,body .toolbar,body .search-panel,
+  body .settings-card,body .pricing-card,body .membership-card{
+    min-width:0;
+  }
+  body .empty-state,body .empty,body .notice,body .message,
+  body .msg,body .hint,body .subtle,body .muted{
+    overflow-wrap:anywhere;
+  }
+  body .subtle,body .muted,body .hint,body .meta,body .lead,
+  body .page-heading p,body .hero p,body .field label,
+  body .date-filter,body .booking-meta,body .location,
+  body .card-body p,body .venue-loc{
+    color:var(--courtly-muted);
+  }
+  body .eyebrow,body .kicker,body .crumb,body .section-kicker{
+    color:var(--courtly-navy);
+  }
+  body .field input,body .field select,body .field textarea,
+  body input,body select,body textarea{
+    color:var(--courtly-ink);
+    background-color:#fff;
+  }
+  body .field input:disabled,body input:disabled{
+    color:#64718A;
+    opacity:1;
+    -webkit-text-fill-color:#64718A;
+  }
+  body .status,body .pill,body .tag,body .chip{
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+  body .tablewrap,body .calendar,body .tabs,body .sport-chips,
+  body .steps,body .navlist,body .nav-links{
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* Shared headers and brand marks */
+  body .courtly-brand-logo{
+    width:clamp(132px,38vw,170px) !important;
+    max-width:100%;
+    max-height:38px !important;
+    object-fit:contain;
+  }
+  body .site-header{
+    height:auto;
+    min-height:64px;
+    padding-top:env(safe-area-inset-top);
+  }
+  body .site-header .nav-wrap{
+    min-height:64px;
+    height:auto;
+    gap:10px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+  body .brand .courtly-brand-logo,body .logo .courtly-brand-logo{
+    width:clamp(130px,38vw,165px) !important;
+    max-height:36px !important;
+  }
+  body footer,body .foot{
+    padding-left:16px;
+    padding-right:16px;
+    overflow-wrap:anywhere;
+  }
+
+  /* PUBLIC VENUE DIRECTORY */
+  body .wrap{
+    width:calc(100% - 32px) !important;
+    max-width:100% !important;
+  }
+  body .hero{
+    padding-top:42px;
+    padding-bottom:52px;
+  }
+  body .hero h1{
+    font-size:clamp(30px,8vw,42px);
+    letter-spacing:-.04em;
+    line-height:1.08;
+  }
+  body .hero p{
+    font-size:14px;
+    line-height:1.65;
+  }
+  body .search-panel{
+    margin-top:-26px;
+    padding:14px;
+    border-radius:17px;
+  }
+  body .filters{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:9px;
+  }
+  body .filters input{
+    grid-column:1/-1;
+    width:100%;
+    min-height:48px;
+  }
+  body .filters select{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+  }
+  body .filters button{
+    grid-column:1/-1;
+    width:100%;
+    min-height:46px;
+  }
+  body .results-head{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:5px;
+    margin:22px 0 14px;
+  }
+  body .results-head h2{font-size:20px;line-height:1.25}
+  body .grid,body .venue-grid{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:14px;
+  }
+  body .venue-card{
+    width:100%;
+    min-width:0;
+    overflow:hidden;
+    border-radius:17px;
+  }
+  body .cover,body .venue-cover{
+    height:auto;
+    aspect-ratio:16/9;
+    min-height:145px;
+    max-height:220px;
+  }
+  body .cover img,body .venue-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  body .card-body,body .venue-body{padding:15px}
+  body .card-body h3,body .venue-body h3{font-size:16px;line-height:1.3}
+  body .location,body .venue-loc{font-size:12px;line-height:1.5}
+  body .tags,body .courts{display:flex;flex-wrap:wrap;gap:7px}
+  body .card-foot,body .venue-foot{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  body .card-foot .book,body .venue-foot .btn{
+    flex:1 1 130px;
+    min-height:46px;
+  }
+
+  /* PLAYER DASHBOARD — top bar, drawer, page shell */
+  body .shell{width:100%;min-width:0;overflow:clip}
+  body .main{
+    width:100%;
+    min-width:0;
+    margin-left:0 !important;
+  }
+  body .topbar{
+    position:sticky !important;
+    top:0;
+    min-height:62px;
+    height:auto !important;
+    padding:8px 14px !important;
+    gap:10px;
+    z-index:52 !important;
+    display:flex;
+    align-items:center;
+  }
+  body .topbar .mobile-menu-toggle{
+    width:44px;
+    height:44px;
+    min-width:44px;
+    flex:0 0 44px;
+  }
+  body .topbar .crumb{
+    min-width:0;
+    flex:1 1 auto;
+    font-size:12px;
+    line-height:1.3;
+    letter-spacing:.01em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  body .top-actions{margin-left:auto;min-width:0;gap:8px}
+  body .top-profile{min-width:0}
+  body .top-profile .avatar{width:36px;height:36px;flex:0 0 36px}
+  body .content{
+    width:calc(100% - 32px) !important;
+    max-width:720px !important;
+    padding:22px 0 calc(42px + env(safe-area-inset-bottom)) !important;
+    margin:0 auto !important;
+  }
+  body .page-heading{
+    display:block !important;
+    margin:0 0 20px !important;
+  }
+  body .page-heading .eyebrow{
+    margin-bottom:7px;
+    font-size:10px;
+    letter-spacing:.16em;
+  }
+  body .page-heading h1{
+    font-size:clamp(25px,7vw,32px) !important;
+    line-height:1.12;
+    letter-spacing:-.045em;
+    margin:0 0 8px;
+  }
+  body .page-heading p{
+    font-size:14px;
+    line-height:1.55;
+    max-width:56ch;
+    margin:0;
+  }
+  body #viewRoot,body #viewRoot > *{min-width:0;max-width:100%}
+  body #viewRoot .panel{
+    border-radius:18px;
+    box-shadow:0 8px 24px rgba(0,26,71,.045);
+  }
+
+  /* Player home cards */
+  body .sport-panel{
+    padding:18px 16px !important;
+    margin-bottom:16px;
+    border-radius:18px;
+  }
+  body .sport-top{
+    align-items:flex-start;
+    gap:12px;
+  }
+  body .sport-top > div{min-width:0;flex:1 1 auto}
+  body .sport-top h2{font-size:17px;line-height:1.25}
+  body .sport-top p{font-size:12px;line-height:1.5}
+  body .sport-top .btn{
+    flex:0 0 auto;
+    max-width:112px;
+    min-height:44px;
+    padding:9px 11px;
+    font-size:12px;
+  }
+  body .sport-chips{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:8px;
+    overflow-x:auto;
+    margin:14px -2px 0;
+    padding:0 2px 7px;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+  }
+  body .sport-chips::-webkit-scrollbar{display:none}
+  body .sport-chip{
+    min-height:42px;
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    padding:9px 13px;
+    font-size:12px;
+    white-space:nowrap;
+  }
+  body .quick-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:11px !important;
+    margin-bottom:22px;
+  }
+  body .quick-card{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+    min-height:96px;
+    padding:13px 11px;
+    border-radius:16px;
+  }
+  body .quick-icon{
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    border-radius:12px;
+    font-size:17px;
+  }
+  body .quick-card > span:last-child{min-width:0;overflow-wrap:anywhere}
+  body .quick-card strong{font-size:12px;line-height:1.3;display:block}
+  body .quick-card small{font-size:11px;line-height:1.4;display:block;margin-top:3px;color:#56657D}
+  body .section-block{margin-top:24px}
+  body .section-title{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:9px;
+    margin-bottom:12px;
+  }
+  body .section-title h2{font-size:19px;line-height:1.25;margin:0}
+  body .section-title p{font-size:12px;line-height:1.5;margin:4px 0 0}
+  body .section-title .link{font-size:12px;max-width:100%}
+  body .venue-grid{grid-template-columns:minmax(0,1fr) !important;gap:13px}
+  body .venue-cover{height:auto;aspect-ratio:16/9;max-height:210px}
+  body .venue-body{padding:15px}
+  body .venue-body h3{font-size:16px}
+  body .venue-loc{font-size:12px;line-height:1.5}
+  body .venue-foot{flex-wrap:wrap;gap:10px}
+  body .venue-foot .btn{width:100%;flex:1 1 100%}
+  body .empty-state{
+    padding:28px 18px !important;
+    border-radius:16px;
+    line-height:1.6;
+    overflow-wrap:anywhere;
+  }
+  body .empty-state strong{font-size:16px;line-height:1.35}
+  body .empty-state span{font-size:13px;line-height:1.6}
+
+  /* Player Discover filters — stack the search and selects, keep the mode switch contained */
+  body #viewRoot .toolbar:has(.search){
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    padding:14px;
+    margin:0 0 20px;
+    border-radius:17px;
+  }
+  body #viewRoot .toolbar:has(.search) .search{
+    grid-column:1/-1;
+    width:100%;
+    min-width:0;
+    flex:1 1 100%;
+  }
+  body #viewRoot .toolbar:has(.search) .search input{
+    width:100%;
+    height:48px;
+    min-height:48px;
+    border-radius:11px;
+    font-size:16px !important;
+  }
+  body #viewRoot .toolbar:has(.search) > select{
+    width:100%;
+    min-width:0;
+    height:46px;
+    min-height:46px;
+    padding:0 10px;
+    font-size:14px !important;
+  }
+  body #viewRoot .toolbar:has(.search) .segmented{
+    grid-column:1/-1;
+    width:100%;
+    min-width:0;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:3px;
+    overflow:hidden;
+    padding:4px;
+    border-radius:12px;
+  }
+  body #viewRoot .toolbar:has(.search) .segmented button{
+    min-width:0;
+    min-height:44px;
+    padding:8px 4px;
+    font-size:12px;
+    white-space:normal;
+    line-height:1.2;
+  }
+  body #viewRoot .toolbar:has(.search) .segmented button.active{
+    background:var(--courtly-navy);
+    color:#fff;
+    border-radius:9px;
+  }
+  body .map-list{grid-template-columns:minmax(0,1fr) !important;gap:11px}
+  body .map-card{min-width:0;align-items:flex-start;padding:12px;gap:11px}
+  body .map-thumb{width:82px;height:82px;flex:0 0 82px}
+  body .map-card > div:last-child{min-width:0}
+  body .map-card h3{font-size:13px;overflow-wrap:anywhere}
+  body .map-card p{font-size:11px;overflow-wrap:anywhere}
+
+  /* Player bookings — the previous flex row caused tab/date controls to spill */
+  body #viewRoot .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  body #viewRoot .stat-card{
+    min-width:0;
+    padding:14px;
+    border-radius:15px;
+  }
+  body #viewRoot .stat-card small{font-size:11px;color:#5D6B82}
+  body #viewRoot .stat-card strong{
+    font-size:clamp(22px,6vw,27px);
+    line-height:1.2;
+    overflow-wrap:anywhere;
+  }
+  body #viewRoot .toolbar:has(.date-filter){
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:11px;
+    padding:14px;
+    border-radius:16px;
+    margin:0 0 20px;
+    align-items:stretch;
+  }
+  body #viewRoot .toolbar:has(.date-filter) > .subtle,
+  body #viewRoot .toolbar:has(.date-filter) > .tabs{
+    grid-column:1/-1;
+    min-width:0;
+    width:100%;
+  }
+  body #viewRoot .toolbar:has(.date-filter) > .subtle{
+    font-size:13px;
+    color:#53617A;
+  }
+  body #viewRoot .toolbar:has(.date-filter) > .tabs{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:5px;
+    padding:4px;
+    background:#F0F3F8;
+    border-radius:12px;
+    overflow:visible;
+  }
+  body #viewRoot .toolbar:has(.date-filter) > .tabs button{
+    min-width:0;
+    min-height:44px;
+    padding:8px 5px;
+    font-size:12px;
+    line-height:1.25;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  body #viewRoot .toolbar:has(.date-filter) .date-filter{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:6px;
+    width:100%;
+    min-width:0;
+    white-space:normal;
+    font-size:12px;
+    color:#53617A;
+  }
+  body #viewRoot .toolbar:has(.date-filter) .date-filter input{
+    width:100%;
+    max-width:none;
+    min-width:0;
+    min-height:46px;
+    height:46px;
+    padding:0 9px;
+    border-radius:10px;
+    background:#fff;
+    color:#15213B;
+    font-size:14px !important;
+  }
+  body #viewRoot .toolbar:has(.date-filter) > button{
+    width:100%;
+    min-width:0;
+    min-height:45px;
+    padding:9px 8px;
+    font-size:12px;
+  }
+  body #viewRoot .booking-list{display:grid;grid-template-columns:minmax(0,1fr);gap:11px}
+  body #viewRoot .booking-card{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+    min-width:0;
+    padding:15px;
+    border-radius:15px;
+  }
+  body #viewRoot .booking-card h3{font-size:15px;line-height:1.35}
+  body #viewRoot .booking-meta{font-size:12px;line-height:1.6;color:#56657D}
+  body #viewRoot .booking-right{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:9px;
+  }
+  body #viewRoot .booking-amount{font-size:17px}
+  body #viewRoot .ref{overflow-wrap:anywhere}
+  body #viewRoot .tabs:not(.toolbar .tabs){
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:5px;
+    padding:4px;
+    scrollbar-width:none;
+    max-width:100%;
+  }
+  body #viewRoot .tabs:not(.toolbar .tabs)::-webkit-scrollbar{display:none}
+  body #viewRoot .tabs:not(.toolbar .tabs) button{
+    flex:0 0 auto;
+    min-width:max-content;
+    min-height:43px;
+    padding:9px 13px;
+    font-size:12px;
+  }
+
+  /* Player profile — compact summary card; no fixed height or horizontal overflow */
+  body #viewRoot .profile-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:13px;
+    align-items:start;
+  }
+  body #viewRoot .profile-card{
+    display:grid !important;
+    grid-template-columns:68px minmax(0,1fr);
+    grid-template-rows:auto auto auto auto;
+    column-gap:13px;
+    row-gap:5px;
+    align-items:center;
+    align-content:start;
+    height:auto !important;
+    min-height:0 !important;
+    padding:17px !important;
+    text-align:left !important;
+  }
+  body #viewRoot .profile-card > .profile-large{
+    grid-column:1;
+    grid-row:1 / span 4;
+    width:66px;
+    height:66px;
+    min-width:66px;
+    margin:0 !important;
+    font-size:22px;
+  }
+  body #viewRoot .profile-card > h2{
+    grid-column:2;
+    grid-row:1;
+    margin:0 !important;
+    font-size:18px;
+    line-height:1.2;
+    overflow-wrap:anywhere;
+  }
+  body #viewRoot .profile-card > p{
+    grid-column:2;
+    margin:0 !important;
+    font-size:12px;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+  body #viewRoot .profile-card > p:nth-of-type(1){grid-row:2}
+  body #viewRoot .profile-card > p:nth-of-type(2){grid-row:3}
+  body #viewRoot .profile-card > label.btn{
+    grid-column:2;
+    grid-row:4;
+    justify-self:start;
+    width:auto;
+    max-width:100%;
+    min-height:40px;
+    margin:3px 0 0 !important;
+    padding:8px 11px;
+    font-size:12px;
+    white-space:normal;
+  }
+  body #viewRoot .profile-card .my-sports-card{
+    grid-column:1/-1;
+    width:100%;
+    min-width:0;
+    margin:12px 0 0;
+    padding-top:13px;
+  }
+  body #viewRoot .profile-card .my-sport-row{min-width:0}
+  body #viewRoot .profile-card .my-sport-row > div{min-width:0}
+  body #viewRoot .profile-card .rating-note{font-size:12px;line-height:1.55}
+  body #viewRoot .profile-form{
+    min-width:0;
+    padding:17px !important;
+  }
+  body #viewRoot .profile-form .panel-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:5px 12px;
+  }
+  body #viewRoot .profile-form .panel-head h2{font-size:17px}
+  body #viewRoot .profile-form .panel-head .subtle{font-size:12px}
+  body #viewRoot .form-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:13px;
+  }
+  body #viewRoot .field{min-width:0}
+  body #viewRoot .field label{
+    font-size:13px;
+    margin-bottom:6px;
+    color:#34435C;
+  }
+  body #viewRoot .field input,body #viewRoot .field select{
+    width:100%;
+    height:48px;
+    min-height:48px;
+    padding:0 12px;
+    border-radius:10px;
+    font-size:16px !important;
+  }
+  body #viewRoot .privacy-row{
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 0;
+  }
+  body #viewRoot .privacy-row > div{min-width:0}
+  body #viewRoot .privacy-row strong{font-size:13px}
+  body #viewRoot .privacy-row small{font-size:12px;line-height:1.55;color:#56657D}
+  body #viewRoot .profile-form > button[type="submit"]{
+    width:100%;
+    min-height:48px;
+  }
+
+  /* Tournament, membership, stats and map panels */
+  body #viewRoot .membership-grid,
+  body #viewRoot .profile-grid{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:11px;
+  }
+  body #viewRoot .membership-card{padding:16px}
+  body #viewRoot .stat-grid .stat-card{overflow-wrap:anywhere}
+  body #viewRoot .sport-modal-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px;
+  }
+  body #viewRoot .sport-option{
+    min-width:0;
+    min-height:46px;
+    white-space:normal;
+    line-height:1.25;
+    padding:10px 8px;
+    font-size:12px;
+  }
+
+  /* Owner portal — consistent mobile shell and usable navigation */
+  body .app:not(.shell){
+    display:block !important;
+    width:100%;
+    min-width:0;
+  }
+  body .app:not(.shell) > .side{
+    position:sticky !important;
+    top:0;
+    width:100%;
+    height:auto !important;
+    min-height:64px;
+    z-index:70;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 46px;
+    align-items:center;
+    gap:8px 10px;
+    padding:10px 14px !important;
+    border-right:0 !important;
+    border-bottom:1px solid rgba(142,213,2,.2);
+    background:linear-gradient(180deg,#001A47,#082B61) !important;
+  }
+  body .app:not(.shell) > .side .brand{
+    padding:0 5px !important;
+    margin:0;
+    min-width:0;
+  }
+  body .app:not(.shell) > .side .brand .courtly-brand-logo{
+    width:148px !important;
+    max-width:100%;
+    max-height:36px !important;
+    object-fit:contain;
+  }
+  body .app:not(.shell) > .side .brand-powered{
+    display:none;
+  }
+  body .app:not(.shell) > .side > small,
+  body .app:not(.shell) > .side .side-bottom{
+    display:none !important;
+  }
+  body .app:not(.shell) > .side .mobile-menu-toggle{
+    grid-column:2;
+    grid-row:1;
+    display:flex !important;
+    width:44px;
+    height:44px;
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,.24);
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+  }
+  body .app:not(.shell) > .side .navlist{
+    display:none;
+    grid-column:1/-1;
+    width:100%;
+    padding:8px 0 2px;
+    gap:4px;
+    flex-direction:column;
+  }
+  body .app:not(.shell) > .side.menu-open .navlist{display:flex}
+  body .app:not(.shell) > .side .navbtn{
+    width:100%;
+    min-height:46px;
+    padding:11px 12px;
+    border-radius:11px;
+    text-align:left;
+    color:rgba(255,255,255,.88) !important;
+    background:transparent;
+    font-size:13px;
+  }
+  body .app:not(.shell) > .side .navbtn.active{
+    color:#D9F99A !important;
+    background:rgba(142,213,2,.16) !important;
+  }
+  body .app:not(.shell) > .side .navbtn.active:before{display:block}
+  body .app:not(.shell) > .main{
+    width:100%;
+    min-width:0;
+    margin:0 !important;
+  }
+  body .app:not(.shell) > .main > .topbar{
+    position:sticky !important;
+    top:64px;
+    min-height:58px;
+    height:auto;
+    padding:9px 16px !important;
+    z-index:45;
+    gap:10px;
+  }
+  body .app:not(.shell) > .main > .topbar h2{font-size:17px;line-height:1.25}
+  body .app:not(.shell) > .main > .content{
+    width:100%;
+    max-width:100%;
+    padding:19px 15px calc(38px + env(safe-area-inset-bottom)) !important;
+  }
+  body .app:not(.shell) .heading{
+    display:block;
+    margin-bottom:18px;
+  }
+  body .app:not(.shell) .heading h1{
+    font-size:clamp(25px,7vw,32px);
+    line-height:1.15;
+    margin:5px 0 7px;
+  }
+  body .app:not(.shell) .heading p{font-size:13px;line-height:1.55}
+  body .app:not(.shell) .heading .actions,
+  body .app:not(.shell) .heading > div:last-child{
+    width:100%;
+    margin-top:12px;
+  }
+  body .app:not(.shell) .heading .actions .btn,
+  body .app:not(.shell) .heading > div:last-child .btn{
+    flex:1 1 100%;
+  }
+  body .app:not(.shell) .stats{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:9px;
+  }
+  body .app:not(.shell) .stat{
+    min-width:0;
+    padding:13px;
+    border-radius:14px;
+  }
+  body .app:not(.shell) .stat .num,
+  body .app:not(.shell) .stat strong{font-size:clamp(20px,6vw,26px);overflow-wrap:anywhere}
+  body .app:not(.shell) .panel{
+    padding:15px !important;
+    margin-bottom:13px;
+    border-radius:16px;
+  }
+  body .app:not(.shell) .panelhead{
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  body .app:not(.shell) .panelhead h2{font-size:16px;line-height:1.3}
+  body .app:not(.shell) .formgrid{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:13px;
+  }
+  body .app:not(.shell) .field.full{grid-column:auto}
+  body .app:not(.shell) .field input,
+  body .app:not(.shell) .field select,
+  body .app:not(.shell) .field textarea,
+  body .app:not(.shell) .select{
+    width:100%;
+    min-height:48px;
+    height:auto;
+    padding:11px 12px;
+    border-radius:10px;
+    font-size:16px !important;
+  }
+  body .app:not(.shell) .formactions{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:9px;
+  }
+  body .app:not(.shell) .formactions .btn{width:100%}
+  body .app:not(.shell) .tabs{
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:5px;
+    max-width:100%;
+    scrollbar-width:none;
+  }
+  body .app:not(.shell) .tabs::-webkit-scrollbar{display:none}
+  body .app:not(.shell) .tabs .tab{
+    flex:0 0 auto;
+    min-height:43px;
+    white-space:nowrap;
+    padding:9px 13px;
+  }
+  body .app:not(.shell) .tablewrap{
+    max-width:100%;
+    width:100%;
+    overflow-x:auto !important;
+    overflow-y:hidden;
+    border-radius:12px;
+    -webkit-overflow-scrolling:touch;
+  }
+  body .app:not(.shell) .table{
+    min-width:720px;
+    width:100%;
+    table-layout:auto;
+  }
+  body .app:not(.shell) .table th,
+  body .app:not(.shell) .table td{
+    padding:10px 9px;
+    font-size:12px;
+  }
+  body .app:not(.shell) .table:has(td .actions){
+    min-width:0;
+    width:100%;
+  }
+  body .app:not(.shell) .table:has(td .actions) tbody tr{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  body .app:not(.shell) .table:has(td .actions) td{
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+  body .app:not(.shell) .calendar{
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  body .app:not(.shell) .calendar table{min-width:650px}
+  body .app:not(.shell) .calendar-top{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+  }
+  body .app:not(.shell) .court-cards{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:11px;
+  }
+  body .app:not(.shell) .court-card{min-width:0}
+  body .app:not(.shell) .court-photo{
+    max-width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    object-fit:cover;
+  }
+  body .app:not(.shell) .earnings-tabs{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;
+  }
+  body .app:not(.shell) .earnings-tabs .range-btn{
+    min-width:0;
+    white-space:normal;
+    padding:9px 7px;
+    line-height:1.25;
+  }
+  body .app:not(.shell) .range-filter,
+  body .app:not(.shell) .range-filter label{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+  }
+  body .app:not(.shell) .range-filter input{min-width:0;max-width:100%}
+  body .app:not(.shell) .twocol{grid-template-columns:minmax(0,1fr) !important}
+  body .app:not(.shell) .notice{font-size:12px;line-height:1.55}
+  body .app:not(.shell) .photo-preview{max-width:100%;overflow:hidden}
+  body .app:not(.shell) .actions{gap:7px}
+  body .app:not(.shell) .actions .btn{min-width:0;flex:1 1 120px}
+
+  /* Public venue booking experience */
+  body .venue-hero{padding:18px 0 22px}
+  body .hero-inner{
+    width:calc(100% - 30px);
+    max-width:100%;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:18px;
+    margin:0 auto;
+  }
+  body .hero-copy{min-width:0}
+  body .hero-copy h1{font-size:clamp(27px,7.5vw,36px);line-height:1.12}
+  body .hero-copy .desc{font-size:13px;line-height:1.6}
+  body .amenities{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+  }
+  body .amenity{
+    min-width:0 !important;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:11px;
+    border-radius:12px;
+  }
+  body .amenity-icon{flex:0 0 28px}
+  body .gallery{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:8px;
+    width:100%;
+    min-width:0;
+  }
+  body .gallery-main{
+    width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    min-height:170px;
+    overflow:hidden;
+    border-radius:15px;
+  }
+  body .gallery-main img{width:100%;height:100%;object-fit:cover}
+  body .thumbs{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:8px;
+    max-width:100%;
+    overflow-x:auto;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  body .thumbs::-webkit-scrollbar{display:none}
+  body .thumbs img,body .thumbs button{
+    width:76px;
+    height:60px;
+    min-width:76px;
+    flex:0 0 76px;
+    object-fit:cover;
+  }
+  body .steps{
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:flex-start;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:13px 15px 15px;
+    scrollbar-width:none;
+  }
+  body .steps::-webkit-scrollbar{display:none}
+  body .steps .step{flex:0 0 auto;min-width:max-content;white-space:nowrap;font-size:11px}
+  body .steps .step-line{flex:0 0 14px;min-width:14px}
+  body .openplay-wrap{padding:0 15px}
+  body .openplay-card{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:0;
+    overflow:hidden;
+  }
+  body .openplay-card img{width:100%;height:170px;min-height:0;object-fit:cover}
+  body .openplay-copy{padding:15px}
+  body .booking-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:14px;
+    width:calc(100% - 30px);
+    max-width:100%;
+    margin:0 auto;
+  }
+  body .booking-layout > *{min-width:0;width:100%}
+  body .date-panel,body .court-panel,body .summary-panel{
+    padding:15px !important;
+    border-radius:16px;
+  }
+  body .section-title{font-size:16px;line-height:1.3;flex-wrap:wrap}
+  body .calendar{max-width:100%;overflow-x:hidden}
+  body .calendar table{width:100%;min-width:0;table-layout:fixed;border-spacing:3px}
+  body .calendar th{padding:4px 1px;font-size:10px}
+  body .calendar td{padding:2px 1px}
+  body .calendar .day{
+    min-width:0;
+    width:100%;
+    min-height:38px;
+    height:38px;
+    padding:0;
+    border-radius:9px;
+    font-size:12px;
+  }
+  body .month-row{gap:8px}
+  body .month-row button{min-width:40px;min-height:40px}
+  body .month-row span{font-size:14px}
+  body .slots{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+  }
+  body .slots button,body .slots .slot{
+    min-width:0;
+    min-height:42px;
+    padding:8px 4px;
+    font-size:11px;
+    line-height:1.2;
+    overflow-wrap:anywhere;
+  }
+  body .time-selectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  body .time-field{min-width:0}
+  body .courts-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:10px;
+  }
+  body .court-card{min-width:0;overflow:hidden}
+  body .court-card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+  body .summary-inner{position:static;max-width:100%;width:100%}
+  body .summary-row{min-width:0;gap:10px}
+  body .summary-row > *{min-width:0;overflow-wrap:anywhere}
+  body .next-btn,body .payment-submit{width:100%;min-height:48px}
+  body .payment-overlay,body .confirmation-overlay{
+    align-items:flex-end;
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom));
+  }
+  body .payment-dialog,body .confirmation-dialog{
+    width:100%;
+    max-width:100%;
+    max-height:calc(92dvh - env(safe-area-inset-bottom));
+    overflow-y:auto;
+    border-radius:19px 19px 14px 14px;
+    padding:18px 15px;
+  }
+  body .payment-close,body .confirmation-close{min-width:42px;min-height:42px}
+  body .payment-field{min-width:0}
+  body .payment-field input,body .payment-field select{width:100%;min-height:46px}
+  body .gcash-qr{max-width:100%;height:auto;object-fit:contain}
+  body .qr-download{max-width:100%;white-space:normal}
+
+  /* Player and owner authentication pages */
+  body:has(> .page) .page,
+  body:has(> .card) .card{
+    max-width:100%;
+  }
+  body .page{
+    width:calc(100% - 28px) !important;
+    max-width:560px;
+    padding:24px 0 calc(34px + env(safe-area-inset-bottom));
+  }
+  body .brand-wrap{margin-bottom:18px}
+  body .intro{margin-bottom:20px}
+  body .intro h1{font-size:clamp(25px,7vw,31px);line-height:1.15}
+  body .intro p{font-size:13px;line-height:1.55}
+  body .card{
+    width:100%;
+    max-width:100%;
+    padding:18px !important;
+    border-radius:17px;
+  }
+  body .avatar-area{padding-bottom:16px;margin-bottom:15px}
+  body .avatar-preview{width:84px;height:84px}
+  body .grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:12px;
+  }
+  body .field{min-width:0;margin:12px 0}
+  body .field label{font-size:13px;color:#34435C}
+  body .field input,body .field select{
+    min-height:48px;
+    height:48px;
+    width:100%;
+    border-radius:10px;
+    padding:0 12px;
+  }
+  body .privacy,body .terms{
+    padding:13px;
+    gap:10px;
+    align-items:flex-start;
+    border-radius:12px;
+  }
+  body .privacy p,body .terms{font-size:12px;line-height:1.55}
+  body .submit,body button.submit{
+    width:100%;
+    min-height:49px;
+    height:auto;
+    padding:12px 15px;
+    font-size:14px;
+  }
+  body .login-cta{min-height:48px;padding:11px 14px;text-align:center}
+  body .login-caption,body .bottom{font-size:12px;line-height:1.6}
+  body .links{font-size:12px;line-height:1.9;overflow-wrap:anywhere}
+  body .modal{padding:10px}
+  body .modal-card,body .modal-box{
+    width:100%;
+    max-width:100%;
+    max-height:88dvh;
+    overflow:auto;
+    padding:18px;
+    border-radius:17px;
+  }
+  body .demo-grid{grid-template-columns:minmax(0,1fr) !important}
+  body .demo-box{padding:14px}
+
+  /* Booking confirmation and the standalone booking lookup page */
+  body .card#content,body #content.card{
+    width:calc(100% - 28px);
+    max-width:680px;
+    margin:18px auto;
+  }
+  body .status h1{font-size:clamp(23px,7vw,29px);line-height:1.15}
+  body .next{display:grid;grid-template-columns:minmax(0,1fr) !important;gap:10px}
+  body .row{font-size:12px;gap:8px}
+  body .toolbar:not(:has(.search)){
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:9px;
+    padding:13px;
+  }
+  body .toolbar:not(:has(.search)) > *{width:100%;min-width:0}
+  body .toolbar:not(:has(.search)) button{min-height:45px}
+  body .booking{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:10px;
+    padding:15px;
+  }
+  body .right{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    text-align:left;
+    gap:9px;
+  }
+
+  /* Homepage, features, pricing, clubs, courts and business pages */
+  body .section{padding:52px 0}
+  body .hero-grid,body .product-layout,body .player-layout,
+  body .owner-hero-inner,body .owner-pricing-inner,
+  body .owner-signup-inner,body .clubs-hero{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:27px;
+  }
+  body .hero-copy{max-width:100%}
+  body .hero-actions{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+  }
+  body .hero-actions .btn{width:100%;min-height:48px}
+  body .hero-proof,body .proof-items{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+  body .audience-grid,body .feature-grid,body .feature-grid-cards,
+  body .club-feature-grid,body .court-card-grid,body .club-steps,
+  body .owner-benefit-grid,body .owner-how-grid,
+  body .feature-showcase,body .feature-row,body .feature-row.reverse{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:15px;
+  }
+  body .feature-row,body .feature-row.reverse{align-items:stretch}
+  body .feature-visual,body .feature-copy{min-width:0}
+  body .audience-card,body .feature-card,body .onboarding-card,
+  body .club-feature,body .court-card,body .owner-benefit{
+    min-width:0;
+    padding:17px;
+    border-radius:16px;
+  }
+  body .hero-ui-preview,body .owner-dashboard,body .dashboard-preview{
+    width:100%;
+    max-width:100%;
+    margin:20px auto 0;
+    transform:none !important;
+    overflow:hidden;
+  }
+  body .preview-body{grid-template-columns:minmax(0,1fr) !important}
+  body .preview-sidebar{display:none !important}
+  body .preview-dashboard{min-width:0;padding:13px}
+  body .preview-stats,body .owner-metrics{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+  body .preview-stats > div,body .owner-metrics > div{min-width:0;padding:9px}
+  body .preview-stats small{font-size:10px}
+  body .preview-lower,body .owner-dash-bottom{grid-template-columns:minmax(0,1fr) !important}
+  body .owner-dash-body{grid-template-columns:68px minmax(0,1fr);min-height:0}
+  body .owner-dash-side{padding:10px 5px;font-size:9px}
+  body .owner-dash-main{padding:11px 8px;min-width:0}
+  body .owner-dash-heading h3{font-size:13px}
+  body .owner-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body .owner-strip strong{font-size:13px}
+  body .owner-strip span{font-size:10px}
+  body .feature-proof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  body .pricing-layout{grid-template-columns:minmax(0,1fr) !important;gap:15px}
+  body .pricing-hero{padding:45px 16px 25px}
+  body .pricing-hero h2,body .features-hero h2,body .owner-hero h1{
+    font-size:clamp(29px,8vw,41px);
+    line-height:1.12;
+  }
+  body .pricing-card-main,body .pricing-side-card{padding:18px}
+  body .pricing-bottom{
+    display:block;
+    margin:16px;
+    padding:18px;
+  }
+  body .pricing-bottom .feature-primary{width:100%;margin-top:14px}
+  body .pricing-faq-grid{grid-template-columns:minmax(0,1fr) !important}
+  body .pricing-compare-row{
+    grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(68px,.8fr));
+    gap:5px;
+    padding:10px 8px;
+    font-size:10px;
+  }
+  body .pricing-compare-row b{font-size:10px;overflow-wrap:anywhere}
+  body .clubs-page,body .courts-page{padding:42px 15px}
+  body .court-search-panel{grid-template-columns:minmax(0,1fr) !important}
+  body .court-search-btn{width:100%}
+  body .court-results-meta{align-items:flex-start;flex-direction:column;gap:8px}
+  body .club-preview{padding:14px}
+  body .owner-hero{padding:45px 16px 38px}
+  body .owner-hero-copy{text-align:left}
+  body .owner-actions,body .owner-points{justify-content:flex-start;flex-wrap:wrap}
+  body .owner-signup{padding:42px 15px}
+  body .owner-signup-form{padding:16px}
+  body .signup-grid{grid-template-columns:minmax(0,1fr) !important}
+  body .signup-field.full{grid-column:auto}
+  body .signup-form-head{align-items:flex-start;flex-direction:column;gap:7px}
+  body .cta,body .owner-final-cta{padding:24px 17px}
+  body .footer-grid,body .footer-col{grid-template-columns:minmax(0,1fr)}
+  body .footer-col{display:grid;gap:8px}
+  body .app-window,body .dashboard-inner{max-width:100%;overflow:hidden}
+  body .app-body{grid-template-columns:76px minmax(0,1fr);min-height:0}
+  body .app-side{padding:10px 5px}
+  body .app-side .side-item{font-size:8px;padding:7px 4px}
+  body .app-main{padding:11px 8px;min-width:0}
+  body .metric-row,body .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body .schedule-grid,body .week-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  body .floating-status{right:5px;max-width:80%}
+  body .owner-pricing-band{margin-left:14px;margin-right:14px}
+  body .topbar .nav{display:flex;flex-wrap:wrap;gap:8px}
+
+  /* Responsive collapsible nav for public venue directory */
+  body .courtly-mobile-nav-toggle{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 44px;
+    width:44px;
+    height:44px;
+    min-height:44px;
+    padding:0;
+    border:1px solid var(--courtly-line);
+    border-radius:12px;
+    background:#fff;
+    color:var(--courtly-navy);
+  }
+  body .courtly-mobile-nav-toggle span{
+    display:block;
+    width:18px;
+    height:2px;
+    background:currentColor;
+    border-radius:3px;
+    position:absolute;
+    transition:transform .18s ease,opacity .18s ease;
+  }
+  body .courtly-mobile-nav-toggle{position:relative}
+  body .courtly-mobile-nav-toggle span:nth-child(1){transform:translateY(-6px)}
+  body .courtly-mobile-nav-toggle span:nth-child(2){transform:translateY(0)}
+  body .courtly-mobile-nav-toggle span:nth-child(3){transform:translateY(6px)}
+  body .courtly-mobile-nav-toggle[aria-expanded="true"] span:nth-child(1){transform:rotate(45deg)}
+  body .courtly-mobile-nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+  body .courtly-mobile-nav-toggle[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
+  body .nav.courtly-has-mobile-menu{position:relative;flex-wrap:wrap}
+  body .nav.courtly-has-mobile-menu > nav{
+    display:none !important;
+    position:absolute;
+    top:calc(100% + 1px);
+    left:-16px;
+    right:-16px;
+    z-index:90;
+    width:auto;
+    padding:12px 16px 15px;
+    margin:0;
+    background:#fff;
+    border-top:1px solid var(--courtly-line);
+    border-bottom:1px solid var(--courtly-line);
+    box-shadow:0 18px 32px rgba(0,26,71,.12);
+    flex-direction:column;
+    align-items:stretch;
+    gap:4px;
+  }
+  body .nav.courtly-has-mobile-menu > nav.courtly-open{display:flex !important}
+  body .nav.courtly-has-mobile-menu > nav a{
+    display:block !important;
+    padding:12px 10px;
+    border-radius:9px;
+    color:var(--courtly-navy);
+    font-size:14px;
+  }
+  body .nav.courtly-has-mobile-menu > nav a:hover{background:var(--courtly-lime-soft)}
+}
+
+@media (max-width: 480px){
+  body .content{width:calc(100% - 24px) !important}
+  body .page{width:calc(100% - 24px) !important}
+  body .hero{padding-top:35px;padding-bottom:45px}
+  body .hero h1{font-size:clamp(28px,8.5vw,36px)}
+  body .sport-top{flex-wrap:wrap}
+  body .sport-top .btn{max-width:none;flex:1 1 100%;width:100%}
+  body .quick-grid{gap:8px !important}
+  body .quick-card{min-height:92px;padding:11px 9px;gap:8px}
+  body .quick-icon{width:34px;height:34px;flex-basis:34px;font-size:15px}
+  body .quick-card strong{font-size:11px}
+  body .quick-card small{font-size:10px}
+  body #viewRoot .toolbar:has(.date-filter){gap:9px;padding:12px}
+  body #viewRoot .toolbar:has(.date-filter) > .tabs button{font-size:11px;padding:7px 4px}
+  body #viewRoot .profile-card{grid-template-columns:58px minmax(0,1fr);padding:14px !important}
+  body #viewRoot .profile-card > .profile-large{width:56px;height:56px;min-width:56px}
+  body #viewRoot .profile-card > h2{font-size:16px}
+  body #viewRoot .profile-card > p{font-size:11px}
+  body #viewRoot .profile-card > label.btn{font-size:11px;min-height:39px}
+  body .slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body .amenities{gap:7px}
+  body .amenity{padding:9px}
+  body .steps .step{font-size:10px}
+  body .panel,body .card{border-radius:15px}
+  body .stat-grid,body .stats{gap:8px}
+  body .stat-card,body .stat{padding:11px}
+  body .preview-stats > div{padding:7px}
+  body .owner-dash-body{grid-template-columns:60px minmax(0,1fr)}
+  body .owner-dash-side{font-size:8px}
+  body .owner-dash-main{padding:9px 6px}
+  body .owner-strip{gap:7px}
+  body .pricing-compare-row{grid-template-columns:minmax(0,1.1fr) repeat(2,minmax(62px,.8fr));font-size:9px;padding:9px 6px}
+  body .pricing-compare-row b{font-size:9px}
+}
+
+@media (max-width: 360px){
+  body .content{width:calc(100% - 20px) !important}
+  body .quick-grid{grid-template-columns:minmax(0,1fr) !important}
+  body #viewRoot .stat-grid,body .app:not(.shell) .stats{grid-template-columns:minmax(0,1fr) !important}
+  body #viewRoot .toolbar:has(.date-filter){grid-template-columns:minmax(0,1fr)}
+  body #viewRoot .toolbar:has(.date-filter) > *{grid-column:1/-1}
+  body .amenities{grid-template-columns:minmax(0,1fr)}
+  body .filters{grid-template-columns:minmax(0,1fr)}
+  body .filters input,body .filters button{grid-column:1}
+  body .proof-items,body .hero-proof{grid-template-columns:minmax(0,1fr)}
+}
+
+@media (min-width: 761px){
+  body .courtly-mobile-nav-toggle{display:none !important}
+  body .nav.courtly-has-mobile-menu > nav{display:flex}
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+
+
+/* Compact public navigation for player directory, booking lookup and marketing headers. */
+@media (max-width:760px){
+  body .courtly-mobile-nav-shell{
+    position:relative;
+    flex-wrap:wrap;
+  }
+  body .courtly-mobile-nav-shell > .courtly-mobile-nav-toggle{
+    display:inline-flex !important;
+  }
+  body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav{
+    display:none !important;
+    position:absolute;
+    top:calc(100% + 1px);
+    left:-12px;
+    right:-12px;
+    z-index:95;
+    width:auto;
+    margin:0;
+    padding:12px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:3px;
+    background:#fff;
+    border:1px solid var(--courtly-line);
+    border-radius:0 0 15px 15px;
+    box-shadow:0 18px 34px rgba(0,26,71,.13);
+  }
+  body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav.courtly-open{
+    display:flex !important;
+  }
+  body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav a{
+    display:flex;
+    align-items:center;
+    min-height:44px;
+    padding:11px 12px;
+    border-radius:9px;
+    color:var(--courtly-navy) !important;
+    font-size:13px;
+    line-height:1.3;
+  }
+  body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav a:hover{
+    background:var(--courtly-lime-soft);
+  }
+
+  /* Features, pricing, clubs, courts and business headers have two desktop nav rows.
+     Keep their original desktop controls and show a single mobile menu built from them. */
+  body header.topbar.courtly-mobile-header-shell{
+    position:relative !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px;
+    min-height:64px;
+    height:auto !important;
+    padding:9px 14px !important;
+    z-index:80;
+  }
+  body header.topbar.courtly-mobile-header-shell > .brand{
+    display:flex;
+    flex:0 1 auto;
+    min-width:0;
+    margin:0 !important;
+  }
+  body header.topbar.courtly-mobile-header-shell > .brand .courtly-brand-logo{
+    width:clamp(126px,38vw,158px) !important;
+    max-height:35px !important;
+  }
+  body header.topbar.courtly-mobile-header-shell > nav.nav{
+    display:none !important;
+  }
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-nav-toggle{
+    display:inline-flex !important;
+    flex:0 0 44px;
+    margin-left:auto;
+    background:#fff;
+    color:var(--courtly-navy);
+  }
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu{
+    display:none;
+    position:absolute;
+    top:calc(100% + 1px);
+    left:10px;
+    right:10px;
+    z-index:100;
+    padding:11px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:4px;
+    background:#fff;
+    border:1px solid var(--courtly-line);
+    border-radius:0 0 16px 16px;
+    box-shadow:0 18px 38px rgba(0,26,71,.16);
+  }
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu.courtly-open{
+    display:flex;
+  }
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu a,
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu button{
+    display:flex !important;
+    align-items:center;
+    justify-content:flex-start;
+    width:100%;
+    min-height:45px;
+    padding:11px 12px;
+    border:0;
+    border-radius:10px;
+    background:transparent;
+    color:var(--courtly-navy) !important;
+    text-decoration:none;
+    text-align:left;
+    font:400 14px/1.35 Inter,Arial,sans-serif;
+  }
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu a:hover,
+  body header.topbar.courtly-mobile-header-shell > .courtly-mobile-header-menu button:hover{
+    background:var(--courtly-lime-soft);
+  }
+}
+@media (min-width:761px){
+  body .courtly-mobile-nav-toggle,
+  body .courtly-mobile-header-menu{display:none !important}
+  body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav{display:flex !important;position:static !important}
+}

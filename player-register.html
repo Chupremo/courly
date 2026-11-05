@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#001A47">
   <meta name="description" content="Create your Courtly player account to discover sports venues, book courts and join Open Play.">
   <title>Create Player Account | Courtly</title>
@@ -21,6 +21,8 @@
     @media(max-width:620px){.page{padding-top:24px}.card{padding:18px}.grid{grid-template-columns:1fr;gap:13px}.field.full{grid-column:auto}.privacy{align-items:flex-start}.intro h1{font-size:28px}}
   </style>
 <link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
 </head>
 <body>
   <main class="page">
@@ -132,5 +134,7 @@
       finally{if(!registrationCompleted){button.disabled=false;button.textContent='Create Player Account';}else{button.disabled=true;}}
     });
   </script>
+
+<script type="module" src="/courtly-responsive.js"></script>
 </body>
 </html>

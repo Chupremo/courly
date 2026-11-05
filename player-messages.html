@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#001A47">
+  <meta name="description" content="Private player-to-player messages on Courtly.">
+  <title>Player Messages | Courtly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=launch-20261106">
+  <style>
+    :root{--navy:#001a47;--navy2:#12376d;--lime:#8ed502;--ink:#172744;--muted:#73819a;--line:#e4eaf2;--paper:#f4f7fb;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:13px Inter,Arial,sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+    .messages-page{max-width:1240px;width:calc(100% - 40px);margin:28px auto 55px}
+    .messages-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:17px}.messages-heading h1{font:700 25px Poppins;color:var(--navy);margin:0 0 5px}.messages-heading p{font-size:11px;color:var(--muted);margin:0;line-height:1.6}.back-link{font-size:11px;color:var(--navy);font-weight:700}
+    .messages-shell{display:grid;grid-template-columns:310px minmax(0,1fr);min-height:640px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 14px 40px #0a20400b}
+    .inbox{border-right:1px solid var(--line);min-width:0;display:flex;flex-direction:column}.inbox-head{padding:18px;border-bottom:1px solid var(--line)}.inbox-head h2{font:700 14px Poppins;color:var(--navy);margin:0}.inbox-head p{font-size:10px;color:var(--muted);margin:5px 0 0}.inbox-list{overflow:auto;max-height:580px}
+    .conversation{display:flex;gap:10px;align-items:center;width:100%;border:0;border-bottom:1px solid #f0f3f7;background:#fff;text-align:left;padding:13px 15px}.conversation:hover{background:#f8fafc}.conversation.active{background:#edf3ff}.conversation-avatar{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:#eaf0fb;color:var(--navy);font:700 12px Poppins}.conversation-copy{min-width:0;flex:1}.conversation-copy strong{display:block;font-size:11px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.conversation-copy small{display:block;margin-top:4px;font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.conversation-time{font-size:8px;color:#9ba6b6;white-space:nowrap}
+    .thread{display:flex;flex-direction:column;min-width:0;min-height:640px}.thread-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.thread-head strong{display:block;font:700 12px Poppins;color:var(--navy)}.thread-head small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.thread-avatar{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:#eaf0fb;color:var(--navy);font:700 11px Poppins}
+    .thread-messages{flex:1;min-height:430px;max-height:540px;overflow:auto;padding:20px;background:#fbfcfe;display:flex;flex-direction:column;gap:10px}.message-day{align-self:center;font-size:8px;color:#9aa5b5;background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 9px}.bubble{max-width:min(78%,520px);padding:10px 12px;border-radius:13px;background:#fff;border:1px solid var(--line);color:#42516a;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.bubble.mine{align-self:flex-end;background:#eaf3d9;border-color:#deebc5;color:#263d0a}.bubble small{display:block;font-size:8px;color:#8a97aa;margin-top:5px}.thread-empty{margin:auto;max-width:330px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}.thread-empty strong{display:block;font:700 14px Poppins;color:var(--navy);margin-bottom:6px}
+    .send-form{display:flex;align-items:flex-end;gap:10px;padding:14px 16px;border-top:1px solid var(--line);background:#fff}.send-form textarea{min-height:43px;max-height:120px;resize:vertical;flex:1;width:100%;border:1px solid #d8e1ed;border-radius:10px;padding:11px 12px;outline:none;color:var(--ink);font:11px Inter}.send-form textarea:focus{border-color:#829bc8;box-shadow:0 0 0 3px #edf2fb}.send-form button{min-height:43px;border:0;border-radius:10px;background:var(--lime);color:#182900;padding:0 17px;font-weight:800;font-size:10px}.send-form button:disabled{opacity:.5}.notice{padding:11px 13px;background:#f1f5fb;border-radius:9px;color:#60708a;font-size:9px;line-height:1.6;margin:13px 0 0}.page-message{display:none;margin-bottom:13px;padding:11px 13px;border-radius:9px;font-size:11px;line-height:1.6}.page-message.show{display:block}.page-message.error{background:#fff0f1;color:#a82b36}.page-message.success{background:#eaf8ef;color:#176b44}.mobile-back{display:none;border:0;background:transparent;color:var(--navy);font-weight:800;padding:0 4px 0 0}
+    @media(max-width:760px){.messages-page{width:calc(100% - 24px);margin:19px auto 35px}.messages-heading{align-items:flex-start}.messages-heading h1{font-size:21px}.messages-shell{display:block;min-height:calc(100dvh - 190px)}.inbox{border-right:0;min-height:420px}.inbox-list{max-height:none}.thread{display:none;min-height:calc(100dvh - 190px)}.messages-shell.has-thread .inbox{display:none}.messages-shell.has-thread .thread{display:flex}.thread-messages{min-height:calc(100dvh - 360px);max-height:none;padding:15px 12px}.mobile-back{display:inline-flex}.send-form{padding:11px 10px;gap:7px}.send-form button{padding:0 13px}.bubble{max-width:88%}.notice{font-size:9px}}
+    @media(max-width:420px){.messages-heading{display:block}.messages-heading .back-link{display:inline-block;margin-top:10px}.thread-head{padding:12px}.thread-messages{min-height:calc(100dvh - 345px)}}
+  </style>
+</head>
+<body>
+  <main class="messages-page">
+    <div class="messages-heading"><div><div style="font-size:9px;letter-spacing:1.5px;color:#749b17;font-weight:800">COURTLY PLAYER NETWORK</div><h1>Messages</h1><p>Private conversations between player accounts.</p></div><a class="back-link" href="/player-dashboard.html?view=players">← Back to players</a></div>
+    <div class="page-message" id="pageMessage" role="status" aria-live="polite"></div>
+    <section class="messages-shell" id="messagesShell">
+      <aside class="inbox" aria-label="Conversations"><div class="inbox-head"><h2>Your conversations</h2><p>Choose a player to open your chat.</p></div><div class="inbox-list" id="conversationList"><div class="thread-empty">Loading your messages…</div></div></aside>
+      <section class="thread" aria-label="Message thread">
+        <div class="thread-head"><button class="mobile-back" id="mobileBack" type="button">← Inbox</button><div class="thread-avatar" id="threadAvatar">C</div><div><strong id="threadName">Select a conversation</strong><small id="threadMeta">Private player chat</small></div></div>
+        <div class="thread-messages" id="threadMessages"><div class="thread-empty"><strong>Your player conversations</strong>Select a player or use Chat or Message from the player directory to start a conversation.</div></div>
+        <form class="send-form" id="sendForm"><textarea id="messageBody" maxlength="2000" rows="1" placeholder="Write a message…" aria-label="Write a message" required disabled></textarea><button id="sendButton" type="submit" disabled>Send</button></form>
+      </section>
+    </section>
+    <div class="notice">Keep conversations respectful. Do not share passwords, payment details or sensitive personal information in chat.</div>
+  </main>
+  <script type="module" src="/player-messages.js?v=launch-20261106"></script>
+  <script type="module" src="/courtly-global-nav.js?v=launch-20261106"></script>
+</body>
+</html>

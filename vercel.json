@@ -4,6 +4,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/demo",
+      "destination": "/demo.html"
+    },
+    {
       "source": "/browse-clubs",
       "destination": "/browse-clubs.html"
     },

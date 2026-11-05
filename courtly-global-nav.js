@@ -5,10 +5,10 @@ const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 
 function headerMarkup(role, displayName) {
   const guest = role === 'guest';
-  let links = '<a href="/">Home</a><a href="/coaches.html">Browse Coaches</a>'; 
+  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a>'; 
   if (guest) {
     links += `<details class="ct-dropdown"><summary>Login</summary><div class="ct-menu-panel"><a href="/player-login.html">Player login</a><a href="/coach-login.html">Coach login</a><a href="/login.html">Business owner login</a></div></details>`;
-    links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a business owner</a></div></details>`;
+    links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a venue owner</a><a href="/club-register.html">Register a club</a></div></details>`;
   } else {
     if (role === 'player') {
       links += '<a href="/player-dashboard.html">Player dashboard</a><a href="/community.html">Community</a>';
@@ -19,7 +19,7 @@ function headerMarkup(role, displayName) {
     } else if (role === 'owner') {
       links += '<a href="/owner-portal.html">Owner portal</a><a href="/community.html">Community</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/owner-portal.html">Manage my venue</a><a href="/community.html">Community</a><button type="button" data-ct-logout>Log out</button></div></details>`;
-    } else if (role === 'admin') {
+    } else if (role === 'club') {\n      links += '<a href="/browse-clubs.html">Browse clubs</a><a href="/community.html">Community</a>';\n      links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/browse-clubs.html">Club directory</a><button type="button" data-ct-logout>Log out</button></div></details>`;\n    } else if (role === 'admin') {
       links += '<a href="/admin-billing.html">Admin billing</a><a href="/admin-coaches.html">Coach verification</a><a href="/community.html">Community</a>';
       links += `<details class="ct-dropdown"><summary>Admin account</summary><div class="ct-menu-panel"><a href="/admin-billing.html">Billing administration</a><a href="/admin-coaches.html">Coach marketplace</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     }
@@ -46,7 +46,7 @@ async function resolveRole() {
     const { data: profile } = await supabase.from('player_profiles').select('player_name,full_name').eq('id', user.id).maybeSingle();
     return { role: 'player', displayName: profile?.player_name || profile?.full_name || user.user_metadata?.player_name || user.email?.split('@')[0] || 'Player' };
   }
-  if (type === 'venue_owner' || type === 'owner' || type === 'business_owner') {
+  if (type === 'club' || type === 'sports_club') {\n    const { data: club } = await supabase.from('club_profiles').select('club_name').eq('id', user.id).maybeSingle();\n    return { role: 'club', displayName: club?.club_name || user.user_metadata?.club_name || 'Club' };\n  }\n  if (type === 'venue_owner' || type === 'owner' || type === 'business_owner') {
     const { data: venue } = await supabase.from('venues').select('name,owner_name').eq('owner_id', user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
     return { role: 'owner', displayName: venue?.owner_name || venue?.name || user.user_metadata?.owner_name || 'Venue owner' };
   }

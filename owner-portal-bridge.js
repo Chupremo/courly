@@ -139,6 +139,9 @@ async function uploadDataUrlOrKeep(value, venueId, key) {
   if (!response.ok) throw new Error(`Could not prepare ${key} image (HTTP ${response.status}).`);
   const blob = await response.blob();
   if (!blob.type.startsWith('image/')) throw new Error(`${key} is not a valid image file.`);
+  if (key === 'logo' && blob.type !== 'image/png') {
+    throw new Error('Venue logos must be transparent PNG files. Please upload a PNG with its background removed.');
+  }
   const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
   const path = `${venueId}/${key}-${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from('courtly-venue-media').upload(path, blob, { contentType: blob.type, upsert: false });

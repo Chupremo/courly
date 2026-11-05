@@ -4,6 +4,22 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/browse-clubs",
+      "destination": "/browse-clubs.html"
+    },
+    {
+      "source": "/club/dashboard",
+      "destination": "/club-dashboard.html"
+    },
+    {
+      "source": "/club/register",
+      "destination": "/club-register.html"
+    },
+    {
+      "source": "/club/login",
+      "destination": "/club-login.html"
+    },
+    {
       "source": "/coaches",
       "destination": "/coaches.html"
     },

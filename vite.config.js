@@ -38,7 +38,8 @@ export default defineConfig({
         browseClubs: resolve(process.cwd(), 'browse-clubs.html'),
         clubRegister: resolve(process.cwd(), 'club-register.html'),
         clubLogin: resolve(process.cwd(), 'club-login.html'),
-        clubDashboard: resolve(process.cwd(), 'club-dashboard.html')
+        clubDashboard: resolve(process.cwd(), 'club-dashboard.html'),
+        demoPlayground: resolve(process.cwd(), 'demo.html')
       }
     }
   }

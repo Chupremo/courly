@@ -1,4 +1,5 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
+import { syncPlayerProfile, playerDisplayName } from './player-profile-sync.js';
 
 const $ = (id) => document.getElementById(id);
 const root = $('viewRoot');
@@ -55,14 +56,14 @@ function eventCard(event) {
 }
 function heading(kicker,title,desc,action='') { return `<div class="page-heading"><div><div class="eyebrow">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(desc)}</p></div>${action}</div>`; }
 function setHeader() {
-  const name=profile?.player_name||profile?.full_name||user?.email?.split('@')[0]||'Player';
+  const name=playerDisplayName(profile,user);
   $('sideName').textContent=name; $('topName').textContent=name; $('sideSkill').textContent=profile?.skill_level||'Player';
   const img=profileAvatarUrl; $('sideAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name)); $('topAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name));
   document.querySelectorAll('.nav-link').forEach(link=>link.classList.toggle('active',link.dataset.view===view));
   $('crumbText').textContent=({home:'Home',discover:'Discover',tournaments:'My Tournaments',bookings:'My Bookings',memberships:'Memberships',profile:'Profile'})[view]||'Home';
 }
 function renderHome() {
-  const name=profile?.player_name||profile?.full_name?.split(' ')[0]||'Player';
+  const name=playerDisplayName(profile,user).split(' ')[0];
   const current=selectedSport||profile?.preferred_sport||'';
   const homeSports=[...new Set(['Pickleball','Basketball','Padel','Badminton','Lawn Tennis','Volleyball',...(current?[current]:[])])];
   const chips=homeSports.map(s=>`<button class="sport-chip ${s===current?'active':''}" data-home-sport="${esc(s)}"><span class="sico">${sports.find(x=>x[0]===s)?.[1]||'⚽'}</span>${esc(s)}</button>`).join('');
@@ -150,7 +151,7 @@ async function resolvePlayerAvatar() {
   profileAvatarUrl=data?.signedUrl||'';
 }
 function renderProfile() {
-  const p=profile||{}; const name=p.player_name||p.full_name||'Player';
+  const p=profile||{}; const name=playerDisplayName(p,user);
   root.innerHTML=`${heading('ACCOUNT SETTINGS','Player Profile','Manage your personal information, skill level and profile privacy.')}
     <div class="profile-layout"><section class="panel profile-card">${avatarMarkup(profileAvatarUrl,name,'profile-large')}<h2>${esc(name)}</h2><p>${esc(p.email||user.email||'')}</p><p style="margin-top:8px"><span class="skill-pill">${esc(p.skill_level||'Beginner')}</span></p><label class="btn light" style="margin-top:15px;cursor:pointer">Upload photo<input id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none"></label><div class="my-sports-card"><h3>My Sports</h3><div class="my-sport-row"><span class="sport-badge">${sports.find(s=>s[0]===p.preferred_sport)?.[1]||'＋'}</span><div><strong>${esc(p.preferred_sport||'Choose your sport')}</strong><small>${esc(p.skill_level||'Beginner')} · Self-rated skill level</small></div></div><div class="rating-note"><b>Official player rating</b><span>Rating provider integration is not connected yet. Your skill level is currently self-reported.</span></div></div></section>
     <form class="panel profile-form" id="profileForm"><div class="panel-head"><h2>Personal details</h2><span class="subtle">Saved to your player account</span></div><div class="form-grid"><div class="field"><label for="profileFullName">Full name</label><input id="profileFullName" required maxlength="100" value="${esc(p.full_name||'')}"></div><div class="field"><label for="profilePlayerName">Player name</label><input id="profilePlayerName" required maxlength="40" value="${esc(p.player_name||'')}"></div><div class="field"><label for="profileEmail">Email address</label><input id="profileEmail" disabled value="${esc(p.email||user.email||'')}"></div><div class="field"><label for="profilePhone">Contact number</label><input id="profilePhone" maxlength="30" value="${esc(p.phone||'')}"></div><div class="field"><label for="profileSkill">Skill level</label><select id="profileSkill">${['Beginner','Intermediate','Advanced','Professional'].map(s=>`<option ${p.skill_level===s?'selected':''}>${s}</option>`).join('')}</select></div><div class="field"><label for="profileSport">Preferred sport</label><select id="profileSport"><option value="">Choose a sport</option>${sports.map(([s])=>`<option value="${esc(s)}" ${p.preferred_sport===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div></div>
@@ -182,15 +183,23 @@ async function loadOpenPlayEvents() {
 async function init() {
   if(!supabase){root.innerHTML=`<div class="empty-state"><strong>Supabase is not configured</strong><span>${esc(supabaseConfigError)}</span></div>`;return;}
   const {data:{session},error:sessionError}=await supabase.auth.getSession(); if(sessionError)throw sessionError;
-  if(!session?.user){location.replace('/player-login.html');return;}
+  if(!session?.user){
+    const confirmed = new URLSearchParams(location.search).get('welcome') === '1';
+    location.replace(confirmed ? '/player-login.html?confirmed=1' : '/player-login.html');
+    return;
+  }
   user=session.user;
   if(user.user_metadata?.account_type!=='player'){location.replace('/login.html?message=Please+use+your+player+account');return;}
-  let profileResult=await supabase.from('player_profiles').select('*').eq('id',user.id).maybeSingle(); if(profileResult.error)throw profileResult.error;
-  if(!profileResult.data){const m=user.user_metadata||{};const {data,error}=await supabase.from('player_profiles').upsert({id:user.id,full_name:m.full_name||'',player_name:m.player_name||'',email:user.email||'',phone:m.phone||null,skill_level:m.skill_level||'Beginner',is_private:!!m.is_private},{onConflict:'id'}).select().single();if(error)throw error;profile=data;}else profile=profileResult.data;
+  profile=await syncPlayerProfile(supabase,user);
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
   await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity()]);
   render();
+  const params = new URLSearchParams(location.search);
+  if (params.get('welcome') === '1') {
+    notify(`Welcome to Courtly, ${playerDisplayName(profile,user)}! Your player profile is synced.`);
+    history.replaceState({}, '', '/player-dashboard.html' + (view === 'home' ? '' : `?view=${encodeURIComponent(view)}`));
+  }
   if(!selectedSport&&view==='home')openSportModal();
 }
 $('closeSportModal').addEventListener('click',()=>$('sportModal').classList.remove('open'));

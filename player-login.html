@@ -1,10 +1,95 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1733"><title>Player Login | Courtly</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet"><style>
-:root{--navy:#0b1733;--blue:#2454c6;--red:#df454d;--ink:#17233e;--muted:#718099;--line:#e2e8f1}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(145deg,#f4f7fc,#eaf0fa);font-family:Inter,Arial;color:var(--ink)}.card{width:min(440px,100%);background:white;border:1px solid var(--line);border-radius:20px;padding:34px;box-shadow:0 22px 65px #0b17331a}.brand{display:inline-flex;align-items:center;gap:9px;color:var(--navy);font:800 25px Poppins;text-decoration:none;letter-spacing:-1px}.mark{height:36px;width:36px;background:var(--navy);color:white;border-radius:11px;display:grid;place-items:center;position:relative}.mark:after{content:'';position:absolute;width:22px;height:4px;background:var(--red);bottom:6px;right:-4px;transform:rotate(-35deg)}.brand span:last-child span{color:var(--red)}h1{font:700 30px Poppins;letter-spacing:-1px;margin:27px 0 7px}.lead{font-size:13px;line-height:1.7;color:var(--muted);margin:0 0 22px}.field{margin:15px 0}.field label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}.field input{height:46px;width:100%;border:1px solid #cfd8e6;border-radius:9px;padding:0 13px;font:13px Inter;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2454c615}.submit{width:100%;height:47px;border:0;border-radius:10px;background:var(--blue);color:white;font-weight:700;cursor:pointer;margin-top:8px}.submit:disabled{opacity:.6}.msg{display:none;padding:12px;border-radius:9px;font-size:12px;line-height:1.5;margin-top:14px}.msg.show{display:block}.msg.error{background:#fff0f0;color:#a32730}.msg.success{background:#eaf8f0;color:#176b44}.links{text-align:center;color:var(--muted);font-size:12px;line-height:2;margin-top:20px}.links a{color:var(--blue);font-weight:600;text-decoration:none}.links a:hover{text-decoration:underline}
-</style></head><body><main class="card"><a class="brand" href="/"><span class="mark">C</span><span>COURT<span>LY</span></span></a><h1>Welcome back, Player</h1><p class="lead">Log in to discover venues, manage your court bookings and find your next game.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="submit" id="submitButton">Log in to Courtly →</button><div class="msg" id="msg" role="alert" aria-live="polite"></div></form><div class="links">New to Courtly? <a href="/player-register.html">Create a player account</a><br>Managing a sports venue? <a href="/login.html">Owner portal login</a><br><a href="/players.html">Continue browsing venues as a guest</a></div></main>
+:root{--navy:#0b1733;--blue:#2454c6;--red:#df454d;--ink:#17233e;--muted:#718099;--line:#e2e8f1}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(145deg,#f4f7fc,#eaf0fa);font-family:Inter,Arial;color:var(--ink)}.card{width:min(440px,100%);background:white;border:1px solid var(--line);border-radius:20px;padding:34px;box-shadow:0 22px 65px #0b17331a}.brand{display:inline-flex;align-items:center;gap:9px;color:var(--navy);font:800 25px Poppins;text-decoration:none;letter-spacing:-1px}.mark{height:36px;width:36px;background:var(--navy);color:white;border-radius:11px;display:grid;place-items:center;position:relative}.mark:after{content:'';position:absolute;width:22px;height:4px;background:var(--red);bottom:6px;right:-4px;transform:rotate(-35deg)}.brand span:last-child span{color:var(--red)}h1{font:700 30px Poppins;letter-spacing:-1px;margin:27px 0 7px}.lead{font-size:13px;line-height:1.7;color:var(--muted);margin:0 0 22px}.field{margin:15px 0}.field label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}.field input{height:46px;width:100%;border:1px solid #cfd8e6;border-radius:9px;padding:0 13px;font:13px Inter;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2454c615}.submit{width:100%;height:47px;border:0;border-radius:10px;background:var(--blue);color:white;font-weight:700;cursor:pointer;margin-top:8px}.submit:disabled{opacity:.6}.msg{display:none;padding:12px;border-radius:9px;font-size:12px;line-height:1.5;margin-top:14px}.msg.show{display:block}.msg.error{background:#fff0f0;color:#a32730}.msg.success{background:#eaf8f0;color:#176b44}.links{text-align:center;color:var(--muted);font-size:12px;line-height:2;margin-top:20px}.links a{color:var(--blue);font-weight:600;text-decoration:none}.links a:hover{text-decoration:underline}.resend{display:block;width:100%;margin-top:10px;border:1px solid #d5deec;border-radius:9px;background:#fff;color:var(--blue);font-weight:700;padding:11px;cursor:pointer}.resend[hidden]{display:none}
+</style></head><body><main class="card"><a class="brand" href="/"><span class="mark">C</span><span>COURT<span>LY</span></span></a><h1 id="welcomeHeading">Welcome back, Player</h1><p class="lead">Log in to discover venues, manage your court bookings and find your next game.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="submit" id="submitButton">Log in to Courtly →</button><div class="msg" id="msg" role="alert" aria-live="polite"></div></form><button class="resend" id="resendConfirmation" type="button" hidden>Resend confirmation email</button><div class="links">New to Courtly? <a href="/player-register.html">Create a player account</a><br>Managing a sports venue? <a href="/login.html">Owner portal login</a><br><a href="/players.html">Continue browsing venues as a guest</a></div></main>
 <script type="module">
-import {supabase,supabaseConfigError} from './supabase-client.js';
-const $=id=>document.getElementById(id), form=$('loginForm'), button=$('submitButton'), msg=$('msg');
-function show(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
-form.addEventListener('submit',async e=>{e.preventDefault();if(!supabase){show(supabaseConfigError);return;}button.disabled=true;button.textContent='Signing in…';msg.className='msg';try{const {data,error}=await supabase.auth.signInWithPassword({email:$('email').value.trim().toLowerCase(),password:$('password').value});if(error)throw error;const user=data.user;if(user?.user_metadata?.account_type!=='player'){await supabase.auth.signOut();throw new Error('This account is not registered as a Courtly player. Please use the owner portal login if you manage a venue.');}let {data:profile,error:profileError}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();if(profileError)throw profileError;if(!profile){const meta=user.user_metadata||{};const {error:insertError}=await supabase.from('player_profiles').upsert({id:user.id,full_name:meta.full_name||'',player_name:meta.player_name||'',email:user.email||'',phone:meta.phone||null,skill_level:meta.skill_level||'Beginner',is_private:!!meta.is_private},{onConflict:'id'});if(insertError)throw insertError;}show('Login successful. Opening your player dashboard…','success');setTimeout(()=>location.replace('/player-dashboard.html'),450);}catch(error){show(error.message||'Unable to log in. Please try again.');button.disabled=false;button.textContent='Log in to Courtly →';}});
+import { supabase, supabaseConfigError } from './supabase-client.js';
+import { syncPlayerProfile, playerDisplayName } from './player-profile-sync.js';
+const $ = id => document.getElementById(id);
+const form = $('loginForm');
+const button = $('submitButton');
+const msg = $('msg');
+const resendButton = $('resendConfirmation');
+function show(text, type='error') {
+  msg.textContent = text;
+  msg.className = `msg show ${type}`;
+}
+function getCourtlyAppUrl() {
+  const configured = String(import.meta.env.VITE_APP_URL || '').trim().replace(/\/$/, '');
+  if (configured) return configured;
+  const host = location.hostname.toLowerCase();
+  if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return 'https://courtly-ecru.vercel.app';
+  return location.origin;
+}
+function getEmailRedirectUrl() { return `${getCourtlyAppUrl()}/player-dashboard.html?welcome=1`; }
+
+
+const params = new URLSearchParams(location.search);
+if (params.get('confirmed') === '1') {
+  show('Your email has been confirmed. Log in to continue to your player dashboard.', 'success');
+}
+
+// If the confirmation callback created a session, continue straight to the player area.
+if (supabase) {
+  supabase.auth.getSession().then(({ data, error }) => {
+    if (error) return;
+    const currentUser = data?.session?.user;
+    if (currentUser?.user_metadata?.account_type === 'player') {
+      location.replace('/player-dashboard.html?welcome=1');
+    }
+  });
+}
+
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!supabase) { show(supabaseConfigError); return; }
+  button.disabled = true;
+  button.textContent = 'Signing in…';
+  resendButton.hidden = true;
+  msg.className = 'msg';
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: $('email').value.trim().toLowerCase(),
+      password: $('password').value
+    });
+    if (error) throw error;
+    const signedInUser = data.user;
+    if (signedInUser?.user_metadata?.account_type !== 'player') {
+      await supabase.auth.signOut();
+      throw new Error('This account is not registered as a Courtly player. Please use the owner portal login if you manage a venue.');
+    }
+    const profile = await syncPlayerProfile(supabase, signedInUser);
+    const displayName = playerDisplayName(profile, signedInUser);
+    $('welcomeHeading').textContent = `Welcome back, ${displayName}`;
+    show(`Welcome back, ${displayName}! Your player profile is synced. Opening your dashboard…`, 'success');
+    setTimeout(() => location.replace('/player-dashboard.html?welcome=1'), 650);
+  } catch (error) {
+    show(error.message || 'Unable to log in. Please try again.');
+    if (/email not confirmed/i.test(error.message || '')) resendButton.hidden = false;
+    button.disabled = false;
+    button.textContent = 'Log in to Courtly →';
+  }
+});
+
+resendButton.addEventListener('click', async () => {
+  if (!supabase) { show(supabaseConfigError); return; }
+  const email = $('email').value.trim().toLowerCase();
+  if (!email) { show('Enter your registration email address first.'); $('email').focus(); return; }
+  resendButton.disabled = true;
+  resendButton.textContent = 'Sending confirmation email…';
+  try {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: getEmailRedirectUrl() }
+    });
+    if (error) throw error;
+    show(`A new confirmation email was sent to ${email}. Its link will return to Courtly.`, 'success');
+  } catch (error) {
+    show(error.message || 'Could not resend the confirmation email.');
+  } finally {
+    resendButton.disabled = false;
+    resendButton.textContent = 'Resend confirmation email';
+  }
+});
 </script></body></html>

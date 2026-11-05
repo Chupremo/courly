@@ -197,3 +197,12 @@ html body .courtly-admin-brand .courtly-brand-logo{background:#FFFFFF;padding:6p
 html body .owner .outline,html body .outline{border-color:#D6EDA6 !important;color:#001A47 !important}
 html body .btn.soft{background:#F2FBDD !important;border-color:#D6EDA6 !important;color:#001A47 !important}
 html body .stat-icon{background:#F2FBDD !important;color:#001A47 !important}
+
+/* Public venue discovery hero: preserve high-contrast white type on the navy banner. */
+html body .discover-hero{
+  background:linear-gradient(120deg,#001A47 0%,#082B61 100%) !important;
+  color:#FFFFFF !important;
+}
+html body .discover-hero .eyebrow{color:#B4ED55 !important;}
+html body .discover-hero h1{color:#FFFFFF !important;}
+html body .discover-hero p{color:#E5ECF7 !important;}

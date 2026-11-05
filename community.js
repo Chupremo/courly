@@ -1,4 +1,5 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
+import { Upload } from 'tus-js-client';
 
 const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -54,7 +55,7 @@ function composerMarkup() {
     <div class="composer-heading"><div><span class="composer-kicker">YOUR COMMUNITY</span><h2>Share an update</h2></div><span class="community-role">${state.role==='player'?'Player':'Venue owner'}</span></div>
     <form id="communityPostForm"><textarea id="communityPostBody" maxlength="2000" rows="3" placeholder="${state.role==='player'?'What’s happening on your court? Share a game, a highlight or an update…':'Share news, upcoming games, venue updates or photos from your facility…'}"></textarea>
       <div class="community-media-preview" id="communityMediaPreview" hidden></div>
-      <div class="composer-actions"><div class="composer-tools">${venueSelect}<label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label><span class="media-limit">Images up to 10 MB · Videos up to 25 MB</span></div><button class="community-primary" id="communityPostButton" type="submit">Post to community</button></div>
+      <div class="composer-actions"><div class="composer-tools">${venueSelect}<label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label><span class="media-limit">Photos and videos up to 100 MB</span></div><button class="community-primary" id="communityPostButton" type="submit">Post to community</button></div>
       <div class="community-inline-message" id="communityPostMessage" aria-live="polite"></div></form>
     <p class="privacy-reminder">Posts are visible to signed-in Courtly members. ${state.role==='player'&&state.privateProfile?'Your profile is private, so posts you create will only be visible to you. You can change this in Player Profile.':'Keep posts respectful and only upload photos/videos you have permission to share.'}</p>
   </section>`;
@@ -147,13 +148,43 @@ function handleMediaSelect(event) {
   const isImage=file.type.startsWith('image/');const isVideo=file.type.startsWith('video/');
   const allowed=['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm','video/quicktime'];
   if(!allowed.includes(file.type)||(!isImage&&!isVideo)){toast('Choose a JPG, PNG, WEBP, GIF, MP4, WEBM or MOV file.');event.target.value='';return;}
-  const max=isImage?10*1024*1024:25*1024*1024;
-  if(file.size>max){toast(isImage?'Images must be 10 MB or smaller.':'Videos must be 25 MB or smaller.');event.target.value='';return;}
+  const max=100*1024*1024;
+  if(file.size>max){toast('Photos and videos must be 100 MB or smaller.');event.target.value='';return;}
   clearMediaPreview();state.selectedFile=file;state.previewUrl=URL.createObjectURL(file);
   const preview=$('communityMediaPreview');preview.hidden=false;
   preview.innerHTML=isImage?`<img src="${esc(state.previewUrl)}" alt="Selected photo preview">`:`<video controls playsinline src="${esc(state.previewUrl)}"></video>`;
   const remove=document.createElement('button');remove.className='preview-remove';remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','Remove selected media');remove.addEventListener('click',clearMediaPreview);preview.append(remove);
 }
+async function uploadCommunityMedia(file, objectName) {
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!session?.access_token) throw new Error('Your session expired. Please sign in again before uploading.');
+  const projectUrl = String(import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+  if (!projectUrl) throw new Error('Supabase URL is not configured.');
+  const projectHost = new URL(projectUrl).hostname;
+  const projectRef = projectHost.split('.')[0];
+  const endpoint = `https://${projectRef}.storage.supabase.co/storage/v1/upload/resumable`;
+  const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+  return new Promise((resolve,reject)=>{
+    const upload = new Upload(file, {
+      endpoint,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: { authorization: `Bearer ${session.access_token}`, ...(apiKey ? { apikey: apiKey } : {}) },
+      metadata: { bucketName: 'courtly-community-media', objectName, contentType: file.type, cacheControl: '3600' },
+      chunkSize: 6 * 1024 * 1024,
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      onError: error => reject(new Error(`Media upload failed: ${error.message || error}`)),
+      onProgress: (uploaded,total) => setMessage(`Uploading ${Math.round(uploaded / total * 100)}% of your media…`),
+      onSuccess: () => resolve(true)
+    });
+    upload.findPreviousUploads().then(previous => {
+      if (previous.length) upload.resumeFromPreviousUpload(previous[0]);
+      upload.start();
+    }).catch(reject);
+  });
+}
+
 async function submitPost(event) {
   event.preventDefault();const button=$('communityPostButton');const body=$('communityPostBody').value.trim();const file=state.selectedFile;
   if(!body&&!file){setMessage('Write something or add a photo/video before posting.','error');return;}
@@ -163,8 +194,7 @@ async function submitPost(event) {
       const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'');
       const uuid=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
       mediaPath=`${state.user.id}/${uuid}.${ext}`;mediaType=file.type.startsWith('video/')?'video':'image';
-      const {error:uploadError}=await supabase.storage.from('courtly-community-media').upload(mediaPath,file,{upsert:false,contentType:file.type,cacheControl:'3600'});
-      if(uploadError)throw new Error(`Media upload failed: ${uploadError.message}`);
+      await uploadCommunityMedia(file,mediaPath);
     }
     const payload={body,media_path:mediaPath,media_type:mediaType};
     if(state.role==='venue_owner'&&$('communityVenueSelect')?.value)payload.venue_id=$('communityVenueSelect').value;

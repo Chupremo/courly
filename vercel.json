@@ -4,6 +4,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/players",
+      "destination": "/players.html"
+    },
+    {
       "source": "/venue-owner-terms",
       "destination": "/venue-owner-terms.html"
     },

@@ -15,6 +15,7 @@ button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;co
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/courtly-brand.css">
 
 <link rel="stylesheet" href="/courtly-responsive.css">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 </head>
 <body>
 <main class="card">
@@ -59,7 +60,12 @@ function message(text,type='error'){msg.textContent=text;msg.className=`msg show
 function setMode(next){signup=next;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
-(async()=>{if(!supabase){message(supabaseConfigError);button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session)location.replace('/owner-portal.html');})().catch(e=>message(e.message));
+async function routeSignedInAccount(user){
+ const {data:player}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
+ if(player || user.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
+ location.replace('/owner-portal.html');
+}
+(async()=>{if(!supabase){message(supabaseConfigError);button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session?.user)await routeSignedInAccount(session.user);})().catch(e=>message(e.message));
 form.addEventListener('submit',async e=>{
  e.preventDefault();button.disabled=true;button.textContent=signup?'Creating account...':'Signing in...';msg.className='msg';
  const email=document.getElementById('email').value.trim().toLowerCase(),password=document.getElementById('password').value;
@@ -68,7 +74,7 @@ form.addEventListener('submit',async e=>{
   if(signup){
    const business=document.getElementById('business').value.trim();
    if(!business)throw new Error('Please enter your venue or business name.');
-   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{owner_name:document.getElementById('ownerName').value.trim(),owner_phone:document.getElementById('ownerPhone').value.trim(),business_name:business,business_address:document.getElementById('address').value.trim(),city:document.getElementById('city').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
+   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{account_type:'venue_owner',owner_name:document.getElementById('ownerName').value.trim(),owner_phone:document.getElementById('ownerPhone').value.trim(),business_name:business,business_address:document.getElementById('address').value.trim(),city:document.getElementById('city').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
    if(error)throw error;
    if(data.session){message('Account created. Opening your owner portal...','success');location.replace('/owner-portal.html');}
    else message('Account created. Please confirm your email, then return here to log in.','success');
@@ -76,7 +82,9 @@ form.addEventListener('submit',async e=>{
    const {data,error}=await supabase.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data.session)throw new Error('Login did not create a session. Please try again.');
-   message('Login successful. Opening your dashboard...','success');location.replace('/owner-portal.html');
+   const {data:playerProfile}=await supabase.from('player_profiles').select('id').eq('id',data.user.id).maybeSingle();
+   if(playerProfile || data.user?.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
+   message('Login successful. Opening your owner dashboard...','success');location.replace('/owner-portal.html');
   }
  }catch(err){message(err.message||'Unable to continue. Please try again.');}
  finally{button.disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
@@ -84,4 +92,5 @@ form.addEventListener('submit',async e=>{
 </script>
 
 <script type="module" src="/courtly-responsive.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
 </body></html>

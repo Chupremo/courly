@@ -4,6 +4,7 @@
 </style><link rel="stylesheet" href="/courtly-brand.css">
 
 <link rel="stylesheet" href="/courtly-responsive.css">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 </head><body><main class="card"><a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a><h1 id="welcomeHeading">Welcome back, Player</h1><p class="lead">Log in to discover venues, manage your court bookings and find your next game.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="submit" id="submitButton">Log in to Courtly →</button><div class="msg" id="msg" role="alert" aria-live="polite"></div></form><button class="resend" id="resendConfirmation" type="button" hidden>Resend confirmation email</button><div class="links">New to Courtly? <a href="/player-register.html">Create a player account</a><br>Managing a sports venue? <a href="/login.html">Owner portal login</a><br><a href="/players.html">Continue browsing venues as a guest</a></div></main>
 <script type="module">
 import { supabase, supabaseConfigError } from './supabase-client.js';
@@ -24,23 +25,39 @@ function getCourtlyAppUrl() {
   if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return 'https://courtly-ecru.vercel.app';
   return location.origin;
 }
-function getEmailRedirectUrl() { return `${getCourtlyAppUrl()}/player-dashboard.html?welcome=1`; }
-
-
+function safeReturnTo(value) {
+  if (!value || typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return '/player-dashboard.html?welcome=1';
+  try { const url = new URL(value, location.origin); if (url.origin !== location.origin) return '/player-dashboard.html?welcome=1'; return url.pathname + url.search + url.hash; } catch { return '/player-dashboard.html?welcome=1'; }
+}
 const params = new URLSearchParams(location.search);
+const returnTo = safeReturnTo(params.get('returnTo'));
+function getEmailRedirectUrl() { return `${getCourtlyAppUrl()}/player-login.html?confirmed=1&returnTo=${encodeURIComponent(returnTo)}`; }
+
 if (params.get('confirmed') === '1') {
   show('Your email has been confirmed. Log in to continue to your player dashboard.', 'success');
 }
 
 // If the confirmation callback created a session, continue straight to the player area.
 if (supabase) {
-  supabase.auth.getSession().then(({ data, error }) => {
+  supabase.auth.getSession().then(async ({ data, error }) => {
     if (error) return;
     const currentUser = data?.session?.user;
-    if (currentUser?.user_metadata?.account_type === 'player') {
-      location.replace('/player-dashboard.html?welcome=1');
+    if (!currentUser) return;
+    const { data: profile } = await supabase.from('player_profiles').select('id').eq('id', currentUser.id).maybeSingle();
+    if (profile || currentUser.user_metadata?.account_type === 'player') {
+      location.replace(returnTo);
+      return;
     }
-  });
+    const ownerRole = ['venue_owner','owner','business_owner'].includes(String(currentUser.user_metadata?.account_type || '').toLowerCase());
+    if (params.get('switchAccount') === '1') {
+      await supabase.auth.signOut();
+      show('Your business-owner session was signed out. You can now log in with your player account.', 'success');
+      window.dispatchEvent(new Event('courtly:auth-changed'));
+      return;
+    }
+    const { data: ownedVenue } = await supabase.from('venues').select('id').eq('owner_id', currentUser.id).limit(1).maybeSingle();
+    if (ownedVenue || ownerRole) location.replace('/owner-portal.html');
+  }).catch(error => console.warn('Could not resolve existing Courtly session:', error));
 }
 
 form.addEventListener('submit', async event => {
@@ -57,15 +74,18 @@ form.addEventListener('submit', async event => {
     });
     if (error) throw error;
     const signedInUser = data.user;
-    if (signedInUser?.user_metadata?.account_type !== 'player') {
+    const { data: existingPlayerProfile, error: playerProfileError } = await supabase
+      .from('player_profiles').select('id').eq('id', signedInUser.id).maybeSingle();
+    if (playerProfileError) throw playerProfileError;
+    if (!existingPlayerProfile && signedInUser?.user_metadata?.account_type !== 'player') {
       await supabase.auth.signOut();
-      throw new Error('This account is not registered as a Courtly player. Please use the owner portal login if you manage a venue.');
+      throw new Error('This is a business-owner account, not a player account. Use the player registration/login option with a player account, or return to your Owner Portal.');
     }
     const profile = await syncPlayerProfile(supabase, signedInUser);
     const displayName = playerDisplayName(profile, signedInUser);
     $('welcomeHeading').textContent = `Welcome back, ${displayName}`;
     show(`Welcome back, ${displayName}! Your player profile is synced. Opening your dashboard…`, 'success');
-    setTimeout(() => location.replace('/player-dashboard.html?welcome=1'), 650);
+    setTimeout(() => location.replace(returnTo), 650);
   } catch (error) {
     show(error.message || 'Unable to log in. Please try again.');
     if (/email not confirmed/i.test(error.message || '')) resendButton.hidden = false;
@@ -97,4 +117,5 @@ resendButton.addEventListener('click', async () => {
 });
 </script>
 <script type="module" src="/courtly-responsive.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
 </body></html>

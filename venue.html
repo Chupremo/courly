@@ -17,6 +17,8 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 
 .openplay-wrap{max-width:1180px;margin:0 auto 22px;padding:0 22px}.openplay-card{display:grid;grid-template-columns:minmax(220px,36%) 1fr;background:#fff;border:1px solid #dce5f2;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px #10264a12;margin-bottom:14px}.openplay-card img{width:100%;height:100%;min-height:190px;object-fit:cover;background:#eaf0f8}.openplay-copy{padding:20px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.openplay-kicker{font-size:10px;letter-spacing:.16em;color:#0754c8;font-weight:700;text-transform:uppercase}.openplay-copy h2{margin:0;color:#102449;font-size:23px}.openplay-copy p{margin:0;color:#53627f;line-height:1.55}.openplay-meta{display:flex;gap:10px 18px;flex-wrap:wrap;color:#354967;font-size:13px;margin-top:4px}.openplay-register{display:inline-flex;margin-top:8px;padding:11px 20px;border-radius:8px;background:#0754c8;color:#fff;text-decoration:none;font-weight:700}.openplay-register:hover{background:#063f98}.openplay-card{position:relative;border:1px solid #d7e4fa;box-shadow:0 12px 32px #0b2c5b18;animation:openPlayGlow 3.2s ease-in-out infinite}.openplay-card:before{content:'';position:absolute;inset:-2px;border-radius:18px;padding:2px;background:conic-gradient(from var(--op-angle,0deg),#0754c8,#20b56b,#f2c14e,#e92c40,#0754c8);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;animation:opBorder 5s linear infinite}@property --op-angle{syntax:'<angle>';initial-value:0deg;inherits:false}@keyframes opBorder{to{--op-angle:360deg}}@keyframes openPlayGlow{0%,100%{box-shadow:0 12px 32px #0b2c5b18}50%{box-shadow:0 16px 42px #0754c833}}.openplay-register{background:linear-gradient(100deg,#0754c8,#1475ee);box-shadow:0 7px 18px #0754c83b;transition:transform .2s,box-shadow .2s}.openplay-register:hover{transform:translateY(-2px);box-shadow:0 10px 22px #0754c855}@media(max-width:650px){.openplay-wrap{padding:0 14px}.openplay-card{grid-template-columns:1fr}.openplay-card img{height:155px;min-height:0}.openplay-copy{padding:16px}}
 @media(max-width:650px){.steps{justify-content:flex-start;overflow-x:auto;padding:14px 2px 18px;gap:8px}.step{font-size:10px;gap:6px}.step-num{width:30px;height:30px;min-width:30px}.step-line{min-width:12px}.date-panel{display:block;padding:14px;}.date-panel .section-title{margin-bottom:14px}.calendar{padding:12px 10px;margin-bottom:16px}.day{min-height:40px;font-size:14px;border-radius:9px;color:#263957}.day.selected{background:#064fc4!important;color:#fff!important;border:2px solid #003b9b!important;box-shadow:0 0 0 3px #cfe0ff,0 4px 10px #0754c833!important;font-weight:800!important}.day.today:not(.selected){border:2px solid #0754c8;color:#0754c8}.slots-head{align-items:flex-start}.time-selectors{display:grid;grid-template-columns:1fr 1fr;gap:10px}.time-field select{width:100%;min-width:0}.court-panel{padding:15px 12px;margin-top:14px}.courts-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.court-card img{height:100px}.summary-panel{margin-top:14px}.summary-inner{padding:15px}.next-btn,.payment-submit,.openplay-register{width:100%;min-height:48px;justify-content:center;padding:14px 18px}.payment-dialog{padding:22px 16px}.openplay-copy{gap:10px}.openplay-details{width:100%}.openplay-register{display:flex;margin-top:12px}.summary-row{display:grid;grid-template-columns:20px minmax(112px,auto) minmax(0,1fr);gap:8px;align-items:start}.summary-row span:last-child{margin-left:0;text-align:left}} 
+
+.auth-required-dialog{max-width:480px}.auth-required-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.auth-required-actions a{display:grid;place-items:center;text-align:center;text-decoration:none;min-height:48px}.auth-required-actions .auth-register{background:#8ED502;color:#132500}.auth-required-actions .auth-register:hover{background:#a3e52a}@media(max-width:540px){.auth-required-actions{grid-template-columns:1fr}}
 </style>
 <style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
 
@@ -33,6 +35,7 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 .venue-back-button:focus-visible{outline:3px solid #8ed502;outline-offset:3px}
 @media(max-width:650px){.venue-back-button{min-height:44px;margin-bottom:14px;padding:10px 14px;font-size:13px}.hero-inner{padding-top:16px}}
 </style>
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 </head>
 <body>
 <header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></div></div></header>
@@ -41,13 +44,74 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 <section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><div class="booking-layout"><section class="panel date-panel" id="booking-calendar"><h2 class="section-title"><span class="title-icon">▦</span>1. Select Date &amp; Time</h2><div class="calendar"><div class="month-row"><button id="prevMonth" aria-label="Previous month">‹</button><span id="monthLabel">October 2026</span><button id="nextMonth" aria-label="Next month">›</button></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days" id="daysGrid"></div></div><div class="slot-area"><div class="slots-head"><div><h3>Available Time Slots</h3><p id="selectedDateLabel">Sunday, October 25, 2026</p></div><div class="legend"><span><i class="dot"></i>Available</span><span><i class="dot booked"></i>Booked</span><span><i class="dot chosen"></i>Selected</span></div></div><div class="time-selectors"><label class="time-field" for="startTime">Start time<select id="startTime" aria-label="Booking start time"></select></label><label class="time-field" for="endTime">End time<select id="endTime" aria-label="Booking end time"></select></label></div><p class="range-hint">Choose your start and end times independently. Every hourly slot within your selected range will be highlighted. Price: ₱200 per court, per hour.</p><div class="slots" id="slots"></div></div></section>
 </div>
 <section class="panel court-panel" id="courtSection"><h2 class="section-title"><span class="title-icon">▦</span>2. Choose Your Court</h2><p class="subheading">Select an available court for your preferred time.</p><div class="courts-grid" id="courtsGrid"></div><section class="panel summary-panel"><div class="summary-inner"><h2 class="section-title"><span class="title-icon">▦</span>Booking Summary</h2><div class="summary-row"><span class="ico">▦</span><strong>Date</strong><span id="summaryDate">October 25, 2026</span></div><div class="summary-row"><span class="ico">◷</span><strong>Time</strong><span id="summaryTime">8:00 AM – 12:00 PM (4 hours)</span></div><div class="summary-row"><span class="ico">▦</span><strong>Court</strong><span id="summaryCourt">Not selected yet</span></div><div class="summary-row"><span class="ico">₱</span><strong>Court rental</strong><span id="summarySubtotal">₱0</span></div><div class="summary-row" id="summaryPlatformFeeRow" hidden><span class="ico">＋</span><strong>Courtly owner fee</strong><span id="summaryPlatformFee">₱0</span></div><div class="sum-total"><span>Total to pay</span><strong id="summaryTotal">₱0</strong></div><button class="next-btn" id="nextChoose" disabled>PAY NOW <span>→</span></button></div></section>
-</main><div class="payment-overlay" id="gcashModal" hidden><section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="gcashTitle"><button class="payment-close" id="closeGcash" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY CHECKOUT</p><h2 id="gcashTitle">Pay with GCash</h2><p class="payment-help" id="gcashHelp">Send the exact amount using the venue's GCash details, then upload your payment screenshot.</p><div class="gcash-recipient"><strong id="gcashRecipient">Venue payment details</strong><div id="gcashInstructions"></div><div id="gcashQrWrap"></div><div class="gcash-total"><span id="gcashSubtotalLabel">Court Hourly Rental</span><strong id="gcashSubtotal">₱0.00</strong></div><div class="gcash-total" id="gcashPlatformFeeRow" hidden><span id="gcashFeeLabel">Courtly owner fee</span><strong id="gcashPlatformFee">₱0.00</strong></div><div class="gcash-total"><span>Total</span><strong id="gcashAmount">₱0.00</strong></div></div><form id="gcashForm"><div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div><div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div><div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" maxlength="40" autocomplete="tel"></div><div class="payment-field"><label for="paymentScreenshot">GCash payment receipt * (max 100 MB)</label><input id="paymentScreenshot" type="file" accept="image/*" required><small>Image formats only. Maximum file size: 100 MB. Your receipt is securely uploaded.</small><div id="paymentImagePreview"></div></div><button class="payment-submit" id="paymentSubmitButton" type="submit">Submit payment receipt &amp; reserve court</button></form><p class="reservation-note" id="paymentReservationNote">After your receipt uploads successfully, this time slot is reserved immediately so another player cannot select it. The venue owner only needs to verify your payment and mark it confirmed.</p><p class="payment-note">Receipt submission is not automatic bank/GCash verification. Keep your booking reference until the venue confirms payment.</p></section></div><div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check">✓</div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main><div class="payment-overlay" id="authRequiredModal" hidden><section class="payment-dialog auth-required-dialog" role="dialog" aria-modal="true" aria-labelledby="authRequiredTitle"><button class="payment-close" id="closeAuthRequired" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY PLAYER ACCOUNT</p><h2 id="authRequiredTitle">Sign in to book this venue</h2><p class="payment-help">You can browse venues, courts and available times without an account. Create a free player account or log in to continue with this booking.</p><div class="auth-required-actions"><a class="payment-submit" id="authPlayerLogin" href="/player-login.html">Log in</a><a class="payment-submit auth-register" id="authPlayerRegister" href="/player-register.html">Create player account</a></div><p class="payment-note">Venue owners should use their owner account for venue management. Player accounts are required to make court reservations and Open Play registrations.</p></section></div><div class="payment-overlay" id="gcashModal" hidden><section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="gcashTitle"><button class="payment-close" id="closeGcash" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY CHECKOUT</p><h2 id="gcashTitle">Pay with GCash</h2><p class="payment-help" id="gcashHelp">Send the exact amount using the venue's GCash details, then upload your payment screenshot.</p><div class="gcash-recipient"><strong id="gcashRecipient">Venue payment details</strong><div id="gcashInstructions"></div><div id="gcashQrWrap"></div><div class="gcash-total"><span id="gcashSubtotalLabel">Court Hourly Rental</span><strong id="gcashSubtotal">₱0.00</strong></div><div class="gcash-total" id="gcashPlatformFeeRow" hidden><span id="gcashFeeLabel">Courtly owner fee</span><strong id="gcashPlatformFee">₱0.00</strong></div><div class="gcash-total"><span>Total</span><strong id="gcashAmount">₱0.00</strong></div></div><form id="gcashForm"><div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div><div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div><div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" maxlength="40" autocomplete="tel"></div><div class="payment-field"><label for="paymentScreenshot">GCash payment receipt * (max 100 MB)</label><input id="paymentScreenshot" type="file" accept="image/*" required><small>Image formats only. Maximum file size: 100 MB. Your receipt is securely uploaded.</small><div id="paymentImagePreview"></div></div><button class="payment-submit" id="paymentSubmitButton" type="submit">Submit payment receipt &amp; reserve court</button></form><p class="reservation-note" id="paymentReservationNote">After your receipt uploads successfully, this time slot is reserved immediately so another player cannot select it. The venue owner only needs to verify your payment and mark it confirmed.</p><p class="payment-note">Receipt submission is not automatic bank/GCash verification. Keep your booking reference until the venue confirms payment.</p></section></div><div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check">✓</div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script type="module">
 import { supabase, supabaseConfigError } from './supabase-client.js';
 
 const params = new URLSearchParams(location.search);
 const slug = (params.get('slug') || location.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
 const $ = (id) => document.getElementById(id);
+const PENDING_BOOKING_INTENT_KEY = 'courtly.pendingPublicBooking.v1';
+function currentVenueReturnTo(){return `/venue.html?slug=${encodeURIComponent(slug)}#booking-calendar`;}
+function setAuthReturnLinks(switchAccount=false){
+  const returnTo=currentVenueReturnTo();
+  const switchParam=switchAccount?'&switchAccount=1':'';
+  const login=$('authPlayerLogin'),register=$('authPlayerRegister');
+  if(login)login.href=`/player-login.html?returnTo=${encodeURIComponent(returnTo)}${switchParam}`;
+  if(register)register.href=`/player-register.html?returnTo=${encodeURIComponent(returnTo)}${switchParam}`;
+}
+async function requirePlayerForCheckout(kind,event=null){
+  const {data:{user},error}=await supabase.auth.getUser();
+  if(error)throw error;
+  if(user){
+    const {data:playerProfile, error:profileError}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
+    if(profileError)throw profileError;
+    if(playerProfile)return true;
+  }
+  const intent={kind,venueSlug:slug,eventId:event?.id||null,date:localDateForSelection(selectedDate),start:selectedStart,end:selectedEnd,courtId:selectedCourtId,createdAt:new Date().toISOString()};
+  try{sessionStorage.setItem(PENDING_BOOKING_INTENT_KEY,JSON.stringify(intent));}catch(_){/* session storage may be blocked */}
+  setAuthReturnLinks(Boolean(user));
+  if(user){
+    setText('authRequiredTitle','Use a player account to book');
+    const help=$('authRequiredModal')?.querySelector('.payment-help');
+    if(help)help.textContent='You are signed in with a venue-owner or administrator account. Court bookings and Open Play registrations require a player account. Choose a player login or registration option below; Courtly will safely sign out your business-owner session before you switch accounts.';
+  }else{
+    setText('authRequiredTitle','Sign in to book this venue');
+    const help=$('authRequiredModal')?.querySelector('.payment-help');
+    if(help)help.textContent='You can browse venues, courts and available times without an account. Create a free player account or log in to continue with this booking.';
+  }
+  $('authRequiredModal').hidden=false;
+  return false;
+}
+async function restorePendingBookingIntent(){
+  let intent=null;
+  try{intent=JSON.parse(sessionStorage.getItem(PENDING_BOOKING_INTENT_KEY)||'null');}catch(_){return;}
+  if(!intent||intent.venueSlug!==slug||Date.now()-Date.parse(intent.createdAt||0)>30*60*1000)return;
+  const {data:{user}}=await supabase.auth.getUser();
+  if(!user)return;
+  const {data:playerProfile,error:profileError}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
+  if(profileError)throw profileError;
+  if(!playerProfile)return;
+  sessionStorage.removeItem(PENDING_BOOKING_INTENT_KEY);
+  if(intent.kind==='openplay'){
+    const selectedEvent=events.find(item=>String(item.id)===String(intent.eventId));
+    if(selectedEvent){openPayment(selectedEvent);return;}
+    showToast('That Open Play session is no longer available. Please choose another session.');
+    return;
+  }
+  if(intent.date){const restored=new Date(`${intent.date}T12:00:00`);if(!Number.isNaN(restored.getTime())){selectedDate=restored;viewYear=restored.getFullYear();viewMonth=restored.getMonth();}}
+  selectedStart=Number.isFinite(Number(intent.start))?Number(intent.start):null;
+  selectedEnd=Number.isFinite(Number(intent.end))?Number(intent.end):null;
+  selectedCourtId=intent.courtId||null;
+  renderCalendar();refreshTimeSelects();renderSlots();renderCourts();updateSummary();
+  if(selectedCourt()&&selectedRangeIso()&&!hasConflict(selectedCourtId,selectedRangeIso().start,selectedRangeIso().end)){
+    await openPayment();
+  }else{
+    showToast('You are signed in. Please recheck the selected time and court before continuing.');
+    $('booking-calendar')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
 
 // Return to the page the visitor came from. If the venue page was opened
 // directly (for example from a shared link), take them to the venue directory.
@@ -300,7 +364,8 @@ function updateSummary() {
   const button = $('nextChoose');
   if (button) button.disabled = !court || !selectedRangeIso() || hasConflict(court.id, selectedRangeIso().start, selectedRangeIso().end);
 }
-function openPayment(event = null) {
+async function openPayment(event = null) {
+  if (!(await requirePlayerForCheckout(event ? 'openplay' : 'court', event))) return;
   selectedOpenPlay = event;
   const v = venue;
   const isOpenPlay = Boolean(event);
@@ -402,7 +467,7 @@ async function prefillPlayerCheckout() {
   if (!supabase) return;
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.user_metadata?.account_type !== 'player') return;
+    if (!user) return;
     const { data: profile, error } = await supabase.from('player_profiles')
       .select('full_name,player_name,email,phone').eq('id', user.id).maybeSingle();
     if (error) throw error;
@@ -617,6 +682,7 @@ async function loadVenue() {
   renderCalendar();
   updateSummary();
   await loadAvailability();
+  await restorePendingBookingIntent();
 }
 
 $('prevMonth')?.addEventListener('click', async () => {
@@ -645,6 +711,8 @@ $('nextChoose')?.addEventListener('click', () => {
   openPayment();
 });
 $('closeGcash')?.addEventListener('click', () => { $('gcashModal').hidden = true; selectedOpenPlay = null; });
+$('closeAuthRequired')?.addEventListener('click', () => { $('authRequiredModal').hidden = true; });
+$('authRequiredModal')?.addEventListener('click', e => { if(e.target === $('authRequiredModal')) $('authRequiredModal').hidden = true; });
 $('gcashForm')?.addEventListener('submit', submitPayment);
 $('confirmationClose')?.addEventListener('click', () => { $('confirmationModal').hidden = true; selectedOpenPlay = null; });
 
@@ -665,4 +733,5 @@ setInterval(() => { if (venue) loadAvailability().catch((error) => console.warn(
 setInterval(() => { if (venue) refreshPublicVenueMedia(); }, 60000);
 </script>
 <script type="module" src="/courtly-responsive.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
 </body></html>

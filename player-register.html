@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="/courtly-brand.css">
 
 <link rel="stylesheet" href="/courtly-responsive.css">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 </head>
 <body>
   <main class="page">
@@ -89,7 +90,33 @@
       if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return PRODUCTION_APP_URL;
       return location.origin;
     }
-    const emailConfirmationRedirect = `${getCourtlyAppUrl()}/player-dashboard.html?welcome=1`;
+    function safeReturnTo(value) {
+      if (!value || typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return '/player-dashboard.html?welcome=1';
+      try { const url = new URL(value, location.origin); if (url.origin !== location.origin) return '/player-dashboard.html?welcome=1'; return url.pathname + url.search + url.hash; } catch { return '/player-dashboard.html?welcome=1'; }
+    }
+    const returnTo = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
+    const emailConfirmationRedirect = `${getCourtlyAppUrl()}/player-login.html?confirmed=1&returnTo=${encodeURIComponent(returnTo)}`;
+    // Registered players return to their dashboard; owners can explicitly switch to a player account.
+    supabase?.auth.getSession().then(async ({data,error})=>{
+      if(error || !data?.session?.user) return;
+      const activeUser=data.session.user;
+      const {data:existingPlayer}=await supabase.from('player_profiles').select('id').eq('id',activeUser.id).maybeSingle();
+      if(existingPlayer || activeUser.user_metadata?.account_type==='player'){
+        location.replace(returnTo);
+        return;
+      }
+      const ownerRole=['venue_owner','owner','business_owner'].includes(String(activeUser.user_metadata?.account_type||'').toLowerCase());
+      const {data:ownedVenue}=await supabase.from('venues').select('id').eq('owner_id',activeUser.id).limit(1).maybeSingle();
+      if(ownedVenue || ownerRole){
+        if(new URLSearchParams(location.search).get('switchAccount')==='1'){
+          await supabase.auth.signOut();
+          showMessage('Your business-owner session was signed out. You can now create a separate player account.','success');
+          window.dispatchEvent(new Event('courtly:auth-changed'));
+        }else{
+          showMessage('You are already registered as a business owner. To create a separate player account, use the player registration link from the booking sign-in prompt.');
+        }
+      }
+    }).catch(error=>console.warn('Could not resolve existing Courtly session:',error));
     $('avatarFile').addEventListener('change', (event) => {
       const file = event.target.files?.[0]; avatarFile = file || null;
       if (!file) { $('avatarPreview').innerHTML='◎'; return; }
@@ -121,6 +148,15 @@
       button.disabled=true; button.textContent='Creating your account…';
       let registrationCompleted = false;
       try {
+        // If a venue owner opens player registration directly, switch out of the owner session first.
+        const {data:{session:activeSession}}=await supabase.auth.getSession();
+        if(activeSession?.user){
+          const {data:existingPlayer,error:existingPlayerError}=await supabase.from('player_profiles').select('id').eq('id',activeSession.user.id).maybeSingle();
+          if(existingPlayerError)throw existingPlayerError;
+          if(existingPlayer){showMessage('You already have a Courtly player account. Opening your dashboard…','success');location.replace(returnTo);return;}
+          await supabase.auth.signOut();
+          window.dispatchEvent(new Event('courtly:auth-changed'));
+        }
         const {data,error}=await supabase.auth.signUp({email,password,options:{
           emailRedirectTo: emailConfirmationRedirect,
           data:{account_type:'player',full_name:fullName,player_name:playerName,phone,skill_level:skillLevel,is_private:isPrivate}
@@ -139,7 +175,7 @@
           registrationCompleted = true;
           button.textContent='Account created';
           showMessage(`Welcome to Courtly, ${profile.player_name || profile.full_name || playerName}! Opening your player dashboard…`,'success');
-          setTimeout(()=>location.replace('/player-dashboard.html?welcome=1'),650);
+          setTimeout(()=>location.replace(returnTo),650);
         }else{
           registrationCompleted = true;
           button.textContent='Confirmation email sent';
@@ -151,5 +187,6 @@
   </script>
 
 <script type="module" src="/courtly-responsive.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
 </body>
 </html>

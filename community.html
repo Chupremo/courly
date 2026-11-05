@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/courtly-brand.css">
   <link rel="stylesheet" href="/courtly-responsive.css">
   <link rel="stylesheet" href="/community.css?v=1">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 </head>
 <body>
   <header class="community-topbar">
@@ -42,7 +43,7 @@
         <div class="composer-actions">
           <div class="composer-tools">
             <label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label>
-            <span class="media-limit">Images up to 10 MB · Videos up to 25 MB</span>
+            <span class="media-limit">Photos and videos up to 100 MB</span>
           </div>
           <button class="community-primary" id="communityPostButton" type="submit">Post to community</button>
         </div>
@@ -65,11 +66,12 @@
       <div class="community-signin-icon">✦</div>
       <h2>Join the Courtly community</h2>
       <p>Sign in as a player or venue owner to share updates, like posts and comment.</p>
-      <div class="signin-actions"><a class="community-primary" href="/player-login.html">Player login</a><a class="community-secondary" href="/login.html">Owner login</a></div>
+      <div class="signin-actions"><a class="community-primary" href="/player-login.html">Log in as player</a><a class="community-secondary" href="/login.html">Log in as business owner</a></div>
     </section>
   </main>
 
   <div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>
   <script type="module" src="/community.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
 </body>
 </html>

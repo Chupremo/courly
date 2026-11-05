@@ -1576,3 +1576,25 @@ button,input,select,textarea{max-width:100%}
   body .courtly-mobile-header-menu{display:none !important}
   body .courtly-mobile-nav-shell > nav.courtly-collapsible-nav{display:flex !important;position:static !important}
 }
+
+
+/* ==========================================================
+   PLAYER DASHBOARD — desktop and tablet alignment normalization
+   Keeps the sidebar, topbar and page canvas on one shared grid.
+   ========================================================== */
+body .shell{min-height:100vh}
+body .sidebar{width:238px}
+body .main{margin-left:238px;min-width:0;width:calc(100% - 238px)}
+body .main>.topbar{width:100%;padding-left:clamp(20px,3vw,38px);padding-right:clamp(20px,3vw,38px)}
+body .main>.content{width:min(1240px,calc(100% - 64px));max-width:1240px;margin:0 auto;padding:32px 0 70px}
+body #viewRoot,body #viewRoot>*{min-width:0}
+body #viewRoot .page-heading{align-items:flex-end}
+body #viewRoot .panel-head{align-items:center}
+@media(max-width:1100px) and (min-width:761px){
+ body .main>.content{width:calc(100% - 44px);padding-top:27px}
+ body .main>.topbar{padding-left:22px;padding-right:22px}
+}
+@media(max-width:760px){
+ body .main{width:100%;margin-left:0!important}
+ body .main>.content{width:calc(100% - 28px)!important;max-width:none!important;padding:22px 0 calc(42px + env(safe-area-inset-bottom))!important}
+}

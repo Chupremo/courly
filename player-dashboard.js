@@ -85,9 +85,7 @@ function renderHome() {
 function playerCardMarkup(player) {
   const name=player.player_name||'Courtly Player';
   const playerId=String(player.player_id||'');
-  const chatUrl='/player-messages.html?player='+encodeURIComponent(playerId);
-  const messageUrl=chatUrl+'&compose=1';
-  return `<article class="player-social-card">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<div class="player-social-copy"><strong>${esc(name)}</strong><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></div><div class="player-social-actions"><button type="button" class="btn ${player.is_following?'light':'social-follow'}" data-follow-player="${esc(playerId)}" data-following="${player.is_following?'1':'0'}">${player.is_following?'Following':'Follow'}</button><a class="btn social-chat" href="${chatUrl}">Chat</a><button type="button" class="btn social-invite" data-invite-player="${esc(playerId)}" data-player-name="${esc(name)}">Invite to club</button><a class="btn social-message" href="${messageUrl}">Message</a></div></article>`;
+  return `<article class="player-social-card">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<div class="player-social-copy"><strong>${esc(name)}</strong><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></div><div class="player-social-actions"><button type="button" class="btn ${player.is_following?'light':'social-follow'}" data-follow-player="${esc(playerId)}" data-following="${player.is_following?'1':'0'}">${player.is_following?'Following':'Follow'}</button></div></article>`;
 }
 async function signPlayerAvatar(path) {
   if(!path)return '';

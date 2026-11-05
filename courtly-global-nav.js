@@ -5,25 +5,25 @@ const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 
 function headerMarkup(role, displayName) {
   const guest = role === 'guest';
-  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a><a href="/demo.html">Try demo</a>'; 
+  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a>'; 
   if (guest) {
     links += `<details class="ct-dropdown"><summary>Login</summary><div class="ct-menu-panel"><a href="/player-login.html">Player login</a><a href="/coach-login.html">Coach login</a><a href="/club-login.html">Club login</a><a href="/login.html">Venue owner login</a></div></details>`;
     links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a venue owner</a><a href="/club-register.html">Register a club</a></div></details>`;
   } else {
     if (role === 'player') {
-      links += '<a href="/player-dashboard.html">Player dashboard</a><a href="/player-messages.html">Messages</a><a href="/player-dashboard.html?view=invites">Club invitations</a><a href="/community.html">Community</a>';
+      links += '';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/player-dashboard.html?view=profile">My profile</a><a href="/player-dashboard.html?view=bookings">My bookings</a><a href="/player-dashboard.html?view=invites">Club invitations</a><a href="/player-messages.html">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'coach') {
-      links += '<a href="/coach-portal.html">Coach portal</a><a href="/community.html">Community</a>';
+      links += '<a href="/coach-portal.html">Coach portal</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/coach-portal.html?view=profile">Coach profile</a><a href="/coach-portal.html?view=sessions">Coaching sessions</a><a href="/coach-portal.html?view=availability">Availability & rates</a><a href="/coach-portal.html?view=messages">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'owner') {
-      links += '<a href="/owner-portal.html">Owner portal</a><a href="/community.html">Community</a>';
+      links += '<a href="/owner-portal.html">Owner portal</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/owner-portal.html">Manage my venue</a><a href="/community.html">Community</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'club') {
-      links += '<a href="/club-dashboard.html">Club dashboard</a><a href="/browse-clubs.html">Browse clubs</a><a href="/community.html">Community</a>';
+      links += '<a href="/club-dashboard.html">Club dashboard</a><a href="/browse-clubs.html">Browse clubs</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/club-dashboard.html">Club dashboard</a><a href="/club-dashboard.html?view=members">Manage members</a><a href="/club-dashboard.html?view=activities">Activities &amp; posts</a><a href="/browse-clubs.html">Club directory</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'admin') {
-      links += '<a href="/admin-billing.html">Admin billing</a><a href="/admin-coaches.html">Coach verification</a><a href="/community.html">Community</a>';
+      links += '<a href="/admin-billing.html">Admin billing</a><a href="/admin-coaches.html">Coach verification</a>';
       links += `<details class="ct-dropdown"><summary>Admin account</summary><div class="ct-menu-panel"><a href="/admin-billing.html">Billing administration</a><a href="/admin-coaches.html">Coach marketplace</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     }
   }

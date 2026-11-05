@@ -136,16 +136,26 @@ export async function loadOwnerWorkspace() {
 async function uploadDataUrlOrKeep(value, venueId, key) {
   if (!value || !String(value).startsWith('data:')) return value || null;
   const response = await fetch(value);
+  if (!response.ok) throw new Error(`Could not prepare ${key} image (HTTP ${response.status}).`);
   const blob = await response.blob();
+  if (!blob.type.startsWith('image/')) throw new Error(`${key} is not a valid image file.`);
   const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
   const path = `${venueId}/${key}-${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from('courtly-venue-media').upload(path, blob, { contentType: blob.type, upsert: false });
-  if (error) throw error;
-  return supabase.storage.from('courtly-venue-media').getPublicUrl(path).data.publicUrl;
+  if (error) throw new Error(`Storage upload denied for ${key} (bucket courtly-venue-media, venue folder ${venueId}): ${error.message}`);
+  const publicUrl = supabase.storage.from('courtly-venue-media').getPublicUrl(path).data.publicUrl;
+  if (!publicUrl) throw new Error(`Storage accepted ${key}, but did not return a public image URL.`);
+  return publicUrl;
+}
+async function assertCurrentOwnerCanManageVenue(venueId) {
+  const { data: allowed, error } = await supabase.rpc('courtly_owns_venue', { p_venue_id: String(venueId) });
+  if (error) throw new Error(`Could not verify venue ownership before saving images: ${error.message}. Apply migration 004_owner_court_image_rls_fix.sql.`);
+  if (allowed !== true) throw new Error(`Your signed-in account does not own venue ${venueId}. Sign in with the venue owner account or contact Courtly support to link the venue.`);
 }
 async function persistOwnerWorkspace(state) {
   if (!state?.venue?.id) return;
   const v = state.venue;
+  await assertCurrentOwnerCanManageVenue(v.id);
   v.logoData = await uploadDataUrlOrKeep(v.logoData, v.id, 'logo');
   v.coverData = await uploadDataUrlOrKeep(v.coverData, v.id, 'cover');
   v.qrData = await uploadDataUrlOrKeep(v.qrData, v.id, 'payment-qr');
@@ -161,7 +171,7 @@ async function persistOwnerWorkspace(state) {
     notify_cancelled: v.notifyCancelled !== false, updated_at: new Date().toISOString()
   };
   const { error: venueError } = await supabase.from('venues').update(payload).eq('id', v.id);
-  if (venueError) throw venueError;
+  if (venueError) throw new Error(`Venue profile update was rejected by Supabase: ${venueError.message}`);
 
   const imageRows = [];
   for (let index = 0; index < Number(v.courtCount || 0); index += 1) {
@@ -183,7 +193,7 @@ async function persistOwnerWorkspace(state) {
       .from('courts')
       .upsert(imageRows, { onConflict: 'venue_id,name' })
       .select('id,name,image_url,image_fit,is_active');
-    if (error) throw error;
+    if (error) throw new Error(`Court records could not be saved after the Storage upload. Check the public.courts INSERT/UPDATE RLS policy: ${error.message}`);
     // Verify each uploaded image URL was actually persisted before the owner
     // portal reports success. This catches storage/RLS/schema issues clearly.
     const savedByName = new Map((savedImageRows || []).map((row) => [row.name, row]));

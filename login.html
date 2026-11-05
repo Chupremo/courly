@@ -38,7 +38,7 @@ button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;co
 <div id="msg" class="msg" role="alert" aria-live="polite"></div>
 </form>
 <div class="links"><span id="modePrompt">New to Courtly? </span><a id="toggleMode">Create an owner account</a></div>
-<div class="links" style="margin-top:12px">Looking to book a court? <a href="/player-login.html">Player login</a> · <a href="/player-register.html">Create player account</a></div>
+<div class="links" style="margin-top:12px">Looking to book? <a href="/player-login.html">Player login</a> · <a href="/player-register.html">Player registration</a><br>Are you a coach? <a href="/coach-login.html">Coach login</a> · <a href="/coach-register.html">Coach registration</a></div>
 <section class="demo-box" aria-label="Explore demo owner portals"><h2>Explore a demo owner portal</h2><p style="margin:4px 0 0;font-size:12px">No login required. Sample bookings and Open Play transactions are fictional and saved only in this browser.</p><div class="demo-grid"><a href="/owner-portal.html?demo=demo-batangas-racquet-club">Batangas Racquet Club</a><a href="/owner-portal.html?demo=demo-lipa-pickleball-hub">Lipa Pickleball Hub</a><a href="/owner-portal.html?demo=demo-santos-pickleball-club">Santos Pickleball Club</a><a href="/owner-portal.html?demo=demo-southside-sports-center">Southside Sports Center</a></div></section>
 </main>
 <script type="module">
@@ -61,6 +61,9 @@ function setMode(next){signup=next;document.getElementById('signupFields').class
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
 async function routeSignedInAccount(user){
+ if(String(user.user_metadata?.account_type||'').toLowerCase()==='coach'){location.replace('/coach-portal.html');return;}
+ const {data:coach}=await supabase.from('coach_profiles').select('id').eq('id',user.id).maybeSingle();
+ if(coach){location.replace('/coach-portal.html');return;}
  const {data:player}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
  if(player || user.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
  location.replace('/owner-portal.html');
@@ -82,6 +85,8 @@ form.addEventListener('submit',async e=>{
    const {data,error}=await supabase.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data.session)throw new Error('Login did not create a session. Please try again.');
+   const {data:coachProfile}=await supabase.from('coach_profiles').select('id').eq('id',data.user.id).maybeSingle();
+   if(coachProfile || data.user?.user_metadata?.account_type==='coach'){location.replace('/coach-portal.html');return;}
    const {data:playerProfile}=await supabase.from('player_profiles').select('id').eq('id',data.user.id).maybeSingle();
    if(playerProfile || data.user?.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
    message('Login successful. Opening your owner dashboard...','success');location.replace('/owner-portal.html');

@@ -17,7 +17,7 @@ async function signedUrl(bucket,path) {
   return data?.signedUrl||'';
 }
 async function resolvePost(row) {
-  const avatarBucket=row.author_type==='player'?'courtly-player-avatars':'courtly-venue-media';
+  const avatarBucket=row.author_type==='player'?'courtly-player-avatars':row.author_type==='coach'?'courtly-coach-media':'courtly-venue-media';
   const [avatarUrl,mediaUrl]=await Promise.all([
     signedUrl(avatarBucket,row.author_avatar_path),
     signedUrl('courtly-community-media',row.media_path)
@@ -38,6 +38,9 @@ async function checkAccount() {
     state.privateProfile=!!player.is_private;
     return true;
   }
+  const {data:coach,error:coachError}=await supabase.from('coach_profiles').select('id,coach_name,profile_image_path').eq('id',state.user.id).maybeSingle();
+  if(coachError)throw coachError;
+  if(coach){state.role='coach';state.displayName=coach.coach_name||'Courtly Coach';state.avatarUrl=await signedUrl('courtly-coach-media',coach.profile_image_path);return true;}
   const {data:venues,error:venueError}=await supabase.from('venues').select('id,name,owner_name,logo_url').eq('owner_id',state.user.id).order('created_at',{ascending:true}).limit(20);
   if(venueError)throw venueError;
   if(venues?.length){
@@ -52,8 +55,8 @@ function composerMarkup() {
   const venueSelect=state.role==='venue_owner'&&state.venues.length>1
     ? `<label class="venue-select-label">Post as venue<select id="communityVenueSelect">${state.venues.map((v,i)=>`<option value="${esc(v.id)}" ${i===0?'selected':''}>${esc(v.name)}</option>`).join('')}</select></label>` : '';
   return `<section class="community-composer card">
-    <div class="composer-heading"><div><span class="composer-kicker">YOUR COMMUNITY</span><h2>Share an update</h2></div><span class="community-role">${state.role==='player'?'Player':'Venue owner'}</span></div>
-    <form id="communityPostForm"><textarea id="communityPostBody" maxlength="2000" rows="3" placeholder="${state.role==='player'?'What’s happening on your court? Share a game, a highlight or an update…':'Share news, upcoming games, venue updates or photos from your facility…'}"></textarea>
+    <div class="composer-heading"><div><span class="composer-kicker">YOUR COMMUNITY</span><h2>Share an update</h2></div><span class="community-role">${state.role==='player'?'Player':state.role==='coach'?'Coach':'Venue owner'}</span></div>
+    <form id="communityPostForm"><textarea id="communityPostBody" maxlength="2000" rows="3" placeholder="${state.role==='player'?'What’s happening on your court? Share a game, a highlight or an update…':state.role==='coach'?'Share a coaching tip, training update or player success story…':'Share news, upcoming games, venue updates or photos from your facility…'}"></textarea>
       <div class="community-media-preview" id="communityMediaPreview" hidden></div>
       <div class="composer-actions"><div class="composer-tools">${venueSelect}<label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label><span class="media-limit">Photos and videos up to 100 MB</span></div><button class="community-primary" id="communityPostButton" type="submit">Post to community</button></div>
       <div class="community-inline-message" id="communityPostMessage" aria-live="polite"></div></form>
@@ -66,7 +69,7 @@ function postMarkup(post) {
     ? `<div class="post-media-wrap"><video controls playsinline preload="metadata" src="${esc(post.media_url)}"></video></div>`
     : `<img class="post-media" loading="lazy" src="${esc(post.media_url)}" alt="Community post media">`) : '';
   return `<article class="community-post" data-post-card="${esc(post.post_id)}">
-    <header class="post-header">${avatarMarkup(post.author_avatar_url,post.author_name)}<div class="post-author"><strong>${esc(post.author_name)}${post.author_type==='venue_owner'?'<span class="venue-author-tag">VENUE</span>':''}</strong><small>${post.author_type==='venue_owner'&&post.venue_name?`${esc(post.venue_name)} · `:''}${esc(time)}</small></div><button class="post-more" type="button" data-report-post="${esc(post.post_id)}" aria-label="Report post">•••</button></header>
+    <header class="post-header">${avatarMarkup(post.author_avatar_url,post.author_name)}<div class="post-author"><strong>${esc(post.author_name)}${post.author_type==='venue_owner'?'<span class="venue-author-tag">VENUE</span>':post.author_type==='coach'?'<span class="venue-author-tag">COACH</span>':''}</strong><small>${post.author_type==='venue_owner'&&post.venue_name?`${esc(post.venue_name)} · `:''}${esc(time)}</small></div><button class="post-more" type="button" data-report-post="${esc(post.post_id)}" aria-label="Report post">•••</button></header>
     ${post.body?`<div class="post-body">${esc(post.body)}</div>`:''}${media}
     <div class="post-counts"><span>${Number(post.likes_count||0).toLocaleString('en-PH')} likes</span><span>${Number(post.comments_count||0).toLocaleString('en-PH')} comments · ${Number(post.shares_count||0).toLocaleString('en-PH')} shares</span></div>
     <div class="post-actions"><button class="post-action ${post.viewer_liked?'liked':''}" type="button" data-like-post="${esc(post.post_id)}" data-liked="${post.viewer_liked?'1':'0'}">${post.viewer_liked?'♥ Liked':'♡ Like'}</button><button class="post-action" type="button" data-toggle-comments="${esc(post.post_id)}">☷ Comment</button><button class="post-action" type="button" data-share-post="${esc(post.post_id)}">↗ Share</button>${post.viewer_can_delete?`<button class="post-action" type="button" data-delete-post="${esc(post.post_id)}">Delete</button>`:''}</div>
@@ -99,7 +102,7 @@ async function toggleLike(button) {
   }catch(error){button.disabled=false;toast(error.message||'Could not update your like.');}
 }
 async function resolveComment(row) {
-  const bucket=row.author_type==='player'?'courtly-player-avatars':'courtly-venue-media';
+  const bucket=row.author_type==='player'?'courtly-player-avatars':row.author_type==='coach'?'courtly-coach-media':'courtly-venue-media';
   return {...row,avatar_url:await signedUrl(bucket,row.author_avatar_path)};
 }
 async function toggleComments(postId) {
@@ -214,7 +217,7 @@ async function init() {
   if(!allowed){showSignin();return;}
   $('communitySignin').hidden=true;$('communityComposer').hidden=false;
   $('communityUser').textContent=state.displayName;
-  $('communityRole').textContent=state.role==='player'?'Player':'Venue owner';
+  $('communityRole').textContent=state.role==='player'?'Player':state.role==='coach'?'Coach':'Venue owner';
   $('communityPostForm').addEventListener('submit',submitPost);
   $('communityMediaInput').addEventListener('change',handleMediaSelect);
   $('refreshCommunityFeed').addEventListener('click',()=>loadFeed().catch(e=>toast(e.message)));

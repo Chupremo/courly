@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" href="/courtly-responsive.css">
   <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
-</head><body><main class="card"><a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a><h1 id="welcomeHeading">Welcome back, Player</h1><p class="lead">Log in to discover venues, manage your court bookings and find your next game.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="submit" id="submitButton">Log in to Courtly →</button><div class="msg" id="msg" role="alert" aria-live="polite"></div></form><button class="resend" id="resendConfirmation" type="button" hidden>Resend confirmation email</button><div class="links">New to Courtly? <a href="/player-register.html">Create a player account</a><br>Managing a sports venue? <a href="/login.html">Owner portal login</a><br><a href="/players.html">Continue browsing venues as a guest</a></div></main>
+</head><body><main class="card"><a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a><h1 id="welcomeHeading">Welcome back, Player</h1><p class="lead">Log in to discover venues, manage your court bookings and find your next game.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="submit" id="submitButton">Log in to Courtly →</button><div class="msg" id="msg" role="alert" aria-live="polite"></div></form><p class="coach-note">Are you a coach? <a href="/coach-login.html">Coach login</a></p><button class="resend" id="resendConfirmation" type="button" hidden>Resend confirmation email</button><div class="links">New to Courtly? <a id="playerRegisterLink" href="/player-register.html">Create a player account</a><br>Are you a coach? <a href="/coach-login.html">Coach login</a><br>Managing a sports venue? <a href="/login.html">Owner portal login</a><br><a href="/players.html">Continue browsing venues as a guest</a></div></main>
 <script type="module">
 import { supabase, supabaseConfigError } from './supabase-client.js';
 import { syncPlayerProfile, playerDisplayName } from './player-profile-sync.js';
@@ -31,6 +31,8 @@ function safeReturnTo(value) {
 }
 const params = new URLSearchParams(location.search);
 const returnTo = safeReturnTo(params.get('returnTo'));
+const playerRegisterLink = document.getElementById('playerRegisterLink');
+if (playerRegisterLink) playerRegisterLink.href = `/player-register.html?returnTo=${encodeURIComponent(returnTo)}`;
 function getEmailRedirectUrl() { return `${getCourtlyAppUrl()}/player-login.html?confirmed=1&returnTo=${encodeURIComponent(returnTo)}`; }
 
 if (params.get('confirmed') === '1') {

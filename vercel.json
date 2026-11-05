@@ -4,6 +4,46 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/coaches",
+      "destination": "/coaches.html"
+    },
+    {
+      "source": "/coach/login",
+      "destination": "/coach-login.html"
+    },
+    {
+      "source": "/coach/register",
+      "destination": "/coach-register.html"
+    },
+    {
+      "source": "/coach/dashboard",
+      "destination": "/coach-portal.html"
+    },
+    {
+      "source": "/coach/booking",
+      "destination": "/coach-booking.html"
+    },
+    {
+      "source": "/coach/chat",
+      "destination": "/coach-chat.html"
+    },
+    {
+      "source": "/coach/:slug",
+      "destination": "/coach.html?slug=:slug"
+    },
+    {
+      "source": "/coach-terms",
+      "destination": "/coach-owner-terms.html"
+    },
+    {
+      "source": "/admin-coaches",
+      "destination": "/admin-coaches.html"
+    },
+    {
+      "source": "/my-coaching-sessions",
+      "destination": "/my-coaching-sessions.html"
+    },
+    {
       "source": "/players",
       "destination": "/players.html"
     },

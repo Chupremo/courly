@@ -24,7 +24,17 @@ export default defineConfig({
         playerDashboard: resolve(process.cwd(), 'player-dashboard.html'),
         community: resolve(process.cwd(), 'community.html'),
         adminBilling: resolve(process.cwd(), 'admin-billing.html'),
-        venueOwnerTerms: resolve(process.cwd(), 'venue-owner-terms.html')
+        venueOwnerTerms: resolve(process.cwd(), 'venue-owner-terms.html'),
+        coaches: resolve(process.cwd(), 'coaches.html'),
+        coachProfile: resolve(process.cwd(), 'coach.html'),
+        coachRegister: resolve(process.cwd(), 'coach-register.html'),
+        coachLogin: resolve(process.cwd(), 'coach-login.html'),
+        coachBooking: resolve(process.cwd(), 'coach-booking.html'),
+        coachChat: resolve(process.cwd(), 'coach-chat.html'),
+        coachPortal: resolve(process.cwd(), 'coach-portal.html'),
+        coachTerms: resolve(process.cwd(), 'coach-owner-terms.html'),
+        adminCoaches: resolve(process.cwd(), 'admin-coaches.html'),
+        myCoachingSessions: resolve(process.cwd(), 'my-coaching-sessions.html')
       }
     }
   }

@@ -9,7 +9,7 @@
 ## Expected calculation
 - Court & Open Play Gross = confirmed court-rental gross + confirmed Open Play fees.
 - Transaction Fee = confirmed court-rental hours × ₱10 per hour.
-- Owner Net Earnings = Court & Open Play Gross − Transaction Fee. This reflects the ₱10 per court-hour fee deducted from the owner’s earnings.
+- Owner Net Earnings subtract only owner-paid court rental fees and historical owner-paid Open Play fees. New player-paid Open Play transaction fees are tracked separately as remittance due, not deducted from venue registration revenue.
 - Pending and rejected Open Play payments are excluded from confirmed Open Play revenue.
 
 ## Deployment

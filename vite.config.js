@@ -21,7 +21,9 @@ export default defineConfig({
         myBookings: resolve(process.cwd(), 'my-bookings.html'),
         playerRegister: resolve(process.cwd(), 'player-register.html'),
         playerLogin: resolve(process.cwd(), 'player-login.html'),
-        playerDashboard: resolve(process.cwd(), 'player-dashboard.html')
+        playerDashboard: resolve(process.cwd(), 'player-dashboard.html'),
+        adminBilling: resolve(process.cwd(), 'admin-billing.html'),
+        venueOwnerTerms: resolve(process.cwd(), 'venue-owner-terms.html')
       }
     }
   }

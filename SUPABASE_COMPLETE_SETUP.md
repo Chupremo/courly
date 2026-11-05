@@ -118,7 +118,7 @@ Venue owners are isolated by Row Level Security. Anonymous players use restricte
 
 ## Fee rule
 
-Court bookings: Courtly fee = PHP 10 × booked court-hours. Open Play: Courtly fee = PHP 10 × confirmed registration. The player pays the published court/event price only; the platform fee is deducted from the venue owner's payout. This repository does not itself move or settle money between bank/payment accounts.
+Court rentals: the venue owner pays PHP 10 per booked court-hour. Paid Open Play: the player pays a PHP 10 transaction fee added to the published event registration amount; free Open Play has no transaction fee. Because current checkout uses the venue's GCash QR, the venue receives the full player payment and must remit the player-paid transaction fee to Courtly. The dashboard tracks this amount separately. This repository does not itself move or settle money between bank/payment accounts.
 
 ## Known items outside this database migration
 
@@ -137,3 +137,15 @@ After the complete backend migration has already been applied, run the additive 
 This creates private player profiles, player avatar storage, and account-scoped read access for court bookings and Open Play registrations. It also updates the owner signup trigger so new player accounts do not accidentally create a venue, and prevents player accounts from calling the owner venue bootstrap RPC.
 
 Do not rerun the full base migration for this update. Test with a newly registered player account. Existing guest bookings are not automatically attached to a player account; only new bookings made while signed in can be linked by the new database trigger.
+
+## Hybrid fee policy migration (existing Courtly project)
+
+After the main backend migration is already installed, back up the database and run `supabase/migrations/005_hybrid_courtly_fee_policy.sql` once. This changes new paid Open Play registrations to add a PHP 10 player transaction fee, gives free Open Play a zero fee and no receipt requirement, and preserves older registrations as venue-owner-paid for historical reporting. It also updates the owner transaction and earnings reports.
+
+Court rental bookings remain PHP 10 per booked court-hour paid by the venue owner. The player is not charged this court-rental fee.
+
+**GCash QR settlement note:** Paid Open Play players send the full registration amount plus PHP 10 to the venue's QR. The venue collects that PHP 10 on Courtly's behalf. Supabase tracks it as an amount to remit, but does not automatically transfer or split the money.
+
+## Weekly owner billing (new)
+
+After the hybrid fee policy migration `supabase/migrations/005_hybrid_courtly_fee_policy.sql`, apply `supabase/migrations/006_weekly_owner_billing_invoices.sql`. Then follow `COURTLY_WEEKLY_BILLING_IMPLEMENTATION.md` to create/allowlist a Courtly admin account, configure Courtly's remittance account in `/admin-billing`, enable Supabase `pg_cron`, and install `supabase/migrations/007_weekly_billing_cron_schedule.sql`. This feature creates unique fee ledger entries, invoices venue owners each Friday with a 72-hour deadline, accepts manual remittance references, supports admin approval/rejection and suspends a listing only from new customer traffic if an overdue amount remains unpaid. Owner access and existing confirmed bookings remain intact. Email notifications are optional and require server-only Vercel environment variables for Resend.

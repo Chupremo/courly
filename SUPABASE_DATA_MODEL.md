@@ -33,7 +33,7 @@ Court payment receipts and Open Play receipts
 
 Court rate is stored on each court as `off_peak_rate` and `peak_rate`. The venue stores an optional `peak_hours_start` / `peak_hours_end` window. When both are blank, off-peak pricing applies all day. The booking RPC calculates each booked hour from these database values; the amount sent by the browser is not trusted.
 
-Courtly's fee is PHP 10 per booked court-hour and PHP 10 per confirmed Open Play registration. It is recorded separately and deducted from the owner's payout calculation. It is not added to the player's payment total. This is a reporting/deduction rule in the app; actual money settlement is not automated by this database.
+Court rentals: PHP 10 per booked court-hour, paid by the venue owner and deducted from court-rental earnings. Paid Open Play: PHP 10 transaction fee per registration, added to the player's event registration checkout. Free Open Play has no transaction fee. Venue QR payments collect the player-paid Open Play fee for Courtly; the database tracks the amount due for remittance but does not automatically transfer funds.
 
 ## Security model
 

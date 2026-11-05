@@ -304,23 +304,46 @@ function openPayment(event = null) {
   selectedOpenPlay = event;
   const v = venue;
   const isOpenPlay = Boolean(event);
-  const amount = isOpenPlay ? Number(event.fee || 0) : bookingTotal();
-  setText('gcashTitle', isOpenPlay ? 'Open Play Registration' : 'Pay with GCash');
-  setText('gcashHelp', isOpenPlay ? 'Pay the event price shown below and upload your receipt. Courtly’s ₱10 service fee is deducted from the venue owner’s payout, not added to your payment.' : 'Pay the court rental amount shown below and upload your receipt. Courtly’s ₱10 per-hour service fee is deducted from the venue owner’s payout, not added to your payment.');
+  const registrationAmount = isOpenPlay ? Math.max(0, Number(event.fee || 0)) : bookingTotal();
+  const isFreeOpenPlay = isOpenPlay && registrationAmount <= 0;
+  const playerTransactionFee = isOpenPlay && !isFreeOpenPlay ? 10 : 0;
+  const totalDue = registrationAmount + playerTransactionFee;
+
+  setText('gcashTitle', isOpenPlay ? (isFreeOpenPlay ? 'Free Open Play Registration' : 'Open Play Registration') : 'Pay with GCash');
+  setText('gcashHelp', isOpenPlay
+    ? (isFreeOpenPlay
+        ? 'This Open Play session is free. No payment, receipt or transaction fee is required. Register to reserve your place.'
+        : 'A ₱10 transaction fee is added to the Open Play registration price and paid by the player. Pay the full total using the venue payment QR, then upload your receipt.')
+    : 'Pay the court rental amount shown below and upload your payment receipt. Courtly’s ₱10 per booked court-hour platform fee is paid by the venue owner and is not added to your checkout.');
   setText('gcashRecipient', `${v.payment_method || 'GCash QR'} · ${v.payment_account || v.name}`);
-  setText('gcashInstructions', v.payment_instructions || 'Please pay using the venue’s official payment details.');
+  setText('gcashInstructions', isFreeOpenPlay ? 'No payment is needed for this free session.' : (v.payment_instructions || 'Please pay using the venue’s official payment details.'));
   setText('gcashSubtotalLabel', isOpenPlay ? 'Open Play registration' : 'Court rental');
-  setText('gcashSubtotal', money(amount));
-  setText('gcashFeeLabel', 'Courtly fee (paid by venue owner)');
-  setText('gcashPlatformFee', isOpenPlay ? money(10) : money(platformFee()));
-  if ($('gcashPlatformFeeRow')) $('gcashPlatformFeeRow').hidden = true;
-  setText('gcashAmount', money(amount));
-  setText('paymentSubmitButton', isOpenPlay ? 'Submit receipt & reserve my spot' : 'Submit payment receipt & reserve court');
-  setText('paymentReservationNote', 'Your place is reserved after your receipt is submitted. The venue owner will verify the payment before confirming it.');
+  setText('gcashSubtotal', money(registrationAmount));
+  setText('gcashFeeLabel', isOpenPlay ? 'Transaction Fee (paid by player)' : 'Courtly Platform Fee (paid by venue owner)');
+  setText('gcashPlatformFee', money(playerTransactionFee));
+  if ($('gcashPlatformFeeRow')) $('gcashPlatformFeeRow').hidden = !playerTransactionFee;
+  setText('gcashAmount', money(totalDue));
+  setText('paymentSubmitButton', isFreeOpenPlay ? 'Register for free' : (isOpenPlay ? 'Submit receipt & reserve my spot' : 'Submit payment receipt & reserve court'));
+  setText('paymentReservationNote', isFreeOpenPlay
+    ? 'Your free registration will be confirmed immediately. No payment receipt is required.'
+    : (isOpenPlay
+        ? 'Pay the displayed total, including the ₱10 player transaction fee, to the venue QR. The venue will verify your receipt. The transaction fee is collected for Courtly and is not part of the venue’s registration revenue.'
+        : 'Your place is reserved after your receipt is submitted. The venue owner will verify the payment before confirming it.'));
+
+  const receiptInput = $('paymentScreenshot');
+  const receiptField = receiptInput?.closest('.payment-field');
+  if (receiptInput) {
+    receiptInput.required = !isFreeOpenPlay;
+    receiptInput.value = '';
+  }
+  if (receiptField) receiptField.hidden = isFreeOpenPlay;
+
   const qr = $('gcashQrWrap');
-  if (qr) qr.innerHTML = v.payment_qr_url
-    ? `<p style="font-weight:700;margin:12px 0 4px">Scan or download the venue payment QR</p><img class="gcash-qr" alt="Venue payment QR code" src="${esc(v.payment_qr_url)}"><a class="qr-download" href="${esc(v.payment_qr_url)}" download="${esc(slug)}-payment-qr.png">↓ Download QR code</a>`
-    : '<p style="margin-top:10px;color:#b42318;font-size:13px">The venue has not uploaded a payment QR code. Please contact the venue before paying.</p>';
+  if (qr) qr.innerHTML = isFreeOpenPlay
+    ? '<p style="margin-top:10px;color:#168344;font-size:13px;font-weight:700">Free registration — no payment required.</p>'
+    : (v.payment_qr_url
+      ? `<p style="font-weight:700;margin:12px 0 4px">Scan or download the venue payment QR</p><img class="gcash-qr" alt="Venue payment QR code" src="${esc(v.payment_qr_url)}"><a class="qr-download" href="${esc(v.payment_qr_url)}" download="${esc(slug)}-payment-qr.png">↓ Download QR code</a>`
+      : '<p style="margin-top:10px;color:#b42318;font-size:13px">The venue has not uploaded a payment QR code. Please contact the venue before paying.</p>');
   $('gcashModal').hidden = false;
 }
 function renderOpenPlay() {
@@ -336,7 +359,7 @@ function renderOpenPlay() {
     const full = limit > 0 && count >= limit;
     const date = new Intl.DateTimeFormat('en-PH', { timeZone: venue.timezone, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(start);
     const time = new Intl.DateTimeFormat('en-PH', { timeZone: venue.timezone, hour: 'numeric', minute: '2-digit' }).format(start);
-    return `<article class="openplay-card">${event.banner_url ? `<img src="${esc(event.banner_url)}" alt="${esc(event.title)}">` : '<div style="min-height:190px;display:grid;place-items:center;background:#102449;color:#fff;font-weight:800;letter-spacing:.15em">OPEN PLAY</div>'}<div class="openplay-copy"><span class="openplay-kicker">✦ FEATURED OPEN PLAY · ${esc(date)}</span><h2>${esc(event.title)}</h2><div class="openplay-details" style="margin:12px 0 14px;display:grid;gap:7px"><p><strong>Description:</strong> ${esc(event.details)}</p><p><strong>When:</strong> ${esc(date)} · ${esc(time)}</p><p><strong>Where:</strong> ${esc(event.location_text)}</p><p><strong>Registration fee:</strong> ${money(event.fee)} per player</p></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:5px"><strong style="font-size:16px;color:#102449">${count}${limit ? `/${limit}` : ''}</strong><span style="font-size:12px;color:#53627f">players registered</span><span style="font-size:12px;color:${full ? '#b42332' : '#168344'};font-weight:800">${full ? 'Fully booked' : (limit ? `${Math.max(0, limit - count)} spots left` : 'Registration open')}</span></div><button class="openplay-register" type="button" data-openplay-id="${esc(event.id)}" ${full ? 'disabled' : ''}>${full ? 'Fully booked' : 'REGISTER NOW →'}</button></div></article>`;
+    return `<article class="openplay-card">${event.banner_url ? `<img src="${esc(event.banner_url)}" alt="${esc(event.title)}">` : '<div style="min-height:190px;display:grid;place-items:center;background:#102449;color:#fff;font-weight:800;letter-spacing:.15em">OPEN PLAY</div>'}<div class="openplay-copy"><span class="openplay-kicker">✦ FEATURED OPEN PLAY · ${esc(date)}</span><h2>${esc(event.title)}</h2><div class="openplay-details" style="margin:12px 0 14px;display:grid;gap:7px"><p><strong>Description:</strong> ${esc(event.details)}</p><p><strong>When:</strong> ${esc(date)} · ${esc(time)}</p><p><strong>Where:</strong> ${esc(event.location_text)}</p><p><strong>Registration fee:</strong> ${money(event.fee)} per player</p>${Number(event.fee||0)>0?`<p><strong>Transaction fee:</strong> ${money(10)} per paid registration (added at checkout)</p>`:'<p><strong>Transaction fee:</strong> None — this session is free.</p>'}</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:5px"><strong style="font-size:16px;color:#102449">${count}${limit ? `/${limit}` : ''}</strong><span style="font-size:12px;color:#53627f">players registered</span><span style="font-size:12px;color:${full ? '#b42332' : '#168344'};font-weight:800">${full ? 'Fully booked' : (limit ? `${Math.max(0, limit - count)} spots left` : 'Registration open')}</span></div><button class="openplay-register" type="button" data-openplay-id="${esc(event.id)}" ${full ? 'disabled' : ''}>${full ? 'Fully booked' : 'REGISTER NOW →'}</button></div></article>`;
   }).join('');
   host.querySelectorAll('[data-openplay-id]').forEach((button) => button.addEventListener('click', () => {
     const event = upcoming.find((item) => item.id === button.dataset.openplayId);
@@ -365,10 +388,12 @@ function fileExtension(file) {
   const map = { 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp', 'image/heic':'heic', 'image/heif':'heif' };
   return map[file?.type] || 'jpg';
 }
-function showOpenPlayConfirmation(reference) {
+function showOpenPlayConfirmation(reference, isFree = false) {
   $('gcashModal').hidden = true;
-  setText('confirmationTitle', 'Open Play registration received!');
-  setText('confirmationMessage', 'Your registration and payment receipt have been submitted. Your place is awaiting payment verification by the venue owner.');
+  setText('confirmationTitle', isFree ? 'You’re registered!' : 'Open Play registration received!');
+  setText('confirmationMessage', isFree
+    ? 'Your free Open Play registration is confirmed. No payment or transaction fee was required.'
+    : 'Your registration and payment receipt have been submitted. Your place is awaiting payment verification by the venue owner.');
   setText('confirmationReference', `Reference: ${reference}`);
   setText('confirmationDetails', selectedOpenPlay?.title || 'Open Play registration');
   $('confirmationModal').hidden = false;
@@ -393,7 +418,8 @@ async function prefillPlayerCheckout() {
 async function submitPayment(event) {
   event.preventDefault();
   const file = $('paymentScreenshot')?.files?.[0];
-  if (!file) { showToast('Please attach your payment receipt.'); return; }
+  const freeOpenPlay = Boolean(selectedOpenPlay && Number(selectedOpenPlay.fee || 0) <= 0);
+  if (!file && !freeOpenPlay) { showToast('Please attach your payment receipt.'); return; }
   const name = $('playerName').value.trim();
   const email = $('playerEmail').value.trim().toLowerCase();
   const phone = $('playerPhone').value.trim();
@@ -402,9 +428,12 @@ async function submitPayment(event) {
   let pendingBookingId = null;
   try {
     if (selectedOpenPlay) {
-      const fileExt = fileExtension(file);
-      const path = `${slug}/open-play/${selectedOpenPlay.id}/${uuid()}.${fileExt}`;
-      await uploadReceipt(file, path);
+      let path = null;
+      if (!freeOpenPlay) {
+        const fileExt = fileExtension(file);
+        path = `${slug}/open-play/${selectedOpenPlay.id}/${uuid()}.${fileExt}`;
+        await uploadReceipt(file, path);
+      }
       const { data, error } = await supabase.rpc('register_open_play_player', {
         p_event_id: selectedOpenPlay.id,
         p_player_name: name,
@@ -414,7 +443,7 @@ async function submitPayment(event) {
       });
       if (error) throw error;
       const result = data || {};
-      showOpenPlayConfirmation(result.registration_reference || 'Submitted');
+      showOpenPlayConfirmation(result.registration_reference || 'Submitted', Boolean(result.requires_payment === false));
       await loadVenueEvents();
       return;
     }

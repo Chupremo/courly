@@ -4,6 +4,14 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/venue-owner-terms",
+      "destination": "/venue-owner-terms.html"
+    },
+    {
+      "source": "/admin-billing",
+      "destination": "/admin-billing.html"
+    },
+    {
       "source": "/player/register",
       "destination": "/player-register.html"
     },
@@ -54,6 +62,12 @@
     {
       "source": "/my-bookings",
       "destination": "/my-bookings.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/send-billing-emails",
+      "schedule": "0 2 * * *"
     }
   ]
 }

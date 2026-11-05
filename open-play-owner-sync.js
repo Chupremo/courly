@@ -9,7 +9,7 @@ const DEMO_VENUE_SLUGS = new Set([
   'demo-southside-sports-center'
 ]);
 const PORTAL_KEY = DEMO_VENUE_SLUGS.has(DEMO_REQUEST) ? `courtlyOwnerPortalDemoV1:${DEMO_REQUEST}` : 'courtlyOwnerPortalV1';
-let latestOpenPlayMetrics = { registrations: 0, confirmedCount: 0, pendingCount: 0, revenue: 0 };
+let latestOpenPlayMetrics = { registrations: 0, confirmedCount: 0, pendingCount: 0, revenue: 0, playerPaidFees: 0, legacyOwnerFees: 0, remittanceDue: 0, venueNet: 0 };
 
 function portalState() {
   if (!DEMO_VENUE_SLUGS.has(DEMO_REQUEST) && window.courtlyOwnerState) return window.courtlyOwnerState;
@@ -30,7 +30,7 @@ function demoRows() {
   const key = DEMO_KEY_PREFIX + venue.slug;
   try {
     const saved = JSON.parse(localStorage.getItem(key) || 'null');
-    if (Array.isArray(saved)) return saved.map(row => ({ ...row, transaction_fee: row.transaction_fee ?? 10 }));
+    if (Array.isArray(saved)) return saved.map(row => ({ ...row, transaction_fee: row.transaction_fee ?? 10, transaction_fee_payer: row.transaction_fee_payer || 'player', player_total: row.player_total ?? (Number(row.fee||0) + Number(row.transaction_fee||0)), billing_eligible: row.billing_eligible ?? true }));
   } catch {}
   const today = new Date();
   const day = offset => {
@@ -38,12 +38,12 @@ function demoRows() {
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   };
   const rows = [
-    { id:'demo-op-001', registration_reference:'OP-DEMO-001', event_title:'Weekend Social Play', event_date:day(1), event_time:'9:00 AM', player_name:'Alex Reyes', player_email:'alex@example.com', player_phone:'0917 000 0001', fee:200, payment_status:'confirmed', registration_status:'confirmed', receipt_path:null, transaction_fee:10, created_at:new Date().toISOString(), demo:true },
+    { id:'demo-op-001', registration_reference:'OP-DEMO-001', event_title:'Weekend Social Play', event_date:day(1), event_time:'9:00 AM', player_name:'Alex Reyes', player_email:'alex@example.com', player_phone:'0917 000 0001', fee:200, payment_status:'confirmed', registration_status:'confirmed', receipt_path:null, transaction_fee:10, transaction_fee_payer:'player', player_total:210, created_at:new Date().toISOString(), demo:true },
     { id:'demo-op-002', registration_reference:'OP-DEMO-002', event_title:'Beginner Open Play', event_date:day(2), event_time:'4:00 PM', player_name:'Jamie Cruz', player_email:'jamie@example.com', player_phone:'0917 000 0002', fee:150, payment_status:'awaiting_verification', registration_status:'reserved', receipt_path:null, created_at:new Date(Date.now()-3600000).toISOString(), demo:true },
     { id:'demo-op-003', registration_reference:'OP-DEMO-003', event_title:'Weekend Social Play', event_date:day(3), event_time:'9:00 AM', player_name:'Taylor Santos', player_email:'taylor@example.com', player_phone:'0917 000 0003', fee:200, payment_status:'awaiting_verification', registration_status:'reserved', receipt_path:null, created_at:new Date(Date.now()-7200000).toISOString(), demo:true },
     { id:'demo-op-004', registration_reference:'OP-DEMO-004', event_title:'Evening Doubles', event_date:day(-1), event_time:'6:00 PM', player_name:'Morgan Dela Cruz', player_email:'morgan@example.com', player_phone:'0917 000 0004', fee:180, payment_status:'rejected', registration_status:'reserved', receipt_path:null, created_at:new Date(Date.now()-86400000).toISOString(), demo:true }
   ];
-  rows.forEach(row => { row.transaction_fee = row.transaction_fee ?? 10; });
+  rows.forEach(row => { row.transaction_fee = row.transaction_fee ?? 10; row.transaction_fee_payer = row.transaction_fee_payer || 'player'; row.player_total = row.player_total ?? (Number(row.fee||0) + (row.transaction_fee_payer === 'player' ? Number(row.transaction_fee||0) : 0)); row.billing_eligible = row.billing_eligible ?? true; });
   localStorage.setItem(key, JSON.stringify(rows));
   return rows;
 }
@@ -62,17 +62,26 @@ function updateMetrics(rows, venueName, demo = false) {
   const confirmed = active.filter(r => r.payment_status === 'confirmed');
   const pending = active.filter(r => r.payment_status === 'awaiting_verification');
   const revenue = confirmed.reduce((sum, r) => sum + Number(r.fee || 0), 0);
-  const transactionFees = confirmed.reduce((sum, r) => sum + Number(r.transaction_fee || 0), 0);
+  const billingEligible = confirmed.filter(r => r.billing_eligible !== false);
+  const playerPaidFees = billingEligible.reduce((sum, r) => sum + (r.transaction_fee_payer === 'player' ? Number(r.transaction_fee || 0) : 0), 0);
+  const billableLegacyOwnerFees = billingEligible.reduce((sum, r) => sum + (r.transaction_fee_payer === 'venue_owner' ? Number(r.transaction_fee || 0) : 0), 0);
+  const legacyOwnerFees = confirmed.reduce((sum, r) => sum + (r.transaction_fee_payer === 'venue_owner' ? Number(r.transaction_fee || 0) : 0), 0);
+  const venueNet = revenue - legacyOwnerFees;
+  const remittanceDue = playerPaidFees + billableLegacyOwnerFees;
 
-  // Canonical Open Play totals live independently of the rendered DOM.
-  // The owner portal's central KPI function combines these with confirmed
-  // court-rental transactions so every panel uses one calculation.
+  // Only registrations created on/after billing_effective_at are included in
+  // the current weekly invoice estimate. Historical rows remain visible for
+  // reporting but are not silently back-billed by the new policy.
   latestOpenPlayMetrics = {
     registrations: active.length,
     confirmedCount: confirmed.length,
     pendingCount: pending.length,
     revenue,
-    transactionFees
+    playerPaidFees,
+    legacyOwnerFees,
+    remittanceDue,
+    venueNet,
+    transactionFees: playerPaidFees
   };
   window.getCourtlyOpenPlayMetrics = () => ({ ...latestOpenPlayMetrics });
 
@@ -84,13 +93,15 @@ function updateMetrics(rows, venueName, demo = false) {
   set('opEarnPaidCount', confirmed.length.toLocaleString('en-PH'));
   set('opEarnPendingCount', pending.length.toLocaleString('en-PH'));
   set('opEarnRevenue', fmtMoney(revenue));
-  set('opEarnFees', fmtMoney(transactionFees));
-  set('opEarnNet', fmtMoney(revenue - transactionFees));
+  set('opEarnFees', fmtMoney(playerPaidFees));
+  set('opEarnLegacyFees', fmtMoney(legacyOwnerFees));
+  set('opEarnNet', fmtMoney(venueNet));
+  set('opEarnRemittance', fmtMoney(remittanceDue));
 
   const note = document.getElementById('opEarnNote');
   if (note) note.textContent = demo
     ? `${venueName}: sample Open Play transactions for demo purposes only. No real payments or receipts are represented.`
-    : `${venueName}: confirmed Open Play payments only. Pending receipts are excluded until verified.`;
+    : `${venueName}: the Open Play remittance estimate includes only registrations created on or after the current Courtly billing start. Historical registrations remain visible for reference and are not back-billed. For eligible paid sessions, the ₱10 player transaction fee is collected through your venue QR on Courtly’s behalf; it is not deducted from event registration revenue. Free events have no fee.`;
 
   if (typeof window.updateOverviewGrossStats === 'function') {
     window.updateOverviewGrossStats();
@@ -107,7 +118,7 @@ function transactionMarkup(rows, demo = false) {
       <div><strong>${esc(row.player_name)}</strong> <span class="muted small">· ${esc(row.registration_reference)}</span>
       <div class="muted small">${esc(row.event_title)} · ${esc(row.event_date)} · ${esc(row.event_time)}</div>
       <div class="muted small">${esc(row.player_email)}${row.player_phone?' · '+esc(row.player_phone):''}</div>
-      <div class="op-txn-meta"><span class="op-txn-amount">${fmtMoney(row.fee)}</span>${Number(row.transaction_fee||0)>0?`<span class="muted small">+ ${fmtMoney(row.transaction_fee)} fee</span>`:''}<span class="pill ${statusClass}">${status}</span>${receipt}</div></div>
+      <div class="op-txn-meta"><span class="op-txn-amount">Registration: ${fmtMoney(row.fee)}</span>${Number(row.transaction_fee||0)>0?`<span class="muted small">${row.transaction_fee_payer==='player'?'Player transaction fee (collected for Courtly)':'Historical owner-paid fee'}: ${fmtMoney(row.transaction_fee)}</span>`:''}<span class="muted small">Total player checkout: ${fmtMoney(row.player_total ?? (Number(row.fee||0)+(row.transaction_fee_payer==='player'?Number(row.transaction_fee||0):0)))}</span><span class="pill ${statusClass}">${status}</span>${row.billing_eligible===false?'<span class="muted small">Historical · excluded from current invoices</span>':''}${receipt}</div></div>
       <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">${pending?`<button class="btn" data-op-review="confirmed" data-op-id="${esc(row.id)}">${demo?'Mark paid (demo)':'Verify payment'}</button><button class="btn" data-op-review="rejected" data-op-id="${esc(row.id)}" style="background:#fff;color:#b42318;border:1px solid #f0c8c8">Reject</button>`:''}</div>
     </article>`;
   }).join('');
@@ -156,13 +167,15 @@ function renderUnifiedRows(rows, demo = false) {
     const pill = row.payment_status === 'confirmed' ? 'confirmed' : row.payment_status === 'rejected' ? 'rejected' : 'pending';
     const fee = Number(row.fee || 0);
     const txnFee = Number(row.transaction_fee || 0);
+    const feePayer = row.transaction_fee_payer || 'venue_owner';
+    const venueNet = feePayer === 'player' || feePayer === 'none' ? fee : fee - txnFee;
     return `<tr data-openplay-row="true" data-reservation-status="${esc(status)}">
       <td class="nowrap"><span class="pill" style="background:#f3ecdc;color:#8a672b">Open Play</span></td>
       <td><strong>${esc(row.registration_reference || row.id)}</strong><br>${esc(row.player_name)}<br><span class="muted">${esc(row.player_email || '')}</span></td>
       <td>${esc(row.event_date || '')}<br>${esc(row.event_time || '')}</td>
       <td>${esc(row.event_title || 'Open Play session')}</td>
-      <td class="num">${fmtMoney(fee)}</td><td class="num">${fmtMoney(row.payment_status === 'confirmed' ? txnFee : 0)}</td><td class="num"><strong>${fmtMoney(row.payment_status === 'confirmed' ? fee - txnFee : 0)}</strong></td>
-      <td class="nowrap"><span class="pill ${pill}">${status}</span>${row.receipt_path && !demo ? '<br><span class="muted small">Receipt uploaded</span>' : demo ? '<br><span class="muted small">Demo receipt</span>' : ''}</td>
+      <td class="num">${fmtMoney(fee)}</td><td class="num">${fmtMoney(row.payment_status === 'confirmed' ? txnFee : 0)}<br><span class="muted small">${feePayer === 'player' ? 'paid by player' : feePayer === 'none' ? 'no fee' : 'legacy owner fee'}</span></td><td class="num"><strong>${fmtMoney(row.payment_status === 'confirmed' ? venueNet : 0)}</strong></td>
+      <td class="nowrap"><span class="pill ${pill}">${status}</span>${row.billing_eligible===false?'<br><span class="muted small">Historical · excluded from current invoices</span>':''}${row.receipt_path && !demo ? '<br><span class="muted small">Receipt uploaded</span>' : demo ? '<br><span class="muted small">Demo receipt</span>' : ''}</td>
       <td class="nowrap"><div class="actions">${row.payment_status === 'awaiting_verification' ? `<button class="btn primary sm" data-op-review="confirmed" data-op-id="${esc(row.id)}">${demo ? 'Mark paid (demo)' : 'Confirm paid'}</button><button class="btn danger sm" data-op-review="rejected" data-op-id="${esc(row.id)}">Reject</button>` : ''}</div></td>
     </tr>`;
   }).join('');

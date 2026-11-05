@@ -16,6 +16,8 @@ Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local` before usin
 
 Follow [`SUPABASE_COMPLETE_SETUP.md`](SUPABASE_COMPLETE_SETUP.md). For a new project, run the base `schema.sql` once and then run `supabase/001_complete_supabase_backend.sql`. For a project that already has the base Courtly tables, back up the database and run only the consolidated migration. Do not run the older individual Open Play, owner-registration, receipt-storage, or hourly-fee SQL patches after the consolidated migration. Those historical files are stored under `archive/legacy-migrations/`.
 
+After the consolidated backend migration, also apply each incremental migration in order, including `supabase/migrations/005_hybrid_courtly_fee_policy.sql` for the hybrid fee policy. Back up the database before applying migrations.
+
 The consolidated migration provides:
 
 - Owner venue creation/linking through Supabase Auth.
@@ -25,7 +27,7 @@ The consolidated migration provides:
 - Open Play events, registrations, capacity checks, receipt review and earnings.
 - Private customer receipts, public venue media, and RLS / least-privilege access.
 - Customer booking lookups through random access tokens rather than public email-only lookup.
-- A consistent platform fee rule: PHP 10 per reserved court-hour or Open Play registration is deducted from the venue owner's payout and is not added to the player's checkout total.
+- A hybrid fee policy: PHP 10 per booked court-hour for court rentals is paid by the venue owner; paid Open Play adds a PHP 10 transaction fee to the player’s registration checkout; free Open Play has no transaction fee. Venue QR payments collect the player-paid Open Play fee for later remittance to Courtly.
 
 ## Main routes
 
@@ -74,3 +76,10 @@ Courtly now includes a separate player registration/login and dashboard flow. Se
 See `PLAYER_EMAIL_REDIRECT_AND_PROFILE_SYNC_FIX.md`. Run the additive migration `supabase/migrations/003_sync_existing_player_profiles.sql` after the player account migration. Set `VITE_APP_URL=https://courtly-ecru.vercel.app` in Vercel and update Supabase Authentication URL Configuration as described in the guide.
 
 The player login page includes a resend-confirmation action for accounts that are still unconfirmed; it uses the same canonical production redirect.
+
+## Weekly owner billing and remittances
+
+Courtly's owner billing implementation is documented in `COURTLY_WEEKLY_BILLING_IMPLEMENTATION.md`. After the hybrid fee policy migration 005, run `supabase/migrations/006_weekly_owner_billing_invoices.sql`, bootstrap the dedicated admin account, configure Courtly's receiving remittance details in `/admin-billing`, enable Supabase `pg_cron`, and run `supabase/migrations/007_weekly_billing_cron_schedule.sql`. New venue owners must accept the current Venue Owner Terms in the Owner Portal before new bookings/Open Play registrations are accepted. Weekly invoices are issued Friday 09:00 Asia/Manila and are due 72 hours after issue. Venue payments remain direct to venue merchant QR; fee remittance to Courtly is manual and verified by a Courtly admin.
+
+
+For the Courtly billing administrator, use a separate email: register it through the player registration page, confirm it, then run `COURTLY_WEEKLY_BILLING_ADMIN_BOOTSTRAP.sql` after replacing the email placeholder. The script changes that account's metadata to `courtly_admin` and allowlists it, avoiding the owner-venue creation trigger. Use that identity only at `/admin-billing`.

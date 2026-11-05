@@ -35,7 +35,7 @@ function normalizeBookings() {
   const openRows=(registrations||[]).map(row=>({
     id:row.id,type:'openplay',title:row.event_title||'Open Play session',venue:row.venue_name||'Courtly venue',court:'Open Play',sport:'Open Play',
     starts_at:row.event_date ? `${row.event_date}T${convertTime(row.event_time)}:00+08:00` : row.created_at,
-    total:row.fee,status:row.registration_status,payment_status:row.payment_status,reference:row.registration_reference,created_at:row.created_at,payment_method:'GCash'
+    total:Number(row.player_total ?? (Number(row.fee||0) + (row.transaction_fee_payer==='player' ? Number(row.transaction_fee||0) : 0))),registrationFee:Number(row.fee||0),transactionFee:Number(row.transaction_fee||0),transactionFeePayer:row.transaction_fee_payer||'venue_owner',status:row.registration_status,payment_status:row.payment_status,reference:row.registration_reference,created_at:row.created_at,payment_method:'GCash'
   }));
   return [...courtRows,...openRows].sort((a,b)=>new Date(b.starts_at||b.created_at)-new Date(a.starts_at||a.created_at));
 }
@@ -52,7 +52,7 @@ function venueCard(v) {
 function eventCard(event) {
   const venue=event.venues||{}; const image=event.banner_url||''; const date=formatDate(event.starts_at); const time=formatTime(event.starts_at);
   const spots=event.registration_limit ? `${Number(event.registered_count||0)} / ${event.registration_limit} spots` : 'Open registration';
-  return `<article class="venue-card"><div class="venue-cover">${image?`<img loading="lazy" src="${esc(image)}" alt="${esc(event.title)}">`:'◉'}<span class="sport-label">OPEN PLAY</span></div><div class="venue-body"><h3>${esc(event.title)}</h3><div class="venue-loc">${esc(venue.name||'Courtly venue')} · ${esc(venue.city||event.location_text||'Location to be confirmed')}<br>${esc(date)} · ${esc(time)}</div><div class="venue-tags"><span class="tag">${esc(venue.sport||'Social play')}</span><span class="tag">${esc(spots)}</span></div><div class="venue-foot"><div class="price">Session fee<b>${money(event.fee)}</b></div><a class="btn" href="/venue.html?slug=${encodeURIComponent(venue.slug||'')}">View session →</a></div></div></article>`;
+  return `<article class="venue-card"><div class="venue-cover">${image?`<img loading="lazy" src="${esc(image)}" alt="${esc(event.title)}">`:'◉'}<span class="sport-label">OPEN PLAY</span></div><div class="venue-body"><h3>${esc(event.title)}</h3><div class="venue-loc">${esc(venue.name||'Courtly venue')} · ${esc(venue.city||event.location_text||'Location to be confirmed')}<br>${esc(date)} · ${esc(time)}</div><div class="venue-tags"><span class="tag">${esc(venue.sport||'Social play')}</span><span class="tag">${esc(spots)}</span></div><div class="venue-foot"><div class="price">${Number(event.fee||0)>0?'Total at checkout':'Free registration'}<b>${money(Number(event.fee||0)+(Number(event.fee||0)>0?10:0))}</b><small>${Number(event.fee||0)>0?`${money(event.fee)} registration + ₱10 transaction fee`:'No transaction fee'}</small></div><a class="btn" href="/venue.html?slug=${encodeURIComponent(venue.slug||'')}">View session →</a></div></div></article>`;
 }
 function heading(kicker,title,desc,action='') { return `<div class="page-heading"><div><div class="eyebrow">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(desc)}</p></div>${action}</div>`; }
 function setHeader() {
@@ -108,7 +108,10 @@ function renderDiscover() {
 }
 function bookingCard(row) {
   const status=statusInfo(row); const date=formatDate(row.starts_at); const time=row.ends_at?`${formatTime(row.starts_at)} – ${formatTime(row.ends_at)}`:'';
-  return `<article class="booking-card"><div><h3>${esc(row.venue||row.title)}</h3><div class="booking-meta">${esc(row.type==='openplay'?'Open Play session':row.court)}${row.sport&&row.type==='court'?' · '+esc(row.sport):''}<br>${esc(date)}${time?' · '+esc(time):''}<br>${row.reference?'Reference: '+esc(row.reference):''}</div></div><div class="booking-right"><strong class="booking-amount">${money(row.total)}</strong><span class="status ${status.cls}">${status.label}</span>${row.venueSlug?`<a class="link" href="/venue.html?slug=${encodeURIComponent(row.venueSlug)}">View venue →</a>`:''}</div></article>`;
+  const openPlayBreakdown = row.type === 'openplay'
+    ? `<br><span class="booking-fee-note">Registration ${money(row.registrationFee||0)}${row.transactionFeePayer==='player'&&row.transactionFee>0?` + ${money(row.transactionFee)} transaction fee`:''}</span>`
+    : '';
+  return `<article class="booking-card"><div><h3>${esc(row.venue||row.title)}</h3><div class="booking-meta">${esc(row.type==='openplay'?'Open Play session':row.court)}${row.sport&&row.type==='court'?' · '+esc(row.sport):''}<br>${esc(date)}${time?' · '+esc(time):''}<br>${row.reference?'Reference: '+esc(row.reference):''}${openPlayBreakdown}</div></div><div class="booking-right"><strong class="booking-amount">${money(row.total)}</strong><span class="status ${status.cls}">${status.label}</span>${row.venueSlug?`<a class="link" href="/venue.html?slug=${encodeURIComponent(row.venueSlug)}">View venue →</a>`:''}</div></article>`;
 }
 function renderBookings() {
   const all=normalizeBookings(); const countAll=all.length, open=all.filter(r=>r.type==='openplay').length, courts=all.filter(r=>r.type==='court').length, sessions=0;
@@ -168,7 +171,7 @@ async function uploadProfileAvatar(event) { const file=event.target.files?.[0]; 
 async function loadPlayerActivity() {
   const bookingResult=await supabase.from('bookings').select('id,reference,customer_name,customer_email,starts_at,ends_at,duration_hours,total,status,payment_status,payment_method,created_at,venues(name,slug,city),courts(name,sport)').eq('player_id',user.id).order('created_at',{ascending:false}).limit(100);
   if(bookingResult.error)throw bookingResult.error; bookings=bookingResult.data||[];
-  const regResult=await supabase.from('open_play_registrations').select('id,registration_reference,event_title,venue_name,venue_slug,event_date,event_time,fee,payment_status,registration_status,created_at').eq('player_id',user.id).order('created_at',{ascending:false}).limit(100);
+  const regResult=await supabase.from('open_play_registrations').select('id,registration_reference,event_title,venue_name,venue_slug,event_date,event_time,fee,transaction_fee,transaction_fee_payer,player_total,payment_status,registration_status,created_at').eq('player_id',user.id).order('created_at',{ascending:false}).limit(100);
   if(regResult.error)throw regResult.error; registrations=regResult.data||[];
 }
 async function loadVenues() {

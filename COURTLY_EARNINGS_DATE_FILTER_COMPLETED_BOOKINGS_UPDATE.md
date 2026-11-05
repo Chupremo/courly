@@ -3,7 +3,7 @@
 ## Included
 - Earnings filters on Overview and Earnings: 7 Days (default), 30 Days, 1 Year.
 - The 7 Days option is always visible and is selected on each fresh page load.
-- Court rental booking count, gross, Courtly transaction fees, and owner net update with the selected period.
+- Court rental booking count, gross, court rental platform fees and Open Play player transaction fees tracked separately, and owner net update with the selected period.
 - Confirmed bookings whose scheduled end time has passed are displayed as **Completed** and remain included in earnings.
 - Already-completed bookings are also included. Pending and cancelled bookings are excluded.
 - Open Play transaction payment statuses use green for Confirmed, yellow for Awaiting verification, and red for Rejected.

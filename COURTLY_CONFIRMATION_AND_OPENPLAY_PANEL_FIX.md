@@ -14,7 +14,7 @@
 - Open Play Bookings: confirmed Open Play player payments.
 - Court & Open Play Gross: court rental gross + confirmed Open Play fees.
 - Transaction Fee: ₱10 per confirmed court-rental hour.
-- Owner Net Earnings: combined gross − Courtly transaction fees.
+- Owner Net Earnings: court rental net (after venue-owner court-hour fees) plus Open Play registration revenue (less historical owner-paid fees only). Player-paid Open Play transaction fees are tracked separately as remittance due.
 
 Example: ₱800 (2 hours) + ₱400 (1 hour) court bookings + ₱200 confirmed Open Play = ₱1,400 gross. The ₱30 court-hour fee leaves ₱1,370 owner net.
 

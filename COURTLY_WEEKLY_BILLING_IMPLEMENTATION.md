@@ -6,7 +6,8 @@ This update implements Courtly's venue-owner fee collection model:
 - Court rentals: the venue owner owes Courtly PHP 10 per successfully paid and confirmed court-hour.
 - Paid Open Play: the player pays a PHP 10 Transaction Fee on top of the event registration amount. When the venue receives the full player payment through its own QR, the owner holds that PHP 10 for Courtly and remits it with the weekly invoice.
 - Free Open Play: no Transaction Fee.
-- Itemized invoices are generated every Friday at 09:00 Asia/Manila and are due exactly 72 hours after issue.
+- The owner portal shows a live running balance as qualifying fees are recorded; it separates accrued (not yet invoiced) fees from issued invoice balances. The dashboard refreshes automatically every 60 seconds while open.
+- Itemized weekly statements are generated every Friday at 09:00 Asia/Manila from fee-ledger entries already visible to the owner. Friday does not create new fees or change the total owed; it groups accrued entries into an invoice that is due exactly 72 hours after issue.
 - If the invoice remains overdue and no sufficient remittance is pending verification, Courtly suspends/unpublishes the venue from new discovery, court bookings and Open Play registrations. Owners retain access to their portal and existing confirmed bookings remain in place.
 - Once Courtly approves enough remittance to clear all overdue balances, the venue's prior publication state is restored. A venue that the owner had manually unpublished before suspension remains unpublished.
 
@@ -15,7 +16,8 @@ The system does not automatically transfer funds. Venue QR payments go directly 
 ## Files added / changed
 
 - `supabase/migrations/006_weekly_owner_billing_invoices.sql` — billing tables, fee ledger triggers, weekly invoice functions, owner/admin RPCs, terms acceptance, suspension/re-activation rules, private remittance proof bucket and email queue.
-- `supabase/migrations/007_weekly_billing_cron_schedule.sql` — Supabase Cron jobs (weekly invoice generation + five-minute overdue enforcement).
+- `supabase/migrations/007_weekly_billing_cron_schedule.sql` — Supabase Cron jobs (weekly statement generation + five-minute overdue enforcement).
+- `supabase/migrations/008_live_owner_fee_balance.sql` — returns the live accrued balance and itemized fee activity to owner and admin dashboards.
 - `owner-billing.js` — Owner Portal invoice/remittance screen.
 - `owner-portal.html` — Adds the **Courtly Fees & Invoices** navigation item and page mount.
 - `admin-billing.html` / `admin-billing.js` — Courtly admin invoice, remittance review and payment settings console.
@@ -68,7 +70,13 @@ The QR URL must be a public image URL if you want to display the QR inside the O
 
 Owners will see these instructions on each invoice and submit the payment reference plus optional proof. A payment reference alone is not proof of cleared funds. The admin must verify that funds actually arrived before approving the remittance. Duplicate payment references are rejected across invoices for the same payment method.
 
-## 4. Enable Supabase Cron and install migration 007
+## 4. Install the live-balance update (migration 008)
+
+After migrations 006 and 007 are installed, run `supabase/migrations/008_live_owner_fee_balance.sql`. This updates the owner billing RPC so the outstanding amount includes both unpaid invoices and accrued ledger fees that have not yet been grouped into a Friday statement. It also returns the latest 100 fee/credit entries. It does not modify existing invoices, create charges, or change fee rates.
+
+The owner portal displays: total owed (live), accrued not yet invoiced, and invoiced unpaid balance. The fee activity refreshes every 60 seconds while the portal is open. When Friday's statement is generated, the amount moves from “accrued” to “invoiced”; the total does not increase merely because a statement was issued.
+
+## 5. Enable Supabase Cron and install migration 007
 
 In Supabase Dashboard → Database → Extensions, enable `pg_cron` (if it is not already enabled). Then run:
 
@@ -100,7 +108,7 @@ ORDER BY start_time DESC
 LIMIT 20;
 ```
 
-## 5. Configure Vercel
+## 6. Configure Vercel
 
 Vercel keeps the existing public variables:
 
@@ -117,7 +125,7 @@ For the optional server-side email sender, add these server-only variables in Ve
 
 Email sending is optional. Without Resend configuration, invoices, deadlines and listing enforcement still work in Supabase and the Owner Portal, but emails are skipped. The Vercel daily email job is scheduled for 10:00 Philippine time. It queues invoice-issued, 48-hour reminder, 24-hour reminder and overdue emails through the email outbox.
 
-## 6. Deploy the website
+## 7. Deploy the website
 
 Add / replace all project files from this package in the existing `courly` GitHub repository and push to `main`. Vercel should build the new multi-page entries and deploy these routes:
 
@@ -127,13 +135,13 @@ Add / replace all project files from this package in the existing `courly` GitHu
 
 No new `VITE_` environment variables are required by this update. Existing Supabase environment variables remain the same.
 
-## 7. Acceptance and operating workflow
+## 8. Acceptance and operating workflow
 
 1. Owner signs in and opens **Courtly Fees & Invoices**.
 2. Owner reads and accepts the current Venue Owner Terms.
 3. Owner's new public court bookings and Open Play registrations can proceed.
 4. Fee-ledger triggers record one fee entry per successfully paid source. Unique source/fee constraints prevent duplicate ledger entries, and fee-trigger writes serialize with invoice generation so a Friday invoice cannot mark a fee invoiced without its invoice line.
-5. On Friday, the invoice generator groups unbilled venue fee entries into an itemized invoice with a 72-hour due time.
+5. Each fee appears in the owner's live fee activity as soon as the source transaction is confirmed. On Friday, the statement generator only groups still-unbilled ledger entries into an itemized invoice with a 72-hour due time; it does not create new fees.
 6. Owner pays Courtly's configured remittance account, then submits the amount, payment method and unique transaction reference. Proof upload is optional.
 7. Admin checks the actual receiving account and approves/rejects the remittance in `/admin-billing`.
 8. If a due invoice has no sufficient remittance submitted for verification, five-minute enforcement marks it overdue and unpublishes the venue from new player traffic. Owner account and existing bookings remain available.

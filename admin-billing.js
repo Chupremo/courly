@@ -12,7 +12,7 @@ function showLogin(message='') {
 function render(data) {
   state=data; $('loginPanel').classList.add('hidden'); $('adminApp').classList.remove('hidden');
   const s=data.summary||{};
-  $('summaryGrid').innerHTML=`<div class="kpi"><small>Outstanding invoices</small><strong>${money(s.outstanding)}</strong></div><div class="kpi"><small>Overdue balance</small><strong>${money(s.overdue)}</strong></div><div class="kpi"><small>Remittances to review</small><strong>${Number(s.pending_remittances||0)}</strong></div><div class="kpi"><small>Suspended venues</small><strong>${Number(s.suspended_venues||0)}</strong></div>`;
+  $('summaryGrid').innerHTML=`<div class="kpi"><small>Total fees owed (live)</small><strong>${money(s.total_owed)}</strong></div><div class="kpi"><small>Accrued, not yet invoiced</small><strong>${money(s.unbilled_accrued)}</strong></div><div class="kpi"><small>Outstanding invoices</small><strong>${money(s.outstanding)}</strong></div><div class="kpi"><small>Overdue balance</small><strong>${money(s.overdue)}</strong></div><div class="kpi"><small>Remittances to review</small><strong>${Number(s.pending_remittances||0)}</strong></div><div class="kpi"><small>Suspended venues</small><strong>${Number(s.suspended_venues||0)}</strong></div>`;
   const settings=data.settings||{}; const form=$('settingsForm');
   for(const key of ['terms_version','payment_method','payment_account_name','payment_account_number','payment_qr_url','payment_instructions']) if(form.elements[key]) form.elements[key].value=settings[key]||'';
   renderRemittances(data.remittances||[]); renderInvoices(data.invoices||[]);

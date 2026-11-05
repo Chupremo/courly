@@ -6,6 +6,8 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&a
 const fmtDate = (value) => value ? new Intl.DateTimeFormat('en-PH', { dateStyle:'medium', timeStyle:'short', timeZone:'Asia/Manila' }).format(new Date(value)) : '—';
 let busy = false;
 let latestBilling = null;
+let billingRefreshTimer = null;
+let billingVisibilityHandlerAttached = false;
 
 function statusPill(status) {
   const value = String(status || 'issued').toLowerCase();
@@ -54,6 +56,30 @@ function invoiceCard(invoice, paymentDetails) {
   </article>`;
 }
 
+function feeActivityMarkup(rows) {
+  if (!rows.length) {
+    return '<div class="billing-empty">No Courtly fees have been recorded yet. Once a paid court booking or paid Open Play registration is confirmed, it will appear here.</div>';
+  }
+  return `<div class="billing-activity-list">${rows.map((entry) => {
+    const amount = Number(entry.fee_amount || 0);
+    const credit = amount < 0;
+    const status = entry.billing_status || (credit ? 'credit' : entry.invoice_id ? 'invoiced' : 'accrued');
+    const statusLabel = status === 'accrued' ? 'Accrued · next Friday statement'
+      : status === 'invoiced' ? `Included in ${entry.invoice_number || 'invoice'}`
+      : 'Credit / adjustment';
+    return `<div class="billing-activity-row">
+      <div class="billing-activity-copy">
+        <strong>${esc(entry.description || 'Courtly transaction fee')}</strong>
+        <div class="billing-muted">${fmtDate(entry.occurred_at)} · ${entry.source_type === 'court_booking' ? 'Court rental' : 'Open Play'}</div>
+      </div>
+      <div class="billing-activity-amount">
+        <strong>${credit ? '−' : ''}${peso(Math.abs(amount))}</strong>
+        <span class="billing-pill ${credit ? 'credit' : esc(status)}">${esc(statusLabel)}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 function renderBilling(data) {
   latestBilling = data;
   const host = $('ownerBillingApp');
@@ -64,40 +90,57 @@ function renderBilling(data) {
   const invoices = Array.isArray(data.invoices) ? data.invoices : [];
   const payment = data.payment_details || {};
   const remittances = Array.isArray(data.remittances) ? data.remittances : [];
+  const feeActivity = Array.isArray(data.fee_activity) ? data.fee_activity : [];
   const billingState = venue.billing_status || 'active';
   const suspended = billingState === 'suspended';
-  const balance = Number(summary.outstanding_balance || 0);
+  const balance = Number(summary.outstanding_balance ?? summary.total_owed ?? 0);
+  const accrued = Number(summary.unbilled_balance || 0);
+  const invoiced = Number(summary.invoiced_balance || 0);
+  const credits = Number(summary.pending_credits || 0);
+  const updatedAt = summary.updated_at || new Date().toISOString();
 
   host.innerHTML = `
     ${suspended ? `<div class="notice" style="border-left-color:#b42318;background:#fff1f0;color:#7a271a"><strong>Your venue listing is temporarily suspended.</strong><br>${esc(venue.billing_suspend_reason || 'Settle the overdue Courtly invoice and wait for payment verification.')} Your owner portal and existing confirmed bookings remain accessible.</div>` : ''}
     <div class="billing-grid">
-      <div class="billing-card"><div class="billing-muted">Outstanding Courtly fees</div><div class="billing-kpi">${peso(balance)}</div><div class="billing-muted">All unpaid invoices for ${esc(venue.name)}</div></div>
-      <div class="billing-card"><div class="billing-muted">Venue listing</div><div style="font-size:22px;font-weight:700;color:${suspended?'#b42318':'#2e6500'}">${suspended?'Suspended':'Active'}</div><div class="billing-muted">${venue.is_published?'Visible to players':'Not publicly listed'}</div></div>
-      <div class="billing-card"><div class="billing-muted">Payment deadline</div><div class="billing-kpi">72 hours</div><div class="billing-muted">From invoice issue time, every Friday</div></div>
+      <div class="billing-card"><div class="billing-muted">Current Courtly balance</div><div class="billing-kpi">${peso(balance)}</div><div class="billing-muted">All unpaid invoices plus fees already accumulated.</div></div>
+      <div class="billing-card"><div class="billing-muted">Accrued · not yet invoiced</div><div class="billing-kpi">${peso(accrued)}</div><div class="billing-muted">Already recorded and included in your live balance.${credits > 0 ? ` Pending credits: ${peso(credits)}.` : ''}</div></div>
+      <div class="billing-card"><div class="billing-muted">Invoiced · unpaid balance</div><div class="billing-kpi">${peso(invoiced)}</div><div class="billing-muted">Issued statements that are not fully paid.</div></div>
     </div>
+    <div class="billing-row billing-status-strip">
+      <span>Venue status: <strong style="color:${suspended ? '#b42318' : '#2e6500'}">${suspended ? 'Suspended' : 'Active'}</strong> · ${venue.is_published ? 'Visible to players' : 'Not publicly listed'}</span>
+      <span>Weekly statement: <strong>Friday, 9:00 AM Manila time</strong> · Due within 72 hours of issue</span>
+    </div>
+    <div class="notice billing-live-note"><strong>Your balance is kept up to date.</strong> Each qualifying court booking or paid Open Play registration adds its Courtly fee to the live balance when it is confirmed. Friday's statement does not add a new fee—it simply groups the charges already shown in the activity list below. You can check your exact running balance here at any time.</div>
     ${!terms.accepted ? `<section class="billing-terms"><div><strong style="color:#234b08">Accept the Courtly Venue Owner Terms</strong><div class="billing-muted">Before your venue can accept new court bookings or Open Play registrations, the owner must accept the current fee and weekly remittance policy (version ${esc(terms.version)}).</div></div><div class="billing-actions"><a class="btn" href="/venue-owner-terms" target="_blank" rel="noopener">Read Terms &amp; Conditions</a><button class="btn primary" id="acceptCourtlyTerms">I agree and accept</button></div></section>` : `<div class="billing-row"><span class="billing-muted">Venue Owner Terms ${esc(terms.version)} accepted.</span><span class="billing-pill paid">Accepted</span></div>`}
-    <section class="panel"><div class="panelhead"><h3>Weekly invoices</h3><span class="pill">Every Friday</span></div>${invoices.length ? `<div style="display:grid;gap:14px">${invoices.map((invoice) => invoiceCard(invoice,payment)).join('')}</div>` : `<div class="billing-empty">No Courtly invoices yet. Your first invoice will be generated on Friday when eligible fees have been recorded.</div>`}</section>
+    <section class="panel">
+      <div class="panelhead billing-panelhead"><div><h3>Live Courtly fee activity</h3><div class="billing-muted">Latest 100 charges and adjustments · Updated ${fmtDate(updatedAt)}</div></div><button class="btn" id="refreshCourtlyBalance" type="button">↻ Refresh balance</button></div>
+      ${feeActivityMarkup(feeActivity)}
+    </section>
+    <section class="panel"><div class="panelhead"><h3>Weekly statements &amp; invoices</h3><span class="pill">Every Friday</span></div><div class="billing-muted" style="margin-bottom:10px">You can submit payment against an issued invoice below. Fees marked “Accrued · next Friday statement” are already included in your current balance; they become payable against an invoice once grouped into the weekly statement.</div>${invoices.length ? `<div style="display:grid;gap:14px">${invoices.map((invoice) => invoiceCard(invoice,payment)).join('')}</div>` : `<div class="billing-empty">No weekly statement has been issued yet. Your accrued fees are already included in the live balance above and will be grouped into the next Friday statement. You do not need to estimate or guess the amount.</div>`}</section>
     <section class="panel"><div class="panelhead"><h3>Remittance history</h3><span class="muted small">${remittances.length} submission(s)</span></div>${remittances.length ? remittances.map((r) => `<div class="billing-row" style="padding:10px 0;border-bottom:1px solid #edf0f4"><div><strong>${peso(r.amount)} · ${esc(r.payment_reference)}</strong><div class="billing-muted">${esc(r.payment_method)} · ${fmtDate(r.submitted_at)}</div></div>${statusPill(r.status)}</div>`).join('') : `<div class="billing-empty">No remittances submitted yet.</div>`}</section>
-    <div class="notice">Courtly fees are invoiced weekly. Court rentals are charged at ₱10 per successfully paid court-hour (venue owner-paid). Paid Open Play adds a ₱10 Transaction Fee to the player's checkout; the venue collects it through its own QR and remits it to Courtly. Free Open Play has no transaction fee. New bookings are paused if an invoice remains unpaid after 72 hours. Existing confirmed bookings remain available.</div>
+    <div class="notice">Court rentals: ₱10 per successfully paid court-hour, owed by the venue owner. Paid Open Play: the player pays a ₱10 Transaction Fee on top of the registration price; because the venue receives the full QR payment, the venue remits that ₱10 to Courtly. Free Open Play has no fee. Friday statements summarize fees already recorded in this live ledger. Any issued invoice is due within 72 hours.</div>
   `;
 
   host.querySelector('#acceptCourtlyTerms')?.addEventListener('click', acceptTerms);
   host.querySelectorAll('[data-remit-form]').forEach((form) => form.addEventListener('submit', submitRemittance));
+  host.querySelector('#refreshCourtlyBalance')?.addEventListener('click', () => loadCourtlyOwnerBilling({ silent: true }));
 }
 
-async function loadCourtlyOwnerBilling() {
+async function loadCourtlyOwnerBilling(options = {}) {
+  const silent = options.silent === true;
   const host = $('ownerBillingApp');
   if (!host) return;
-  if (!supabase) { host.innerHTML = '<div class="notice">Courtly is not connected to Supabase.</div>'; return; }
-  host.innerHTML = '<section class="panel"><div class="muted">Loading invoices and remittance history…</div></section>';
+  ensureBillingAutoRefresh();
+  if (!supabase) { if (!silent) host.innerHTML = '<div class="notice">Courtly is not connected to Supabase.</div>'; return; }
+  if (!silent || !latestBilling) host.innerHTML = '<section class="panel"><div class="muted">Loading your live Courtly balance and fee activity…</div></section>';
   const { data: auth, error: authError } = await supabase.auth.getUser();
   if (authError || !auth?.user) {
-    host.innerHTML = '<div class="notice">Your owner session has expired. Please sign in again.</div>';
+    if (!silent) host.innerHTML = '<div class="notice">Your owner session has expired. Please sign in again.</div>';
     return;
   }
   const { data, error } = await supabase.rpc('get_owner_courtly_billing');
   if (error) {
-    host.innerHTML = `<div class="notice" style="color:#b42318">Could not load Courtly billing: ${esc(error.message)}<br><span class="billing-muted">Confirm migration 006 is installed and that you are signed in using the venue owner account.</span></div>`;
+    if (!silent || !latestBilling) host.innerHTML = `<div class="notice" style="color:#b42318">Could not load Courtly billing: ${esc(error.message)}<br><span class="billing-muted">Confirm migrations 006 and 008 are installed and that you are signed in using the venue owner account.</span></div>`;
     return;
   }
   renderBilling(data || {});
@@ -169,7 +212,29 @@ async function submitRemittance(event) {
   }
 }
 
+function ensureBillingAutoRefresh() {
+  if (!billingRefreshTimer) {
+    billingRefreshTimer = setInterval(() => {
+      if (document.visibilityState === 'visible' && $('ownerBillingApp')) {
+        loadCourtlyOwnerBilling({ silent: true });
+      }
+    }, 60000);
+  }
+  if (!billingVisibilityHandlerAttached) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && $('ownerBillingApp')) {
+        loadCourtlyOwnerBilling({ silent: true });
+      }
+    });
+    billingVisibilityHandlerAttached = true;
+  }
+}
+
 window.loadCourtlyOwnerBilling = loadCourtlyOwnerBilling;
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { if ($('ownerBillingApp')) loadCourtlyOwnerBilling(); }, { once:true });
+  document.addEventListener('DOMContentLoaded', () => {
+    if ($('ownerBillingApp')) loadCourtlyOwnerBilling();
+  }, { once:true });
+} else if ($('ownerBillingApp')) {
+  loadCourtlyOwnerBilling();
 }

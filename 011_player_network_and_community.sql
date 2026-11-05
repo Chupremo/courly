@@ -416,12 +416,12 @@ VALUES (
   'courtly-community-media',
   'courtly-community-media',
   false,
-  26214400,
+  104857600,
   ARRAY['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm','video/quicktime']
 )
 ON CONFLICT (id) DO UPDATE SET
   public = false,
-  file_size_limit = 26214400,
+  file_size_limit = 104857600,
   allowed_mime_types = EXCLUDED.allowed_mime_types;
 
 DROP POLICY IF EXISTS "Community members upload their own media" ON storage.objects;

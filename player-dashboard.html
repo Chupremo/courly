@@ -25,10 +25,12 @@
     @media(max-width:560px){.date-filter{width:calc(50% - 6px);justify-content:space-between}.date-filter input{max-width:118px}.topbar{height:57px}.top-btn{display:none}.content{width:calc(100% - 24px);padding-top:18px}.quick-grid{gap:8px}.quick-card{padding:12px;min-height:85px;gap:9px}.quick-icon{width:34px;height:34px;font-size:16px}.quick-card strong{font-size:10px}.quick-card small{font-size:9px}.venue-grid{grid-template-columns:1fr}.venue-cover{height:160px}.sport-panel{padding:15px}.sport-chips{gap:6px}.sport-chip{padding:8px 10px;font-size:10px}.map-list{grid-template-columns:1fr}.map-thumb{width:85px;height:84px}.page-heading{align-items:flex-start;flex-direction:column}.stat-grid{gap:8px}.stat-card{padding:12px}.stat-card strong{font-size:20px}.tabs button{font-size:9px;padding:9px 4px}.booking-card{grid-template-columns:1fr}.booking-right{align-items:flex-start;flex-direction:row;flex-wrap:wrap}.form-grid{grid-template-columns:1fr}.membership-grid{grid-template-columns:1fr}.top-profile span{display:none}}
   </style>
 <link rel="stylesheet" href="/courtly-brand.css">
+<link rel="stylesheet" href="/player-mobile.css">
 </head>
 <body>
   <div class="shell">
-    <aside class="sidebar">
+    <button class="mobile-nav-backdrop" id="mobileNavBackdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
+    <aside class="sidebar" id="playerSidebar" aria-label="Player navigation">
       <a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a>
       <div class="side-user"><div class="avatar" id="sideAvatar">C</div><div class="user-meta"><strong id="sideName">Player</strong><span class="skill-pill" id="sideSkill">Player</span></div></div>
       <div class="side-label">Navigation</div>
@@ -44,7 +46,7 @@
       <div class="side-bottom"><button id="logoutButton" type="button">↪ &nbsp; <span>Log out</span></button></div>
     </aside>
     <main class="main">
-      <header class="topbar"><div class="crumb">COURTLY / <b id="crumbText">Player dashboard</b></div><div class="top-actions"><a class="top-btn" href="/players.html">Browse public venues ↗</a><div class="top-profile"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></div></div></header>
+      <header class="topbar"><button class="mobile-menu-toggle" id="mobileMenuButton" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="playerSidebar"><span></span><span></span><span></span></button><div class="crumb">COURTLY / <b id="crumbText">Player dashboard</b></div><div class="top-actions"><a class="top-btn" href="/players.html">Browse public venues ↗</a><div class="top-profile"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></div></div></header>
       <section class="content"><div id="viewRoot"><div class="loading">Loading your Courtly player space…</div></div></section>
     </main>
   </div>

@@ -1,0 +1,128 @@
+/* Courtly player dashboard — mobile-first navigation and touch refinements */
+.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:1px solid #e3e9f2;border-radius:12px;background:#fff;color:#001a47;cursor:pointer;touch-action:manipulation;}
+.mobile-menu-toggle span{display:block;position:absolute;width:19px;height:2px;border-radius:2px;background:#001a47;transition:transform .2s ease,opacity .2s ease;}
+.mobile-menu-toggle{position:relative;gap:0;}
+.mobile-menu-toggle span:nth-child(1){transform:translateY(-6px)}
+.mobile-menu-toggle span:nth-child(2){transform:translateY(0)}
+.mobile-menu-toggle span:nth-child(3){transform:translateY(6px)}
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(1){transform:rotate(45deg)}
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
+.mobile-nav-backdrop{display:none}
+
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body.mobile-menu-open{overflow:hidden;overscroll-behavior:none}
+  .shell{width:100%;min-width:0;overflow-x:clip}
+  .sidebar{position:fixed!important;inset:0 auto 0 0!important;width:min(292px,88vw)!important;max-width:calc(100vw - 52px);height:100dvh;min-height:100vh;padding:20px 15px calc(18px + env(safe-area-inset-bottom))!important;display:flex!important;transform:translateX(-110%);visibility:hidden;transition:transform .24s cubic-bezier(.2,.75,.25,1),visibility .24s;z-index:61!important;box-shadow:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .sidebar.mobile-open{transform:translateX(0);visibility:visible;box-shadow:18px 0 48px rgba(0,16,48,.2)}
+  .sidebar .brand{display:flex!important;justify-content:flex-start!important;align-items:center;padding:2px 8px 22px!important;min-height:56px}
+  .sidebar .brand .courtly-brand-logo{width:154px!important;max-width:100%;max-height:42px!important;object-fit:contain}
+  .sidebar .side-user{display:flex!important;justify-content:flex-start!important;padding:10px 8px 17px!important;margin-bottom:17px}
+  .sidebar .side-user .user-meta{display:block!important}
+  .sidebar .side-label{display:block!important;padding:0 9px 8px!important}
+  .sidebar .side-nav{display:grid!important;gap:5px}
+  .sidebar .nav-link{display:flex!important;justify-content:flex-start!important;align-items:center;gap:13px;min-height:49px;padding:10px 12px!important;border-radius:11px;font-size:13px;}
+  .sidebar .nav-link span:not(.nav-ico){display:block!important;min-width:0}
+  .sidebar .nav-link small{display:block!important;font-size:10px;line-height:1.35;margin-top:3px}
+  .sidebar .nav-ico{display:block!important;width:24px;flex:0 0 24px;font-size:19px;text-align:center}
+  .sidebar .nav-spacer{display:block!important;flex:1 0 20px;min-height:20px}
+  .sidebar .side-bottom{display:block!important}
+  .sidebar .side-bottom button{display:block!important;min-height:46px;padding:11px 12px!important}
+  .sidebar .side-bottom button span{display:inline!important}
+  .mobile-nav-backdrop{display:block;position:fixed;inset:0;width:100%;height:100%;padding:0;margin:0;border:0;border-radius:0;background:rgba(4,15,36,.48);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;z-index:60;}
+  .mobile-nav-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
+  .main{width:100%;min-width:0;margin-left:0!important;min-height:100vh}
+  .topbar{height:62px!important;min-height:62px;padding:0 14px!important;gap:11px;z-index:62!important}
+  .mobile-menu-toggle{display:inline-flex;position:relative;z-index:1}
+  .crumb{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}
+  .top-actions{margin-left:auto;gap:8px;flex:0 0 auto}
+  .top-btn{display:none!important}
+  .top-profile{gap:6px;flex:0 0 auto}
+  .top-profile .avatar{width:34px;height:34px}
+  .content{width:calc(100% - 28px)!important;max-width:none!important;padding:22px 0 calc(42px + env(safe-area-inset-bottom))!important;margin:0 auto}
+  .page-heading{display:block;margin-bottom:19px}
+  .page-heading h1{font-size:clamp(21px,6vw,26px);line-height:1.2;letter-spacing:-.04em;margin-bottom:8px}
+  .page-heading p{font-size:13px;line-height:1.55;max-width:58ch}
+  .eyebrow{font-size:9px;letter-spacing:1.4px;margin-bottom:7px}
+  .panel{border-radius:17px}
+  .sport-panel{padding:17px 15px;margin-bottom:17px}
+  .sport-top{align-items:center;gap:10px}
+  .sport-top>div{min-width:0}
+  .sport-top h2{font-size:15px;line-height:1.3}
+  .sport-top p{font-size:11px;line-height:1.45}
+  .sport-top .btn{flex:0 0 auto;min-height:44px;padding:9px 12px;max-width:116px;white-space:normal;line-height:1.25}
+  .sport-chips{display:flex;flex-wrap:nowrap;gap:8px;margin:15px -2px 0;padding:0 2px 5px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .sport-chips::-webkit-scrollbar{display:none}
+  .sport-chip{flex:0 0 auto;min-height:42px;padding:9px 13px;font-size:11px;white-space:nowrap;scroll-snap-align:start;touch-action:pan-x}
+  .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px;margin-bottom:22px}
+  .quick-card{display:flex;min-width:0;min-height:96px;padding:13px 11px;gap:10px;border-radius:15px;align-items:center}
+  .quick-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;font-size:17px}
+  .quick-card>span:last-child{min-width:0}
+  .quick-card strong{font-size:11px;line-height:1.3;margin-bottom:4px}
+  .quick-card small{font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+  .section-block{margin-top:23px}
+  .section-title{align-items:flex-start;gap:10px;margin-bottom:12px}
+  .section-title h2{font-size:17px;line-height:1.25}
+  .section-title p{font-size:11px;line-height:1.45}
+  .section-title .link{flex:0 0 auto;align-self:flex-end;font-size:11px}
+  .venue-grid{grid-template-columns:1fr!important;gap:12px}
+  .venue-cover{height:178px}
+  .venue-body{padding:14px}
+  .venue-body h3{font-size:14px}
+  .venue-loc{font-size:11px;min-height:0}
+  .venue-foot{gap:8px}
+  .venue-foot .btn{min-height:42px}
+  .empty-state,.venue-empty{padding:30px 17px;border-radius:15px;line-height:1.55}
+  .toolbar{padding:11px;gap:8px;border-radius:13px}
+  .search{flex:1 1 100%;min-width:0}
+  .search input{height:46px;font-size:13px}
+  .toolbar select{flex:1 1 calc(50% - 5px);min-width:0;height:44px;font-size:12px}
+  .toolbar .segmented{width:100%;overflow-x:auto}
+  .toolbar .segmented button{min-height:40px;flex:1 0 auto;font-size:11px}
+  .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+  .stat-card{min-width:0;padding:13px;border-radius:13px}
+  .stat-card strong{font-size:21px;overflow-wrap:anywhere}
+  .tabs{overflow-x:auto;scrollbar-width:none;gap:4px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:0 0 auto;min-width:max-content;min-height:42px;padding:9px 13px;font-size:11px}
+  .booking-list{gap:10px}
+  .booking-card{grid-template-columns:minmax(0,1fr);gap:11px;padding:14px;border-radius:13px}
+  .booking-card h3{font-size:13px}
+  .booking-meta{font-size:11px;line-height:1.65;overflow-wrap:anywhere}
+  .booking-right{align-items:center;justify-content:space-between;flex-direction:row;flex-wrap:wrap;gap:8px}
+  .booking-amount{font-size:16px}
+  .profile-layout{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  .profile-card{display:flex;align-items:center;text-align:left;gap:13px;padding:14px}
+  .profile-large{width:58px;height:58px;flex:0 0 58px;margin:0;font-size:20px}
+  .profile-form{padding:16px}
+  .form-grid{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+  .field label{font-size:12px}
+  .field input,.field select{height:46px;font-size:13px}
+  .privacy-row{align-items:flex-start;padding:14px 0}
+  .membership-grid{grid-template-columns:minmax(0,1fr)!important;gap:11px}
+  .membership-card{padding:16px;border-radius:14px}
+  .modal{align-items:end!important;padding:0!important}
+  .modal-box{width:100%!important;max-width:none!important;max-height:88dvh!important;padding:20px 16px calc(20px + env(safe-area-inset-bottom))!important;border-radius:20px 20px 0 0!important}
+  .sport-modal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+  .sport-option{min-height:46px;padding:11px;font-size:12px}
+  .toast{left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));max-width:none;width:auto;font-size:12px}
+}
+@media(max-width:390px){
+  .topbar{padding:0 10px!important;gap:8px}
+  .crumb{font-size:10px}
+  .content{width:calc(100% - 22px)!important}
+  .quick-grid{gap:8px}
+  .quick-card{padding:11px 9px;gap:8px;min-height:91px}
+  .quick-icon{width:34px;height:34px;flex-basis:34px;font-size:16px}
+  .quick-card strong{font-size:10px}
+  .quick-card small{font-size:9px}
+  .sport-top .btn{max-width:104px;font-size:10px}
+}
+@media(min-width:761px){
+  .mobile-menu-toggle,.mobile-nav-backdrop{display:none!important}
+  .sidebar{transform:none!important;visibility:visible!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .sidebar,.mobile-nav-backdrop,.mobile-menu-toggle span{transition:none!important}
+}

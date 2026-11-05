@@ -202,11 +202,41 @@ async function init() {
   }
   if(!selectedSport&&view==='home')openSportModal();
 }
+const mobileMenuButton = $('mobileMenuButton');
+const mobileSidebar = $('playerSidebar');
+const mobileNavBackdrop = $('mobileNavBackdrop');
+const mobileViewport = window.matchMedia('(max-width: 760px)');
+function setMobileMenu(open) {
+  const shouldOpen = Boolean(open && mobileViewport.matches);
+  mobileSidebar.classList.toggle('mobile-open', shouldOpen);
+  mobileNavBackdrop.classList.toggle('open', shouldOpen);
+  document.body.classList.toggle('mobile-menu-open', shouldOpen);
+  mobileMenuButton.setAttribute('aria-expanded', String(shouldOpen));
+  mobileMenuButton.setAttribute('aria-label', shouldOpen ? 'Close navigation menu' : 'Open navigation menu');
+  mobileSidebar.setAttribute('aria-hidden', String(mobileViewport.matches && !shouldOpen));
+  if (shouldOpen) {
+    const firstLink = mobileSidebar.querySelector('.nav-link');
+    window.setTimeout(() => firstLink?.focus(), 80);
+  }
+}
+mobileMenuButton.addEventListener('click', () => {
+  setMobileMenu(mobileMenuButton.getAttribute('aria-expanded') !== 'true');
+});
+mobileNavBackdrop.addEventListener('click', () => { setMobileMenu(false); mobileMenuButton.focus(); });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && mobileMenuButton.getAttribute('aria-expanded') === 'true') {
+    setMobileMenu(false);
+    mobileMenuButton.focus();
+  }
+});
+mobileViewport.addEventListener?.('change', () => setMobileMenu(false));
+mobileSidebar.setAttribute('aria-hidden', String(mobileViewport.matches));
+
 $('closeSportModal').addEventListener('click',()=>$('sportModal').classList.remove('open'));
 $('sportModal').addEventListener('click',e=>{if(e.target===$('sportModal'))$('sportModal').classList.remove('open')});
 $('sportModalSearch').addEventListener('input',renderSportOptions);
-document.querySelectorAll('.nav-link').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();view=link.dataset.view;history.pushState({},'',`/player-dashboard.html?view=${view}`);render();}));
-window.addEventListener('popstate',()=>{view=new URLSearchParams(location.search).get('view')||'home';render();});
+document.querySelectorAll('.nav-link').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();setMobileMenu(false);mobileMenuButton.focus();view=link.dataset.view;history.pushState({},'',`/player-dashboard.html?view=${view}`);render();}));
+window.addEventListener('popstate',()=>{setMobileMenu(false);view=new URLSearchParams(location.search).get('view')||'home';render();});
 $('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/player-login.html');});
 supabase?.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.replace('/player-login.html');});
 init().catch(error=>{console.error('Courtly player dashboard failed:',error);root.innerHTML=`<div class="empty-state"><div class="empty-icon">!</div><strong>We could not load your player dashboard</strong><span>${esc(error.message||'Please refresh the page. If this is a new deployment, run the player account SQL migration in Supabase first.')}</span></div>`;});

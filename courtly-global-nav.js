@@ -5,14 +5,14 @@ const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 
 function headerMarkup(role, displayName) {
   const guest = role === 'guest';
-  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a>'; 
+  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a><a href="/demo.html">Try demo</a>'; 
   if (guest) {
     links += `<details class="ct-dropdown"><summary>Login</summary><div class="ct-menu-panel"><a href="/player-login.html">Player login</a><a href="/coach-login.html">Coach login</a><a href="/club-login.html">Club login</a><a href="/login.html">Venue owner login</a></div></details>`;
     links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a venue owner</a><a href="/club-register.html">Register a club</a></div></details>`;
   } else {
     if (role === 'player') {
-      links += '<a href="/player-dashboard.html">Player dashboard</a><a href="/community.html">Community</a>';
-      links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/player-dashboard.html?view=profile">My profile</a><a href="/player-dashboard.html?view=bookings">My bookings</a><button type="button" data-ct-logout>Log out</button></div></details>`;
+      links += '<a href="/player-dashboard.html">Player dashboard</a><a href="/player-messages.html">Messages</a><a href="/player-dashboard.html?view=invites">Club invitations</a><a href="/community.html">Community</a>';
+      links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/player-dashboard.html?view=profile">My profile</a><a href="/player-dashboard.html?view=bookings">My bookings</a><a href="/player-dashboard.html?view=invites">Club invitations</a><a href="/player-messages.html">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'coach') {
       links += '<a href="/coach-portal.html">Coach portal</a><a href="/community.html">Community</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/coach-portal.html?view=profile">Coach profile</a><a href="/coach-portal.html?view=sessions">Coaching sessions</a><a href="/coach-portal.html?view=availability">Availability & rates</a><a href="/coach-portal.html?view=messages">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;

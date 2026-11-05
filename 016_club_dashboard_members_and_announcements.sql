@@ -48,7 +48,7 @@ DROP POLICY IF EXISTS club_announcements_owner_delete ON public.club_announcemen
 CREATE POLICY club_announcements_owner_delete ON public.club_announcements FOR DELETE TO authenticated USING(club_id=auth.uid() OR public.is_courtly_admin());
 CREATE OR REPLACE FUNCTION public.courtly_club_dashboard_members(p_club_id uuid)
 RETURNS TABLE(id uuid,player_id uuid,player_name text,avatar_url text,status text,created_at timestamptz)
-LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=public,auth,pg_temp AS $
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=public,auth,pg_temp AS $$
 BEGIN
  IF auth.uid() IS NULL OR (auth.uid()<>p_club_id AND NOT public.is_courtly_admin()) THEN
    RAISE EXCEPTION 'Not authorized to view this club member list';
@@ -60,7 +60,7 @@ BEGIN
  LEFT JOIN public.player_profiles pp ON pp.id=cm.player_id
  WHERE cm.club_id=p_club_id
  ORDER BY cm.created_at DESC;
-END $;
+END $$;
 REVOKE ALL ON FUNCTION public.courtly_club_dashboard_members(uuid) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.courtly_club_dashboard_members(uuid) TO authenticated;
 COMMIT;

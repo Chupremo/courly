@@ -241,7 +241,7 @@ BEGIN
   VALUES (p_club_id, auth.uid(), p_invitee_id, 'pending', now(), NULL)
   ON CONFLICT (club_id, inviter_id, invitee_id) DO UPDATE
     SET status = 'pending', created_at = now(), responded_at = NULL
-    WHERE public.player_club_invites.status <> 'pending'
+    WHERE player_club_invites.status <> 'pending'
   RETURNING id INTO v_invite_id;
 
   IF v_invite_id IS NULL THEN
@@ -321,7 +321,7 @@ BEGIN
     INSERT INTO public.club_members(club_id, player_id, status)
     VALUES (v_invite.club_id, auth.uid(), 'pending')
     ON CONFLICT (club_id, player_id) DO UPDATE
-      SET status = CASE WHEN public.club_members.status = 'active' THEN 'active' ELSE 'pending' END,
+      SET status = CASE WHEN club_members.status = 'active' THEN 'active' ELSE 'pending' END,
           updated_at = now();
   END IF;
 

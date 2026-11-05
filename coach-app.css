@@ -60,3 +60,12 @@
  .coach-list-details{min-height:0}
  .coach-list-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Browse Coaches hero callout: keep copy readable on its white card.
+   The general .coach-hero p rule is intended for text on the navy hero,
+   so explicitly reset paragraph colors inside the white coach-stat panel. */
+.coach-hero .coach-stat{color:var(--c-ink);background:#fff}
+.coach-hero .coach-stat small{color:#596982!important;font-size:14px;line-height:1.5}
+.coach-hero .coach-stat strong{color:#001a47!important}
+.coach-hero .coach-stat p{color:#52627a!important;font-size:14px;line-height:1.65;margin:8px 0 0;max-width:none}

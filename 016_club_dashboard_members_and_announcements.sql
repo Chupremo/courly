@@ -33,7 +33,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON public.club_announcements TO authenticated;
 DROP POLICY IF EXISTS club_members_read_owner_or_self ON public.club_members;
 CREATE POLICY club_members_read_owner_or_self ON public.club_members FOR SELECT TO authenticated USING(club_id=auth.uid() OR player_id=auth.uid() OR public.is_courtly_admin());
 DROP POLICY IF EXISTS club_members_player_request ON public.club_members;
-CREATE POLICY club_members_player_request ON public.club_members FOR INSERT TO authenticated WITH CHECK(player_id=auth.uid() AND COALESCE((SELECT raw_user_meta_data->>'account_type' FROM auth.users WHERE id=auth.uid()),'')='player');
+CREATE POLICY club_members_player_request ON public.club_members FOR INSERT TO authenticated WITH CHECK(player_id=auth.uid() AND public.courtly_is_player_account() AND EXISTS(SELECT 1 FROM public.club_profiles cp WHERE cp.id=club_id));
 DROP POLICY IF EXISTS club_members_owner_update ON public.club_members;
 CREATE POLICY club_members_owner_update ON public.club_members FOR UPDATE TO authenticated USING(club_id=auth.uid() OR public.is_courtly_admin()) WITH CHECK(club_id=auth.uid() OR public.is_courtly_admin());
 DROP POLICY IF EXISTS club_members_owner_delete ON public.club_members;
@@ -46,4 +46,21 @@ DROP POLICY IF EXISTS club_announcements_owner_update ON public.club_announcemen
 CREATE POLICY club_announcements_owner_update ON public.club_announcements FOR UPDATE TO authenticated USING(club_id=auth.uid() OR public.is_courtly_admin()) WITH CHECK(club_id=auth.uid() OR public.is_courtly_admin());
 DROP POLICY IF EXISTS club_announcements_owner_delete ON public.club_announcements;
 CREATE POLICY club_announcements_owner_delete ON public.club_announcements FOR DELETE TO authenticated USING(club_id=auth.uid() OR public.is_courtly_admin());
+CREATE OR REPLACE FUNCTION public.courtly_club_dashboard_members(p_club_id uuid)
+RETURNS TABLE(id uuid,player_id uuid,player_name text,avatar_url text,status text,created_at timestamptz)
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=public,auth,pg_temp AS $
+BEGIN
+ IF auth.uid() IS NULL OR (auth.uid()<>p_club_id AND NOT public.is_courtly_admin()) THEN
+   RAISE EXCEPTION 'Not authorized to view this club member list';
+ END IF;
+ RETURN QUERY
+ SELECT cm.id,cm.player_id,COALESCE(NULLIF(pp.player_name,''),NULLIF(pp.full_name,''),'Courtly player')::text,
+        pp.avatar_url,cm.status,cm.created_at
+ FROM public.club_members cm
+ LEFT JOIN public.player_profiles pp ON pp.id=cm.player_id
+ WHERE cm.club_id=p_club_id
+ ORDER BY cm.created_at DESC;
+END $;
+REVOKE ALL ON FUNCTION public.courtly_club_dashboard_members(uuid) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.courtly_club_dashboard_members(uuid) TO authenticated;
 COMMIT;

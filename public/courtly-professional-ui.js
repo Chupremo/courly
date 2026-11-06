@@ -14,6 +14,7 @@
 
     const before = node.nodeValue || '';
     const after = before
+      .replace(/\u00A9/g, 'Copyright ')
       .replace(decorativeSymbols, '')
       .replace(/[\u200B\u2060\uFEFF]/g, '')
       .replace(/[ \t]{2,}/g, ' ');

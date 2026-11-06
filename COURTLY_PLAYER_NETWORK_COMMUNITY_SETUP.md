@@ -143,3 +143,10 @@ Run the full `017_player_messaging_and_club_invites.sql` file in Supabase SQL Ed
 7. Confirm a private player profile is excluded from the player directory, and is rejected by the conversation/invitation functions.
 
 The Vercel deploy does not apply database migrations. Complete this SQL step and the real-account checks above in a staging project before announcing the new social actions.
+
+
+## Public player profile location (migration 018)
+
+Run `018_player_public_location.sql` in the Supabase SQL Editor after the player account and player network migrations (`002_player_accounts_and_dashboard.sql` and `011_player_network_and_community.sql`). The migration adds an optional `public_location` field and extends `get_player_directory` to return it only for profiles that are already public.
+
+Players can enter a general public area such as a city or barangay in Player Dashboard → Profile. Do not enter a home or street address. The location appears in the clickable profile details only when the player has chosen to keep their profile public. Empty locations display as “Not shared by this player.”

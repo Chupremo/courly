@@ -5,7 +5,9 @@ const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 
 function headerMarkup(role, displayName) {
   const guest = role === 'guest';
-  let links = '<a href="/">Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a>'; 
+  const homeDestinations = { player: '/player-dashboard.html?view=home', coach: '/coach-portal.html', owner: '/owner-portal.html', club: '/club-dashboard.html', admin: '/admin-billing.html' };
+  const homeHref = homeDestinations[role] || '/';
+  let links = `<a href="${homeHref}" data-ct-home>Home</a><a href="/coaches.html">Coaches</a><a href="/players.html">Venues</a><a href="/browse-clubs.html">Clubs</a>`;
   if (guest) {
     links += `<details class="ct-dropdown"><summary>Login</summary><div class="ct-menu-panel"><a href="/player-login.html">Player login</a><a href="/coach-login.html">Coach login</a><a href="/club-login.html">Club login</a><a href="/login.html">Venue owner login</a></div></details>`;
     links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a venue owner</a><a href="/club-register.html">Register a club</a></div></details>`;
@@ -74,6 +76,13 @@ async function renderHeader() {
   header.innerHTML = headerMarkup(resolved.role, resolved.displayName);
   const toggle = header.querySelector('.ct-mobile-toggle');
   const nav = header.querySelector('.ct-nav');
+  if (resolved.role === 'guest') {
+    header.querySelector('[data-ct-home]')?.addEventListener('click', event => {
+      event.preventDefault();
+      const register = window.confirm('To access your player home, create a free Courtly player account. Register now?');
+      if (register) location.assign('/player-register.html');
+    });
+  }
   toggle?.addEventListener('click', () => {
     const open = nav.classList.toggle('is-open');
     toggle.setAttribute('aria-expanded', String(open));

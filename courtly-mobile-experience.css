@@ -252,3 +252,39 @@ body:has(#viewRoot) .player-home-activity .booking-right{align-items:flex-start;
  body:has(#summaryGrid) .coach-market-grid{grid-template-columns:1fr!important}
  body:has(#summaryGrid) .tablewrap{max-width:100%;overflow-x:auto!important}
 }
+
+/* Venue page: compact mobile header, full-bleed media, tabbed venue details */
+@media(max-width:650px){
+ body:has(.venue-hero) .ct-mobile-toggle{display:none!important}
+ body:has(.venue-hero) .ct-nav{display:none!important}
+ body:has(.venue-hero) .topbar{height:60px!important}
+ body:has(.venue-hero) .hero-inner{width:100%!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:15px!important;padding:18px 0 0!important}
+ body:has(.venue-hero) .hero-copy{padding:0 16px!important}
+ body:has(.venue-hero) .gallery{width:100%!important;min-width:0!important;margin:0!important}
+ body:has(.venue-hero) .gallery-main{height:220px!important;border-radius:0!important;border-left:0!important;border-right:0!important}
+ body:has(.venue-hero) .thumbs{padding:0 12px 12px!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+ body:has(.venue-hero) .thumb{height:58px!important}
+ body:has(.venue-hero) .venue-brand-lockup{min-height:60px!important}
+ body:has(.venue-hero) .venue-owner-logo{max-width:100%!important;max-height:70px!important}
+ body:has(.venue-hero) main{width:100%!important;padding:0 14px!important}
+}
+.venue-details-tabs{display:flex;gap:8px;overflow-x:auto;padding:17px 0 0;border-bottom:1px solid #dce5f2;scrollbar-width:none}
+.venue-details-tabs::-webkit-scrollbar{display:none}
+.venue-info-tab{border:0;border-bottom:3px solid transparent;background:transparent;color:#72809a;font-size:13px;font-weight:700;padding:12px 17px;white-space:nowrap}
+.venue-info-tab.active{color:#0b3c7a;border-bottom-color:#8ed502}
+.venue-info-panel{background:#fff;border:1px solid #e5ebf4;border-radius:0 0 14px 14px;padding:18px 20px;margin-bottom:12px;min-height:90px}
+.venue-info-content[hidden]{display:none!important}
+.venue-info-eyebrow{font-size:10px;font-weight:800;letter-spacing:.15em;color:#8290a6}
+.venue-info-content p{margin:8px 0;color:#4c5d78;line-height:1.6;font-size:13px}
+.venue-amenity-list{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.venue-amenity-list span{display:inline-flex;align-items:center;gap:7px;background:#f1f6fd;border:1px solid #e1eaf7;border-radius:999px;padding:9px 13px;color:#213958;font-size:12px;font-weight:700}
+.venue-info-note{font-size:11px!important;color:#8a96a8!important}
+.venue-info-content a{color:#1555a1;font-size:12px;font-weight:800}
+@media(max-width:650px){.venue-details-tabs{margin-top:0;padding-top:12px}.venue-info-panel{padding:15px;margin-bottom:10px}.venue-info-tab{padding:11px 14px;font-size:12px}.venue-amenity-list span{font-size:11px;padding:8px 11px}}
+@media(max-width:760px){
+ body:has(#viewRoot) .player-home-openplay-grid{grid-template-columns:minmax(0,1fr)!important}
+ body:has(#viewRoot) .player-home-openplay-grid .venue-card{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important}
+ body:has(#viewRoot) .player-home-openplay-grid .venue-cover{display:block!important;width:100%!important;height:190px!important;min-height:190px!important;flex:0 0 190px!important}
+ body:has(#viewRoot) .player-home-openplay-grid .venue-cover img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important}
+ body:has(#viewRoot) .player-home-openplay-grid .venue-body{width:100%!important;min-width:0!important}
+}

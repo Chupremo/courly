@@ -70,7 +70,7 @@ module.exports = async (req,res) => {
     }
     if(!receipt) throw new Error('Could not create or retrieve the receipt record.');
     if(receipt.email_status==='sent') return json(res,200,{success:true,already_sent:true,receipt:{id:receipt.id,receipt_number:receipt.receipt_number}});
-    const claimed=await rest('payment_receipts?id=eq.'+encodeURIComponent(receipt.id)+'&email_status=eq.pending',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({email_status:'processing',email_error:null})});
+    const claimed=await rest('payment_receipts?id=eq.'+encodeURIComponent(receipt.id)+'&email_status=in.(pending,failed)',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({email_status:'processing',email_error:null})});
     if(!claimed?.length) return json(res,200,{success:true,already_processing:true,receipt:{id:receipt.id,receipt_number:receipt.receipt_number}});
     const paid=new Date(receipt.paid_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'});
     const lines=['OFFICIAL PAYMENT RECEIPT','Receipt No: '+receipt.receipt_number,'Date paid: '+paid,'Player: '+receipt.player_name,'Description: '+receipt.description,'Booking reference: '+receipt.reference,'Payment method: '+(receipt.payment_method||'GCash'),'Amount paid: PHP '+amount.toFixed(2),'','Thank you for booking with Courtly.','https://courtlyph.com'];

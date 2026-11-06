@@ -22,7 +22,9 @@ function makePdf(lines) {
   out+='trailer\n<< /Size '+(objects.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
   return Buffer.from(out,'utf8');
 }
-async function rest(path, key, options={}) {
+async function rest(path, keyOrOptions, maybeOptions={}) {
+  const key=typeof keyOrOptions==='string'?keyOrOptions:process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const options=typeof keyOrOptions==='string'?maybeOptions:(keyOrOptions||{});
   const base=env('SUPABASE_URL',env('VITE_SUPABASE_URL','')).replace(/\/$/,'');
   const r=await fetch(base+'/rest/v1/'+path,{...options,headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json',...(options.headers||{})}});
   const t=await r.text(); if(!r.ok) throw new Error('Supabase request failed ('+r.status+'): '+t.slice(0,300));
@@ -47,7 +49,8 @@ module.exports = async (req,res) => {
     const booking=rows?.[0];
     if(!booking) return json(res,404,{error:'Booking not found.'});
     if(booking.payment_status!=='confirmed') return json(res,409,{error:'A receipt is available only after payment is confirmed.'});
-    const allowed=type==='court_booking' ? (actor.id===booking.player_id || actor.id===booking.owner_id) : (actor.id===booking.player_id || actor.id===booking.coach_id);
+    let ownerAuthorized=false; if(type==='court_booking' && booking.venue_id){const venue=await rest('venues?id=eq.'+encodeURIComponent(booking.venue_id)+'&select=owner_id',secret);ownerAuthorized=venue?.[0]?.owner_id===actor.id;}
+    const allowed=type==='court_booking' ? (actor.id===booking.player_id || ownerAuthorized) : (actor.id===booking.player_id || actor.id===booking.coach_id);
     if(!allowed) return json(res,403,{error:'You are not authorized to issue this receipt.'});
     const playerRows=await rest('player_profiles?id=eq.'+encodeURIComponent(booking.player_id)+'&select=id,email,full_name,player_name',secret);
     const player=playerRows?.[0]||{};

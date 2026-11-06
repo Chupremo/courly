@@ -70,3 +70,29 @@
 /* Simplified player cards: keep only the Follow / Following action. */
 .player-social-actions{grid-template-columns:minmax(0,1fr)}
 .player-social-actions .btn{width:100%}
+
+/* Public player profile details */
+.player-social-card{grid-template-columns:minmax(0,1fr)}
+.player-profile-trigger{grid-column:1/-1;display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:0;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer}
+.player-profile-trigger:hover .player-social-copy strong{text-decoration:underline;text-underline-offset:3px}
+.player-profile-trigger:focus-visible{outline:2px solid #1747ad;outline-offset:4px;border-radius:8px}
+.player-profile-trigger .player-social-avatar{width:52px;height:52px;flex:none}
+.player-profile-trigger .player-social-copy{min-width:0;flex:1}
+.player-social-actions{grid-column:1/-1}
+.player-detail-dialog{width:min(480px,calc(100% - 28px));max-width:480px;border:0;border-radius:18px;padding:0;color:#172744;box-shadow:0 24px 70px #071b4250}
+.player-detail-dialog::backdrop{background:#06152d80;backdrop-filter:blur(3px)}
+.player-detail-panel{position:relative;padding:25px}
+.player-detail-close{position:absolute;top:15px;right:15px;width:34px;height:34px;border:1px solid #e2e8f1;border-radius:9px;background:#fff;color:#52617b;font-size:21px;line-height:1}
+.player-detail-profile{display:flex;align-items:center;gap:14px;padding-right:40px;margin-bottom:20px}
+.player-detail-avatar{width:62px;height:62px;flex:none;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#f1f8e4;color:#001a47;font-size:16px;font-weight:800}
+.player-detail-avatar img{width:100%;height:100%;object-fit:cover}
+.player-detail-eyebrow{font-size:9px;letter-spacing:1.4px;color:#789f1b;font-weight:800}
+.player-detail-profile h2{margin:5px 0 3px;color:#001a47;font:700 19px Poppins}
+.player-detail-profile p{margin:0;color:#718099;font-size:11px}
+.player-detail-facts{display:grid;gap:10px}
+.player-detail-facts>div{padding:13px 14px;border:1px solid #e3eaf2;border-radius:10px;background:#fbfcfe}
+.player-detail-facts span{display:block;color:#74829a;font-size:10px;margin-bottom:5px}
+.player-detail-facts strong{display:block;color:#172744;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.player-detail-note{margin:14px 0 0;color:#7a879c;font-size:10px;line-height:1.6}
+.field-help{display:block;margin-top:6px;color:#8793a7;font-size:9px;line-height:1.5}
+@media(max-width:560px){.player-detail-panel{padding:20px}.player-detail-profile{gap:11px}.player-detail-avatar{width:54px;height:54px}}

@@ -280,6 +280,16 @@ function queueOwnerWorkspaceSave(state) {
 async function reviewBooking(bookingId, decision) {
   const { data, error } = await supabase.rpc('review_court_booking_payment', { p_booking_id: bookingId, p_decision: decision });
   if (error) throw error;
+  if (decision === 'confirmed') {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
+    if (token) {
+      const response = await fetch('/api/receipts/issue', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ type: 'court_booking', id: bookingId }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) console.error('Courtly payment confirmed, but receipt delivery failed:', result.error || response.status);
+      else console.info('Courtly receipt issued:', result.receipt?.receipt_number || 'already processed');
+    }
+  }
   return data;
 }
 async function cancelBooking(bookingId) {

@@ -93,25 +93,56 @@ function setBannerPreview(file){
 }
 function initializeGooglePlaces(){
  const input=$('communityEventMap');
- if(!MAPS_KEY){$('communityMapsHelp').textContent='Google Maps suggestions require a VITE_GOOGLE_MAPS_API_KEY in the Courtly Vercel project. You can still leave this optional.';return;}
- const attach=()=>{
-  if(!window.google?.maps?.places?.Autocomplete)return;
-  const autocomplete=new google.maps.places.Autocomplete(input,{fields:['place_id','formatted_address','geometry','name'],componentRestrictions:{country:'ph'}});
-  autocomplete.addListener('place_changed',()=>{
-   const place=autocomplete.getPlace();
-   if(!place.place_id)return;
-   $('communityEventPlaceId').value=place.place_id;
-   $('communityEventMap').value=place.formatted_address||place.name||'';
-   $('communityEventPlaceLat').value=place.geometry?.location?.lat?.()??'';
-   $('communityEventPlaceLng').value=place.geometry?.location?.lng?.()??'';
-   $('communityMapsHelp').textContent='Google Maps location selected. The registered venue and court remain the reserved playing location.';
-  });
+ if(!MAPS_KEY){
+  $('communityMapsHelp').textContent='Google Maps suggestions require VITE_GOOGLE_MAPS_API_KEY in Courtly Vercel settings. You can still leave this optional.';
+  return;
+ }
+ const attach=async()=>{
+  try{
+   const placesLibrary=await google.maps.importLibrary('places');
+   const PlaceAutocompleteElement=placesLibrary.PlaceAutocompleteElement;
+   if(!PlaceAutocompleteElement)throw new Error('Google Places Autocomplete widget is unavailable. Enable Places API (New).');
+   const widget=new PlaceAutocompleteElement({includedRegionCodes:['ph']});
+   widget.id='communityEventMapAutocomplete';
+   widget.setAttribute('aria-label','Search Google Maps for a landmark or address');
+   widget.placeholder='Search a landmark or address in Google Maps';
+   widget.style.display='block';
+   widget.style.width='100%';
+   widget.style.minHeight='44px';
+   input.hidden=true;
+   input.insertAdjacentElement('afterend',widget);
+   document.querySelector('label[for="communityEventMap"]')?.setAttribute('for',widget.id);
+   widget.addEventListener('gmp-select',async event=>{
+    try{
+     const prediction=event.placePrediction;
+     if(!prediction)return;
+     const place=prediction.toPlace();
+     await place.fetchFields({fields:['id','formattedAddress','location','displayName']});
+     $('communityEventPlaceId').value=place.id||'';
+     $('communityEventMap').value=place.formattedAddress||place.displayName||'';
+     const location=place.location;
+     $('communityEventPlaceLat').value=location?(typeof location.lat==='function'?location.lat():location.lat)||'':'';
+     $('communityEventPlaceLng').value=location?(typeof location.lng==='function'?location.lng():location.lng)||'':'';
+     $('communityMapsHelp').textContent='Google Maps location selected. The registered venue and court remain the reserved playing location.';
+    }catch(error){
+     console.error('Google Places selection failed:',error);
+     $('communityMapsHelp').textContent='Could not read this Google Maps result. Choose another suggestion.';
+    }
+   });
+   widget.addEventListener('gmp-error',()=>{
+    $('communityMapsHelp').textContent='Google Maps could not return suggestions. Check the API key restrictions and Places API (New) settings.';
+   });
+  }catch(error){
+   console.error('Google Places could not initialize:',error);
+   $('communityMapsHelp').textContent=error.message||'Google Places could not initialize. Check the Maps JavaScript API and Places API (New) settings.';
+  }
  };
- if(window.google?.maps?.places){attach();return;}
+ if(window.google?.maps?.importLibrary){attach();return;}
  window.courtlyPlacesReady=attach;
  const script=document.createElement('script');
- script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(MAPS_KEY)+'&libraries=places&callback=courtlyPlacesReady';
- script.async=true;script.defer=true;script.onerror=()=>{$('communityMapsHelp').textContent='Google Maps could not load. Check the API key and enable Places API in Google Cloud.';};
+ script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(MAPS_KEY)+'&v=weekly&loading=async&callback=courtlyPlacesReady';
+ script.async=true;script.defer=true;
+ script.onerror=()=>{$('communityMapsHelp').textContent='Google Maps could not load. Check the Maps JavaScript API key and enable Places API (New).';};
  document.head.appendChild(script);
 }
 async function loadEvents(){

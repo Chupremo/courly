@@ -122,7 +122,7 @@ export async function loadOwnerWorkspace() {
       baseRate: rates.length ? Math.min(...rates) : 350, peakRate: peakRates.length ? Math.max(...peakRates) : 350,
       peakHoursStart: venue.peak_hours_start ? String(venue.peak_hours_start).slice(0,5) : '',
       peakHoursEnd: venue.peak_hours_end ? String(venue.peak_hours_end).slice(0,5) : '',
-      courtCount: courts.length, courtImages: courts.map((court) => ({ data: court.image_url || '', fit: court.image_fit || 'cover', id: court.id })),
+      courtCount: courts.length, amenities: Array.isArray(venue.amenities) ? venue.amenities : [], courtImages: courts.map((court) => ({ data: court.image_url || '', fit: court.image_fit || 'cover', id: court.id })),
       logoData: venue.logo_url || '', coverData: venue.cover_url || '', paymentName: venue.payment_method || 'GCash QR',
       paymentAccount: venue.payment_account || '', paymentInstructions: venue.payment_instructions || '',
       qrData: venue.payment_qr_url || '', notifyEmail: venue.notify_email !== false,
@@ -164,7 +164,7 @@ async function persistOwnerWorkspace(state) {
   v.qrData = await uploadDataUrlOrKeep(v.qrData, v.id, 'payment-qr');
   const payload = {
     name: v.name, owner_name: v.owner, admin_email: v.email || null, phone: v.phone, address: v.location,
-    city: v.city || null, sport: v.sport, description: v.description,
+    city: v.city || null, sport: v.sport, description: v.description, amenities: Array.isArray(v.amenities) ? v.amenities : [],
     logo_url: v.logoData || null, cover_url: v.coverData || null,
     payment_qr_url: v.qrData || null, payment_method: v.paymentName || 'GCash QR',
     payment_account: v.paymentAccount || null, payment_instructions: v.paymentInstructions || null,

@@ -419,3 +419,116 @@ body:has(#viewRoot) .account-avatar-link:focus-visible{
   outline:2px solid #8ed502!important;
   outline-offset:3px!important;
 }
+
+
+/* FINAL OWNER MOBILE NAV OVERRIDE — this stylesheet is loaded after the owner theme. */
+@media (max-width:760px){
+  body:has(.app .side) .side .mobile-menu-toggle,
+  body:has(.app .side) .side>button.mobile-menu-toggle{
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    flex:0 0 46px!important;
+    width:46px!important;
+    min-width:46px!important;
+    max-width:46px!important;
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+    padding:0!important;
+    margin:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex-direction:column!important;
+    gap:5px!important;
+    background:#102b4e!important;
+    border:1px solid rgba(255,255,255,.3)!important;
+    border-radius:11px!important;
+    box-shadow:none!important;
+    cursor:pointer!important;
+    position:relative!important;
+    z-index:160!important;
+  }
+  body:has(.app .side) .side .mobile-menu-toggle>span,
+  body:has(.app .side) .side>button.mobile-menu-toggle>span{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:static!important;
+    flex:0 0 2.5px!important;
+    width:22px!important;
+    min-width:22px!important;
+    max-width:22px!important;
+    height:2.5px!important;
+    min-height:2.5px!important;
+    max-height:2.5px!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:99px!important;
+    background:#fff!important;
+    color:#fff!important;
+    transform:none!important;
+  }
+  body:has(.app .side) .side .navlist,
+  body:has(.app .side) .side.menu-open .navlist{
+    display:flex!important;
+    position:fixed!important;
+    top:76px!important;
+    left:0!important;
+    right:auto!important;
+    bottom:0!important;
+    width:min(320px,86vw)!important;
+    height:calc(100dvh - 76px)!important;
+    max-height:calc(100dvh - 76px)!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:14px 13px calc(18px + env(safe-area-inset-bottom))!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    gap:7px!important;
+    background:#071b3c!important;
+    border:0!important;
+    border-right:1px solid rgba(255,255,255,.12)!important;
+    border-radius:0 15px 15px 0!important;
+    box-shadow:12px 0 30px rgba(0,0,0,.2)!important;
+    transform:translateX(-110%)!important;
+    visibility:hidden!important;
+    z-index:150!important;
+    transition:transform .22s ease,visibility .22s ease!important;
+  }
+  body:has(.app .side.menu-open) .side .navlist{
+    transform:translateX(0)!important;
+    visibility:visible!important;
+  }
+  body:has(.app .side) .side .navlist .navbtn,
+  body:has(.app .side) .side .navlist>a.navbtn{
+    display:flex!important;
+    width:100%!important;
+    min-height:48px!important;
+    max-height:54px!important;
+    height:auto!important;
+    flex:0 0 auto!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    padding:11px 13px!important;
+    margin:0!important;
+    color:#eaf0f8!important;
+    background:rgba(255,255,255,.055)!important;
+    border:1px solid rgba(255,255,255,.09)!important;
+    border-radius:9px!important;
+    text-align:left!important;
+    font-size:13px!important;
+    box-shadow:none!important;
+  }
+  body:has(.app .side) .side .navlist .navbtn.active{
+    color:#fff!important;
+    background:rgba(255,255,255,.13)!important;
+    border-left:3px solid #8ed502!important;
+    box-shadow:none!important;
+  }
+}

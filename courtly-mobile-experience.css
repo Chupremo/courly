@@ -25,7 +25,7 @@
   body:has(.app .side) .side .navbtn.active{background:var(--ct-lime)!important;color:var(--ct-navy)!important;border-color:var(--ct-lime)!important}
   body:has(.app .side) .side .navbtn.active:before{display:none!important}
   body:has(.app .side) .main{width:100%!important;min-width:0!important;margin:0!important}
-  body:has(.app .side) .topbar{height:auto!important;min-height:62px!important;position:sticky!important;top:0!important;z-index:70;padding:10px 16px!important;background:rgba(255,255,255,.96)}
+  body:has(.app .side) .topbar{height:auto!important;min-height:62px!important;position:sticky!important;top:88px!important;z-index:70;padding:10px 16px!important;background:rgba(255,255,255,.96)}
   body:has(.app .side) .topbar h2{font-size:19px!important}
   body:has(.app .side) .content{padding:20px 14px 48px!important;width:100%!important;max-width:none!important}
   body:has(.app .side) .heading{align-items:flex-start!important;gap:12px!important;margin-bottom:20px!important}

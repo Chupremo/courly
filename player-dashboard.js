@@ -8,7 +8,7 @@ const money = (value) => '₱' + Number(value || 0).toLocaleString('en-PH', { ma
 const sports = [
   ['Pickleball','🏓'],['Basketball','🏀'],['Padel','🎾'],['Archery','🏹'],['Badminton','🏸'],['Lawn Tennis','🎾'],['Billiards','🎱'],['Dart','🎯'],['Golf','⛳'],['Boxing','🥊'],['Swimming','🏊'],['Muay Thai','🥊'],['Volleyball','🏐'],['Gym','🏋️'],['Gymnastics','🤸'],['Table Tennis','🏓'],['Yoga','🧘'],['Dance Studio','💃'],['Football','⚽'],['Futsal','⚽'],['Bowling','🎳'],['Other','＋']
 ];
-let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [];
+let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], paymentReceipts = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [];
 let inviteTargetPlayerId = null;
 let directorySearch = '';
 let view = new URLSearchParams(location.search).get('view') || 'home';
@@ -246,6 +246,7 @@ function renderBookings() {
     <div class="toolbar"><div class="subtle">Filter your activity</div><div class="tabs" style="margin:0;flex:1">${filters.map(([key,label,n])=>`<button data-booking-filter="${key}" class="${bookingFilter===key?'active':''}">${label} <span style="opacity:.65">${n}</span></button>`).join('')}</div><label class="date-filter">From <input id="bookingFrom" type="date" value="${esc(bookingFrom)}"></label><label class="date-filter">To <input id="bookingTo" type="date" value="${esc(bookingTo)}"></label><button class="btn light" id="clearBookingDates">Clear dates</button><button class="btn light" id="refreshBookings">↻ Refresh</button></div>
     <div class="section-title"><div><h2>${bookingFilter==='all'?'All activity':filters.find(f=>f[0]===bookingFilter)?.[1]||'Bookings'}</h2><p>${rows.length} ${rows.length===1?'record':'records'}</p></div></div>
     ${rows.length?`<div class="booking-list">${rows.map(bookingCard).join('')}</div>`:`<div class="empty-state"><div class="empty-icon">▣</div><strong>No ${bookingFilter==='all'?'bookings or registrations':filters.find(f=>f[0]===bookingFilter)?.[1]?.toLowerCase()||'activity'} yet</strong><span>Bookings and Open Play registrations you create while signed in will be stored in your Courtly account and appear here.</span><div style="margin-top:14px"><a class="btn" href="/player-dashboard.html?view=discover">Find a court</a></div></div>`}`;
+  root.insertAdjacentHTML('beforeend', '<section class="section-block"><div class="section-title"><div><h2>Payment receipts</h2><p>Official receipts appear after the venue owner or coach confirms payment.</p></div></div>' + (paymentReceipts.length ? '<div class="booking-list">' + paymentReceipts.map(r => '<article class="booking-card"><div><strong>' + esc(r.receipt_number) + '</strong><p>' + esc(r.description) + ' · Ref: ' + esc(r.reference) + '</p><small>' + new Date(r.paid_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'}) + ' · Email: ' + esc(r.email_status) + '</small></div><div><strong>' + money(r.amount) + '</strong><a class="btn light" href="/api/receipts/download?id=' + encodeURIComponent(r.id) + '" target="_blank" rel="noopener">Download PDF</a></div></article>').join('') + '</div>' : '<div class="empty-state"><strong>No receipts yet</strong><span>Your receipt will appear here once payment is confirmed. Refresh if your payment was just approved.</span></div>') + '</section>');
   root.querySelectorAll('[data-booking-filter]').forEach(btn=>btn.addEventListener('click',()=>{bookingFilter=btn.dataset.bookingFilter;renderBookings()}));
   $('bookingFrom')?.addEventListener('change',e=>{bookingFrom=e.target.value;renderBookings()});
   $('bookingTo')?.addEventListener('change',e=>{bookingTo=e.target.value;renderBookings()});
@@ -293,6 +294,16 @@ async function loadPlayerActivity() {
   if(bookingResult.error)throw bookingResult.error; bookings=bookingResult.data||[];
   const regResult=await supabase.from('open_play_registrations').select('id,registration_reference,event_title,venue_name,venue_slug,event_date,event_time,fee,transaction_fee,transaction_fee_payer,player_total,payment_status,registration_status,created_at').eq('player_id',user.id).order('created_at',{ascending:false}).limit(100);
   if(regResult.error)throw regResult.error; registrations=regResult.data||[];
+  const {data:coachRows,error:coachError}=await supabase.from('coaching_bookings').select('id,payment_status').eq('player_id',user.id).eq('payment_status','confirmed').limit(100);
+  if(coachError) console.warn('Could not load coaching receipt triggers:',coachError.message);
+  const {data:sessionData}=await supabase.auth.getSession(); const token=sessionData?.session?.access_token;
+  if(token){
+    const tasks=[...bookings.filter(b=>b.payment_status==='confirmed').map(b=>({type:'court_booking',id:b.id})),...(coachRows||[]).map(b=>({type:'coaching_booking',id:b.id}))];
+    for(const item of tasks){try{await fetch('/api/receipts/issue',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(item)});}catch(e){console.warn('Receipt retry deferred:',e.message);}}
+  }
+  const receiptResult=await supabase.from('payment_receipts').select('id,receipt_number,description,reference,amount,paid_at,email_status').eq('player_id',user.id).order('paid_at',{ascending:false}).limit(100);
+  if(receiptResult.error) throw receiptResult.error;
+  paymentReceipts=receiptResult.data||[];
 }
 async function loadVenues() {
   const {data,error}=await supabase.from('venues').select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)').eq('is_published',true).order('created_at',{ascending:false});

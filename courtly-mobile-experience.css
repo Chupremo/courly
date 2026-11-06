@@ -288,3 +288,8 @@ body:has(#viewRoot) .player-home-activity .booking-right{align-items:flex-start;
  body:has(#viewRoot) .player-home-openplay-grid .venue-cover img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important}
  body:has(#viewRoot) .player-home-openplay-grid .venue-body{width:100%!important;min-width:0!important}
 }
+.venue-amenities-empty{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border:1px dashed #d5dfed;border-radius:12px;background:#f8fafd;color:#71809a}
+.venue-amenities-empty>span{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#eaf3ff;color:#164b86;font-size:20px}
+.venue-amenities-empty strong{font-size:12px;color:#253d5e}
+.venue-amenities-empty p{margin:0 0 0 auto;font-size:11px;color:#8290a5}
+@media(max-width:650px){.venue-amenities-empty{align-items:flex-start;flex-wrap:wrap}.venue-amenities-empty p{width:100%;margin:0 0 0 46px}}

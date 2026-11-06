@@ -1,0 +1,75 @@
+/* Courtly mobile experience refresh — player app + role-specific workspaces */
+:root{
+  --ct-navy:#001A47;--ct-navy-2:#102b59;--ct-lime:#8ED502;--ct-red:#df454d;
+  --ct-paper:#f4f7fb;--ct-line:#e5eaf2;--ct-ink:#15213b;--ct-muted:#68758e;
+}
+@media (max-width:760px){
+  html,body{max-width:100%;overflow-x:hidden}
+  body{padding-bottom:env(safe-area-inset-bottom)}
+  button,a,[role=button]{-webkit-tap-highlight-color:transparent}
+  /* PLAYER: native-app rhythm, sticky topbar and spacious feed */
+  body:has(#viewRoot) .topbar{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--ct-line);box-shadow:0 4px 18px rgba(0,26,71,.035)}
+  body:has(#viewRoot) .content{padding-top:20px!important;padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+  body:has(#viewRoot) .page-heading{margin-bottom:18px!important}
+  body:has(#viewRoot) .page-heading h1{font-size:clamp(25px,7vw,32px)!important;letter-spacing:-.045em}
+  body:has(#viewRoot) #viewRoot .panel{border-radius:18px;border-color:#e8edf5;box-shadow:0 8px 24px rgba(0,26,71,.045)}
+  body:has(#viewRoot) .quick-card,body:has(#viewRoot) .venue-card,body:has(#viewRoot) .map-card{box-shadow:0 5px 18px rgba(0,26,71,.045)}
+  /* OWNER: replace desktop sidebar with a compact horizontal workspace switcher */
+  body:has(.app .side) .app{display:flex!important;flex-direction:column!important;min-height:100dvh}
+  body:has(.app .side) .side{position:sticky!important;top:0!important;z-index:90;width:100%!important;height:auto!important;min-height:0!important;padding:10px 12px 8px!important;border-right:0!important;border-bottom:1px solid rgba(255,255,255,.1);overflow:hidden}
+  body:has(.app .side) .side .brand-logo{max-width:142px!important;max-height:38px!important;margin:0 0 8px 4px!important}
+  body:has(.app .side) .side .brand-powered,body:has(.app .side) .side small,body:has(.app .side) .side-bottom{display:none!important}
+  body:has(.app .side) .side .navlist{display:flex!important;flex-direction:row!important;gap:7px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:0 0 3px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  body:has(.app .side) .side .navlist::-webkit-scrollbar{display:none}
+  body:has(.app .side) .side .navbtn{flex:0 0 auto!important;min-height:40px!important;padding:9px 13px!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:999px!important;font-size:12px!important;white-space:nowrap!important}
+  body:has(.app .side) .side .navbtn.active{background:var(--ct-lime)!important;color:var(--ct-navy)!important;border-color:var(--ct-lime)!important}
+  body:has(.app .side) .side .navbtn.active:before{display:none!important}
+  body:has(.app .side) .main{width:100%!important;min-width:0!important;margin:0!important}
+  body:has(.app .side) .topbar{height:auto!important;min-height:62px!important;position:sticky!important;top:0!important;z-index:70;padding:10px 16px!important;background:rgba(255,255,255,.96)}
+  body:has(.app .side) .topbar h2{font-size:19px!important}
+  body:has(.app .side) .content{padding:20px 14px 48px!important;width:100%!important;max-width:none!important}
+  body:has(.app .side) .heading{align-items:flex-start!important;gap:12px!important;margin-bottom:20px!important}
+  body:has(.app .side) .heading h1{font-size:clamp(26px,7vw,34px)!important}
+  body:has(.app .side) .panel,body:has(.app .side) .card{border-radius:17px!important}
+  body:has(.app .side) .grid,body:has(.app .side) .stats,body:has(.app .side) .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  body:has(.app .side) .tablewrap,body:has(.app .side) .table-wrap{max-width:100%;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  /* COACH: slide-in navigation, app-like header and readable dashboard cards */
+  body.coach-dashboard .coach-sidebar{width:min(300px,88vw)!important;max-width:calc(100vw - 44px);height:100dvh!important;position:fixed!important;inset:0 auto 0 0!important;z-index:120!important;transform:translateX(-110%);transition:transform .24s ease;overflow-y:auto!important}
+  body.coach-dashboard .coach-sidebar.open,body.coach-dashboard .coach-sidebar.mobile-open{transform:translateX(0)!important}
+  body.coach-dashboard .coach-sidebar-backdrop{position:fixed!important;inset:0!important;z-index:110!important;background:rgba(4,15,36,.48)!important;opacity:0;visibility:hidden;pointer-events:none;transition:.2s}
+  body.coach-dashboard .coach-sidebar-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
+  body.coach-dashboard .coach-dash-main{width:100%!important;margin:0!important;min-width:0!important}
+  body.coach-dashboard .coach-topbar{position:sticky!important;top:0!important;z-index:100!important;min-height:62px!important;padding:8px 14px!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(16px)}
+  body.coach-dashboard .coach-topbar>div:first-child{min-width:0}
+  body.coach-dashboard .coach-topbar>div:first-child strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.coach-dashboard .coach-top-actions{gap:8px!important}
+  body.coach-dashboard .coach-top-actions>a{display:none!important}
+  body.coach-dashboard .coach-top-avatar-name{display:none!important}
+  body.coach-dashboard .coach-dash-content{padding:18px 14px calc(44px + env(safe-area-inset-bottom))!important;width:100%!important;max-width:none!important}
+  body.coach-dashboard #coachView>*,body.coach-dashboard #coachView .coach-card,body.coach-dashboard #coachView .card{min-width:0;max-width:100%}
+  body.coach-dashboard #coachView .grid,body.coach-dashboard #coachView .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  body.coach-dashboard #coachView .table-wrap,body.coach-dashboard #coachView .table-responsive{max-width:100%;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  /* ADMIN: compact command center, stacked sections and scroll-contained data tables */
+  body:has(.top #refreshBtn) .top{height:auto!important;min-height:60px;padding:10px 14px!important}
+  body:has(.top #refreshBtn) .top img{width:126px!important}
+  body:has(.top #refreshBtn) .top small{font-size:9px!important;letter-spacing:.08em}
+  body:has(.top #refreshBtn) .wrap{width:100%!important;margin:18px auto!important;padding:0 14px 42px!important}
+  body:has(.top #refreshBtn) .title{align-items:flex-start!important;flex-direction:column!important;gap:12px!important;margin-bottom:16px!important}
+  body:has(.top #refreshBtn) .title h1{font-size:26px!important}
+  body:has(.top #refreshBtn) .title>.row{width:100%;display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+  body:has(.top #refreshBtn) .title>.row .btn{width:100%}
+  body:has(.top #refreshBtn) .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  body:has(.top #refreshBtn) .kpi{padding:12px!important}
+  body:has(.top #refreshBtn) .kpi strong{font-size:22px!important}
+  body:has(.top #refreshBtn) .card{padding:14px!important;border-radius:16px!important}
+  body:has(.top #refreshBtn) .section-head{align-items:flex-start!important;flex-direction:column!important;gap:5px!important}
+  body:has(.top #refreshBtn) .coach-market-grid{grid-template-columns:1fr!important;gap:12px!important}
+  body:has(.top #refreshBtn) .coach-market-cover{height:160px!important}
+  body:has(.top #refreshBtn) .tablewrap{max-width:100%;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  body:has(.top #refreshBtn) .table{min-width:620px}
+}
+@media(max-width:390px){
+  body:has(.app .side) .topbar{padding-inline:12px!important}
+  body.coach-dashboard .coach-dash-content{padding-inline:12px!important}
+  body:has(.top #refreshBtn) .wrap{padding-inline:12px!important}
+}

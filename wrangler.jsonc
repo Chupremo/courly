@@ -7,6 +7,12 @@
   "workers_dev": true,
   "preview_urls": true,
   "keep_vars": true,
+  "previews": {
+    "vars": {
+      "COURTLY_EMAIL_ENABLED": "false",
+      "COURTLY_SCHEDULED_JOBS_ENABLED": "false"
+    }
+  },
   "observability": { "enabled": true },
   "assets": {
     "directory": "./dist",

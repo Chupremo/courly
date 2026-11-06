@@ -23,6 +23,8 @@ In Cloudflare, open **Workers & Pages → courtly → Settings → Builds**.
 
 Test the migration branch using a preview before merging it into the production branch. Enable Preview URLs in the Worker's **Domains** tab. The repository pins Wrangler so CI uses a known version.
 
+The `previews` block is required for `npx wrangler preview`. This repository includes it with email delivery and scheduling disabled. Asset and Node compatibility settings remain at the top level and apply to previews too.
+
 If the dashboard's retry action retries an old commit, start a build for the updated branch/commit instead.
 
 ## Build variables
@@ -58,6 +60,8 @@ The API also retains its existing `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`
 Secret values cannot be recovered from Vercel variables stored as Sensitive/Secret. Obtain them from their original provider or your credential store and enter them directly into Cloudflare. Do not put them in the repository or public build variables.
 
 `keep_vars: true` preserves dashboard-managed plain runtime variables on deploy; secrets are managed separately by Cloudflare. For local development, use an ignored `.dev.vars` file for Worker bindings and an ignored `.env.local` for Vite build variables.
+
+Preview runtime variables have their own configuration: put plain values in `previews.vars` and keep the generated dashboard configuration in sync with that block. New previews receive secrets from Previews Base when created. Updating Base secrets later does not update an existing preview; update that preview's secrets directly when needed. Production runtime settings are not inherited by previews.
 
 ## Routing and APIs
 
@@ -133,6 +137,7 @@ Keep the prior Vercel deployment and its domain/DNS configuration available unti
 
 - [Workers Static Assets configuration](https://developers.cloudflare.com/workers/static-assets/binding/)
 - [Workers build settings](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
+- [Preview configuration](https://developers.cloudflare.com/workers/previews/configuration/)
 - [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/)
 - [Workers platform limits](https://developers.cloudflare.com/workers/platform/limits/)
 - [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)

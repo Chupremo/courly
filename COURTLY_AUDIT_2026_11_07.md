@@ -12,10 +12,14 @@ navigation problems, and addresses verified booking, billing-display and owner
 management defects. It preserves the existing Supabase schema, authentication
 boundaries, payment providers, fee rates and booking policies.
 
-The code is prepared for review on a separate branch. It has not been merged or
-published to `courtlyph.com`. No live reservations, payment approvals,
-cancellations, remittances, accounts or database migrations were created or
-changed during this work.
+The code is saved in [draft pull request #16](https://github.com/Chupremo/courly/pull/16)
+on `fix/mobile-booking-audit`. All three Vercel preview deployments for the
+implementation commit `4ac2fc3ed9e4ea079ff843da6b76371906ef834b` completed
+successfully. The changes have not been merged or published to `courtlyph.com`.
+No live reservations, payment approvals, cancellations, remittances, accounts
+or database migrations were created or changed during this work.
+
+[Open the Courtly preview](https://courtly-git-fix-mobile-booki-5e953a-ibdm0720-gmailcoms-projects.vercel.app).
 
 The repository's existing Vercel checks on the baseline commit report
 **“Deployment rate limited — retry in 24 hours.”** All three linked Vercel
@@ -168,10 +172,12 @@ npm run build
 
 ## Checks still required before release
 
-Updated-page visual verification is blocked in this session: the connected and
-cloud browsers could not reach the workspace development server, and the
-existing Vercel deployment checks were rate-limited. The source and regression
-checks are not a substitute for rendering the changed pages.
+Updated-page visual verification remains incomplete. The connected and cloud
+browsers could not reach the workspace development server. After the branch
+preview deployed successfully, the connected browser disconnected and could
+not open it. The earlier baseline rate-limit failures are no longer the
+blocking condition. The source and regression checks are not a substitute for
+rendering the changed pages.
 
 Before merging/publishing, use a preview with staging accounts and data to:
 

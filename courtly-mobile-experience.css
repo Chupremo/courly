@@ -334,3 +334,63 @@ body:has(#viewRoot) .player-home-activity .booking-right{align-items:flex-start;
     text-align:center!important;
   }
 }
+
+
+/* Mobile player navigation: fill the viewport and center all four destinations */
+@media (max-width:760px){
+  body:has(#viewRoot) nav.courtly-mobile-tabs{
+    position:fixed!important;
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    width:100vw!important;
+    max-width:none!important;
+    min-width:100vw!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:0!important;
+    transform:translateX(-50%)!important;
+    margin:0!important;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;
+    gap:4px!important;
+    box-sizing:border-box!important;
+    justify-content:stretch!important;
+    align-items:stretch!important;
+  }
+  body:has(#viewRoot) nav.courtly-mobile-tabs > a{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:64px!important;
+    min-height:64px!important;
+    padding:7px 3px!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    justify-self:stretch!important;
+    gap:6px!important;
+    box-sizing:border-box!important;
+    text-align:center!important;
+    font-size:12px!important;
+    line-height:15px!important;
+    white-space:nowrap!important;
+  }
+  body:has(#viewRoot) nav.courtly-mobile-tabs > a .tab-icon{
+    display:flex!important;
+    width:26px!important;
+    height:26px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0 auto!important;
+    font-size:24px!important;
+    line-height:26px!important;
+  }
+  body:has(#viewRoot) nav.courtly-mobile-tabs > a > span:last-of-type{
+    display:block!important;
+    width:100%!important;
+    text-align:center!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+}

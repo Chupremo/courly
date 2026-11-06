@@ -17,7 +17,7 @@ header{background:#fff;border-bottom:1px solid var(--line)}.nav{height:72px;disp
 /* Regular weight for interface text; headings remain bold. */
 body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}
 @media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.nav{height:62px}nav{gap:12px}nav a{font-size:11px}.hero{padding:48px 0 65px}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.filters button{height:45px}.grid{grid-template-columns:1fr}.results-head{align-items:start;flex-direction:column}.cover{height:130px}}
-</style>
+.venue-owner-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:22px 0 0;padding:20px 22px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px #12254a0a}.venue-owner-entry-copy{min-width:0;max-width:650px}.venue-owner-entry-label{display:block;color:#58719c;font-size:10px;font-weight:700;letter-spacing:1.5px}.venue-owner-entry h2{margin:7px 0 5px;color:var(--navy);font-size:20px;letter-spacing:-.4px}.venue-owner-entry p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}.venue-owner-entry-actions{display:flex;flex:none;gap:9px;flex-wrap:wrap}.venue-owner-entry-btn{display:inline-flex;min-height:42px;align-items:center;justify-content:center;gap:8px;padding:0 15px;border:1px solid var(--blue);border-radius:9px;text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap}.venue-owner-entry-btn.primary{background:var(--blue);color:#fff}.venue-owner-entry-btn.secondary{background:#fff;color:var(--blue)}.venue-owner-entry-btn:hover{filter:brightness(.97)}@media(max-width:760px){.venue-owner-entry{align-items:flex-start;flex-direction:column;gap:14px;padding:17px}.venue-owner-entry-actions{width:100%}.venue-owner-entry-btn{flex:1 1 180px}}@media(max-width:420px){.venue-owner-entry-actions{flex-direction:column}.venue-owner-entry-btn{width:100%}}</style>
 <link rel="stylesheet" href="/courtly-brand.css?v=20261105-hybrid-fees">
 
 <link rel="stylesheet" href="/courtly-responsive.css">
@@ -28,6 +28,17 @@ body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}
 <section class="hero discover-hero"><div class="wrap"><div class="eyebrow">DISCOVER · BOOK · PLAY</div><h1>Find your court.<br>Find your people.</h1><p>Explore sports venues and registered businesses on Courtly. Compare locations, sports and hourly rates, then open a venue page to check its booking details.</p></div></section>
 <main class="wrap">
 <div class="guest-browse-hint"><strong>Browse freely.</strong> View published venues, active courts, prices and available times without an account. A free player account is required only when you book a court or join Open Play.</div>
+<section class="venue-owner-entry" aria-labelledby="venueOwnerEntryTitle">
+  <div class="venue-owner-entry-copy">
+    <span class="venue-owner-entry-label">FOR VENUE OWNERS</span>
+    <h2 id="venueOwnerEntryTitle">Manage your venue with Courtly.</h2>
+    <p>Manage court details, review reservations and keep your venue operations in one workspace. Preview the owner dashboard using sample venue data.</p>
+  </div>
+  <div class="venue-owner-entry-actions">
+    <a class="venue-owner-entry-btn primary" href="/business.html">Manage your venue <span aria-hidden="true">↗</span></a>
+    <a class="venue-owner-entry-btn secondary" href="/owner-portal.html?demo=demo-lipa-pickleball-hub">Explore interactive demo <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
 <section class="search-panel"><div class="filters"><input id="search" type="search" placeholder="Search venue, court or city…" aria-label="Search venue, court or city"><select id="sport"><option value="">All sports</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Tennis</option><option>Volleyball</option><option>Football</option><option>Other</option></select><select id="city"><option value="">All locations</option></select><button id="clear" type="button">Clear filters</button></div></section>
 <div class="results-head"><div><h2>Explore courts & venues</h2><p>Registered businesses and their active courts.</p></div><div class="count" id="count">Loading listings…</div></div>
 <section class="grid" id="listings" aria-live="polite"><div class="loading">Loading registered venues…</div></section>
@@ -50,5 +61,5 @@ async function load(){if(!supabase){list.innerHTML='<div class="error">Supabase 
 </script>
 
 <script type="module" src="/courtly-responsive.js"></script>
-  <script type="module" src="/courtly-global-nav.js?v=20261105-3"></script>
+  <script type="module" src="/courtly-global-nav.js?v=venue-owner-cta-20261106"></script>
 </body></html>

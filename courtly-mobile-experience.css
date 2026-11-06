@@ -394,3 +394,28 @@ body:has(#viewRoot) .player-home-activity .booking-right{align-items:flex-start;
     text-overflow:ellipsis!important;
   }
 }
+
+
+/* Player account avatars are direct links to editable account settings */
+body:has(#viewRoot) .account-avatar-link{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:inherit!important;
+  text-decoration:none!important;
+  cursor:pointer!important;
+  border-radius:999px!important;
+}
+body:has(#viewRoot) .account-avatar-link .avatar{
+  cursor:pointer!important;
+  transition:box-shadow .18s ease,transform .18s ease!important;
+}
+body:has(#viewRoot) .account-avatar-link:hover .avatar,
+body:has(#viewRoot) .account-avatar-link:focus-visible .avatar{
+  box-shadow:0 0 0 3px rgba(142,213,2,.35)!important;
+  transform:scale(1.04)!important;
+}
+body:has(#viewRoot) .account-avatar-link:focus-visible{
+  outline:2px solid #8ed502!important;
+  outline-offset:3px!important;
+}

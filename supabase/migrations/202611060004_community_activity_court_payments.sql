@@ -350,7 +350,8 @@ as $$
   join public.player_profiles pp on pp.id=e.host_id
   left join public.venues v on v.id=e.venue_id
   left join public.courts c on c.id=e.court_id
-  where (auth.uid() is not null or p_event_id is not null)
+  where e.venue_id is not null and e.court_id is not null
+    and (auth.uid() is not null or p_event_id is not null)
     and (p_event_id is null or e.id=p_event_id)
     and (e.starts_at>=now()-interval '12 hours' or e.host_id=auth.uid())
     and (e.status='published' or e.host_id=auth.uid())
@@ -369,7 +370,7 @@ as $$
     pp.avatar_url,true
   from public.community_events e
   join public.player_profiles pp on pp.id=e.host_id
-  where e.id=p_event_id and e.status='published' and pp.is_private=false
+  where e.id=p_event_id and e.status='published' and e.venue_id is not null and e.court_id is not null and pp.is_private=false
   union all
   select pp.id,
     coalesce(nullif(trim(pp.player_name),''),nullif(trim(pp.full_name),''),'Courtly Player'),
@@ -378,7 +379,7 @@ as $$
   join public.player_profiles pp on pp.id=r.player_id
   join public.community_events e on e.id=r.event_id
   where r.event_id=p_event_id and r.registration_status='confirmed'
-    and e.status='published' and pp.is_private=false
+    and e.status='published' and e.venue_id is not null and e.court_id is not null and pp.is_private=false
   order by 2;
 $$;
 

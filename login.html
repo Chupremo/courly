@@ -11,6 +11,10 @@ h1{margin:26px 0 8px;font-size:30px}p{color:#65718a;line-height:1.6;font-size:14
 .field{margin:15px 0}.field label{display:block;font-size:12px;margin-bottom:7px}.field input,.field select{width:100%;padding:13px 14px;border:1px solid #d7deeb;border-radius:10px;font:inherit}
 button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;color:white;font-weight:700;font-size:14px;cursor:pointer;margin-top:8px}
 .secondary{background:#f2f5fa;color:#1747ad;border:1px solid #d7deeb}.msg{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:13px;line-height:1.5}.msg.show{display:block}.error{background:#fff0f0;color:#a72a2a}.success{background:#eaf8ef;color:#176b37}.links{margin-top:18px;text-align:center;font-size:13px}.demo-box{margin-top:24px;padding-top:20px;border-top:1px solid #e8edf5}.demo-box h2{font-size:15px;margin:0 0 6px}.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.demo-grid a{display:block;padding:11px 10px;border:1px solid #d7deeb;border-radius:10px;color:#1747ad;text-decoration:none;font-size:12px;font-weight:700;background:#f8faff}.demo-grid a:hover{border-color:#1747ad;background:#eef4ff}.links a{color:#1747ad;cursor:pointer}.hidden{display:none}
+
+/* Owner login: keep the global header logo only; remove any duplicated card-level brand mark. */
+main.card::before,main.card::after{content:none!important;display:none!important}
+main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.courtly-brand{display:none!important}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/courtly-brand.css">
 

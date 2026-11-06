@@ -208,3 +208,97 @@ body:has(#viewRoot) .nav-link[href="/community.html"]{position:relative}
 .player-community-badge[hidden]{display:none!important}
 .player-community-badge.mobile{position:absolute;top:0;right:calc(50% - 26px);margin:0;min-width:16px;height:16px;font-size:8px}
 body:has(#viewRoot) .courtly-mobile-tabs a[data-mobile-tab="community"]{position:relative}
+
+
+/* OWNER WORKSPACE — responsive hamburger navigation for phones and tablets */
+@media (max-width: 1024px){
+  body:has(.app .side) .app{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:100dvh;
+  }
+  body:has(.app .side) .side{
+    position:sticky!important;
+    inset:0 0 auto!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 48px!important;
+    grid-template-rows:auto!important;
+    align-items:center!important;
+    gap:0 12px!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:76px!important;
+    padding:12px 18px!important;
+    overflow:visible!important;
+    z-index:120!important;
+    border:0!important;
+    border-bottom:1px solid #ffffff18!important;
+    box-shadow:0 8px 24px #06173518!important;
+  }
+  body:has(.app .side) .side .brand{
+    grid-column:1!important;grid-row:1!important;
+    display:flex!important;align-items:center!important;
+    min-width:0!important;padding:0!important;margin:0!important;
+  }
+  body:has(.app .side) .side .courtly-brand-logo,
+  body:has(.app .side) .side .brand-logo{
+    display:block!important;width:clamp(142px,34vw,176px)!important;
+    max-width:100%!important;max-height:42px!important;
+    object-fit:contain!important;margin:0!important;
+  }
+  body:has(.app .side) .side .brand-powered,
+  body:has(.app .side) .side>small,
+  body:has(.app .side) .side-bottom{display:none!important}
+  body:has(.app .side) .side .mobile-menu-toggle{
+    grid-column:2!important;grid-row:1!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:48px!important;height:48px!important;min-width:48px!important;
+    padding:0!important;border:1px solid #ffffff55!important;border-radius:13px!important;
+    background:#ffffff10!important;color:#fff!important;gap:5px!important;
+  }
+  body:has(.app .side) .side .mobile-menu-toggle span{
+    display:block!important;width:22px!important;height:2px!important;
+    border-radius:3px!important;background:#fff!important;
+  }
+  body:has(.app .side) .side .navlist{
+    display:none!important;position:fixed!important;
+    top:76px!important;left:0!important;right:0!important;bottom:0!important;
+    z-index:119!important;width:100vw!important;height:calc(100dvh - 76px)!important;
+    max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;
+    flex-direction:column!important;align-items:stretch!important;gap:7px!important;
+    padding:18px 18px calc(28px + env(safe-area-inset-bottom))!important;
+    background:linear-gradient(180deg,#061735 0%,#0a2851 100%)!important;
+    box-shadow:0 18px 30px #06173535!important;
+  }
+  body:has(.app .side.menu-open) .side .navlist{display:flex!important}
+  body:has(.app .side) .side .navbtn{
+    display:flex!important;align-items:center!important;width:100%!important;
+    min-height:52px!important;flex:0 0 auto!important;
+    padding:13px 16px!important;border:1px solid #ffffff12!important;
+    border-radius:12px!important;background:#ffffff08!important;
+    color:#e8eef9!important;text-align:left!important;
+    white-space:normal!important;font-size:15px!important;
+  }
+  body:has(.app .side) .side .navbtn.active{
+    background:#ffffff18!important;border-color:#a5e51e80!important;
+    color:#b8ec52!important;box-shadow:inset 3px 0 #a5e51e!important;
+  }
+  body:has(.app .side) .side .navbtn.active:before{display:none!important}
+  body:has(.app .side) .main{width:100%!important;min-width:0!important;margin:0!important}
+  body:has(.app .side) .topbar{position:relative!important;top:auto!important;min-height:68px!important;height:auto!important;padding:12px 20px!important}
+  body:has(.app .side) .content{width:100%!important;max-width:1600px!important;margin:0 auto!important;padding:26px clamp(16px,3vw,32px) 48px!important}
+}
+@media (max-width: 600px){
+  body:has(.app .side) .side{min-height:68px!important;padding:9px 14px!important}
+  body:has(.app .side) .side .navlist{top:68px!important;height:calc(100dvh - 68px)!important;padding:14px 14px calc(24px + env(safe-area-inset-bottom))!important}
+  body:has(.app .side) .side .mobile-menu-toggle{width:46px!important;height:46px!important;min-width:46px!important}
+  body:has(.app .side) .topbar{padding:11px 16px!important}
+  body:has(.app .side) .topbar h2{font-size:19px!important}
+  body:has(.app .side) .content{padding:20px 14px calc(32px + env(safe-area-inset-bottom))!important}
+  body:has(.app .side) .heading{display:flex!important;align-items:stretch!important;flex-direction:column!important;gap:13px!important}
+  body:has(.app .side) .heading>div:last-child,
+  body:has(.app .side) .heading .actions{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+  body:has(.app .side) .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  body:has(.app .side) .stat{min-width:0!important;padding:14px!important}
+  body:has(.app .side) .panel{padding:16px!important}
+}

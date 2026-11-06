@@ -34,6 +34,7 @@ create policy "Players can view their own payment receipts"
 
 revoke all on public.payment_receipts from anon, authenticated;
 grant select on public.payment_receipts to authenticated;
+grant select, insert, update on public.payment_receipts to service_role;
 grant usage, select on sequence public.courtly_receipt_number_seq to service_role;
 
 comment on table public.payment_receipts is 'Immutable player-facing receipts created only after court owner or coach confirms payment.';

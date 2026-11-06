@@ -303,8 +303,8 @@ async function loadPlayerActivity() {
     for(const item of tasks){try{await fetch('/api/receipts/issue',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(item)});}catch(e){console.warn('Receipt retry deferred:',e.message);}}
   }
   const receiptResult=await supabase.from('payment_receipts').select('id,receipt_number,description,reference,amount,paid_at,email_status').eq('player_id',user.id).order('paid_at',{ascending:false}).limit(100);
-  if(receiptResult.error) throw receiptResult.error;
-  paymentReceipts=receiptResult.data||[];
+  if(receiptResult.error){if(receiptResult.error.code==='42P01'||receiptResult.error.code==='PGRST205'){console.warn('Apply the Courtly payment receipts migration in Supabase to enable receipt history.');paymentReceipts=[];}else throw receiptResult.error;}
+  else paymentReceipts=receiptResult.data||[];
 }
 async function loadVenues() {
   const {data,error}=await supabase.from('venues').select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)').eq('is_published',true).order('created_at',{ascending:false});

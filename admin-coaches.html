@@ -1,1 +1,118 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coach Administration | Courtly</title><link rel="stylesheet" href="/coach-app.css?v=1"></head><body><div id="courtlyGlobalHeader"></div><main class="coach-page"><div class="coach-kicker">COURTLY ADMINISTRATION</div><h1 class="coach-title">Coach marketplace management</h1><p class="coach-subtitle">Verify coach profiles and review coach remittances.</p><div id="adminMessage" class="coach-msg" role="status"></div><section id="adminContent"><div class="coach-empty">Loading administration…</div></section></main><script type="module" src="/admin-coaches.js"></script><script type="module" src="/courtly-global-nav.js?v=player-home-20261106"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#001A47">
+  <title>Coach Administration | Courtly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/courtly-brand.css">
+  <link rel="stylesheet" href="/courtly-responsive.css">
+  <style>
+    :root{--navy:#001A47;--lime:#8ED502;--muted:#64748b;--line:#e2e8f0;--bg:#f5f7fb;--ink:#172033}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif;font-weight:400}
+    .top{height:70px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 max(20px,calc((100vw - 1180px)/2));gap:16px}
+    .top img{width:150px;max-height:38px;object-fit:contain}
+    .top small{color:#cbd5e1;font-size:11px;letter-spacing:.12em;font-weight:700}
+    .wrap{max-width:1180px;margin:28px auto;padding:0 20px 60px}
+    .title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+    .title h1{font:700 clamp(25px,3vw,34px)/1.15 Poppins,Inter,sans-serif;color:var(--navy);margin:0}
+    .title p{color:var(--muted);margin:7px 0 0;font-size:14px;line-height:1.6}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .kpi{background:#f8fafc;border:1px solid #e8edf4;border-radius:12px;padding:14px;min-width:0}
+    .kpi small{color:var(--muted);font-size:12px}
+    .kpi strong{display:block;color:var(--navy);font:700 25px Poppins,Inter,sans-serif;margin-top:6px;overflow-wrap:anywhere}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .section-head h2{font:700 18px Poppins,Inter,sans-serif;color:var(--navy);margin:0}
+    .btn{border:0;border-radius:10px;min-height:42px;padding:10px 15px;background:var(--navy);color:#fff;font:600 13px Inter;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+    .btn.lime{background:var(--lime);color:var(--navy)}
+    .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+    .btn.danger{background:#b42318}
+    .btn:disabled{opacity:.55;cursor:wait}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .muted{color:var(--muted);font-size:12px;line-height:1.55}
+    .small-note{font-size:12px;color:var(--muted)}
+    .notice{border-radius:12px;padding:13px 15px;background:#f1f6ff;border-left:3px solid var(--navy);color:#334155;font-size:13px;line-height:1.55;margin-bottom:16px}
+    .notice.success{background:#f0f9e8;border-color:#65a30d;color:#365314}
+    .notice.error{background:#fff0ef;border-color:#b42318;color:#8f2019}
+    .hidden{display:none!important}
+    .pill{border-radius:999px;background:#f1f5f9;color:#334155;padding:5px 10px;font-size:11px;font-weight:700;text-transform:capitalize;white-space:nowrap}
+    .pill.paid,.pill.approved,.pill.active,.pill.verified{background:#eaf7df;color:#2e6500}
+    .pill.overdue,.pill.rejected,.pill.suspended{background:#fff0ef;color:#b42318}
+    .pill.issued,.pill.partially_paid,.pill.submitted,.pill.pending{background:#fff7df;color:#8a5a00}
+    .coach-market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+    .coach-market-card{min-width:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.035)}
+    .coach-market-cover{height:124px;background:linear-gradient(125deg,#001a47,#234b88);overflow:hidden;flex:none}
+    .coach-market-cover img{display:block;width:100%;height:100%;object-fit:cover}
+    .coach-market-body{display:flex;flex-direction:column;flex:1;min-width:0;padding:0 16px 16px}
+    .coach-market-identity{display:flex;align-items:center;gap:11px;margin-top:-34px;min-width:0}
+    .coach-market-avatar{width:70px;height:70px;flex:none;border:4px solid #fff;border-radius:50%;background:#eaf0f7;object-fit:cover;display:grid;place-items:center;color:var(--navy);font:700 22px Poppins;box-shadow:0 0 0 1px var(--line)}
+    .coach-market-name{min-width:0;padding-top:28px}
+    .coach-market-name strong{display:block;color:var(--navy);font:700 14px/1.35 Poppins,Inter,sans-serif;overflow-wrap:anywhere}
+    .coach-market-name small{display:block;color:var(--muted);font-size:11px;line-height:1.45;margin-top:4px;overflow-wrap:anywhere}
+    .coach-market-description{color:#52627a;font-size:12px;line-height:1.6;margin:14px 0;min-height:58px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .coach-market-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid #edf0f5;padding-top:12px;margin-top:auto}
+    .coach-market-meta span{color:var(--muted);font-size:11px;line-height:1.4}
+    .coach-market-meta strong{display:block;color:var(--navy);font:700 14px Poppins,Inter,sans-serif;margin-top:4px;overflow-wrap:anywhere}
+    .coach-market-status{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+    .coach-market-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+    .coach-market-actions .btn{width:100%;min-width:0;padding:8px 10px;white-space:normal;text-align:center}
+    .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+    .table{width:100%;border-collapse:collapse;min-width:650px}
+    .table th,.table td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+    .table th{color:#64748b;font-size:11px;text-transform:uppercase;background:#f8fafc;letter-spacing:.04em}
+    .table tbody tr:last-child td{border-bottom:0}
+    .empty{padding:28px;text-align:center;color:var(--muted);background:#f8fafc;border:1px dashed #d7dee8;border-radius:12px;font-size:13px;line-height:1.6}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coach-market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.wrap{padding:0 14px 40px;margin:18px auto}.top{padding:0 14px;height:62px}.top img{width:126px}.title{align-items:flex-start;flex-direction:column}.title>.row{width:100%}.title>.row .btn{flex:1}.card{padding:14px}.section-head{align-items:flex-start;flex-direction:column}.coach-market-grid{gap:12px}}
+    @media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.coach-market-grid{grid-template-columns:1fr}.coach-market-cover{height:150px}.coach-market-description{min-height:0}.coach-market-actions{grid-template-columns:1fr 1fr}}
+    @media(max-width:390px){.grid{grid-template-columns:1fr}.coach-market-meta{gap:8px}.coach-market-actions .btn{font-size:12px;padding:8px 6px}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a href="/" aria-label="Courtly home"><img src="/assets/courtly-logo.png" alt="Courtly"></a>
+    <small>COACH ADMINISTRATION</small>
+  </header>
+  <main class="wrap">
+    <div class="title">
+      <div>
+        <h1>Coach Marketplace</h1>
+        <p>Review coach profiles, manage verification and monitor coach remittances.</p>
+      </div>
+      <div class="row">
+        <button id="refreshBtn" class="btn ghost" type="button">Refresh</button>
+        <button id="logoutBtn" class="btn ghost" type="button">Log out</button>
+      </div>
+    </div>
+    <div id="adminMessage" class="notice hidden" role="status" aria-live="polite"></div>
+    <section id="summaryGrid" class="grid" aria-label="Coach marketplace summary"></section>
+    <section class="card">
+      <div class="section-head">
+        <h2>Coach profiles</h2>
+        <span id="coachCount" class="small-note">Loading coach profiles…</span>
+      </div>
+      <div id="coachGrid" class="coach-market-grid"><div class="empty">Loading coach profiles…</div></div>
+    </section>
+    <section class="card">
+      <div class="section-head">
+        <h2>Coach remittance submissions</h2>
+        <span class="small-note">Approve only after confirming funds have arrived.</span>
+      </div>
+      <div id="remittanceList" class="tablewrap"><div class="empty">Loading remittances…</div></div>
+    </section>
+    <section class="card">
+      <div class="section-head">
+        <h2>Coach invoices</h2>
+        <span class="small-note">Weekly Courtly coach fees</span>
+      </div>
+      <div id="invoiceList" class="tablewrap"><div class="empty">Loading invoices…</div></div>
+    </section>
+  </main>
+  <script type="module" src="/admin-coaches.js?v=marketplace-admin-layout-20261106"></script>
+</body>
+</html>

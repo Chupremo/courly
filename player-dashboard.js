@@ -18,7 +18,7 @@ let toastTimer;
 
 function notify(text) { const node=$('toast'); node.textContent=text; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),3400); }
 function initials(name='Player') { return String(name).trim().split(/\s+/).map(part=>part[0]||'').join('').slice(0,2).toUpperCase() || 'P'; }
-function avatarMarkup(url,name='Player',klass='avatar') { return `<div class="${klass}">${url?`<img src="${esc(url)}" alt="${esc(name)} profile photo">`:esc(initials(name))}</div>`; }
+function avatarMarkup(url,name='Player',klass='avatar') { return `<span class="${klass}">${url?`<img src="${esc(url)}" alt="${esc(name)} profile photo">`:esc(initials(name))}</span>`; }
 function formatDate(value) { if(!value)return 'Date to be confirmed'; return new Intl.DateTimeFormat('en-PH',{weekday:'short',month:'short',day:'numeric',year:'numeric',timeZone:'Asia/Manila'}).format(new Date(value)); }
 function formatTime(value) { if(!value)return ''; return new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Manila'}).format(new Date(value)); }
 function statusInfo(row) {

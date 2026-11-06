@@ -19,6 +19,8 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 @media(max-width:650px){.steps{justify-content:flex-start;overflow-x:auto;padding:14px 2px 18px;gap:8px}.step{font-size:10px;gap:6px}.step-num{width:30px;height:30px;min-width:30px}.step-line{min-width:12px}.date-panel{display:block;padding:14px;}.date-panel .section-title{margin-bottom:14px}.calendar{padding:12px 10px;margin-bottom:16px}.day{min-height:40px;font-size:14px;border-radius:9px;color:#263957}.day.selected{background:#064fc4!important;color:#fff!important;border:2px solid #003b9b!important;box-shadow:0 0 0 3px #cfe0ff,0 4px 10px #0754c833!important;font-weight:800!important}.day.today:not(.selected){border:2px solid #0754c8;color:#0754c8}.slots-head{align-items:flex-start}.time-selectors{display:grid;grid-template-columns:1fr 1fr;gap:10px}.time-field select{width:100%;min-width:0}.court-panel{padding:15px 12px;margin-top:14px}.courts-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.court-card img{height:100px}.summary-panel{margin-top:14px}.summary-inner{padding:15px}.next-btn,.payment-submit,.openplay-register{width:100%;min-height:48px;justify-content:center;padding:14px 18px}.payment-dialog{padding:22px 16px}.openplay-copy{gap:10px}.openplay-details{width:100%}.openplay-register{display:flex;margin-top:12px}.summary-row{display:grid;grid-template-columns:20px minmax(112px,auto) minmax(0,1fr);gap:8px;align-items:start}.summary-row span:last-child{margin-left:0;text-align:left}} 
 
 .auth-required-dialog{max-width:480px}.auth-required-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.auth-required-actions a{display:grid;place-items:center;text-align:center;text-decoration:none;min-height:48px}.auth-required-actions .auth-register{background:#8ED502;color:#132500}.auth-required-actions .auth-register:hover{background:#a3e52a}@media(max-width:540px){.auth-required-actions{grid-template-columns:1fr}}
+.payment-error{padding:12px;border:1px solid #f3c5c1;border-radius:10px;background:#fff4f2;color:#982b23;font-size:14px;line-height:1.55}.payment-error[hidden]{display:none}.payment-close:disabled{opacity:.5;cursor:wait}#checkoutDetails{white-space:pre-line;margin:0 0 14px}#confirmationDetails{white-space:pre-line;overflow-wrap:anywhere}.availability-retry{min-height:44px;border:1px solid currentColor;border-radius:8px;background:white;color:#1747ad;padding:8px 14px;margin-top:10px}
+.venue-hero .location,.venue-hero #venueAddress{color:#edf3ff}.venue-photo-fallback{height:100%;min-height:150px;display:grid;place-items:center;text-align:center;padding:24px;color:#edf3ff;background:#14345c;font-size:14px;line-height:1.5}.venue-photo-fallback[hidden]{display:none}.gallery-main.is-empty{height:160px}.court-photo-fallback{height:120px;border-radius:7px;background:#eef3f9;color:#53627f;display:grid;place-items:center;padding:14px;font-size:12px}.thumb:disabled{display:none}.gallery-main img[hidden],.court-card img[hidden]{display:none!important}
 </style>
 <style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
 
@@ -41,7 +43,7 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 </head>
 <body>
 <header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></div></div></header>
-<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><button class="venue-back-button" id="venueBackButton" type="button" aria-label="Go back to previous page"><span aria-hidden="true">←</span><span>Back to venues</span></button><div class="venue-brand-lockup" id="venueBrandLockup"><img id="venueLogo" class="venue-owner-logo" alt="" hidden><h1 id="venueName">Pickle Paul</h1></div><p class="location">♧ <span id="venueAddress">Davao City, Philippines</span></p><p class="desc" id="venueDescription">Premium pickleball courts for casual games, training, and group play.</p></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1300&q=85" alt="Pickleball court at night"></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div></div></div></section>
+<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><button class="venue-back-button" id="venueBackButton" type="button" aria-label="Go back to previous page"><span aria-hidden="true">←</span><span>Back to venues</span></button><div class="venue-brand-lockup" id="venueBrandLockup"><img id="venueLogo" class="venue-owner-logo" alt="" hidden><h1 id="venueName">Loading venue…</h1></div><p class="location">♧ <span id="venueAddress">Loading location…</span></p><p class="desc" id="venueDescription">Loading venue details and court availability…</p></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" alt="" hidden><div id="venuePhotoFallback" class="venue-photo-fallback" role="status">Loading venue photos…</div></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div></div></div></section>
 <main><div class="venue-details-tabs" role="tablist" aria-label="Venue information">
 <button class="venue-info-tab active" type="button" role="tab" aria-selected="true" data-venue-tab="overview">Overview</button>
 <button class="venue-info-tab" type="button" role="tab" aria-selected="false" data-venue-tab="amenities">Amenities</button>
@@ -54,18 +56,58 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 <div class="venue-info-content" data-venue-panel="courts" hidden><span class="venue-info-eyebrow">AVAILABLE COURTS</span><p id="venueCourtCount">Choose from the active courts below.</p><a href="#courtSection">View courts and prices ↓</a></div>
 <div class="venue-info-content" data-venue-panel="location" hidden><span class="venue-info-eyebrow">VENUE LOCATION</span><p id="venueLocationText">Location details are shown above.</p></div>
 </section><div class="steps"><div class="step active" data-step="1"><span class="step-num">1</span><span>Select Date &amp; Time</span></div><div class="step-line"></div><div class="step" data-step="2"><span class="step-num">2</span><span>Choose Court</span></div><div class="step-line"></div><div class="step" data-step="3"><span class="step-num">3</span><span>Review Booking</span></div><div class="step-line"></div><div class="step" data-step="4"><span class="step-num">4</span><span>Payment</span></div></div>
-<section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><div class="booking-layout"><section class="panel date-panel" id="booking-calendar"><h2 class="section-title"><span class="title-icon">▦</span>1. Select Date &amp; Time</h2><div class="calendar"><div class="month-row"><button id="prevMonth" aria-label="Previous month">‹</button><span id="monthLabel">October 2026</span><button id="nextMonth" aria-label="Next month">›</button></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days" id="daysGrid"></div></div><div class="slot-area"><div class="slots-head"><div><h3>Available Time Slots</h3><p id="selectedDateLabel">Sunday, October 25, 2026</p></div><div class="legend"><span><i class="dot"></i>Available</span><span><i class="dot booked"></i>Booked</span><span><i class="dot chosen"></i>Selected</span></div></div><div class="time-selectors"><label class="time-field" for="startTime">Start time<select id="startTime" aria-label="Booking start time"></select></label><label class="time-field" for="endTime">End time<select id="endTime" aria-label="Booking end time"></select></label></div><p class="range-hint">Choose your start and end times independently. Every hourly slot within your selected range will be highlighted. Price: ₱200 per court, per hour.</p><div class="slots" id="slots"></div></div></section>
+<section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><aside class="reservation-note" id="checkoutRecovery" hidden><p id="checkoutRecoveryText"></p><button class="qr-download" id="resumeCheckout" type="button">View my checkout</button></aside>
+<div class="booking-layout"><section class="panel date-panel" id="booking-calendar"><h2 class="section-title"><span class="title-icon">▦</span>1. Select Date &amp; Time</h2><div class="calendar"><div class="month-row"><button type="button" id="prevMonth" aria-label="Previous month">‹</button><span id="monthLabel" aria-live="polite">Loading calendar…</span><button type="button" id="nextMonth" aria-label="Next month">›</button></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days" id="daysGrid"></div></div><div class="slot-area"><div class="slots-head"><div><h3>Available Time Slots</h3><p id="selectedDateLabel" aria-live="polite">Loading availability…</p></div><div class="legend"><span><i class="dot"></i>Available</span><span><i class="dot booked"></i>Booked</span><span><i class="dot chosen"></i>Selected</span></div></div><div class="time-selectors"><label class="time-field" for="startTime">Start time<select id="startTime" aria-label="Booking start time"></select></label><label class="time-field" for="endTime">End time<select id="endTime" aria-label="Booking end time"></select></label></div><p class="range-hint">Choose a start and end time, then an available court. Book between 1 and 8 hours.</p><div class="slots" id="slots"></div></div></section>
 </div>
-<section class="panel court-panel" id="courtSection"><h2 class="section-title"><span class="title-icon">▦</span>2. Choose Your Court</h2><p class="subheading">Select an available court for your preferred time.</p><div class="courts-grid" id="courtsGrid"></div><section class="panel summary-panel"><div class="summary-inner"><h2 class="section-title"><span class="title-icon">▦</span>Booking Summary</h2><div class="summary-row"><span class="ico">▦</span><strong>Date</strong><span id="summaryDate">October 25, 2026</span></div><div class="summary-row"><span class="ico">◷</span><strong>Time</strong><span id="summaryTime">8:00 AM – 12:00 PM (4 hours)</span></div><div class="summary-row"><span class="ico">▦</span><strong>Court</strong><span id="summaryCourt">Not selected yet</span></div><div class="summary-row"><span class="ico">₱</span><strong>Court rental</strong><span id="summarySubtotal">₱0</span></div><div class="summary-row" id="summaryPlatformFeeRow" hidden><span class="ico">＋</span><strong>Courtly owner fee</strong><span id="summaryPlatformFee">₱0</span></div><div class="sum-total"><span>Total to pay</span><strong id="summaryTotal">₱0</strong></div><button class="next-btn" id="nextChoose" disabled>PAY NOW <span>→</span></button></div></section>
-</main><div class="payment-overlay" id="authRequiredModal" hidden><section class="payment-dialog auth-required-dialog" role="dialog" aria-modal="true" aria-labelledby="authRequiredTitle"><button class="payment-close" id="closeAuthRequired" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY PLAYER ACCOUNT</p><h2 id="authRequiredTitle">Sign in to book this venue</h2><p class="payment-help">You can browse venues, courts and available times without an account. Create a free player account or log in to continue with this booking.</p><div class="auth-required-actions"><a class="payment-submit" id="authPlayerLogin" href="/player-login.html">Log in</a><a class="payment-submit auth-register" id="authPlayerRegister" href="/player-register.html">Create player account</a></div><p class="payment-note">Venue owners should use their owner account for venue management. Player accounts are required to make court reservations and Open Play registrations.</p></section></div><div class="payment-overlay" id="gcashModal" hidden><section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="gcashTitle"><button class="payment-close" id="closeGcash" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY CHECKOUT</p><h2 id="gcashTitle">Pay with GCash</h2><p class="payment-help" id="gcashHelp">Send the exact amount using the venue's GCash details, then upload your payment screenshot.</p><div class="gcash-recipient"><strong id="gcashRecipient">Venue payment details</strong><div id="gcashInstructions"></div><div id="gcashQrWrap"></div><div class="gcash-total"><span id="gcashSubtotalLabel">Court Hourly Rental</span><strong id="gcashSubtotal">₱0.00</strong></div><div class="gcash-total" id="gcashPlatformFeeRow" hidden><span id="gcashFeeLabel">Courtly owner fee</span><strong id="gcashPlatformFee">₱0.00</strong></div><div class="gcash-total"><span>Total</span><strong id="gcashAmount">₱0.00</strong></div></div><form id="gcashForm"><div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div><div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div><div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" maxlength="40" autocomplete="tel"></div><div class="payment-field"><label for="paymentScreenshot">GCash payment receipt * (max 100 MB)</label><input id="paymentScreenshot" type="file" accept="image/*" required><small>Image formats only. Maximum file size: 100 MB. Your receipt is securely uploaded.</small><div id="paymentImagePreview"></div></div><button class="payment-submit" id="paymentSubmitButton" type="submit">Submit payment receipt &amp; reserve court</button></form><p class="reservation-note" id="paymentReservationNote">After your receipt uploads successfully, this time slot is reserved immediately so another player cannot select it. The venue owner only needs to verify your payment and mark it confirmed.</p><p class="payment-note">Receipt submission is not automatic bank/GCash verification. Keep your booking reference until the venue confirms payment.</p></section></div><div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check">✓</div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<section class="panel court-panel" id="courtSection"><h2 class="section-title"><span class="title-icon">▦</span>2. Choose Your Court</h2><p class="subheading">Select an available court for your preferred time.</p><div class="courts-grid" id="courtsGrid"></div><section class="panel summary-panel"><div class="summary-inner"><h2 class="section-title"><span class="title-icon">▦</span>Booking Summary</h2><div class="summary-row"><span class="ico">▦</span><strong>Date</strong><span id="summaryDate">Select a date</span></div><div class="summary-row"><span class="ico">◷</span><strong>Time</strong><span id="summaryTime">Select a time</span></div><div class="summary-row"><span class="ico">▦</span><strong>Court</strong><span id="summaryCourt">Not selected yet</span></div><div class="summary-row"><span class="ico">₱</span><strong>Court rental</strong><span id="summarySubtotal">₱0</span></div><div class="summary-row" id="summaryPlatformFeeRow" hidden><span class="ico">＋</span><strong>Convenience Fee</strong><span id="summaryPlatformFee">₱0</span></div><div class="sum-total"><span>Total to pay</span><strong id="summaryTotal">₱0</strong></div><button class="next-btn" id="nextChoose" disabled>Review booking &amp; payment <span aria-hidden="true">→</span></button></div></section>
+</main><div class="payment-overlay" id="authRequiredModal" hidden><section class="payment-dialog auth-required-dialog" role="dialog" aria-modal="true" aria-labelledby="authRequiredTitle"><button class="payment-close" id="closeAuthRequired" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY PLAYER ACCOUNT</p><h2 id="authRequiredTitle">Sign in to book this venue</h2><p class="payment-help">You can browse venues, courts and available times without an account. Create a free player account or log in to continue with this booking.</p><div class="auth-required-actions"><a class="payment-submit" id="authPlayerLogin" href="/player-login.html">Log in</a><a class="payment-submit auth-register" id="authPlayerRegister" href="/player-register.html">Create player account</a></div><p class="payment-note">Venue owners should use their owner account for venue management. Player accounts are required to make court reservations and Open Play registrations.</p></section></div><div class="payment-overlay" id="gcashModal" hidden>
+<section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="gcashTitle">
+<button class="payment-close" id="closeGcash" type="button" aria-label="Close">×</button>
+<p class="payment-eyebrow">COURTLY CHECKOUT</p>
+<h2 id="gcashTitle">Review your reservation</h2>
+<p class="payment-help" id="gcashHelp">Review your details. Courtly will reserve your place before showing payment instructions.</p>
+<p id="holdStatus" class="reservation-note" role="status" hidden></p>
+<p id="holdCountdown" class="payment-help" aria-live="off" hidden></p>
+<div class="gcash-recipient">
+<p id="checkoutDetails" class="payment-help"></p>
+<div id="paymentDetails" hidden>
+<strong id="gcashRecipient"></strong><div id="gcashInstructions"></div><div id="gcashQrWrap"></div>
+</div>
+<div class="gcash-total"><span id="gcashSubtotalLabel">Court rental</span><strong id="gcashSubtotal">—</strong></div>
+<div class="gcash-total" id="gcashPlatformFeeRow" hidden><span id="gcashFeeLabel">Convenience Fee</span><strong id="gcashPlatformFee">—</strong></div>
+<div class="gcash-total"><span>Total</span><strong id="gcashAmount">—</strong></div>
+</div>
+<form id="gcashForm">
+<p id="checkoutError" class="payment-error" role="alert" hidden></p>
+<div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div>
+<div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div>
+<div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" type="tel" maxlength="40" autocomplete="tel"></div>
+<div class="payment-field" id="receiptField" hidden>
+<label for="paymentScreenshot">Payment receipt (max 100 MB)</label>
+<input id="paymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif">
+<small id="receiptHelp">Upload an image of the payment receipt before your hold expires.</small>
+<div id="paymentImagePreview"></div>
+</div>
+<button class="payment-submit" id="paymentSubmitButton" type="submit">Reserve court &amp; show payment details</button>
+</form>
+<button class="payment-submit" id="restartCheckout" type="button" hidden>Start again only if you have not paid</button>
+<p class="reservation-note" id="paymentReservationNote">The final price and a temporary hold are confirmed by the server before payment.</p>
+<p class="payment-note">Pay only once for your reservation reference. Receipt submission is followed by the venue's payment verification.</p>
+</section>
+</div>
+<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check">✓</div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script type="module">
 import { supabase, supabaseConfigError } from './supabase-client.js';
+import { CONVENIENCE_FEE_LABEL, MAX_COURT_BOOKING_HOURS, selectedHour, validCourtRange, courtSubtotal, openPlayAmounts, requestSequence, submissionGuard, validateReceipt, saveBookingToken, requireBookingReadiness, checkoutRequestKey, normalizeCheckoutHold, holdRemainingMs } from './booking-utils.mjs';
 
 const params = new URLSearchParams(location.search);
 const slug = (params.get('slug') || location.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
 const $ = (id) => document.getElementById(id);
 const PENDING_BOOKING_INTENT_KEY = 'courtly.pendingPublicBooking.v1';
-function currentVenueReturnTo(){return `/venue.html?slug=${encodeURIComponent(slug)}#booking-calendar`;}
+function currentVenueReturnTo(){
+  const holdId = new URLSearchParams(location.search).get('checkout');
+  return `/venue.html?slug=${encodeURIComponent(slug)}${holdId ? '&checkout=' + encodeURIComponent(holdId) : ''}#booking-calendar`;
+}
 function setAuthReturnLinks(switchAccount=false){
   const returnTo=currentVenueReturnTo();
   const switchParam=switchAccount?'&switchAccount=1':'';
@@ -75,11 +117,11 @@ function setAuthReturnLinks(switchAccount=false){
 }
 async function requirePlayerForCheckout(kind,event=null){
   const {data:{user},error}=await supabase.auth.getUser();
-  if(error)throw error;
+  if(error && error.name !== 'AuthSessionMissingError')throw error;
   if(user){
     const {data:playerProfile, error:profileError}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
     if(profileError)throw profileError;
-    if(playerProfile)return true;
+    if(playerProfile)return user;
   }
   const intent={kind,venueSlug:slug,eventId:event?.id||null,date:localDateForSelection(selectedDate),start:selectedStart,end:selectedEnd,courtId:selectedCourtId,createdAt:new Date().toISOString()};
   try{sessionStorage.setItem(PENDING_BOOKING_INTENT_KEY,JSON.stringify(intent));}catch(_){/* session storage may be blocked */}
@@ -96,32 +138,42 @@ async function requirePlayerForCheckout(kind,event=null){
   $('authRequiredModal').hidden=false;
   return false;
 }
-async function restorePendingBookingIntent(){
-  let intent=null;
-  try{intent=JSON.parse(sessionStorage.getItem(PENDING_BOOKING_INTENT_KEY)||'null');}catch(_){return;}
-  if(!intent||intent.venueSlug!==slug||Date.now()-Date.parse(intent.createdAt||0)>30*60*1000)return;
-  const {data:{user}}=await supabase.auth.getUser();
-  if(!user)return;
-  const {data:playerProfile,error:profileError}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
-  if(profileError)throw profileError;
-  if(!playerProfile)return;
-  sessionStorage.removeItem(PENDING_BOOKING_INTENT_KEY);
-  if(intent.kind==='openplay'){
-    const selectedEvent=events.find(item=>String(item.id)===String(intent.eventId));
-    if(selectedEvent){openPayment(selectedEvent);return;}
+async function restorePendingBookingIntent() {
+  let intent = null;
+  try { intent = JSON.parse(sessionStorage.getItem(PENDING_BOOKING_INTENT_KEY) || 'null'); } catch { return; }
+  const createdAt = Date.parse(intent?.createdAt || '');
+  if (!intent || intent.venueSlug !== slug || !Number.isFinite(createdAt) || Date.now() - createdAt > 30 * 60 * 1000) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data: profile, error } = await supabase.from('player_profiles').select('id').eq('id', user.id).maybeSingle();
+  if (error) throw error;
+  if (!profile) return;
+  try { sessionStorage.removeItem(PENDING_BOOKING_INTENT_KEY); } catch { /* Storage may be unavailable. */ }
+  if (intent.kind === 'openplay') {
+    const event = events.find((item) => String(item.id) === String(intent.eventId));
+    if (event) { await openPayment(event); return; }
     showToast('That Open Play session is no longer available. Please choose another session.');
     return;
   }
-  if(intent.date){const restored=new Date(`${intent.date}T12:00:00`);if(!Number.isNaN(restored.getTime())){selectedDate=restored;viewYear=restored.getFullYear();viewMonth=restored.getMonth();}}
-  selectedStart=Number.isFinite(Number(intent.start))?Number(intent.start):null;
-  selectedEnd=Number.isFinite(Number(intent.end))?Number(intent.end):null;
-  selectedCourtId=intent.courtId||null;
-  renderCalendar();refreshTimeSelects();renderSlots();renderCourts();updateSummary();
-  if(selectedCourt()&&selectedRangeIso()&&!hasConflict(selectedCourtId,selectedRangeIso().start,selectedRangeIso().end)){
+  if (/^\d{4}-\d{2}-\d{2}$/.test(intent.date || '') && intent.date >= dateInVenueZone()) {
+    const restored = new Date(intent.date + 'T12:00:00');
+    if (Number.isFinite(restored.getTime())) {
+      selectedDate = restored;
+      viewYear = restored.getFullYear();
+      viewMonth = restored.getMonth();
+    }
+  }
+  selectedStart = selectedHour(intent.start);
+  selectedEnd = selectedHour(intent.end);
+  selectedCourtId = intent.courtId || null;
+  renderCalendar();
+  await loadAvailability();
+  if (availabilityReady() && selectedCourt() && selectedRangeIso()
+      && !hasConflict(selectedCourtId, selectedRangeIso().start, selectedRangeIso().end)) {
     await openPayment();
-  }else{
+  } else {
     showToast('You are signed in. Please recheck the selected time and court before continuing.');
-    $('booking-calendar')?.scrollIntoView({behavior:'smooth',block:'start'});
+    $('booking-calendar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -159,6 +211,188 @@ let selectedCourtId = null;
 let selectedOpenPlay = null;
 let venueHours = [];
 let availabilityError = '';
+let availabilityLoading = false;
+let availabilityDate = '';
+let checkout = null;
+let recoverableHold = null;
+let checkoutRefreshBusy = false;
+const availabilityRequests = requestSequence();
+const paymentSubmission = submissionGuard();
+const checkoutOpening = submissionGuard();
+const receiptTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+
+function availabilityReady() {
+  return !availabilityLoading && !availabilityError && availabilityDate === localDateForSelection(selectedDate);
+}
+function checkoutError(message = '') {
+  const node = $('checkoutError');
+  if (node) { node.textContent = message; node.hidden = !message; }
+}
+function setPaymentBusy(busy) {
+  $('gcashForm')?.setAttribute('aria-busy', String(busy));
+  $('gcashForm')?.querySelectorAll('input,button').forEach((input) => { input.disabled = busy; });
+  if ($('closeGcash')) $('closeGcash').disabled = busy;
+}
+function paymentButtonLabel(details = checkout) {
+  if (details?.statusUnverified) return 'Check reservation & retry';
+  if (!details?.hold) return details?.kind === 'openplay'
+    ? (details.amounts.free ? 'Register for free' : 'Reserve my place & show payment details')
+    : 'Reserve court & show payment details';
+  return details.amounts.free ? (details.kind === 'openplay' ? 'Confirm free registration' : 'Submit reservation') : 'Submit payment receipt';
+}
+async function checkBookingReadiness() {
+  const { data, error } = await supabase.rpc('courtly_booking_readiness');
+  if (error) throw new Error('Reservations are temporarily unavailable. Please do not transfer money. Try again later or contact the venue.');
+  return requireBookingReadiness(data);
+}
+function checkoutSelection(details) {
+  return { playerId: details.playerId, venueSlug: slug, kind: details.kind,
+    courtId: details.court?.id, startsAt: details.range?.start,
+    durationHours: details.endHour - details.startHour, eventId: details.event?.id };
+}
+function applyCheckoutHold(details, response) {
+  const hold = normalizeCheckoutHold(response, { kind: details.kind, playerId: details.playerId,
+    holdId: details.hold?.hold_id, courtId: details.court?.id, eventId: details.event?.id, startsAt: details.range?.start });
+  if (hold.venue_slug !== slug) throw new Error('This reservation belongs to another venue. Please open the matching venue page.');
+  details.hold = hold;
+  details.statusUnverified = false;
+  details.amounts = { registration: hold.subtotal, fee: hold.convenience_fee, total: hold.total, free: hold.total === 0 };
+  recoverableHold = hold;
+  if (hold.customer_access_token) rememberBookingAccessToken(hold.customer_access_token);
+  // An authenticated hold ID (not an access token) keeps each tab on its own
+  // checkout through reloads. Server recovery still works if history is blocked.
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('checkout', hold.hold_id);
+    window.history.replaceState(window.history.state, '', url.href);
+  } catch { /* The account-scoped recovery RPC remains available. */ }
+  renderCheckoutRecovery();
+  return hold;
+}
+function detailsFromHold(response) {
+  const hold = normalizeCheckoutHold(response);
+  const start = new Date(hold.starts_at);
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: hold.timezone || 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }).formatToParts(start);
+  const part = (name) => parts.find((item) => item.type === name)?.value;
+  const details = hold.kind === 'openplay'
+    ? { kind: 'openplay', playerId: hold.player_id, event: { id: hold.event_id, title: hold.event_title, starts_at: hold.starts_at } }
+    : { kind: 'court', playerId: hold.player_id, court: { id: hold.court_id, name: hold.court_name },
+        date: `${part('year')}-${part('month')}-${part('day')}`, startHour: Number(part('hour')),
+        endHour: Number(part('hour')) + Number(hold.duration_hours), range: { start: hold.starts_at, end: hold.ends_at } };
+  applyCheckoutHold(details, hold);
+  return details;
+}
+function renderCheckoutRecovery() {
+  const banner = $('checkoutRecovery');
+  if (!banner) return;
+  banner.hidden = !recoverableHold;
+  if (recoverableHold) setText('checkoutRecoveryText', `Your latest reservation: ${recoverableHold.reference}. ${recoverableHold.status === 'held' ? 'Resume this checkout before starting another payment.' : 'View its status before paying again.'}`);
+}
+function renderCheckout(details = checkout) {
+  if (!details) return;
+  const isOpenPlay = details.kind === 'openplay';
+  const hold = details.hold;
+  const amounts = details.amounts;
+  setText('gcashTitle', hold ? (isOpenPlay ? 'Your Open Play reservation' : 'Your court reservation') : 'Review your reservation');
+  setText('gcashHelp', hold
+    ? (amounts.free ? 'No transfer or payment receipt is required.' : 'Your place is temporarily held. Pay the exact amount once, then submit your receipt before the hold expires.')
+    : 'Check your details below. Courtly will reserve your place and confirm the final price before showing payment instructions.');
+  setText('checkoutDetails', isOpenPlay
+    ? details.event.title + '\n' + new Date(details.event.starts_at).toLocaleString('en-PH', { timeZone: venue.timezone || 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' })
+    : details.court.name + '\n' + dateLabel(details.date) + '\n' + formatHour(details.startHour) + ' – ' + formatHour(details.endHour));
+  setText('gcashSubtotalLabel', isOpenPlay ? 'Open Play registration' : 'Court rental');
+  setText('gcashSubtotal', money(amounts.registration));
+  setText('gcashFeeLabel', CONVENIENCE_FEE_LABEL);
+  setText('gcashPlatformFee', money(amounts.fee));
+  $('gcashPlatformFeeRow').hidden = amounts.fee === 0;
+  setText('gcashAmount', money(amounts.total));
+  setText('paymentSubmitButton', paymentButtonLabel(details));
+  for (const [id, field] of [['playerName', 'player_name'], ['playerEmail', 'player_email'], ['playerPhone', 'player_phone']]) {
+    $(id).readOnly = Boolean(hold);
+    if (hold) $(id).value = hold[field] || '';
+  }
+  $('paymentScreenshot').required = Boolean(hold && !amounts.free && !hold.uploaded_receipt_path);
+  setText('receiptHelp', hold?.uploaded_receipt_path ? 'Your uploaded receipt has been recovered. Submit it below to finish; another upload is optional.' : 'Upload an image of the payment receipt before your hold expires.');
+  setText('paymentReservationNote', isOpenPlay
+    ? (amounts.free ? 'This free session has no Convenience Fee and needs no payment receipt.' : 'The venue collects the ₱10 Convenience Fee for Courtly. Your place stays reserved after you submit the receipt, while payment is verified.')
+    : 'The venue owner pays the ₱10 per booked hour Convenience Fee separately. It is not added to your total.');
+  // Payment details are populated only from the authenticated server hold.
+  $('gcashQrWrap').replaceChildren();
+  setText('gcashRecipient', hold ? (hold.payment_method || 'GCash') + ' · ' + (hold.payment_account || hold.venue_name) : '');
+  setText('gcashInstructions', hold?.payment_instructions || '');
+  if (hold && !amounts.free && hold.status === 'held' && holdRemainingMs(hold) > 0 && hold.payment_qr_url) {
+    const qrUrl = new URL(hold.payment_qr_url, window.location.origin);
+    if (!['https:', 'http:'].includes(qrUrl.protocol)) throw new Error('The venue payment QR is unavailable. Contact the venue before paying.');
+    const image = document.createElement('img'); image.className = 'gcash-qr'; image.alt = 'Venue payment QR code'; image.src = qrUrl.href;
+    const link = document.createElement('a'); link.className = 'qr-download'; link.href = qrUrl.href; link.download = slug + '-payment-qr.png'; link.textContent = 'Download venue QR';
+    $('gcashQrWrap').append(image, link);
+  }
+  updateHoldPresentation();
+}
+function updateHoldPresentation() {
+  if (!checkout) return;
+  const hold = checkout.hold;
+  const active = hold?.status === 'held' && holdRemainingMs(hold) > 0 && !checkout.statusUnverified;
+  const expired = hold && (hold.status === 'expired' || (hold.status === 'held' && holdRemainingMs(hold) === 0));
+  $('paymentDetails').hidden = !active || checkout.amounts.free;
+  $('receiptField').hidden = !active || checkout.amounts.free;
+  $('holdStatus').hidden = !hold;
+  $('holdCountdown').hidden = !active;
+  $('restartCheckout').hidden = !(expired || (hold?.status === 'cancelled' && hold.payment_status === 'unpaid'));
+  $('restartCheckout').disabled = paymentSubmission.busy;
+  const button = $('paymentSubmitButton');
+  button.disabled = paymentSubmission.busy || Boolean(hold && !active && !checkout.statusUnverified);
+  if (!hold) return;
+  if (checkout.statusUnverified) { setText('holdStatus', `Reference: ${hold.reference}. Reconnect to verify this reservation before making any payment.`); return; }
+  if (active) {
+    const seconds = Math.ceil(holdRemainingMs(hold) / 1000);
+    setText('holdStatus', `Reference: ${hold.reference}. Your ${hold.kind === 'court' ? 'court time' : 'place'} and this price are held until ${new Date(hold.expires_at).toLocaleTimeString('en-PH', { timeZone: hold.timezone || 'Asia/Manila', hour: 'numeric', minute: '2-digit' })}.`);
+    setText('holdCountdown', `Time remaining: ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}. Submit your receipt before this reaches zero.`);
+  } else {
+    setText('holdStatus', `Reference: ${hold.reference}. ${expired ? 'This hold has expired.' : 'This reservation is ' + hold.status + '.'} Do not pay again. If you already transferred money, contact the venue with this reference and your receipt.`);
+    $('paymentScreenshot').required = false;
+  }
+}
+async function refreshCheckoutHold() {
+  if (!checkout?.hold || $('gcashModal').hidden || paymentSubmission.busy || checkoutRefreshBusy) return;
+  checkoutRefreshBusy = true;
+  const details = checkout;
+  const revision = details.revision;
+  details.statusUnverified = true;
+  updateHoldPresentation();
+  try {
+    const { data, error } = await supabase.rpc('get_checkout_hold', { p_hold_id: details.hold.hold_id });
+    if (error) throw error;
+    if (checkout !== details || details.revision !== revision || $('gcashModal').hidden) return;
+    applyCheckoutHold(details, data);
+    if (['submitted', 'confirmed'].includes(details.hold.status)) completeCheckout(details);
+    else renderCheckout(details);
+  } catch (error) {
+    if (checkout === details && details.revision === revision) {
+      $('paymentDetails').hidden = true;
+      checkoutError('Your reservation status could not be checked. Do not send another payment. Reconnect and retry.');
+    }
+  } finally { checkoutRefreshBusy = false; }
+}
+async function restoreCheckoutHold() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const holdId = new URLSearchParams(location.search).get('checkout');
+  const validId = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(holdId || '');
+  const { data, error } = await supabase.rpc('get_checkout_hold', validId ? { p_hold_id: holdId } : { p_venue_slug: slug });
+  if (error) { console.warn('Checkout recovery is unavailable:', error); return false; }
+  if (!data) return false;
+  recoverableHold = normalizeCheckoutHold(data, { playerId: user.id });
+  renderCheckoutRecovery();
+  if (['held', 'expired'].includes(recoverableHold.status)) {
+    await checkBookingReadiness();
+    checkout = detailsFromHold(recoverableHold);
+    renderCheckout();
+    $('gcashModal').hidden = false;
+    return true;
+  }
+  return false;
+}
 
 const venueAmenityCatalog = [
   ['Parking','P'],['Restrooms','WC'],['Night lighting','✦'],['Changing rooms','↔'],
@@ -200,12 +434,20 @@ function localDateForSelection(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 function formatHour(hour) {
+  hour = ((Number(hour) % 24) + 24) % 24;
   const value = hour % 12 || 12;
   return `${value}:00 ${hour >= 12 ? 'PM' : 'AM'}`;
 }
 function timeValue(time) {
   const [h, m] = String(time || '08:00').split(':').map(Number);
   return { hour: h || 0, minute: m || 0 };
+}
+function refreshVenueHours() {
+  const opening = timeValue(venue?.hours_open || '08:00');
+  const closing = timeValue(venue?.hours_close || '22:00');
+  const open = opening.hour + (opening.minute ? 1 : 0);
+  const close = closing.hour;
+  venueHours = close > open ? Array.from({ length: close - open + 1 }, (_, index) => open + index) : [];
 }
 function showToast(message) {
   const toast = $('toast');
@@ -218,8 +460,32 @@ function setText(id, value) { const node = $(id); if (node) node.textContent = v
 function setImage(id, src, alt) {
   const node = $(id);
   if (!node) return;
-  if (src) { node.src = src; node.alt = alt || ''; node.hidden = false; }
-  else { node.removeAttribute('src'); node.hidden = true; }
+  const fallback = id === 'mainPhoto' ? $('venuePhotoFallback') : null;
+  const showFallback = () => {
+    node.hidden = true;
+    if (fallback) {
+      fallback.hidden = false;
+      fallback.textContent = 'Venue photo unavailable. Court details and booking times are below.';
+      node.parentElement?.classList.add('is-empty');
+    }
+  };
+  node.onload = () => {
+    node.hidden = false;
+    if (fallback) fallback.hidden = true;
+    node.parentElement?.classList.remove('is-empty');
+  };
+  node.onerror = showFallback;
+  if (src) {
+    node.alt = alt || 'Venue photo';
+    node.src = src;
+    if (node.complete) {
+      if (node.naturalWidth) node.onload();
+      else showFallback();
+    }
+  } else {
+    node.removeAttribute('src');
+    showFallback();
+  }
 }
 function getDateRange(dateText) {
   const from = venueDateTimeToIso(dateText, 0, 0);
@@ -230,21 +496,37 @@ function getDateRange(dateText) {
   return { from, to };
 }
 async function loadAvailability() {
-  if (!venue) return;
+  if (!venue) return false;
   const dateText = localDateForSelection(selectedDate);
+  const request = availabilityRequests.next();
   const range = getDateRange(dateText);
-  const { data, error } = await supabase.rpc('get_public_booked_slots', {
-    p_venue_slug: slug, p_from: range.from, p_to: range.to
-  });
-  if (error) {
-    availabilityError = error.message || 'Availability could not be refreshed.';
+  availabilityLoading = true;
+  availabilityError = '';
+  refreshTimeSelects(); renderSlots(); renderCourts(); updateSummary();
+  try {
+    const { data, error } = await supabase.rpc('get_public_booked_slots', {
+      p_venue_slug: slug, p_from: range.from, p_to: range.to
+    });
+    if (!availabilityRequests.isCurrent(request) || dateText !== localDateForSelection(selectedDate)) return false;
+    if (error) throw error;
+    if (!Array.isArray(data)) throw new Error('Availability response was incomplete.');
+    busySlots = data;
+    availabilityDate = dateText;
+  } catch (error) {
+    if (!availabilityRequests.isCurrent(request) || dateText !== localDateForSelection(selectedDate)) return false;
+    availabilityError = 'Availability could not be refreshed. Please try again before booking.';
+    availabilityDate = '';
     busySlots = [];
-  } else {
-    availabilityError = '';
-    busySlots = data || [];
+    console.warn('Courtly availability could not be refreshed:', error);
+  } finally {
+    if (availabilityRequests.isCurrent(request)) {
+      availabilityLoading = false;
+      const selection = selectedRangeIso();
+      if (selection && selectedCourtId && hasConflict(selectedCourtId, selection.start, selection.end)) selectedCourtId = null;
+      refreshTimeSelects(); renderSlots(); renderCourts(); updateSummary();
+    }
   }
-  renderSlots();
-  renderCourts();
+  return availabilityReady();
 }
 function hasConflict(courtId, startIso, endIso) {
   const start = new Date(startIso).getTime();
@@ -253,36 +535,20 @@ function hasConflict(courtId, startIso, endIso) {
     new Date(slot.starts_at).getTime() < end && new Date(slot.ends_at).getTime() > start);
 }
 function selectedRangeIso() {
-  if (selectedStart === null || selectedEnd === null) return null;
+  if (!validCourtRange(selectedStart, selectedEnd, venueHours)) return null;
   const dateText = localDateForSelection(selectedDate);
+  if (dateText < dateInVenueZone() || isPastHour(selectedStart)) return null;
   return {
     start: venueDateTimeToIso(dateText, selectedStart),
     end: venueDateTimeToIso(dateText, selectedEnd)
   };
 }
 function selectedCourt() { return courts.find((court) => court.id === selectedCourtId) || null; }
-function clockMinutes(value) {
-  if (!value) return null;
-  const match = String(value).match(/^(\d{1,2}):(\d{2})/);
-  return match ? Number(match[1]) * 60 + Number(match[2]) : null;
-}
-function isPeakHour(hour) {
-  const start = clockMinutes(venue?.peak_hours_start);
-  const end = clockMinutes(venue?.peak_hours_end);
-  if (start === null || end === null || start === end) return false;
-  const minute = Number(hour) * 60;
-  return start < end ? minute >= start && minute < end : minute >= start || minute < end;
-}
 function bookingSubtotal() {
-  const court = selectedCourt();
-  if (!court || selectedStart === null || selectedEnd === null) return 0;
-  const offPeakRate = Number(court.off_peak_rate ?? court.hourly_rate ?? 0);
-  const peakRate = Number(court.peak_rate ?? offPeakRate);
-  let subtotal = 0;
-  for (let hour = selectedStart; hour < selectedEnd; hour += 1) subtotal += isPeakHour(hour) ? peakRate : offPeakRate;
-  return subtotal;
+  if (!selectedRangeIso()) return 0;
+  return courtSubtotal(selectedCourt(), selectedStart, selectedEnd, venue?.peak_hours_start, venue?.peak_hours_end);
 }
-function platformFee() { return selectedStart !== null && selectedEnd !== null ? 10 * (selectedEnd - selectedStart) : 0; }
+function platformFee() { return selectedRangeIso() ? 10 * (selectedEnd - selectedStart) : 0; }
 function bookingTotal() { return bookingSubtotal(); }
 function isToday(date) { return localDateForSelection(date) === dateInVenueZone(new Date()); }
 function isPastHour(hour, date = selectedDate) {
@@ -295,14 +561,15 @@ function refreshTimeSelects() {
   const end = $('endTime');
   if (!start || !end) return;
   const validStarts = venueHours.slice(0, -1).filter((hour) => !isPastHour(hour));
-  start.innerHTML = '<option value="">Select start time</option>' + validStarts.map((hour) => `<option value="${hour}">${formatHour(hour)}</option>`).join('');
-  start.disabled = !validStarts.length;
+  start.innerHTML = '<option value="">Select start time</option>' + validStarts.map((hour) => '<option value="' + hour + '">' + formatHour(hour) + '</option>').join('');
+  start.disabled = !validStarts.length || !availabilityReady();
   if (selectedStart !== null && validStarts.includes(selectedStart)) start.value = String(selectedStart);
-  else { selectedStart = null; selectedEnd = null; }
-  const validEnds = selectedStart === null ? [] : venueHours.filter((hour) => hour > selectedStart);
-  end.innerHTML = '<option value="">Select end time</option>' + validEnds.map((hour) => `<option value="${hour}">${formatHour(hour)}</option>`).join('');
-  end.disabled = !validEnds.length;
+  else { selectedStart = null; selectedEnd = null; selectedCourtId = null; }
+  const validEnds = selectedStart === null ? [] : venueHours.filter((hour) => hour > selectedStart && hour - selectedStart <= MAX_COURT_BOOKING_HOURS);
+  end.innerHTML = '<option value="">Select end time</option>' + validEnds.map((hour) => '<option value="' + hour + '">' + formatHour(hour) + '</option>').join('');
+  end.disabled = !validEnds.length || !availabilityReady();
   if (selectedEnd !== null && validEnds.includes(selectedEnd)) end.value = String(selectedEnd);
+  else { selectedEnd = null; selectedCourtId = null; }
 }
 function renderCalendar() {
   const label = new Date(viewYear, viewMonth, 1).toLocaleDateString('en-PH', { month: 'long', year: 'numeric' });
@@ -319,6 +586,8 @@ function renderCalendar() {
     const text = localDateForSelection(date);
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'day'; button.textContent = String(day);
+    button.setAttribute('aria-label', dateLabel(text));
+    button.setAttribute('aria-pressed', String(text === localDateForSelection(selectedDate)));
     if (text === localDateForSelection(selectedDate)) button.classList.add('selected');
     if (text === todayText) button.classList.add('today');
     if (text < todayText) button.disabled = true;
@@ -335,10 +604,14 @@ function renderSlots() {
   const box = $('slots');
   if (!box || !venue) return;
   box.innerHTML = '';
+  if (availabilityLoading) { box.innerHTML = '<p class="range-hint" role="status">Checking available times…</p>'; return; }
   if (availabilityError) {
-    box.innerHTML = `<p class="range-hint" style="color:#b42318">${esc(availabilityError)} Refresh the page to try again.</p>`;
+    box.innerHTML = '<div role="status"><p class="range-hint" style="color:#b42318">' + esc(availabilityError) + '</p><button type="button" class="availability-retry">Try again</button></div>';
+    box.querySelector('button')?.addEventListener('click', () => { loadAvailability(); });
     return;
   }
+  if (!availabilityReady()) { box.innerHTML = '<p class="range-hint">Select a date to check availability.</p>'; return; }
+  if (venueHours.length < 2) { box.innerHTML = '<p class="range-hint">No bookable hours are available. Please contact this venue.</p>'; return; }
   const dateText = localDateForSelection(selectedDate);
   setText('selectedDateLabel', dateLabel(dateText));
   venueHours.slice(0, -1).forEach((hour) => {
@@ -347,6 +620,7 @@ function renderSlots() {
     const availableSomewhere = courts.some((court) => !hasConflict(court.id, start, end));
     const button = document.createElement('button');
     button.type = 'button';
+    button.setAttribute('aria-pressed', String(selectedStart !== null && selectedEnd !== null && hour >= selectedStart && hour < selectedEnd));
     button.className = 'slot' + (selectedStart !== null && selectedEnd !== null && hour >= selectedStart && hour < selectedEnd ? ' selected in-range' : '');
     button.textContent = formatHour(hour);
     button.disabled = isPastHour(hour) || !availableSomewhere;
@@ -365,75 +639,74 @@ function renderCourts() {
   if (!courts.length) { box.innerHTML = '<p class="range-hint">This venue has no active courts listed yet.</p>'; return; }
   const range = selectedRangeIso();
   courts.forEach((court) => {
+    let listedRate = null;
+    try { listedRate = courtSubtotal(court, 0, 1, null, null); } catch { /* Unlisted or invalid rates are not bookable. */ }
+    if (listedRate === null && selectedCourtId === court.id) selectedCourtId = null;
     const unavailable = range ? hasConflict(court.id, range.start, range.end) : false;
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'court-card' + (court.id === selectedCourtId ? ' selected' : '') + (unavailable ? ' unavailable' : '');
-    card.disabled = unavailable || !range;
+    card.disabled = unavailable || listedRate === null || !range || !availabilityReady();
+    card.setAttribute('aria-pressed', String(court.id === selectedCourtId));
     const image = court.image_url || venue.cover_url || '';
-    card.innerHTML = `${image ? `<img src="${esc(image)}" alt="${esc(court.name)}" style="object-fit:${court.image_fit === 'contain' ? 'contain' : 'cover'}">` : '<div style="height:110px;border-radius:8px;background:linear-gradient(135deg,#102449,#2c75e8);display:grid;place-items:center;color:white;font-size:24px">▦</div>'}<div class="court-meta"><div class="court-name-line"><span class="court-name">${esc(court.name)}</span><span class="radio"></span></div><div class="available" style="${unavailable ? 'color:#b42318' : ''}"><i style="${unavailable ? 'background:#b42318' : ''}"></i>${unavailable ? 'Unavailable for selected time' : (range ? 'Available' : 'Select a time first')}</div><div class="price">From ${money(court.off_peak_rate ?? court.hourly_rate)} / hour${Number(court.peak_rate ?? court.off_peak_rate ?? court.hourly_rate) !== Number(court.off_peak_rate ?? court.hourly_rate) ? ` · Peak ${money(court.peak_rate)}/hr` : ''}</div></div>`;
-    card.addEventListener('click', () => { selectedCourtId = court.id; renderCourts(); updateSummary(); });
+    card.innerHTML = `${image ? `<img src="${esc(image)}" alt="${esc(court.name)}" style="object-fit:${court.image_fit === 'contain' ? 'contain' : 'cover'}">` : '<div style="height:110px;border-radius:8px;background:linear-gradient(135deg,#102449,#2c75e8);display:grid;place-items:center;color:white;font-size:24px">▦</div>'}<div class="court-meta"><div class="court-name-line"><span class="court-name">${esc(court.name)}</span><span class="radio"></span></div><div class="available" style="${unavailable ? 'color:#b42318' : ''}"><i style="${unavailable ? 'background:#b42318' : ''}"></i>${unavailable ? 'Unavailable for selected time' : (!availabilityReady() ? (availabilityError ? 'Availability unavailable' : 'Checking availability') : range ? 'Available' : 'Select a time first')}</div><div class="price">From ${money(court.off_peak_rate ?? court.hourly_rate)} / hour${Number(court.peak_rate ?? court.off_peak_rate ?? court.hourly_rate) !== Number(court.off_peak_rate ?? court.hourly_rate) ? ` · Peak ${money(court.peak_rate)}/hr` : ''}</div></div>`;
+    const price = card.querySelector('.price');
+    const peakRate = String(court.peak_rate ?? '').trim() === '' ? listedRate : Number(court.peak_rate);
+    if (price) price.textContent = listedRate === null ? 'Rates not listed' : 'From ' + money(listedRate) + ' / hour' + (peakRate !== listedRate ? ' · Peak ' + money(peakRate) + '/hr' : '');
+    if (listedRate === null) card.querySelector('.available').textContent = 'Contact the venue for rates';
+    card.addEventListener('click', () => { if (card.disabled) return; selectedCourtId = court.id; renderCourts(); updateSummary(); });
     box.appendChild(card);
   });
 }
 function updateSummary() {
   const court = selectedCourt();
+  const range = selectedRangeIso();
   setText('summaryDate', dateLabel(localDateForSelection(selectedDate), { month: 'long', day: 'numeric', year: 'numeric' }));
-  setText('summaryTime', selectedStart === null || selectedEnd === null ? 'Select a time' : `${formatHour(selectedStart)} – ${formatHour(selectedEnd)} (${selectedEnd - selectedStart} hour(s))`);
+  setText('summaryTime', !range ? 'Select a time' : formatHour(selectedStart) + ' – ' + formatHour(selectedEnd) + ' (' + (selectedEnd - selectedStart) + ' hour' + (selectedEnd - selectedStart === 1 ? '' : 's') + ')');
   setText('summaryCourt', court ? court.name : 'Not selected yet');
   setText('summarySubtotal', money(bookingSubtotal()));
   setText('summaryPlatformFee', court ? money(platformFee()) : money(0));
   if ($('summaryPlatformFeeRow')) $('summaryPlatformFeeRow').hidden = true;
   setText('summaryTotal', money(bookingTotal()));
   const button = $('nextChoose');
-  if (button) button.disabled = !court || !selectedRangeIso() || hasConflict(court.id, selectedRangeIso().start, selectedRangeIso().end);
+  if (button) button.disabled = !court || !range || !availabilityReady() || checkoutOpening.busy || paymentSubmission.busy || hasConflict(court.id, range.start, range.end);
 }
 async function openPayment(event = null) {
-  if (!(await requirePlayerForCheckout(event ? 'openplay' : 'court', event))) return;
-  selectedOpenPlay = event;
-  const v = venue;
-  const isOpenPlay = Boolean(event);
-  const registrationAmount = isOpenPlay ? Math.max(0, Number(event.fee || 0)) : bookingTotal();
-  const isFreeOpenPlay = isOpenPlay && registrationAmount <= 0;
-  const playerTransactionFee = isOpenPlay && !isFreeOpenPlay ? 10 : 0;
-  const totalDue = registrationAmount + playerTransactionFee;
-
-  setText('gcashTitle', isOpenPlay ? (isFreeOpenPlay ? 'Free Open Play Registration' : 'Open Play Registration') : 'Pay with GCash');
-  setText('gcashHelp', isOpenPlay
-    ? (isFreeOpenPlay
-        ? 'This Open Play session is free. No payment, receipt or transaction fee is required. Register to reserve your place.'
-        : 'A ₱10 transaction fee is added to the Open Play registration price and paid by the player. Pay the full total using the venue payment QR, then upload your receipt.')
-    : 'Pay the court rental amount shown below and upload your payment receipt. Courtly’s ₱10 per booked court-hour platform fee is paid by the venue owner and is not added to your checkout.');
-  setText('gcashRecipient', `${v.payment_method || 'GCash QR'} · ${v.payment_account || v.name}`);
-  setText('gcashInstructions', isFreeOpenPlay ? 'No payment is needed for this free session.' : (v.payment_instructions || 'Please pay using the venue’s official payment details.'));
-  setText('gcashSubtotalLabel', isOpenPlay ? 'Open Play registration' : 'Court rental');
-  setText('gcashSubtotal', money(registrationAmount));
-  setText('gcashFeeLabel', isOpenPlay ? 'Transaction Fee (paid by player)' : 'Courtly Platform Fee (paid by venue owner)');
-  setText('gcashPlatformFee', money(playerTransactionFee));
-  if ($('gcashPlatformFeeRow')) $('gcashPlatformFeeRow').hidden = !playerTransactionFee;
-  setText('gcashAmount', money(totalDue));
-  setText('paymentSubmitButton', isFreeOpenPlay ? 'Register for free' : (isOpenPlay ? 'Submit receipt & reserve my spot' : 'Submit payment receipt & reserve court'));
-  setText('paymentReservationNote', isFreeOpenPlay
-    ? 'Your free registration will be confirmed immediately. No payment receipt is required.'
-    : (isOpenPlay
-        ? 'Pay the displayed total, including the ₱10 player transaction fee, to the venue QR. The venue will verify your receipt. The transaction fee is collected for Courtly and is not part of the venue’s registration revenue.'
-        : 'Your place is reserved after your receipt is submitted. The venue owner will verify the payment before confirming it.'));
-
-  const receiptInput = $('paymentScreenshot');
-  const receiptField = receiptInput?.closest('.payment-field');
-  if (receiptInput) {
-    receiptInput.required = !isFreeOpenPlay;
-    receiptInput.value = '';
+  if (paymentSubmission.busy || !checkoutOpening.start()) return;
+  updateSummary();
+  try {
+    const user = await requirePlayerForCheckout(event ? 'openplay' : 'court', event);
+    if (!user) return;
+    await checkBookingReadiness();
+    await prefillPlayerCheckout();
+    await refreshPublicVenueMedia({ strict: true });
+    if (event) {
+      await loadVenueEvents();
+      event = events.find((item) => item.id === event.id);
+      if (!event || new Date(event.starts_at).getTime() <= Date.now()) throw new Error('This Open Play session is no longer available.');
+    } else {
+      if (!(await loadAvailability())) throw new Error('Availability could not be verified. Please try again.');
+      const court = selectedCourt(); const range = selectedRangeIso();
+      if (!court || !range || hasConflict(court.id, range.start, range.end)) throw new Error('Please choose an available court and a valid booking time, or resume your existing checkout.');
+    }
+    selectedOpenPlay = event;
+    checkout = event
+      ? { kind: 'openplay', playerId: user.id, event: { ...event }, amounts: openPlayAmounts(event.fee) }
+      : { kind: 'court', playerId: user.id, court: { ...selectedCourt() }, date: localDateForSelection(selectedDate),
+          startHour: selectedStart, endHour: selectedEnd, range: selectedRangeIso(),
+          amounts: { registration: bookingSubtotal(), fee: 0, total: bookingTotal(), free: bookingTotal() === 0 } };
+    checkoutError('');
+    $('paymentScreenshot').value = '';
+    $('paymentImagePreview').replaceChildren();
+    renderCheckout();
+    setPaymentBusy(false);
+    $('gcashModal').hidden = false;
+  } catch (error) {
+    showToast(error.message || 'Checkout could not be opened. Please try again.');
+  } finally {
+    checkoutOpening.finish();
+    updateSummary();
   }
-  if (receiptField) receiptField.hidden = isFreeOpenPlay;
-
-  const qr = $('gcashQrWrap');
-  if (qr) qr.innerHTML = isFreeOpenPlay
-    ? '<p style="margin-top:10px;color:#168344;font-size:13px;font-weight:700">Free registration — no payment required.</p>'
-    : (v.payment_qr_url
-      ? `<p style="font-weight:700;margin:12px 0 4px">Scan or download the venue payment QR</p><img class="gcash-qr" alt="Venue payment QR code" src="${esc(v.payment_qr_url)}"><a class="qr-download" href="${esc(v.payment_qr_url)}" download="${esc(slug)}-payment-qr.png">↓ Download QR code</a>`
-      : '<p style="margin-top:10px;color:#b42318;font-size:13px">The venue has not uploaded a payment QR code. Please contact the venue before paying.</p>');
-  $('gcashModal').hidden = false;
 }
 function renderOpenPlay() {
   const host = $('openPlayAnnouncements');
@@ -448,7 +721,7 @@ function renderOpenPlay() {
     const full = limit > 0 && count >= limit;
     const date = new Intl.DateTimeFormat('en-PH', { timeZone: venue.timezone, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(start);
     const time = new Intl.DateTimeFormat('en-PH', { timeZone: venue.timezone, hour: 'numeric', minute: '2-digit' }).format(start);
-    return `<article class="openplay-card">${event.banner_url ? `<img src="${esc(event.banner_url)}" alt="${esc(event.title)}">` : '<div style="min-height:190px;display:grid;place-items:center;background:#102449;color:#fff;font-weight:800;letter-spacing:.15em">OPEN PLAY</div>'}<div class="openplay-copy"><span class="openplay-kicker">✦ FEATURED OPEN PLAY · ${esc(date)}</span><h2>${esc(event.title)}</h2><div class="openplay-details" style="margin:12px 0 14px;display:grid;gap:7px"><p><strong>Description:</strong> ${esc(event.details)}</p><p><strong>When:</strong> ${esc(date)} · ${esc(time)}</p><p><strong>Where:</strong> ${esc(event.location_text)}</p><p><strong>Registration fee:</strong> ${money(event.fee)} per player</p>${Number(event.fee||0)>0?`<p><strong>Transaction fee:</strong> ${money(10)} per paid registration (added at checkout)</p>`:'<p><strong>Transaction fee:</strong> None — this session is free.</p>'}</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:5px"><strong style="font-size:16px;color:#102449">${count}${limit ? `/${limit}` : ''}</strong><span style="font-size:12px;color:#53627f">players registered</span><span style="font-size:12px;color:${full ? '#b42332' : '#168344'};font-weight:800">${full ? 'Fully booked' : (limit ? `${Math.max(0, limit - count)} spots left` : 'Registration open')}</span></div><button class="openplay-register" type="button" data-openplay-id="${esc(event.id)}" ${full ? 'disabled' : ''}>${full ? 'Fully booked' : 'REGISTER NOW →'}</button></div></article>`;
+    return `<article class="openplay-card">${event.banner_url ? `<img src="${esc(event.banner_url)}" alt="${esc(event.title)}">` : '<div style="min-height:190px;display:grid;place-items:center;background:#102449;color:#fff;font-weight:800;letter-spacing:.15em">OPEN PLAY</div>'}<div class="openplay-copy"><span class="openplay-kicker">✦ FEATURED OPEN PLAY · ${esc(date)}</span><h2>${esc(event.title)}</h2><div class="openplay-details" style="margin:12px 0 14px;display:grid;gap:7px"><p><strong>Description:</strong> ${esc(event.details)}</p><p><strong>When:</strong> ${esc(date)} · ${esc(time)}</p><p><strong>Where:</strong> ${esc(event.location_text)}</p><p><strong>Registration fee:</strong> ${money(event.fee)} per player</p>${Number(event.fee||0)>0?`<p><strong>Convenience Fee:</strong> ${money(10)} per paid registration (added at checkout)</p>`:'<p><strong>Convenience Fee:</strong> None — this session is free.</p>'}</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:5px"><strong style="font-size:16px;color:#102449">${count}${limit ? `/${limit}` : ''}</strong><span style="font-size:12px;color:#53627f">places reserved</span><span style="font-size:12px;color:${full ? '#b42332' : '#168344'};font-weight:800">${full ? 'Fully booked' : (limit ? `${Math.max(0, limit - count)} spots left` : 'Registration open')}</span></div><button class="openplay-register" type="button" data-openplay-id="${esc(event.id)}" ${full ? 'disabled' : ''}>${full ? 'Fully booked' : 'REGISTER NOW →'}</button></div></article>`;
   }).join('');
   host.querySelectorAll('[data-openplay-id]').forEach((button) => button.addEventListener('click', () => {
     const event = upcoming.find((item) => item.id === button.dataset.openplayId);
@@ -456,35 +729,37 @@ function renderOpenPlay() {
   }));
 }
 async function uploadReceipt(file, path) {
-  const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
-  if (!file || !allowedTypes.has(file.type)) throw new Error('Upload a JPG, PNG, WebP or HEIC payment receipt image.');
-  if (file.size > 100 * 1024 * 1024) throw new Error('Receipt must be 100 MB or smaller.');
-  const { error } = await supabase.storage.from('courtly-payment-receipts').upload(path, file, {
-    contentType: file.type, upsert: false
-  });
+  validateReceipt(file, 100, receiptTypes);
+  const { error } = await supabase.storage.from('courtly-payment-receipts').upload(path, file, { contentType: file.type, upsert: false });
   if (error) throw error;
 }
 function rememberBookingAccessToken(token) {
-  if (!token) throw new Error('The booking access token was not returned. Please contact Courtly support before leaving this page.');
-  const key = 'courtlyBookingAccessTokensV1';
-  let tokens = [];
-  try { tokens = JSON.parse(localStorage.getItem(key) || '[]'); } catch { tokens = []; }
-  if (!Array.isArray(tokens)) tokens = [];
-  if (!tokens.includes(token)) tokens.push(token);
-  localStorage.setItem(key, JSON.stringify(tokens.slice(-100)));
+  if (!token) throw new Error('The booking access key was not returned. Please contact the venue before trying again.');
+  return saveBookingToken(token);
 }
 function fileExtension(file) {
   const map = { 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp', 'image/heic':'heic', 'image/heif':'heif' };
   return map[file?.type] || 'jpg';
 }
-function showOpenPlayConfirmation(reference, isFree = false) {
+function showOpenPlayConfirmation(reference, isFree = false, details = checkout) {
   $('gcashModal').hidden = true;
-  setText('confirmationTitle', isFree ? 'You’re registered!' : 'Open Play registration received!');
+  const confirmed = details?.hold?.status === 'confirmed';
+  setText('confirmationTitle', isFree || confirmed ? 'You’re registered!' : 'Open Play registration received!');
   setText('confirmationMessage', isFree
-    ? 'Your free Open Play registration is confirmed. No payment or transaction fee was required.'
-    : 'Your registration and payment receipt have been submitted. Your place is awaiting payment verification by the venue owner.');
-  setText('confirmationReference', `Reference: ${reference}`);
-  setText('confirmationDetails', selectedOpenPlay?.title || 'Open Play registration');
+    ? 'Your free Open Play registration is confirmed. No payment was required.'
+    : confirmed ? 'Your Open Play registration and payment are confirmed.' : 'Your registration and payment receipt have been received. Your place is awaiting payment verification by the venue owner.');
+  setText('confirmationReference', 'Reference: ' + reference);
+  const feeLine = details?.amounts.fee > 0 ? '\n' + CONVENIENCE_FEE_LABEL + ': ' + money(details.amounts.fee) : '';
+  setText('confirmationDetails', (details?.event.title || 'Open Play registration') + feeLine + '\nTotal: ' + money(details?.amounts.total || 0));
+  $('confirmationModal').hidden = false;
+}
+function showCourtReceiptConfirmation(booking) {
+  $('gcashModal').hidden = true;
+  setText('confirmationTitle', booking.status === 'confirmed' ? 'Booking confirmed' : 'Reservation submitted');
+  setText('confirmationMessage', booking.status === 'confirmed' ? 'The venue has confirmed your reservation. Keep this reference and view the booking in your player account.' : 'Your time is reserved while the venue verifies your reservation. Keep this reference and view the booking in your player account.');
+  setText('confirmationReference', 'Reference: ' + booking.reference);
+  const details = $('confirmationDetails');
+  if (details) details.innerHTML = esc(booking.court_name || checkout?.court.name || 'Court booking') + '<br>Total: ' + money(booking.total) + '<br><a href="/player-dashboard.html?view=bookings">View account bookings</a>';
   $('confirmationModal').hidden = false;
 }
 async function prefillPlayerCheckout() {
@@ -504,76 +779,112 @@ async function prefillPlayerCheckout() {
   }
 }
 
+async function notifyCheckoutCommitted(hold) {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session?.access_token) return;
+    const type = hold.kind === 'court' ? 'court_booking' : 'open_play_registration';
+    const id = hold.kind === 'court' ? hold.booking_id : hold.registration_id;
+    const response = await fetch('/api/notifications/process', { method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ type, id }) });
+    if (!response.ok) console.warn('Reservation saved; its notification remains queued for retry.');
+  } catch (error) { console.warn('Reservation saved; notification delivery will be retried:', error); }
+}
+function completeCheckout(details) {
+  const hold = details.hold;
+  if (!['submitted', 'confirmed'].includes(hold?.status)) throw new Error('The reservation is not yet submitted. Please check its status before paying again.');
+  recoverableHold = hold;
+  renderCheckoutRecovery();
+  $('gcashModal').hidden = true;
+  if (details.kind === 'openplay') {
+    showOpenPlayConfirmation(hold.reference, details.amounts.free, details);
+    loadVenueEvents().catch((error) => console.warn('Registration saved; Open Play list refresh failed:', error));
+  } else {
+    showCourtReceiptConfirmation(hold);
+    loadAvailability().catch((error) => console.warn('Reservation saved; availability refresh failed:', error));
+  }
+  // The durable database event already exists. Delivery must not change the
+  // successful reservation outcome, including offline/failed email dispatch.
+  notifyCheckoutCommitted(hold);
+}
 async function submitPayment(event) {
   event.preventDefault();
-  const file = $('paymentScreenshot')?.files?.[0];
-  const freeOpenPlay = Boolean(selectedOpenPlay && Number(selectedOpenPlay.fee || 0) <= 0);
-  if (!file && !freeOpenPlay) { showToast('Please attach your payment receipt.'); return; }
-  const name = $('playerName').value.trim();
-  const email = $('playerEmail').value.trim().toLowerCase();
-  const phone = $('playerPhone').value.trim();
+  if (!paymentSubmission.start()) return;
+  const details = checkout;
   const button = $('paymentSubmitButton');
-  button.disabled = true; button.textContent = 'Submitting securely…';
-  let pendingBookingId = null;
+  if (details) details.revision = (details.revision || 0) + 1;
   try {
-    if (selectedOpenPlay) {
-      let path = null;
-      if (!freeOpenPlay) {
-        const fileExt = fileExtension(file);
-        path = `${slug}/open-play/${selectedOpenPlay.id}/${uuid()}.${fileExt}`;
-        await uploadReceipt(file, path);
-      }
-      const { data, error } = await supabase.rpc('register_open_play_player', {
-        p_event_id: selectedOpenPlay.id,
-        p_player_name: name,
-        p_player_email: email,
-        p_player_phone: phone || null,
-        p_receipt_path: path
-      });
+    checkoutError('');
+    if (!details) throw new Error('Please review your booking before continuing.');
+    const name = $('playerName').value.trim();
+    const email = $('playerEmail').value.trim().toLowerCase();
+    const phone = $('playerPhone').value.trim();
+    $('playerName').setCustomValidity(name ? '' : 'Enter your name.');
+    if (!$('gcashForm').reportValidity()) return;
+    setPaymentBusy(true);
+    button.textContent = details.hold ? 'Checking your reservation…' : 'Reserving your place…';
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user || user.id !== details.playerId) throw new Error('Please sign in with the player account used for this checkout, then reload to recover your reservation.');
+    if (!details.hold) {
+      await checkBookingReadiness();
+      details.requestKey ||= checkoutRequestKey(checkoutSelection(details));
+      const common = { p_request_key: details.requestKey, p_player_name: name, p_player_email: email, p_player_phone: phone || null };
+      const rpc = details.kind === 'court' ? 'create_court_checkout_hold' : 'create_open_play_checkout_hold';
+      const args = details.kind === 'court'
+        ? { ...common, p_venue_slug: slug, p_court_id: details.court.id, p_starts_at: details.range.start, p_duration_hours: details.endHour - details.startHour }
+        : { ...common, p_event_id: details.event.id };
+      const { data, error } = await supabase.rpc(rpc, args);
       if (error) throw error;
-      const result = data || {};
-      showOpenPlayConfirmation(result.registration_reference || 'Submitted', Boolean(result.requires_payment === false));
-      await loadVenueEvents();
-      return;
+      const reviewedTotal = details.amounts.total;
+      applyCheckoutHold(details, data);
+      renderCheckout(details);
+      if (['submitted', 'confirmed'].includes(details.hold.status)) { completeCheckout(details); return; }
+      if (details.hold.status !== 'held' || holdRemainingMs(details.hold) <= 0) throw new Error('This previous hold has expired. If you already paid, contact the venue with its reference before starting again.');
+      if (!details.amounts.free) {
+        if (reviewedTotal !== details.amounts.total) checkoutError('The venue’s current price is shown above and is now held for you. Review this amount before paying.');
+        return; // A separate action is required after the authoritative price and QR are shown.
+      }
+    } else {
+      const { data, error } = await supabase.rpc('get_checkout_hold', { p_hold_id: details.hold.hold_id });
+      if (error) throw error;
+      applyCheckoutHold(details, data);
+      if (['submitted', 'confirmed'].includes(details.hold.status)) { completeCheckout(details); return; }
     }
-
-    const court = selectedCourt();
-    const range = selectedRangeIso();
-    if (!court || !range) throw new Error('Select a court, date and timeslot first.');
-    const { data: created, error: createError } = await supabase.rpc('create_booking_request', {
-      p_venue_slug: slug,
-      p_court_id: court.id,
-      p_starts_at: range.start,
-      p_duration_hours: selectedEnd - selectedStart,
-      p_player_name: name,
-      p_player_email: email,
-      p_player_phone: phone || null,
-      p_payment_method: venue.payment_method || 'GCash'
-    });
-    if (createError) throw createError;
-    const booking = created || {};
-    pendingBookingId = booking.id;
-    rememberBookingAccessToken(booking.customer_access_token);
-    const ext = fileExtension(file);
-    const path = `${slug}/${booking.id}/${uuid()}.${ext}`;
-    await uploadReceipt(file, path);
-    const { error: attachError } = await supabase.rpc('attach_booking_receipt', {
-      p_booking_id: booking.id,
-      p_receipt_path: path
-    });
-    if (attachError) throw attachError;
-    sessionStorage.setItem('courtlyConfirmationReference', booking.reference);
-    $('gcashModal').hidden = true;
-    window.location.href = `/booking-confirmation.html?ref=${encodeURIComponent(booking.reference)}`;
+    if (details.hold.status !== 'held' || holdRemainingMs(details.hold) <= 0) {
+      renderCheckout(details);
+      throw new Error('This hold has expired or is no longer payable. If you already paid, contact the venue with your reference before paying again.');
+    }
+    button.textContent = 'Submitting securely…';
+    let path = details.hold.uploaded_receipt_path || null;
+    if (!details.amounts.free) {
+      const file = $('paymentScreenshot')?.files?.[0];
+      if (!path || (file && file !== details.uploadedFile)) {
+        validateReceipt(file, 100, receiptTypes);
+        path = details.hold.receipt_prefix + uuid() + '.' + fileExtension(file);
+        await uploadReceipt(file, path);
+        details.hold.uploaded_receipt_path = path;
+        details.uploadedFile = file;
+      }
+    }
+    const { data, error } = await supabase.rpc('submit_checkout_hold', { p_hold_id: details.hold.hold_id, p_receipt_path: details.amounts.free ? null : path });
+    if (error) throw error;
+    applyCheckoutHold(details, data);
+    completeCheckout(details);
   } catch (error) {
-    if (pendingBookingId) {
-      await supabase.rpc('cancel_unpaid_booking_request', { p_booking_id: pendingBookingId }).catch(() => {});
+    console.warn('Checkout needs attention:', error);
+    checkoutError(error.message || 'The response could not be confirmed. Retry this same checkout or reload to recover it. Do not send another payment.');
+    // Never cancel an uncertain outcome: the server may already have committed.
+    // The same key/hold is retained, and its next response safely recovers it.
+    if (details?.hold) {
+      details.statusUnverified = true;
+      $('paymentScreenshot').required = false;
     }
-    console.error('Courtly checkout failed:', error);
-    alert(error.message || 'Your payment receipt could not be submitted. Please try again.');
   } finally {
-    button.disabled = false;
-    button.textContent = selectedOpenPlay ? 'Submit receipt & reserve my spot' : 'Submit payment receipt & reserve court';
+    paymentSubmission.finish();
+    setPaymentBusy(false);
+    button.textContent = paymentButtonLabel(details);
+    updateHoldPresentation();
+    updateSummary();
   }
 }
 async function loadVenueEvents() {
@@ -587,6 +898,7 @@ async function loadVenueEvents() {
     const { data: counts, error: countError } = await supabase.rpc('get_open_play_registration_counts', {
       p_event_ids: events.map((item) => item.id)
     });
+    if (countError) throw new Error('Open Play availability could not be verified. Please try again.');
     if (!countError) {
       const countMap = new Map((counts || []).map((row) => [String(row.event_id), Number(row.registered_count || 0)]));
       events = events.map((item) => ({ ...item, registered_count: countMap.get(item.id) || 0 }));
@@ -655,24 +967,27 @@ function renderVenueGallery(){
     thumbs.querySelectorAll('.thumb').forEach((node)=>node.classList.toggle('active',node===button));
   };
 }
-async function refreshPublicVenueMedia(){
-  if(!venue?.id||!supabase||document.visibilityState==='hidden')return;
+async function refreshPublicVenueMedia({strict=false}={}){
+  if(!venue?.id||!supabase||(!strict&&document.visibilityState==='hidden'))return false;
   try{
     const [{data:venueRow,error:venueError},{data:courtRows,error:courtError}]=await Promise.all([
-      supabase.from('venues').select('id,name,logo_url,cover_url,is_published').eq('id',venue.id).eq('is_published',true).maybeSingle(),
+      supabase.from('venues').select('id,name,logo_url,cover_url,is_published,payment_method,payment_account,payment_instructions,payment_qr_url,hours_open,hours_close,peak_hours_start,peak_hours_end').eq('id',venue.id).eq('is_published',true).maybeSingle(),
       supabase.from('courts').select('id,name,sport,hourly_rate,off_peak_rate,peak_rate,is_active,image_url,image_fit,display_order').eq('venue_id',venue.id).eq('is_active',true).order('display_order',{ascending:true})
     ]);
     if(venueError)throw venueError;
     if(courtError)throw courtError;
-    if(!venueRow)return;
+    if(!venueRow)throw new Error('This venue is not currently accepting bookings.');
     venue={...venue,...venueRow};
     courts=courtRows||[];
+    refreshVenueHours();
+    refreshTimeSelects();
     renderVenueBrand();
     if(selectedCourtId&&!courts.some((court)=>court.id===selectedCourtId))selectedCourtId=null;
     renderVenueGallery();
     renderCourts();
     updateSummary();
-  }catch(error){console.warn('Courtly venue image refresh failed:',error);}
+    return true;
+  }catch(error){console.warn('Courtly venue refresh failed:',error);if(strict)throw error;return false;}
 }
 
 
@@ -693,6 +1008,8 @@ async function loadVenue() {
   if (error) throw error;
   if (!record) throw new Error('This venue could not be found or is not currently published.');
   venue = record;
+  selectedDate = new Date(dateInVenueZone() + 'T12:00:00');
+  viewYear = selectedDate.getFullYear(); viewMonth = selectedDate.getMonth();
   const { data: amenityRow, error: amenityError } = await supabase.from('venues').select('amenities').eq('id', record.id).maybeSingle();
   venue.amenities = !amenityError && Array.isArray(amenityRow?.amenities) ? amenityRow.amenities : [];
   if (amenityError) console.info('Venue amenities are not available yet. Apply the Courtly venue amenities migration to enable this panel.');
@@ -701,9 +1018,7 @@ async function loadVenue() {
     .eq('venue_id', venue.id).eq('is_active', true).order('display_order', { ascending: true });
   if (courtsError) throw courtsError;
   courts = courtRows || [];
-  const open = timeValue(venue.hours_open || '08:00').hour;
-  const close = timeValue(venue.hours_close || '22:00').hour;
-  venueHours = Array.from({ length: Math.max(1, close - open) + 1 }, (_, index) => open + index);
+  refreshVenueHours();
   renderVenueBrand();
   setText('venueAddress', venue.address || venue.city || 'Location to be added');
   setText('venueDescription', venue.description || '');
@@ -715,14 +1030,14 @@ async function loadVenue() {
   const amenity = document.querySelector('.amenities .amenity strong');
   if (amenity) amenity.textContent = `${courts.length} ${courts.length === 1 ? 'Court' : 'Courts'}`;
   const hint = document.querySelector('.range-hint');
-  if (hint) { const peakWindow = venue.peak_hours_start && venue.peak_hours_end ? ` Peak pricing applies from ${formatHour(timeValue(venue.peak_hours_start).hour)} to ${formatHour(timeValue(venue.peak_hours_end).hour)}; the final price is calculated hour by hour.` : ''; hint.textContent = `Choose your start and end times independently. Courtly deducts ₱10 per booked hour from the venue owner's payout; it is not added to your checkout total.${peakWindow}`; }
+  if (hint) { const peakWindow = venue.peak_hours_start && venue.peak_hours_end ? ` Peak pricing applies from ${formatHour(timeValue(venue.peak_hours_start).hour)} to ${formatHour(timeValue(venue.peak_hours_end).hour)}; the final price is calculated hour by hour.` : ''; hint.textContent = `Choose your start and end times independently. Bookings are 1–8 hours. The venue owner pays the ₱10 per booked hour Convenience Fee; it is not added to your checkout total.${peakWindow}`; }
   if (!courts.length) setText('selectedDateLabel', 'This venue has no active courts yet.');
-  await loadVenueEvents();
+  await loadVenueEvents().catch((error) => { console.warn('Open Play sessions could not load:', error); });
   refreshTimeSelects();
   renderCalendar();
   updateSummary();
   await loadAvailability();
-  await restorePendingBookingIntent();
+  if (!(await restoreCheckoutHold().catch((error) => { showToast(error.message); return false; }))) await restorePendingBookingIntent();
 }
 
 $('prevMonth')?.addEventListener('click', async () => {
@@ -733,28 +1048,59 @@ $('nextMonth')?.addEventListener('click', async () => {
   viewMonth += 1; if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
   renderCalendar();
 });
-$('startTime')?.addEventListener('change', async (event) => {
-  if (!event.target.value) return;
-  selectedStart = Number(event.target.value);
-  selectedEnd = Math.min(selectedStart + 1, venueHours[venueHours.length - 1]);
-  selectedCourtId = null; refreshTimeSelects(); renderSlots(); renderCourts(); updateSummary();
+$('startTime')?.addEventListener('change', (event) => {
+  selectedStart = selectedHour(event.target.value);
+  selectedEnd = selectedStart === null ? null : Math.min(selectedStart + 1, venueHours[venueHours.length - 1]);
+  selectedCourtId = null;
+  refreshTimeSelects(); renderSlots(); renderCourts(); updateSummary();
 });
 $('endTime')?.addEventListener('change', () => {
-  selectedEnd = Number($('endTime').value); selectedCourtId = null;
-  renderSlots(); renderCourts(); updateSummary();
+  selectedEnd = selectedHour($('endTime').value);
+  selectedCourtId = null;
+  refreshTimeSelects(); renderSlots(); renderCourts(); updateSummary();
 });
 $('nextChoose')?.addEventListener('click', () => {
   const range = selectedRangeIso();
   const court = selectedCourt();
-  if (!range || !court) { showToast('Please select a court and booking time first.'); return; }
+  if (!range || !court || !availabilityReady()) { showToast('Please select an available court and booking time first.'); return; }
   if (hasConflict(court.id, range.start, range.end)) { showToast('That time has just been reserved. Select another slot.'); loadAvailability(); return; }
   openPayment();
 });
-$('closeGcash')?.addEventListener('click', () => { $('gcashModal').hidden = true; selectedOpenPlay = null; });
+$('closeGcash')?.addEventListener('click', () => { if (paymentSubmission.busy) return; $('gcashModal').hidden = true; selectedOpenPlay = null; checkout = null; renderCheckoutRecovery(); });
 $('closeAuthRequired')?.addEventListener('click', () => { $('authRequiredModal').hidden = true; });
 $('authRequiredModal')?.addEventListener('click', e => { if(e.target === $('authRequiredModal')) $('authRequiredModal').hidden = true; });
 $('gcashForm')?.addEventListener('submit', submitPayment);
-$('confirmationClose')?.addEventListener('click', () => { $('confirmationModal').hidden = true; selectedOpenPlay = null; });
+$('playerName')?.addEventListener('input', () => { $('playerName').setCustomValidity(''); });
+$('confirmationClose')?.addEventListener('click', () => { $('confirmationModal').hidden = true; selectedOpenPlay = null; checkout = null; });
+$('resumeCheckout')?.addEventListener('click', async () => {
+  if (!recoverableHold || paymentSubmission.busy || checkoutOpening.busy) return;
+  try {
+    await checkBookingReadiness();
+    const { data, error } = await supabase.rpc('get_checkout_hold', { p_hold_id: recoverableHold.hold_id });
+    if (error) throw error;
+    checkout = detailsFromHold(data);
+    if (['submitted', 'confirmed'].includes(checkout.hold.status)) { completeCheckout(checkout); return; }
+    checkoutError(''); renderCheckout(); $('gcashModal').hidden = false;
+  } catch (error) { showToast(error.message || 'Your reservation could not be recovered. Do not pay again. Contact the venue.'); }
+});
+$('restartCheckout')?.addEventListener('click', async () => {
+  const previous = checkout;
+  if (paymentSubmission.busy || !previous?.hold || previous.hold.payment_status !== 'unpaid'
+      || !['held', 'expired', 'cancelled'].includes(previous.hold.status) || holdRemainingMs(previous.hold) > 0) return;
+  checkoutRequestKey(checkoutSelection(previous), { fresh: true });
+  $('gcashModal').hidden = true;
+  checkout = null;
+  if (previous.kind === 'court') {
+    selectedDate = new Date(previous.date + 'T12:00:00'); viewYear = selectedDate.getFullYear(); viewMonth = selectedDate.getMonth();
+    selectedStart = previous.startHour; selectedEnd = previous.endHour; selectedCourtId = previous.court.id; renderCalendar();
+  }
+  await openPayment(previous.kind === 'openplay' ? previous.event : null);
+});
+setInterval(updateHoldPresentation, 1000);
+setInterval(refreshCheckoutHold, 15000);
+window.addEventListener('focus', refreshCheckoutHold);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshCheckoutHold(); });
+
 
 (async () => {
   try { await prefillPlayerCheckout(); await loadVenue(); }
@@ -763,14 +1109,33 @@ $('confirmationClose')?.addEventListener('click', () => { $('confirmationModal')
     const name = $('venueName'); if (name) { name.textContent = 'Venue unavailable'; name.hidden = false; }
     const logo = $('venueLogo'); if (logo) { logo.hidden = true; logo.removeAttribute('src'); }
     setText('venueDescription', error.message || 'This venue page could not be loaded. Please try again later.');
+    setText('venueAddress', '');
+    setText('selectedDateLabel', 'Availability unavailable');
+    setImage('mainPhoto', '', '');
     const courtGrid = $('courtsGrid'); if (courtGrid) courtGrid.innerHTML = `<p class="range-hint" style="color:#b42318">${esc(error.message || 'Could not load this venue.')}</p>`;
   }
 })();
 
+document.addEventListener('error', (event) => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement) || image.id === 'mainPhoto' || image.id === 'venueLogo') return;
+  if (image.closest('#venueGalleryThumbs')) {
+    image.closest('button').disabled = true;
+  } else if (image.closest('#courtsGrid')) {
+    image.hidden = true;
+    if (!image.nextElementSibling?.classList.contains('court-photo-fallback')) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'court-photo-fallback';
+      placeholder.textContent = 'Court photo unavailable';
+      image.after(placeholder);
+    }
+  }
+}, true);
+
 window.addEventListener('focus', () => { refreshPublicVenueMedia(); });
 document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible')refreshPublicVenueMedia(); });
-setInterval(() => { if (venue) loadAvailability().catch((error) => console.warn('Availability refresh failed:', error)); }, 30000);
-setInterval(() => { if (venue) refreshPublicVenueMedia(); }, 60000);
+setInterval(() => { if (venue && !paymentSubmission.busy && !checkoutOpening.busy && document.visibilityState !== 'hidden') loadAvailability().catch((error) => console.warn('Availability refresh failed:', error)); }, 30000);
+setInterval(() => { if (venue && !paymentSubmission.busy && !checkoutOpening.busy) refreshPublicVenueMedia(); }, 60000);
 </script>
 <script type="module" src="/courtly-responsive.js"></script>
   <script type="module" src="/courtly-global-nav.js?v=player-home-20261106"></script>

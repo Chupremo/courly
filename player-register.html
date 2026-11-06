@@ -32,7 +32,7 @@
     <div class="member-count-strip" id="memberCountStrip" aria-live="polite"><span class="member-count-dot"></span><span id="memberCountText">Loading Courtly's player community…</span></div>
     <a class="login-cta" href="/player-login.html">Already have an account? Log in</a>
     <p class="login-caption">Or create your player account below</p>
-    <form class="card" id="registerForm" novalidate>
+    <form class="card" id="registerForm">
       <section class="avatar-area">
         <label class="avatar-label" for="avatarFile">Profile Picture <span style="color:#8994a8;font-weight:400">(Optional)</span></label>
         <div class="avatar-preview" id="avatarPreview" aria-label="Profile picture preview">◎</div>
@@ -53,15 +53,14 @@
         <div><h3>◉ &nbsp; Privacy Settings</h3><p>Keep your profile private from other players. Your name and profile details won't be shown on public player listings.</p></div>
         <label class="switch" aria-label="Make my player profile private"><input type="checkbox" id="isPrivate"><span class="slider"></span></label>
       </section>
-      <label class="terms"><input type="checkbox" id="agreeTerms" required><span>I agree to Courtly's <a href="#" data-legal="terms">Terms &amp; Conditions</a> and acknowledge the <a href="#" data-legal="privacy">Privacy Notice</a>.</span></label>
+      <label class="terms"><input type="checkbox" id="agreeTerms" required><span>I agree to Courtly's <a href="/terms.html" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a> and acknowledge the <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</span></label>
       <button class="submit" id="submitButton" type="submit">Create Player Account</button>
-      <div class="message" id="message" role="alert" aria-live="polite"></div>
+      <div class="message" id="message" role="alert" aria-live="polite"></div><p id="registrationNext" hidden><a class="upload" id="registrationNextLink" href="/player-login.html">Continue to your account →</a></p>
     </form><p class="coach-note">Registering as a coach? <a href="/coach-register.html">Create a coach account</a></p>
     <p class="bottom">Already manage a sports venue? <a href="/login.html">Go to the owner portal</a>.<br>© 2026 Courtly · Book. Play. Grow.</p>
   </main>
-  <div class="modal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><section class="modal-card"><button class="modal-close" id="legalClose" type="button">Close</button><h2 id="legalTitle">Courtly notice</h2><div id="legalContent"></div><p><strong>Launch note:</strong> These are starter notices for the current player-account experience. Courtly should have its final Terms and Privacy Notice reviewed and approved before public launch.</p></section></div>
   <script type="module">
-    import { supabase, supabaseConfigError } from './supabase-client.js';
+    import { supabase } from './supabase-client.js';
     import { syncPlayerProfile } from './player-profile-sync.js';
     const $ = (id) => document.getElementById(id);
     const form = $('registerForm'), button = $('submitButton'), message = $('message');
@@ -80,9 +79,10 @@
     }
     loadPublicPlayerCount();
     let avatarFile = null;
+    let avatarPreviewUrl = null;
     const showMessage = (text, type='error') => { message.textContent=text; message.className=`message show ${type}`; };
     const emailNorm = (value) => value.trim().toLowerCase();
-    const PRODUCTION_APP_URL = 'https://courtly-ecru.vercel.app';
+    const PRODUCTION_APP_URL = 'https://www.courtlyph.com';
     function getCourtlyAppUrl() {
       const configured = String(import.meta.env.VITE_APP_URL || '').trim().replace(/\/$/, '');
       if (configured) return configured;
@@ -95,6 +95,7 @@
       try { const url = new URL(value, location.origin); if (url.origin !== location.origin) return '/player-dashboard.html?welcome=1'; return url.pathname + url.search + url.hash; } catch { return '/player-dashboard.html?welcome=1'; }
     }
     const returnTo = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
+    document.querySelector('.login-cta').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
     const emailConfirmationRedirect = `${getCourtlyAppUrl()}/player-login.html?confirmed=1&returnTo=${encodeURIComponent(returnTo)}`;
     // Registered players return to their dashboard; owners can explicitly switch to a player account.
     supabase?.auth.getSession().then(async ({data,error})=>{
@@ -118,32 +119,28 @@
       }
     }).catch(error=>console.warn('Could not resolve existing Courtly session:',error));
     $('avatarFile').addEventListener('change', (event) => {
+      if (avatarPreviewUrl) { URL.revokeObjectURL(avatarPreviewUrl); avatarPreviewUrl = null; }
+      $('avatarPreview').textContent = '◎';
       const file = event.target.files?.[0]; avatarFile = file || null;
       if (!file) { $('avatarPreview').innerHTML='◎'; return; }
       if (!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size > 8*1024*1024) {
         avatarFile=null; event.target.value=''; showMessage('Choose a PNG, JPG or WEBP image no larger than 8 MB.'); return;
       }
-      $('avatarPreview').innerHTML = `<img alt="Profile picture preview" src="${URL.createObjectURL(file)}">`;
+      avatarPreviewUrl = URL.createObjectURL(file);
+      $('avatarPreview').innerHTML = `<img alt="Profile picture preview" src="${avatarPreviewUrl}">`;
     });
-    document.querySelectorAll('[data-legal]').forEach(link => link.addEventListener('click', event => {
-      event.preventDefault();
-      const type=link.dataset.legal;
-      $('legalTitle').textContent=type==='terms'?'Courtly Terms & Conditions':'Courtly Privacy Notice';
-      $('legalContent').innerHTML=type==='terms'
-        ? '<p>By creating a Courtly player account, you agree to provide accurate account details, keep your sign-in credentials secure, and use Courtly respectfully. Venue bookings and Open Play registrations are subject to the venue’s own schedules, payment instructions, cancellation rules and verification process.</p><ul><li>Submitting a payment receipt does not mean payment has been automatically verified.</li><li>Venue operators are responsible for confirming their own bookings and event registrations.</li><li>Paid Open Play registrations include a clearly displayed ₱10 transaction fee per player; free Open Play sessions have no transaction fee. Court rental platform fees are paid by venue owners and are not added to the player’s court checkout.</li><li>Do not use Courtly to impersonate another player or submit misleading information.</li><li>Contact the venue directly about changes, cancellations or refunds.</li></ul>'
-        : '<p>Courtly stores your account name, player name, email, contact number, skill level, optional profile image and privacy preference to provide your player account. Booking and Open Play details are associated with your account when you are signed in.</p><ul><li>If you keep your profile public, your player nickname, skill level, preferred sport and optional profile picture may appear to signed-in Courtly members in the player directory and community.</li><li>If you switch on Private Profile, you are excluded from public player discovery and your community posts are visible only to you.</li><li>Your email address, phone number and full name are not shown on public player cards.</li><li>Your profile image is stored in Courtly’s private player-avatar storage bucket and is displayed through access-controlled links.</li><li>Venue owners receive the player information required to manage a booking or event registration.</li><li>Never share your password or payment credentials.</li></ul>';
-      $('legalModal').classList.add('open');
-    }));
-    $('legalClose').addEventListener('click', ()=>$('legalModal').classList.remove('open'));
-    $('legalModal').addEventListener('click',e=>{if(e.target===$('legalModal'))$('legalModal').classList.remove('open')});
+    form.addEventListener('input', event => { if (event.target.setCustomValidity) event.target.setCustomValidity(''); if (event.target.id === 'email') $('confirmEmail').setCustomValidity(''); if (event.target.id === 'password') $('confirmPassword').setCustomValidity(''); });
     form.addEventListener('submit', async (event) => {
-      event.preventDefault(); message.className='message';
-      if (!supabase) { showMessage(supabaseConfigError); return; }
+      event.preventDefault();
+      if (button.disabled) return;
+      message.className='message';
+      if (!form.reportValidity()) return;
+      if (!supabase) { showMessage('Account registration is temporarily unavailable. Please try again shortly.'); return; }
       const fullName=$('fullName').value.trim(), playerName=$('playerName').value.trim(), email=emailNorm($('email').value), confirmEmail=emailNorm($('confirmEmail').value), phone=$('phone').value.trim(), skillLevel=$('skillLevel').value, password=$('password').value, confirmPassword=$('confirmPassword').value, isPrivate=$('isPrivate').checked;
-      if (!fullName || !playerName || !email || !phone) { showMessage('Please complete all required fields.'); return; }
-      if (email!==confirmEmail) { showMessage('Email addresses do not match.'); $('confirmEmail').focus(); return; }
+      if (!fullName || !playerName || !email || !phone) { const field = !fullName ? $('fullName') : !playerName ? $('playerName') : !email ? $('email') : $('phone'); field.setCustomValidity('Please complete this field.'); field.reportValidity(); field.focus(); return; }
+      if (email!==confirmEmail) { $('confirmEmail').setCustomValidity('Email addresses do not match.'); $('confirmEmail').reportValidity(); $('confirmEmail').focus(); return; }
       if (password.length<8) { showMessage('Your password must contain at least 8 characters.'); $('password').focus(); return; }
-      if (password!==confirmPassword) { showMessage('Passwords do not match.'); $('confirmPassword').focus(); return; }
+      if (password!==confirmPassword) { $('confirmPassword').setCustomValidity('Passwords do not match.'); $('confirmPassword').reportValidity(); $('confirmPassword').focus(); return; }
       if (!$('agreeTerms').checked) { showMessage('Please agree to the Terms & Conditions and Privacy Notice.'); return; }
       button.disabled=true; button.textContent='Creating your account…';
       let registrationCompleted = false;
@@ -162,6 +159,10 @@
           data:{account_type:'player',full_name:fullName,player_name:playerName,phone,skill_level:skillLevel,is_private:isPrivate}
         }});
         if(error) throw error;
+        if(!data?.user) throw new Error('We could not confirm account creation. Please try signing in before registering again.');
+        // Authentication succeeded. Profile/photo failures must never invite another sign-up.
+        registrationCompleted = true;
+        $('registrationNextLink').href = data.session ? returnTo : `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
         if(data.session && data.user){
           const profile=await syncPlayerProfile(supabase,data.user);
           if(avatarFile){
@@ -181,7 +182,14 @@
           button.textContent='Confirmation email sent';
           showMessage(`Your player account for ${playerName} has been created. We sent a confirmation link to ${email}. Open that email to verify your address. You will be returned to Courtly automatically. Your registered player name will appear in your dashboard after verification. If you selected a profile photo, you can upload it from Profile after signing in.`, 'success');
         }
-      }catch(error){console.error('Player registration error:',error);showMessage(error.message||'We could not create your account. Please try again.');}
+      }catch(error){
+        console.error('Player registration error:',error);
+        if(registrationCompleted){
+          button.textContent='Account created';
+          $('registrationNext').hidden=false;
+          showMessage('Your account was created. We couldn’t finish saving your profile or photo. Continue to your account to review your profile; you do not need to register again.', 'success');
+        }else showMessage(error.message||'We could not create your account. Please try again.');
+      }
       finally{if(!registrationCompleted){button.disabled=false;button.textContent='Create Player Account';}else{button.disabled=true;}}
     });
   </script>

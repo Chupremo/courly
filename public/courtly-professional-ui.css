@@ -1,29 +1,71 @@
-/* Courtly Professional UI — restrained iconography and shared mobile safeguards. */
+/* Courtly shared interaction, accessibility and mobile safeguards. */
 :root {
   --ct-professional-navy: #001A47;
   --ct-professional-lime: #8ED502;
 }
 
-:where(.btn-arrow:empty,
-  .feature-primary span:empty,
-  .feature-secondary span:empty,
-  .ce-map-link span:empty,
-  .community-primary span:empty,
-  .mobile-back span:empty) {
-  display: none !important;
+/* An important cascade layer outranks legacy unlayered grid/flex !important
+   rules. Optional charges, inactive panels and closed overlays must stay hidden. */
+@layer courtly-visibility {
+  [hidden]:not([hidden="until-found"]) {
+    display: none !important;
+  }
 }
 
-/* Use one consistent three-line menu control rather than a text glyph. */
-:where(.menu-toggle, #menu-toggle, .mobile-menu, .ct-mobile-toggle,
-  .coach-mobile-toggle, #coachMenu, .mobile-menu-toggle:not(:has(span))) {
+html body :focus-visible {
+  outline: 3px solid #2166b5 !important;
+  outline-offset: 3px;
+}
+
+.ct-skip-link {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 2200;
+  max-width: calc(100% - 24px);
+  padding: 12px 18px;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background: var(--ct-professional-navy);
+  color: #fff;
+  font: 600 14px/1.4 Inter, Arial, sans-serif;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.ct-skip-link:focus {
+  transform: translateY(0);
+}
+
+body :where(button:disabled, input:disabled, select:disabled, textarea:disabled) {
+  cursor: not-allowed;
+}
+
+body :where(button:disabled) {
+  opacity: .6;
+  box-shadow: none;
+  transform: none;
+}
+
+body :where([aria-busy="true"] button:disabled, button[aria-busy="true"]) {
+  cursor: wait;
+}
+
+body :where(input, select, textarea)[aria-invalid="true"] {
+  border-color: #b42332 !important;
+}
+
+/* Keep both open and closed states recognisable without changing button text. */
+:where(button.menu-toggle, button#menu-toggle, button.mobile-menu, button.ct-mobile-toggle,
+  button.coach-mobile-toggle, button#coachMenu, button.mobile-menu-toggle:not(:has(span))) {
   font-size: 0 !important;
   line-height: 0 !important;
   align-items: center;
   justify-content: center;
 }
 
-:where(.menu-toggle, #menu-toggle, .mobile-menu, .ct-mobile-toggle,
-  .coach-mobile-toggle, #coachMenu, .mobile-menu-toggle:not(:has(span)))::before {
+:where(button.menu-toggle, button#menu-toggle, button.mobile-menu, button.ct-mobile-toggle,
+  button.coach-mobile-toggle, button#coachMenu, button.mobile-menu-toggle:not(:has(span)))::before {
   content: "";
   display: block;
   width: 22px;
@@ -40,7 +82,15 @@
   );
 }
 
-/* Conventional close control for icon-only modal buttons after glyph cleanup. */
+:where(button.menu-toggle, button#menu-toggle, button.mobile-menu, button.ct-mobile-toggle,
+  button.coach-mobile-toggle, button#coachMenu, button.mobile-menu-toggle:not(:has(span)))[aria-expanded="true"]::before {
+  height: 22px;
+  background:
+    linear-gradient(45deg, transparent 45%, currentColor 46% 54%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, currentColor 46% 54%, transparent 55%);
+}
+
+/* A fallback for legacy empty close buttons; labelled symbols stay intact. */
 #closeSportModal:empty::before,
 button[aria-label="Close"]:empty::before {
   content: "×";
@@ -48,6 +98,41 @@ button[aria-label="Close"]:empty::before {
   font-size: 20px;
   line-height: 1;
   font-weight: 500;
+}
+
+/* Overlays must sit above the sticky navigation. Their content can scroll on
+   short screens without losing the close button or payment controls. */
+body :is(.payment-overlay, .confirmation-overlay, .modal, .drawer-backdrop) {
+  z-index: 2000;
+}
+
+body :is(.payment-overlay, .confirmation-overlay, .modal) {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+body :is(.payment-dialog, .confirmation-dialog, .modal-card, .modal-box) {
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: 20px;
+}
+
+body :where(.payment-close, .modal-close, .xbtn, #closeSportModal, button[aria-label="Close"]) {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+body .payment-dialog > h2 {
+  padding-right: 40px;
+}
+
+body .toast {
+  z-index: 2100;
 }
 
 /* Keep mobile touch targets, containers, and scrolling consistent across routes. */
@@ -77,6 +162,17 @@ button[aria-label="Close"]:empty::before {
   body :where(input, select, textarea) {
     min-width: 0;
     max-width: 100%;
+  }
+
+  body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+  body select,
+  body textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  body :where(button, .btn, .coach-btn, summary) {
+    min-height: 44px;
   }
 
   body :where(.table-wrap, .tablewrap, .table-scroll, .table-container,
@@ -218,25 +314,15 @@ button[aria-label="Close"]:empty::before {
   }
 }
 
-/* Remove remaining checkmark pictograms generated by legacy CSS pseudo-elements. */
-.feature-copy li::before,
-.pricing-proof span::before,
-.pricing-list li::before,
-.club-benefits span::before,
-.owner-points span::before,
-.signup-perks span::before {
-  content: none !important;
-  display: none !important;
-}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
 
-.feature-copy li,
-.pricing-list li {
-  padding-left: 0 !important;
-}
-
-.pricing-proof span,
-.club-benefits span,
-.owner-points span,
-.signup-perks span {
-  padding-left: 0 !important;
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

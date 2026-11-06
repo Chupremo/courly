@@ -10,7 +10,7 @@
 h1{margin:26px 0 8px;font-size:30px}p{color:#65718a;line-height:1.6;font-size:14px}
 .field{margin:15px 0}.field label{display:block;font-size:12px;margin-bottom:7px}.field input,.field select{width:100%;padding:13px 14px;border:1px solid #d7deeb;border-radius:10px;font:inherit}
 button{width:100%;border:0;border-radius:10px;padding:14px;background:#1747ad;color:white;font-weight:700;font-size:14px;cursor:pointer;margin-top:8px}
-.secondary{background:#f2f5fa;color:#1747ad;border:1px solid #d7deeb}.msg{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:13px;line-height:1.5}.msg.show{display:block}.error{background:#fff0f0;color:#a72a2a}.success{background:#eaf8ef;color:#176b37}.links{margin-top:18px;text-align:center;font-size:13px}.demo-box{margin-top:24px;padding-top:20px;border-top:1px solid #e8edf5}.demo-box h2{font-size:15px;margin:0 0 6px}.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.demo-grid a{display:block;padding:11px 10px;border:1px solid #d7deeb;border-radius:10px;color:#1747ad;text-decoration:none;font-size:12px;font-weight:700;background:#f8faff}.demo-grid a:hover{border-color:#1747ad;background:#eef4ff}.links a{color:#1747ad;cursor:pointer}.hidden{display:none}
+.secondary{background:#f2f5fa;color:#1747ad;border:1px solid #d7deeb}.msg{display:none;padding:12px;margin-top:14px;border-radius:9px;font-size:13px;line-height:1.5}.msg.show{display:block}.error{background:#fff0f0;color:#a72a2a}.success{background:#eaf8ef;color:#176b37}.links{margin-top:18px;text-align:center;font-size:13px}.demo-box{margin-top:24px;padding-top:20px;border-top:1px solid #e8edf5}.demo-box h2{font-size:15px;margin:0 0 6px}.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.demo-grid a{display:block;padding:11px 10px;border:1px solid #d7deeb;border-radius:10px;color:#1747ad;text-decoration:none;font-size:12px;font-weight:700;background:#f8faff}.demo-grid a:hover{border-color:#1747ad;background:#eef4ff}.links a{color:#1747ad;cursor:pointer}.mode-toggle{display:inline-flex;align-items:center;justify-content:center;width:auto;min-height:44px;margin:0;padding:8px;background:transparent;color:#001a47;text-decoration:underline}.mode-toggle:disabled{opacity:.6;cursor:wait}.hidden{display:none}
 
 /* Owner login: keep the global header logo only; remove any duplicated card-level brand mark. */
 main.card::before,main.card::after{content:none!important;display:none!important}
@@ -20,7 +20,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 
 <link rel="stylesheet" href="/courtly-responsive.css">
   <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
-</head>
+<link rel="stylesheet" href="/account-recovery.css"></head>
 <body>
 <main class="card">
 <h1 id="heading">Welcome back</h1>
@@ -28,7 +28,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 <form id="authForm">
 <div id="signupFields" class="hidden">
 <div class="field"><label for="ownerName">Owner / manager name</label><input id="ownerName" autocomplete="name" placeholder="Your full name"></div>
-<div class="field"><label for="ownerPhone">Contact number</label><input id="ownerPhone" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
+<div class="field"><label for="ownerPhone">Contact number</label><input id="ownerPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
 <div class="field"><label for="business">Venue / business name</label><input id="business" autocomplete="organization" placeholder="Your venue name"></div>
 <div class="field"><label for="address">Venue address</label><input id="address" autocomplete="street-address" placeholder="Street, barangay"></div>
 <div class="field"><label for="city">City / province</label><input id="city" autocomplete="address-level2" placeholder="Lipa City, Batangas"></div>
@@ -36,17 +36,21 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 <div class="field"><label for="courtCount">Number of courts</label><select id="courtCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4–5">4–5</option><option value="6–10">6–10</option><option value="11+">11+</option></select></div>
 </div>
 <div class="field"><label for="email">Email address</label><input id="email" type="email" required autocomplete="username" placeholder="you@example.com"></div>
-<div class="field"><label for="password">Password</label><input id="password" type="password" required minlength="8" autocomplete="current-password" placeholder="At least 8 characters"></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password" placeholder="Your password"></div>
+<a id="forgotPasswordLink" class="courtly-recovery-link" href="/forgot-password.html?role=owner">Forgot your password?</a>
 <button id="submitButton" type="submit">Log in to owner portal →</button>
 <div id="msg" class="msg" role="alert" aria-live="polite"></div>
 </form>
-<div class="links"><span id="modePrompt">New to Courtly? </span><a id="toggleMode">Create an owner account</a></div>
+<div class="links"><span id="modePrompt">New to Courtly? </span><button id="toggleMode" type="button" class="mode-toggle">Create an owner account</button></div>
 <section class="demo-box" aria-label="Explore demo owner portals"><h2>Explore a demo owner portal</h2><p style="margin:4px 0 0;font-size:12px">No login required. Sample bookings and Open Play transactions are fictional and saved only in this browser.</p><div class="demo-grid"><a href="/owner-portal.html?demo=demo-batangas-racquet-club">Batangas Racquet Club</a><a href="/owner-portal.html?demo=demo-lipa-pickleball-hub">Lipa Pickleball Hub</a><a href="/owner-portal.html?demo=demo-santos-pickleball-club">Santos Pickleball Club</a><a href="/owner-portal.html?demo=demo-southside-sports-center">Southside Sports Center</a></div><p class="links"><a href="/demo.html">Explore Club, Coach & Player demo →</a></p></section>
 </main>
 <script type="module">
-import { supabase, supabaseConfigError } from './supabase-client.js';
+import { supabase } from './supabase-client.js';
+import { safeReturnTo, setupRecoveryLink } from './account-recovery.js';
+setupRecoveryLink(document.getElementById('forgotPasswordLink'), 'owner');
 const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton');
 let signup=false;
+let authPending=false;
 const signupParams=new URLSearchParams(location.search);
 function prefillSignup(){
  document.getElementById('ownerName').value=signupParams.get('name')||'';
@@ -59,23 +63,27 @@ function prefillSignup(){
  if(signupParams.get('courtCount')) document.getElementById('courtCount').value=signupParams.get('courtCount');
 }
 function message(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
-function setMode(next){signup=next;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
+function setMode(next){if(authPending)return;signup=next;document.getElementById('forgotPasswordLink').hidden=signup;const password=document.getElementById('password');password.minLength=signup?8:1;password.autocomplete=signup?'new-password':'current-password';password.placeholder=signup?'At least 8 characters':'Your password';document.getElementById('business').required=signup;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
+function routeTo(fallback){location.replace(safeReturnTo(signupParams.get('returnTo'),fallback,location.origin));}
 async function routeSignedInAccount(user){
- if(String(user.user_metadata?.account_type||'').toLowerCase()==='coach'){location.replace('/coach-portal.html');return;}
+ const accountType=String(user.user_metadata?.account_type||'').toLowerCase();
+ if(['club','sports_club'].includes(accountType)){routeTo('/club-dashboard.html');return;}
+ if(['courtly_admin','admin'].includes(accountType)){routeTo('/admin-billing.html');return;}
+ if(String(user.user_metadata?.account_type||'').toLowerCase()==='coach'){routeTo('/coach-portal.html');return;}
  const {data:coach}=await supabase.from('coach_profiles').select('id').eq('id',user.id).maybeSingle();
- if(coach){location.replace('/coach-portal.html');return;}
+ if(coach){routeTo('/coach-portal.html');return;}
  const {data:player}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
- if(player || user.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
- location.replace('/owner-portal.html');
+ if(player || user.user_metadata?.account_type==='player'){routeTo('/player-dashboard.html');return;}
+ routeTo('/owner-portal.html');
 }
-(async()=>{if(!supabase){message(supabaseConfigError);button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session?.user)await routeSignedInAccount(session.user);})().catch(e=>message(e.message));
+(async()=>{if(!supabase){message('Sign-in is temporarily unavailable. Please try again shortly.');button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session?.user)await routeSignedInAccount(session.user);})().catch(e=>message(e.message));
 form.addEventListener('submit',async e=>{
- e.preventDefault();button.disabled=true;button.textContent=signup?'Creating account...':'Signing in...';msg.className='msg';
+ e.preventDefault();if(authPending)return;authPending=true;button.disabled=true;document.getElementById('toggleMode').disabled=true;button.textContent=signup?'Creating account...':'Signing in...';msg.className='msg';
  const email=document.getElementById('email').value.trim().toLowerCase(),password=document.getElementById('password').value;
  try{
-  if(!supabase)throw new Error(supabaseConfigError);
+  if(!supabase)throw new Error('Sign-in is temporarily unavailable. Please try again shortly.');
   if(signup){
    const business=document.getElementById('business').value.trim();
    if(!business)throw new Error('Please enter your venue or business name.');
@@ -87,14 +95,10 @@ form.addEventListener('submit',async e=>{
    const {data,error}=await supabase.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data.session)throw new Error('Login did not create a session. Please try again.');
-   const {data:coachProfile}=await supabase.from('coach_profiles').select('id').eq('id',data.user.id).maybeSingle();
-   if(coachProfile || data.user?.user_metadata?.account_type==='coach'){location.replace('/coach-portal.html');return;}
-   const {data:playerProfile}=await supabase.from('player_profiles').select('id').eq('id',data.user.id).maybeSingle();
-   if(playerProfile || data.user?.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
-   message('Login successful. Opening your owner dashboard...','success');location.replace('/owner-portal.html');
+   message('Login successful. Opening your workspace…','success');await routeSignedInAccount(data.user);
   }
  }catch(err){message(err.message||'Unable to continue. Please try again.');}
- finally{button.disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
+ finally{authPending=false;button.disabled=false;document.getElementById('toggleMode').disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
 });
 </script>
 

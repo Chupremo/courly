@@ -1,4 +1,5 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
+import { dispatchBookingNotifications } from './notification-client.js';
 
 const DEMO_SLUGS = new Set([
   'demo-batangas-racquet-club', 'demo-lipa-pickleball-hub',
@@ -37,13 +38,15 @@ function localTimeToIso(dateText, timeText, timezone) {
 function mapBooking(row, courtMap, timezone) {
   const start = timeParts(row.starts_at, timezone);
   const end = timeParts(row.ends_at, timezone);
-  const status = row.status === 'confirmed' ? 'Confirmed' : row.status === 'cancelled' ? 'Cancelled' : row.status === 'rejected' ? 'Rejected' : 'Pending';
+  const status = ({ confirmed: 'Confirmed', completed: 'Completed', cancelled: 'Cancelled', rejected: 'Rejected', expired: 'Expired' })[row.status] || 'Pending';
   const paymentStatus = row.payment_status === 'confirmed' ? 'Paid'
     : row.payment_status === 'rejected' ? 'Rejected'
       : row.payment_status === 'awaiting_verification' ? 'Awaiting owner verification' : 'Unpaid';
   return {
     id: row.id, reference: row.reference, player: row.customer_name, email: row.customer_email,
     phone: row.customer_phone || '', date: start.date,
+    startsAt: row.starts_at, endsAt: row.ends_at,
+    startMinutes: start.hour * 60 + start.minute, endDate: end.date, endMinutes: end.hour * 60 + end.minute,
     time: `${formatHour(start.hour, start.minute)} – ${formatHour(end.hour, end.minute)}`,
     duration: row.duration_hours, court: courtMap.get(row.court_id) || 'Court', courtId: row.court_id,
     price: Number(row.subtotal || 0), subtotal: Number(row.subtotal || 0),
@@ -87,7 +90,9 @@ export async function loadOwnerWorkspace() {
   if (activityRegistrationError && !['PGRST202','42883'].includes(activityRegistrationError.code)) throw activityRegistrationError;
   const courtMap = new Map((courtRows || []).map((court) => [court.id, court.name]));
   const timezone = venue.timezone || 'Asia/Manila';
-  const courts = courtRows || [];
+  // Inactive courts remain in the lookup for historical reservations, but do
+  // not become active again when an owner saves unrelated venue settings.
+  const courts = (courtRows || []).filter((court) => court.is_active !== false);
   const events = (eventRows || []).map((event) => {
     const parts = timeParts(event.starts_at, timezone);
     return {
@@ -119,7 +124,14 @@ export async function loadOwnerWorkspace() {
   }));
   const blocks = (blockRows || []).map((block) => {
     const start = timeParts(block.starts_at, timezone);
-    return { id: block.id, date: start.date, time: formatHour(start.hour, start.minute), court: courtMap.get(block.court_id) || 'Court', reason: block.reason };
+    const end = timeParts(block.ends_at, timezone);
+    return {
+      id: block.id, date: start.date, time: formatHour(start.hour, start.minute),
+      court: courtMap.get(block.court_id) || 'Court', courtId: block.court_id, reason: block.reason,
+      startsAt: block.starts_at, endsAt: block.ends_at,
+      startMinutes: start.hour * 60 + start.minute, endDate: end.date, endMinutes: end.hour * 60 + end.minute,
+      duration: (new Date(block.ends_at) - new Date(block.starts_at)) / 3600000
+    };
   });
   const rates = courts.map((court) => Number(court.off_peak_rate ?? court.hourly_rate ?? 0));
   const peakRates = courts.map((court) => Number(court.peak_rate ?? court.off_peak_rate ?? court.hourly_rate ?? 0));
@@ -138,7 +150,7 @@ export async function loadOwnerWorkspace() {
       baseRate: rates.length ? Math.min(...rates) : 350, peakRate: peakRates.length ? Math.max(...peakRates) : 350,
       peakHoursStart: venue.peak_hours_start ? String(venue.peak_hours_start).slice(0,5) : '',
       peakHoursEnd: venue.peak_hours_end ? String(venue.peak_hours_end).slice(0,5) : '',
-      courtCount: courts.length, amenities: Array.isArray(venue.amenities) ? venue.amenities : [], courtImages: courts.map((court) => ({ data: court.image_url || '', fit: court.image_fit || 'cover', id: court.id })),
+      courtCount: courts.length, amenities: Array.isArray(venue.amenities) ? venue.amenities : [], courtImages: courts.map((court) => ({ data: court.image_url || '', fit: court.image_fit || 'cover', id: court.id, name: court.name })),
       logoData: venue.logo_url || '', coverData: venue.cover_url || '', paymentName: venue.payment_method || 'GCash QR',
       paymentAccount: venue.payment_account || '', paymentInstructions: venue.payment_instructions || '',
       qrData: venue.payment_qr_url || '', notifyEmail: venue.notify_email !== false,
@@ -171,146 +183,199 @@ async function assertCurrentOwnerCanManageVenue(venueId) {
   if (error) throw new Error(`Could not verify venue ownership before saving images: ${error.message}. Apply migration 004_owner_court_image_rls_fix.sql.`);
   if (allowed !== true) throw new Error(`Your signed-in account does not own venue ${venueId}. Sign in with the venue owner account or contact Courtly support to link the venue.`);
 }
-async function persistOwnerWorkspace(state) {
-  if (!state?.venue?.id) return;
-  const v = state.venue;
-  await assertCurrentOwnerCanManageVenue(v.id);
-  v.logoData = await uploadDataUrlOrKeep(v.logoData, v.id, 'logo');
-  v.coverData = await uploadDataUrlOrKeep(v.coverData, v.id, 'cover');
-  v.qrData = await uploadDataUrlOrKeep(v.qrData, v.id, 'payment-qr');
-  const payload = {
-    name: v.name, owner_name: v.owner, admin_email: v.email || null, phone: v.phone, address: v.location,
-    city: v.city || null, sport: v.sport, description: v.description, amenities: Array.isArray(v.amenities) ? v.amenities : [],
-    logo_url: v.logoData || null, cover_url: v.coverData || null,
-    payment_qr_url: v.qrData || null, payment_method: v.paymentName || 'GCash QR',
-    payment_account: v.paymentAccount || null, payment_instructions: v.paymentInstructions || null,
-    hours_open: v.hoursOpen || '08:00', hours_close: v.hoursClose || '22:00',
-    peak_hours_start: v.peakHoursStart || null, peak_hours_end: v.peakHoursEnd || null,
-    notify_email: v.notifyEmail !== false, notify_pending: v.notifyPending !== false,
-    notify_cancelled: v.notifyCancelled !== false, updated_at: new Date().toISOString()
-  };
-  const { error: venueError } = await supabase.from('venues').update(payload).eq('id', v.id);
-  if (venueError) throw new Error(`Venue profile update was rejected by Supabase: ${venueError.message}`);
-
-  const imageRows = [];
-  for (let index = 0; index < Number(v.courtCount || 0); index += 1) {
-    const image = v.courtImages?.[index] || {};
-    const imageUrl = await uploadDataUrlOrKeep(image.data, v.id, `court-${index + 1}`);
-    if (imageUrl) image.data = imageUrl;
-    imageRows.push({
-      venue_id: v.id, name: `Court ${index + 1}`, sport: v.sport || 'Multi-sport',
-      hourly_rate: Math.max(0, Number(v.baseRate ?? 350)),
-      off_peak_rate: Math.max(0, Number(v.baseRate ?? 350)),
-      peak_rate: Math.max(0, Number(v.peakRate ?? v.baseRate ?? 350)), is_active: true,
-      image_url: imageUrl, image_fit: image.fit === 'contain' ? 'contain' : 'cover', display_order: index + 1
-    });
-  }
-  const { data: currentCourts, error: currentCourtError } = await supabase.from('courts').select('id,name').eq('venue_id', v.id);
-  if (currentCourtError) throw currentCourtError;
-  if (imageRows.length) {
-    const { data: savedImageRows, error } = await supabase
-      .from('courts')
-      .upsert(imageRows, { onConflict: 'venue_id,name' })
-      .select('id,name,image_url,image_fit,is_active');
-    if (error) throw new Error(`Court records could not be saved after the Storage upload. Check the public.courts INSERT/UPDATE RLS policy: ${error.message}`);
-    // Verify each uploaded image URL was actually persisted before the owner
-    // portal reports success. This catches storage/RLS/schema issues clearly.
-    const savedByName = new Map((savedImageRows || []).map((row) => [row.name, row]));
-    for (const expected of imageRows) {
-      const saved = savedByName.get(expected.name);
-      if (!saved) throw new Error(`${expected.name} was not returned after saving. Please retry.`);
-      if (expected.image_url && saved.image_url !== expected.image_url) {
-        throw new Error(`${expected.name} image did not synchronize to the database. Please retry.`);
-      }
-    }
-  }
-  const activeNames = imageRows.map((row) => row.name);
-  const inactiveIds = (currentCourts || []).filter((row) => !activeNames.includes(row.name)).map((row) => row.id);
-  if (inactiveIds.length) {
-    const { error } = await supabase.from('courts').update({ is_active: false }).in('id', inactiveIds);
-    if (error) throw error;
-  }
-
-  const { data: savedCourts, error: savedCourtsError } = await supabase.from('courts').select('id,name').eq('venue_id', v.id).eq('is_active', true);
-  if (savedCourtsError) throw savedCourtsError;
-  const courtIdByName = new Map((savedCourts || []).map((row) => [row.name, row.id]));
-
-  // Open Play is canonical in the database. Upsert edited events and remove only
-  // events explicitly removed from this owner's in-memory list.
-  const eventPayloads = [];
-  for (const event of state.openPlays || []) {
-    const image = await uploadDataUrlOrKeep(event.image, v.id, `open-play-${event.id}`);
-    if (image) event.image = image;
-    eventPayloads.push({
-      id: event.id, venue_id: v.id, title: event.title, details: event.details || '',
-      banner_url: image, starts_at: localTimeToIso(event.date, event.time, v.timezone),
-      location_text: event.where || v.location, fee: Number(event.fee || 0),
-      registration_limit: event.limit ? Number(event.limit) : null,
-      is_published: event.active !== false, updated_at: new Date().toISOString()
-    });
-  }
-  const { data: currentEvents, error: eventsReadError } = await supabase.from('open_play_events').select('id').eq('venue_id', v.id);
-  if (eventsReadError) throw eventsReadError;
-  if (eventPayloads.length) {
-    const { error } = await supabase.from('open_play_events').upsert(eventPayloads, { onConflict: 'id' });
-    if (error) throw error;
-  }
-  const keptEventIds = new Set(eventPayloads.map((event) => event.id));
-  const removeEventIds = (currentEvents || []).map((event) => event.id).filter((id) => !keptEventIds.has(id));
-  if (removeEventIds.length) {
-    const { error } = await supabase.from('open_play_events').delete().in('id', removeEventIds);
-    if (error) throw error;
-  }
-
-  // Time blocks are keyed by their UUID. They are not bookings and never affect revenue.
-  const { data: currentBlocks, error: blockReadError } = await supabase.from('court_blocks').select('id').eq('venue_id', v.id);
-  if (blockReadError) throw blockReadError;
-  const blockPayloads = (state.blocks || []).filter((block) => /^[0-9a-f-]{36}$/i.test(String(block.id || ''))).map((block) => {
-    const hourMatch = String(block.time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if (!hourMatch) return null;
-    let hour = Number(hourMatch[1]) % 12;
-    if (hourMatch[3].toUpperCase() === 'PM') hour += 12;
-    const start = localTimeToIso(block.date, `${String(hour).padStart(2, '0')}:${hourMatch[2]}`, v.timezone);
-    const endDate = new Date(new Date(start).getTime() + 60 * 60 * 1000).toISOString();
-    const courtId = courtIdByName.get(block.court);
-    if (!courtId) return null;
-    return { id: block.id, venue_id: v.id, court_id: courtId, starts_at: start, ends_at: endDate, reason: block.reason || 'Unavailable' };
-  }).filter(Boolean);
-  if (blockPayloads.length) {
-    const { error } = await supabase.from('court_blocks').upsert(blockPayloads, { onConflict: 'id' });
-    if (error) throw error;
-  }
-  const keptBlockIds = new Set(blockPayloads.map((block) => block.id));
-  const removedBlockIds = (currentBlocks || []).map((block) => block.id).filter((id) => !keptBlockIds.has(id));
-  if (removedBlockIds.length) {
-    const { error } = await supabase.from('court_blocks').delete().in('id', removedBlockIds);
-    if (error) throw error;
-  }
+async function updateVenueFields(venueId, payload) {
+  const { error } = await supabase.from('venues')
+    .update({ ...payload, updated_at: new Date().toISOString() }).eq('id', venueId);
+  if (error) throw new Error(`Your venue changes could not be saved: ${error.message}`);
 }
 
-function queueOwnerWorkspaceSave(state) {
-  const nextWrite = pendingWrites.catch(() => {}).then(() => persistOwnerWorkspace(state));
+async function saveCourtSettings(state) {
+  const v = state.venue;
+  const count = Number(v.courtCount);
+  if (!Number.isInteger(count) || count < 1 || count > 16) throw new Error('Choose between 1 and 16 courts.');
+  const rates = [Number(v.baseRate), Number(v.peakRate)];
+  if (rates.some((rate) => !Number.isFinite(rate) || rate < 0)) throw new Error('Enter valid non-negative court prices.');
+  if (!v.hoursOpen || !v.hoursClose || v.hoursClose <= v.hoursOpen) throw new Error('Closing time must be later than opening time.');
+  const { data: currentRows, error: readError } = await supabase.from('courts').select('*').eq('venue_id', v.id);
+  if (readError) throw readError;
+  const currentById = new Map((currentRows || []).map((court) => [court.id, court]));
+  const loadedCourts = state.courts || [];
+  const usedNames = new Set((currentRows || []).map((court) => court.name));
+  const selected = [];
+  for (let index = 0; index < count; index += 1) {
+    const loaded = loadedCourts[index];
+    let court = loaded ? currentById.get(loaded.id) : null;
+    if (loaded && (!court || court.is_active === false)) {
+      throw new Error('A court changed since this page loaded. Refresh the workspace before saving.');
+    }
+    if (!court) {
+      let number = index + 1;
+      while (usedNames.has(`Court ${number}`)) number += 1;
+      court = { id: crypto.randomUUID(), name: `Court ${number}`, sport: v.sport || 'Multi-sport' };
+      usedNames.add(court.name);
+    }
+    // Preserve existing identities, names, sports and photos. Saving a rate
+    // must not silently create a replacement for a named court.
+    selected.push({
+      id: court.id, venue_id: v.id, name: court.name, sport: court.sport || v.sport || 'Multi-sport',
+      hourly_rate: rates[0], off_peak_rate: rates[0], peak_rate: rates[1],
+      image_url: court.image_url || null, image_fit: court.image_fit || 'cover',
+      display_order: index + 1, is_active: true
+    });
+  }
+  await updateVenueFields(v.id, {
+    hours_open: v.hoursOpen, hours_close: v.hoursClose,
+    peak_hours_start: v.peakHoursStart || null, peak_hours_end: v.peakHoursEnd || null
+  });
+  const { data: saved, error: saveError } = await supabase.from('courts')
+    .upsert(selected, { onConflict: 'id' }).select('*');
+  if (saveError) throw new Error(`Court settings could not be saved: ${saveError.message}`);
+  if ((saved || []).length !== selected.length) throw new Error('Some court settings were not returned after saving. Refresh to check their status.');
+  // Only deactivate courts explicitly removed from the loaded list. Courts
+  // created in another tab after this workspace loaded are not removed.
+  const removedIds = loadedCourts.slice(count).map((court) => court.id);
+  if (removedIds.length) {
+    const { error } = await supabase.from('courts').update({ is_active: false }).eq('venue_id', v.id).in('id', removedIds);
+    if (error) throw error;
+  }
+  const savedById = new Map(saved.map((court) => [court.id, court]));
+  state.courts = selected.map((court) => savedById.get(court.id));
+  v.courtImages = state.courts.map((court) => ({ id: court.id, name: court.name, data: court.image_url || '', fit: court.image_fit || 'cover' }));
+}
+
+async function saveCourtImage(state, index) {
+  const v = state.venue;
+  const court = state.courts?.[index];
+  const image = v.courtImages?.[index];
+  if (!court?.id || !image) throw new Error('Save the court count before adding a photo for this court.');
+  const imageUrl = await uploadDataUrlOrKeep(image.data, v.id, `court-${court.id}`);
+  const fit = image.fit === 'contain' ? 'contain' : 'cover';
+  const { data: saved, error } = await supabase.from('courts')
+    .update({ image_url: imageUrl, image_fit: fit }).eq('venue_id', v.id).eq('id', court.id)
+    .select('id,image_url,image_fit').single();
+  if (error) throw new Error(`Court photo could not be saved: ${error.message}`);
+  if (!saved || (saved.image_url || null) !== (imageUrl || null)) throw new Error('The court photo was not saved. Please refresh and try again.');
+  v.courtImages[index] = { ...image, id: court.id, name: court.name, data: saved.image_url || '', fit: saved.image_fit };
+  state.courts[index] = { ...court, image_url: saved.image_url, image_fit: saved.image_fit };
+}
+
+async function persistOwnerWorkspace(state, change = {}) {
+  if (!state?.venue?.id) throw new Error('Your venue has not finished loading. Please try again.');
+  const v = state.venue;
+  await assertCurrentOwnerCanManageVenue(v.id);
+  if (change.scope === 'profile') {
+    v.logoData = await uploadDataUrlOrKeep(v.logoData, v.id, 'logo');
+    v.coverData = await uploadDataUrlOrKeep(v.coverData, v.id, 'cover');
+    await updateVenueFields(v.id, {
+      name: v.name, owner_name: v.owner, admin_email: v.email || null, phone: v.phone,
+      address: v.location, city: v.city || null, sport: v.sport, description: v.description,
+      amenities: Array.isArray(v.amenities) ? v.amenities : [], logo_url: v.logoData || null, cover_url: v.coverData || null
+    });
+  } else if (change.scope === 'payments') {
+    v.qrData = await uploadDataUrlOrKeep(v.qrData, v.id, 'payment-qr');
+    await updateVenueFields(v.id, {
+      payment_qr_url: v.qrData || null, payment_method: v.paymentName || 'GCash QR',
+      payment_account: v.paymentAccount || null, payment_instructions: v.paymentInstructions || null
+    });
+  } else if (change.scope === 'notifications') {
+    await updateVenueFields(v.id, { notify_email: v.notifyEmail !== false, notify_pending: v.notifyPending !== false, notify_cancelled: v.notifyCancelled !== false });
+  } else if (change.scope === 'courts') {
+    await saveCourtSettings(state);
+  } else if (change.scope === 'courtImage') {
+    await saveCourtImage(state, change.index);
+  } else if (change.scope === 'openPlay') {
+    if (change.remove) {
+      const { error } = await supabase.from('open_play_events').delete().eq('venue_id', v.id).eq('id', change.id);
+      if (error) throw error;
+    } else {
+      const event = state.openPlays?.find((item) => item.id === change.id);
+      if (!event) throw new Error('This Open Play event is no longer available. Refresh and try again.');
+      const image = await uploadDataUrlOrKeep(event.image, v.id, `open-play-${event.id}`);
+      const { error } = await supabase.from('open_play_events').upsert({
+        id: event.id, venue_id: v.id, title: event.title, details: event.details || '',
+        banner_url: image, starts_at: localTimeToIso(event.date, event.time, v.timezone),
+        location_text: event.where || v.location, fee: Number(event.fee || 0),
+        registration_limit: event.limit ? Number(event.limit) : null,
+        is_published: event.active !== false, updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+      if (error) throw error;
+      event.image = image || '';
+    }
+  } else if (change.scope === 'block') {
+    if (change.remove) {
+      const { error } = await supabase.from('court_blocks').delete().eq('venue_id', v.id).eq('id', change.id);
+      if (error) throw error;
+    } else {
+      const block = state.blocks?.find((item) => item.id === change.id);
+      if (!block) throw new Error('This time block is no longer available.');
+      const court = (state.courts || []).find((item) => item.id === block.courtId || item.name === block.court);
+      if (!court?.id) throw new Error('The selected court is no longer active. Refresh and try again.');
+      const match = String(block.time || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!match) throw new Error('Choose a valid time to block.');
+      const hour = Number(match[1]) % 12 + (match[3].toUpperCase() === 'PM' ? 12 : 0);
+      const start = block.startsAt || localTimeToIso(block.date, `${String(hour).padStart(2, '0')}:${match[2]}`, v.timezone);
+      const end = block.endsAt || new Date(new Date(start).getTime() + Number(block.duration || 1) * 3600000).toISOString();
+      // Recheck occupancy immediately before saving a new block. The booking
+      // backend remains authoritative when a player is reserving concurrently.
+      const { data: overlaps, error: overlapError } = await supabase.from('bookings').select('id')
+        .eq('venue_id', v.id).eq('court_id', court.id).in('status', ['pending', 'confirmed'])
+        .lt('starts_at', end).gt('ends_at', start);
+      if (overlapError) throw overlapError;
+      if (overlaps?.length) throw new Error('This time now has a reservation. Refresh the calendar before blocking it.');
+      const { error } = await supabase.from('court_blocks').upsert({
+        id: block.id, venue_id: v.id, court_id: court.id, starts_at: start, ends_at: end, reason: block.reason || 'Unavailable'
+      }, { onConflict: 'id' });
+      if (error) throw error;
+      block.courtId = court.id;
+      block.startsAt = start;
+      block.endsAt = end;
+    }
+  } else {
+    throw new Error('Choose the settings or calendar item to save.');
+  }
+  return state;
+}
+
+function queueOwnerWorkspaceSave(state, change) {
+  // Capture this action now, rather than reading mutable form state after a
+  // previous upload finishes. Each write touches only its requested section.
+  const snapshot = structuredClone(state);
+  const before = structuredClone(snapshot);
+  const nextWrite = pendingWrites.catch(() => {}).then(() => persistOwnerWorkspace(snapshot, change));
   pendingWrites = nextWrite.catch(() => {});
-  return nextWrite;
+  return nextWrite.then(() => {
+    for (const key of ['logoData', 'coverData', 'qrData']) {
+      if (state.venue[key] === before.venue[key]) state.venue[key] = snapshot.venue[key];
+    }
+    if (change.scope === 'courts') {
+      state.courts = snapshot.courts;
+      state.venue.courtImages = snapshot.venue.courtImages;
+    } else if (change.scope === 'courtImage') {
+      state.courts[change.index] = snapshot.courts[change.index];
+      state.venue.courtImages[change.index] = snapshot.venue.courtImages[change.index];
+    } else if (change.scope === 'openPlay' && !change.remove) {
+      const event = state.openPlays?.find((item) => item.id === change.id);
+      const saved = snapshot.openPlays?.find((item) => item.id === change.id);
+      if (event && saved && event.image === before.openPlays?.find((item) => item.id === change.id)?.image) event.image = saved.image;
+    } else if (change.scope === 'block' && !change.remove) {
+      const block = state.blocks?.find((item) => item.id === change.id);
+      const saved = snapshot.blocks?.find((item) => item.id === change.id);
+      if (block && saved) Object.assign(block, saved);
+    }
+    return true;
+  });
 }
 async function reviewBooking(bookingId, decision) {
   const { data, error } = await supabase.rpc('review_court_booking_payment', { p_booking_id: bookingId, p_decision: decision });
   if (error) throw error;
-  if (decision === 'confirmed') {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData?.session?.access_token;
-    if (token) {
-      const response = await fetch('/api/receipts/issue', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ type: 'court_booking', id: bookingId }) });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) console.error('Courtly payment confirmed, but receipt delivery failed:', result.error || response.status);
-      else console.info('Courtly receipt issued:', result.receipt?.receipt_number || 'already processed');
-    }
-  }
+  // Payment is committed; dispatch must not delay or reverse the visible result.
+  void dispatchBookingNotifications(supabase, { type: 'court_booking', id: bookingId }).catch(() => {});
   return data;
 }
 async function cancelBooking(bookingId) {
   const { data, error } = await supabase.rpc('cancel_owner_booking', { p_booking_id: bookingId });
   if (error) throw error;
+  void dispatchBookingNotifications(supabase, { type: 'court_booking', id: bookingId }).catch(() => {});
   return data;
 }
 async function reviewCommunityActivityPayment(registrationId, decision) {

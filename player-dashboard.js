@@ -320,6 +320,16 @@ async function loadOpenPlayEvents() {
   if(error)throw error;openPlayEvents=data||[];
   if(openPlayEvents.length){const {data:counts,error:countError}=await supabase.rpc('get_open_play_registration_counts',{p_event_ids:openPlayEvents.map(e=>e.id)});if(!countError){const countMap=new Map((counts||[]).map(r=>[String(r.event_id),Number(r.registered_count||0)]));openPlayEvents=openPlayEvents.map(e=>({...e,registered_count:countMap.get(e.id)||0}));}}
 }
+async function refreshCommunityActivityBadge(){
+ if(!supabase||!user)return;
+ const {data,error}=await supabase.rpc('get_community_activity_unread_count');
+ if(error){console.warn('Could not load activity notifications:',error.message);return;}
+ const count=Math.max(0,Number(data||0));
+ document.querySelectorAll('[data-community-badge]').forEach(node=>{
+  node.textContent=count>99?'99+':String(count);
+  node.hidden=count===0;
+ });
+}
 async function init() {
   if(!supabase){root.innerHTML=`<div class="empty-state"><strong>Supabase is not configured</strong><span>${esc(supabaseConfigError)}</span></div>`;return;}
   const {data:{session},error:sessionError}=await supabase.auth.getSession(); if(sessionError)throw sessionError;
@@ -334,6 +344,9 @@ async function init() {
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
   await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity()]);
+  await refreshCommunityActivityBadge();
+  window.setInterval(refreshCommunityActivityBadge,30000);
+  window.addEventListener('focus',refreshCommunityActivityBadge);
   if(view==='players')await loadPlayerDirectory(directorySearch);
   if(view==='invites')await loadPlayerClubInvites();
   render();

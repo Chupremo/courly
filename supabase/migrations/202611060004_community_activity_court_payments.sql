@@ -92,6 +92,7 @@ as $$
   select auth.uid() is not null
     and (storage.foldername(p_name))[2]='community-activity'
     and (storage.foldername(p_name))[4]=auth.uid()::text
+    and exists(select 1 from public.player_profiles pp where pp.id=auth.uid())
     and exists(
       select 1
       from public.community_events e

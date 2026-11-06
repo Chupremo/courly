@@ -4,15 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#001A47">
-  <meta name="description" content="Discover community sports activities and RSVP with Courtly players.">
-  <title>Courtly Activity | Community RSVP</title>
+  <meta name="description" content="Join a Courtly community activity hosted at a registered sports court.">
+  <title>Courtly Activity | Activities &amp; Games</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/courtly-brand.css">
   <link rel="stylesheet" href="/courtly-global-nav.css?v=20261106">
-  <link rel="stylesheet" href="/community.css?v=2">
-  <link rel="stylesheet" href="/community-events.css?v=1">
+  <link rel="stylesheet" href="/community-events.css?v=2">
 </head>
 <body class="ce-detail-page">
   <header id="courtlyGlobalHeader" class="courtly-global-header"></header>
@@ -23,16 +22,20 @@
       <div class="ce-event-meta">
         <span>◷ <b id="eventDate">—</b></span>
         <span>◴ <b id="eventTime">—</b></span>
-        <span>₱ <b id="eventFee">Free</b></span>
+        <span>₱ <b id="eventFee">—</b></span>
       </div>
+      <button class="ce-share-main" id="eventShareButton" type="button">↗ Share activity</button>
     </div>
   </section>
+
+  <div class="ce-detail-banner" id="eventBannerWrap" hidden><img id="eventBanner" alt="Activity banner"></div>
 
   <main class="ce-detail-layout" id="eventMain">
     <section class="ce-detail-main">
       <div class="ce-detail-card ce-location-card">
         <div class="ce-location-copy">
-          <strong id="eventLocationName">Loading venue…</strong>
+          <span class="ce-section-eyebrow">REGISTERED COURT</span>
+          <strong id="eventLocationName">Loading venue and court…</strong>
           <small id="eventAddress">Location details will appear here.</small>
         </div>
         <a class="ce-map-link" id="eventMapLink" href="#" target="_blank" rel="noopener">See map ↗</a>
@@ -44,49 +47,56 @@
       </article>
       <section class="ce-host-card">
         <span class="ce-host-avatar" id="eventHostAvatar">CP</span>
-        <div class="ce-host-copy">
-          <small>Hosted by</small>
-          <strong id="eventHostName">Courtly Player</strong>
-          <span id="eventHostSubtitle">Activity host · Courtly player</span>
-        </div>
+        <div class="ce-host-copy"><small>Hosted by</small><strong id="eventHostName">Courtly Player</strong><span>Activity host · Courtly player</span></div>
         <button id="eventCancelActivity" type="button" hidden>Cancel activity</button>
       </section>
     </section>
 
-    <aside class="ce-rsvp-card">
-      <div class="ce-rsvp-heading">
-        <strong id="eventConfirmedCount">Confirmed · 0</strong>
-        <span id="eventCapacity">0 players confirmed</span>
-      </div>
-      <div class="ce-attendee-grid" id="eventAttendees">
-        <div class="ce-attendees-empty">Loading confirmed players…</div>
-      </div>
-      <div class="ce-attendee-summary" id="eventConfirmedSummary"></div>
-      <section class="ce-waitlist" id="eventWaitlistBlock" hidden>
-        <h3 id="eventWaitlistCount">Waitlist</h3>
-        <div class="ce-attendee-grid" id="eventWaitlist"></div>
+    <aside class="ce-event-aside">
+      <section class="ce-rsvp-card">
+        <div class="ce-rsvp-heading"><strong id="eventConfirmedCount">Confirmed · 0</strong><span id="eventCapacity">0 / 0 players</span></div>
+        <p class="ce-roster-note">Only the host and players with owner-verified payments appear in this confirmed list.</p>
+        <div class="ce-attendee-grid" id="eventAttendees"><div class="ce-attendees-empty">Loading confirmed players…</div></div>
+        <div class="ce-attendee-summary" id="eventConfirmedSummary"></div>
       </section>
-      <div class="ce-event-status-note" id="eventStatusNote">RSVP confirms your place. Any listed fee is payable directly to the host or venue.</div>
-      <div class="ce-rsvp-status" id="eventRsvpStatus" aria-live="polite"></div>
-      <div class="ce-signin-prompt" id="eventSignInPrompt" hidden>
-        Sign in to confirm your place. <a href="/player-login.html">Player login</a> or <a href="/player-register.html">create a free account</a>.
-      </div>
-      <button class="community-secondary" id="eventAttendanceRefresh" type="button" style="width:100%;margin-top:12px">↻ Refresh attendees</button>
+
+      <section class="ce-payment-card" id="eventPaymentCard">
+        <span class="ce-section-eyebrow">PAY THE VENUE</span>
+        <h2 id="eventPaymentTitle">Venue payment details</h2>
+        <div class="ce-payment-method" id="eventPaymentMethod">Loading payment method…</div>
+        <div class="ce-payment-qr" id="eventPaymentQrWrap" hidden><img id="eventPaymentQr" alt="Venue payment QR code"></div>
+        <div class="ce-payment-account" id="eventPaymentAccount"></div>
+        <p id="eventPaymentInstructions">Payment instructions provided by the venue owner will appear here.</p>
+        <div class="ce-payment-amount"><span>Amount per player</span><strong id="eventPaymentAmount">—</strong></div>
+      </section>
+
+      <section class="ce-registration-card" id="eventRegistrationCard">
+        <div class="ce-registration-heading"><div><span class="ce-section-eyebrow">JOIN THIS GAME</span><h2 id="eventRegistrationTitle">Register to join</h2></div></div>
+        <div class="ce-registration-status" id="eventRegistrationStatus" aria-live="polite"></div>
+        <div class="ce-registration-existing" id="eventExistingRegistration" hidden></div>
+        <div class="ce-signin-prompt" id="eventSignInPrompt" hidden>Sign in with a Courtly player account to register. <a href="/player-login.html">Player login</a> or <a href="/player-register.html">create an account</a>.</div>
+        <form id="eventRegistrationForm" class="ce-registration-form" hidden>
+          <label for="eventPaymentReference">Payment reference / sender name</label>
+          <input id="eventPaymentReference" maxlength="120" placeholder="e.g. GCash reference number">
+          <label for="eventPaymentReceipt">Upload payment proof <span id="eventReceiptRequiredMark">*</span></label>
+          <input id="eventPaymentReceipt" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif">
+          <small class="ce-field-help">JPG, PNG or WebP. Maximum 10 MB. Payment is sent directly to the selected venue.</small>
+          <div class="ce-fee-note" id="eventReceiptNote">After you submit, your registration stays waitlisted until the venue owner verifies your payment. Your profile is added to the confirmed roster only after approval.</div>
+          <button class="ce-rsvp-button" id="eventSubmitRegistration" type="submit">Submit registration</button>
+        </form>
+        <button class="ce-rsvp-button" id="eventOpenRegistration" type="button">Register &amp; join</button>
+        <button class="ce-cancel-registration" id="eventCancelRegistration" type="button" hidden>Cancel my registration</button>
+        <div class="ce-event-status-note" id="eventStatusNote">Your activity place will be confirmed by the venue owner after payment verification.</div>
+      </section>
     </aside>
   </main>
 
   <div class="ce-sticky-bar" id="eventStickyBar">
-    <div class="ce-sticky-meta">
-      <strong id="eventStickyTitle">Activity date and time</strong>
-      <small id="eventStickyFee">Free</small>
-    </div>
-    <div class="ce-sticky-action">
-      <small class="ce-sticky-note">RSVP confirms your place. No payment is collected by Courtly here.</small>
-      <button class="ce-rsvp-button" id="eventRsvpButton" type="button">Confirm my RSVP</button>
-    </div>
+    <div class="ce-sticky-meta"><strong id="eventStickyTitle">Activity date and time</strong><small id="eventStickyFee">—</small></div>
+    <div class="ce-sticky-action"><small class="ce-sticky-note">Venue owners verify payment before confirming players.</small><button class="ce-rsvp-button" id="eventStickyJoin" type="button">Register to join</button></div>
   </div>
   <div class="community-toast" id="eventToast" role="status" aria-live="polite"></div>
-  <script type="module" src="/community-event.js?v=1"></script>
+  <script type="module" src="/community-event.js?v=2"></script>
   <script type="module" src="/courtly-global-nav.js?v=20261106"></script>
 </body>
 </html>

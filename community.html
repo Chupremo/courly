@@ -4,116 +4,73 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#001A47">
-  <meta name="description" content="Share your sports moments, follow players and connect with Courtly venues.">
-  <title>Courtly Community</title>
+  <meta name="description" content="Discover Courtly activities and games hosted at registered sports courts.">
+  <title>Activities &amp; Games | Courtly</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/courtly-brand.css">
   <link rel="stylesheet" href="/courtly-responsive.css">
-  <link rel="stylesheet" href="/community.css?v=2">
-  <link rel="stylesheet" href="/community-events.css?v=1">
-  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
+  <link rel="stylesheet" href="/community-events.css?v=2">
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261106">
 </head>
-<body>
-  <header class="community-topbar">
-    <a href="/" class="community-brand"><img src="/assets/courtly-logo.png" alt="Courtly"></a>
-    <nav aria-label="Community navigation">
-      <a href="/player-dashboard.html">Player dashboard</a>
-      <a href="/players.html">Find venues</a>
-      <a href="/owner-portal.html">Owner portal</a>
-    </nav>
-    <div class="community-user" id="communityUser">Loading account…</div>
-  </header>
-
-  <main class="community-layout">
-    <section class="community-intro">
-      <div class="eyebrow">COURTLY COMMUNITY</div>
-      <h1>Play together. Share the game.</h1>
-      <p>Connect with players and sports venues. Share match moments, discover local games and build your sports network.</p>
-    </section>
-
-    <section class="community-composer card" id="communityComposer" hidden>
-      <div class="composer-heading">
-        <div><span class="composer-kicker">YOUR COMMUNITY</span><h2>Share an update</h2></div>
-        <span class="community-role" id="communityRole">Player</span>
+<body class="ce-community-page">
+  <header id="courtlyGlobalHeader" class="courtly-global-header"></header>
+  <main class="ce-community-layout">
+    <section class="ce-community-heading">
+      <div>
+        <span class="ce-eyebrow">COURTLY COMMUNITY</span>
+        <h1>Activities &amp; Games <span id="communityUnreadBadge" class="ce-notification-badge" hidden>0</span></h1>
+        <p>Join games hosted at registered Courtly venues. Your place is confirmed after the venue owner verifies your payment.</p>
       </div>
-      <form id="communityPostForm">
-        <textarea id="communityPostBody" maxlength="2000" rows="3" placeholder="What's happening on your court? Share a game, a highlight or an update…"></textarea>
-        <div class="community-media-preview" id="communityMediaPreview" hidden></div>
-        <div class="composer-actions">
-          <div class="composer-tools">
-            <label class="media-pick">＋ Add photo or video<input id="communityMediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"></label>
-            <span class="media-limit">Photos and videos up to 100 MB</span>
-          </div>
-          <button class="community-primary" id="communityPostButton" type="submit">Post to community</button>
-        </div>
-        <div class="community-inline-message" id="communityPostMessage" aria-live="polite"></div>
-      </form>
-      <p class="privacy-reminder">Public community posts are visible to signed-in Courtly members. If your player profile is private, your posts are visible only to you.</p>
+      <div class="ce-heading-actions">
+        <button type="button" class="ce-button-secondary" id="refreshCommunityEvents">↻ Refresh</button>
+        <button type="button" class="ce-button-primary" id="openEventComposer" hidden>＋ Host an activity</button>
+      </div>
     </section>
 
-    <section class="community-event-composer card" id="communityEventComposer" hidden>
+    <section class="community-event-composer ce-create-panel" id="communityEventComposer" hidden>
       <div class="composer-heading">
-        <div><span class="composer-kicker">HOST A GAME</span><h2>Create a player activity</h2></div>
-        <button class="community-secondary" id="closeCommunityEventComposer" type="button">Close</button>
+        <div><span class="composer-kicker">HOST A GAME</span><h2>Create an activity at a Courtly venue</h2><p class="ce-muted">Choose a registered venue and active court. Courtly reserves that court/time so another player cannot book it.</p></div>
+        <button class="ce-button-secondary" id="closeCommunityEventComposer" type="button">Close</button>
       </div>
       <form id="communityEventForm" class="ce-create-form">
-        <div class="ce-form-field ce-form-wide"><label for="communityEventTitle">Activity title *</label><input id="communityEventTitle" maxlength="120" required placeholder="e.g. Friday Pickleball Social"></div>
+        <div class="ce-form-field ce-form-wide"><label for="communityEventTitle">Activity title *</label><input id="communityEventTitle" maxlength="120" required placeholder="e.g. Saturday Pickleball Social"></div>
         <div class="ce-form-field"><label for="communityEventSport">Sport *</label><select id="communityEventSport" required><option value="">Choose a sport</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Padel</option><option>Tennis</option><option>Volleyball</option><option>Football</option><option>Futsal</option><option>Running</option><option>Swimming</option><option>Other</option></select></div>
         <div class="ce-form-field"><label for="communityEventType">Activity type *</label><select id="communityEventType"><option>Open Play</option><option>Social game</option><option>Training session</option><option>Tournament</option><option>Other</option></select></div>
+        <div class="ce-form-field"><label for="communityEventVenue">Registered venue *</label><select id="communityEventVenue" required><option value="">Loading registered venues…</option></select></div>
+        <div class="ce-form-field"><label for="communityEventCourt">Registered court *</label><select id="communityEventCourt" required disabled><option value="">Choose a venue first</option></select></div>
+        <div class="ce-form-field ce-form-wide"><div class="ce-selected-venue" id="communitySelectedVenue">Select a registered venue and court to see its address, payment methods and available rate.</div></div>
         <div class="ce-form-field"><label for="communityEventDate">Date *</label><input id="communityEventDate" type="date" required></div>
-        <div class="ce-form-field"><label for="communityEventTime">Start time *</label><input id="communityEventTime" type="time" required></div>
-        <div class="ce-form-field"><label for="communityEventDuration">Duration *</label><select id="communityEventDuration"><option value="60">1 hour</option><option value="90">1 hour 30 minutes</option><option value="120" selected>2 hours</option><option value="150">2 hours 30 minutes</option><option value="180">3 hours</option><option value="240">4 hours</option><option value="360">6 hours</option><option value="480">8 hours</option></select></div>
-        <div class="ce-form-field"><label for="communityEventCapacity">Maximum players</label><input id="communityEventCapacity" type="number" min="2" max="500" step="1" placeholder="No limit"></div>
-        <div class="ce-form-field"><label for="communityEventLocation">Venue / meeting place *</label><input id="communityEventLocation" maxlength="160" required placeholder="e.g. Mutual Homes Covered Court"></div>
-        <div class="ce-form-field ce-form-wide"><label for="communityEventAddress">Street address / landmark</label><input id="communityEventAddress" maxlength="240" placeholder="Court address or nearby landmark"></div>
-        <div class="ce-form-field"><label for="communityEventCity">City / province</label><input id="communityEventCity" maxlength="100" placeholder="e.g. Lipa City, Batangas"></div>
-        <div class="ce-form-field"><label for="communityEventFee">Fee per player (₱)</label><input id="communityEventFee" type="number" min="0" max="100000" step="0.01" value="0"></div>
-        <div class="ce-form-field ce-form-wide"><label for="communityEventDescription">Activity details</label><textarea id="communityEventDescription" maxlength="5000" rows="5" placeholder="Tell players what to expect, skill level, equipment to bring, cost sharing and other details…"></textarea></div>
-        <div class="ce-fee-note ce-form-wide">RSVP confirms a player’s place. Any listed fee is payable directly to the host or venue; Courtly does not collect payment for community activity RSVPs.</div>
+        <div class="ce-form-field"><label for="communityEventTime">Start time *</label><input id="communityEventTime" type="time" required step="3600"></div>
+        <div class="ce-form-field"><label for="communityEventDuration">Court reservation duration *</label><select id="communityEventDuration"><option value="60">1 hour</option><option value="120" selected>2 hours</option><option value="180">3 hours</option><option value="240">4 hours</option><option value="300">5 hours</option><option value="360">6 hours</option><option value="420">7 hours</option><option value="480">8 hours</option></select></div>
+        <div class="ce-form-field"><label for="communityEventCapacity">Maximum players (including host) *</label><input id="communityEventCapacity" type="number" min="2" max="500" step="1" value="8" required></div>
+        <div class="ce-form-field"><label for="communityEventFee">Player fee (₱ per player) *</label><input id="communityEventFee" type="number" min="0" max="100000" step="0.01" value="0" required><small id="communitySuggestedFee" class="ce-field-help">Choose a court and capacity to calculate a suggested share.</small></div>
+        <div class="ce-form-field"><label for="communityEventMap">Map / landmark (Google Maps)</label><input id="communityEventMap" type="text" maxlength="240" placeholder="Search a landmark or address"><small id="communityMapsHelp" class="ce-field-help">Optional location pin for players. Court booking stays tied to the selected registered court.</small></div>
+        <input id="communityEventPlaceId" type="hidden"><input id="communityEventPlaceLat" type="hidden"><input id="communityEventPlaceLng" type="hidden">
+        <div class="ce-form-field ce-form-wide">
+          <label for="communityEventBanner">Activity banner</label>
+          <input id="communityEventBanner" type="file" accept="image/jpeg,image/png,image/webp">
+          <div class="ce-banner-guidance"><strong>Recommended mobile banner: 1200 × 1500 px (4:5)</strong><span>JPG, PNG or WebP · Maximum 5 MB. This image appears on the activity card and social sharing preview.</span></div>
+          <div class="ce-banner-preview" id="communityBannerPreview" hidden><img id="communityBannerPreviewImage" alt="Activity banner preview"><button type="button" id="clearCommunityBanner">Remove banner</button></div>
+        </div>
+        <div class="ce-form-field ce-form-wide"><label for="communityEventDescription">Activity details</label><textarea id="communityEventDescription" maxlength="5000" rows="4" placeholder="Share the skill level, rules, equipment to bring and what players should expect…"></textarea></div>
+        <div class="ce-fee-note ce-form-wide">The selected court/time is reserved when you publish. Players register and upload payment proof to the venue. Their profiles appear in the confirmed list only after the venue owner verifies payment. The host is automatically listed as confirmed.</div>
         <div class="community-inline-message ce-form-wide" id="communityEventMessage" aria-live="polite"></div>
-        <div class="ce-form-actions ce-form-wide"><button class="community-primary" id="publishCommunityEvent" type="submit">Publish activity</button></div>
+        <div class="ce-form-actions ce-form-wide"><button class="ce-button-primary" id="publishCommunityEvent" type="submit">Publish activity</button></div>
       </form>
-      <p class="privacy-reminder" id="communityEventPrivacyNote">Your public player profile is shown as the activity host.</p>
     </section>
 
-    <div class="community-stream-tabs" role="tablist" aria-label="Community content">
-      <button type="button" class="active" data-community-stream-tab="posts" role="tab" aria-selected="true">Community posts</button>
-      <button type="button" data-community-stream-tab="activities" role="tab" aria-selected="false">Activities &amp; games</button>
-    </div>
-
-    <section class="community-feed-section" id="communityPostsPanel">
-      <div class="feed-toolbar">
-        <div><div class="eyebrow">THE COURTLY FEED</div><h2>Community posts</h2></div>
-        <button class="community-secondary" id="refreshCommunityFeed" type="button">↻ Refresh</button>
+    <section class="ce-events-panel" id="communityEventsSection">
+      <div class="ce-feed-toolbar">
+        <div><span class="ce-eyebrow">FIND YOUR NEXT GAME</span><h2>Upcoming activities</h2><p class="ce-muted">Browse games, check the venue and see who's confirmed.</p></div>
+        <div class="ce-filter-row"><select id="communitySportFilter" aria-label="Filter by sport"><option value="">All sports</option><option>Pickleball</option><option>Badminton</option><option>Basketball</option><option>Padel</option><option>Tennis</option><option>Volleyball</option></select></div>
       </div>
-      <div id="communityFeed" class="community-feed" aria-live="polite">
-        <div class="community-state">Loading community posts…</div>
-      </div>
-    </section>
-
-    <section class="community-feed-section ce-events-panel" id="communityEventsPanel" hidden>
-      <div class="feed-toolbar">
-        <div><div class="eyebrow">PLAYER-HOSTED ACTIVITIES</div><h2>Upcoming activities</h2><p>Find a game, see who’s confirmed and RSVP with other Courtly players.</p></div>
-        <div class="ce-feed-actions"><button class="community-secondary" id="refreshCommunityEvents" type="button">↻ Refresh</button><button class="community-primary" id="openEventComposer" type="button" hidden>＋ Create activity</button></div>
-      </div>
-      <div id="communityEventsSection">
-        <div id="communityEventsFeed" class="ce-event-grid" aria-live="polite"><div class="community-state">Loading player activities…</div></div>
-      </div>
-    </section>
-
-    <section class="community-signin card" id="communitySignin" hidden>
-      <div class="community-signin-icon">✦</div>
-      <h2>Join the Courtly community</h2>
-      <p>Sign in as a player or venue owner to share updates, like posts and comment.</p>
-      <div class="signin-actions"><a class="community-primary" href="/player-login.html">Log in as player</a><a class="community-secondary" href="/login.html">Log in as business owner</a></div>
+      <div id="communityEventsFeed" class="ce-event-grid" aria-live="polite"><div class="community-state">Loading activities…</div></div>
     </section>
   </main>
-
   <div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>
-  <script type="module" src="/community.js"></script>
-  <script type="module" src="/community-events.js"></script>
-  <script type="module" src="/courtly-global-nav.js?v=player-home-20261106"></script>
+  <script type="module" src="/community-events.js?v=2"></script>
+  <script type="module" src="/courtly-global-nav.js?v=activities-only-20261106"></script>
 </body>
 </html>

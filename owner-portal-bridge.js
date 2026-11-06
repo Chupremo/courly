@@ -72,16 +72,19 @@ async function currentOwnerVenue() {
 export async function loadOwnerWorkspace() {
   const { user, venue } = await currentOwnerVenue();
   const [{ data: courtRows, error: courtError }, { data: bookingRows, error: bookingError },
-    { data: eventRows, error: eventError }, { data: blockRows, error: blockError }] = await Promise.all([
+    { data: eventRows, error: eventError }, { data: blockRows, error: blockError },
+    { data: activityRegistrationRows, error: activityRegistrationError }] = await Promise.all([
     supabase.from('courts').select('*').eq('venue_id', venue.id).order('display_order', { ascending: true }),
     supabase.from('bookings').select('*').eq('venue_id', venue.id).order('created_at', { ascending: false }),
     supabase.from('open_play_events').select('*').eq('venue_id', venue.id).order('starts_at', { ascending: true }),
-    supabase.from('court_blocks').select('*').eq('venue_id', venue.id).order('starts_at', { ascending: true })
+    supabase.from('court_blocks').select('*').eq('venue_id', venue.id).order('starts_at', { ascending: true }),
+    supabase.rpc('get_owner_community_activity_registrations')
   ]);
   if (courtError) throw courtError;
   if (bookingError) throw bookingError;
   if (eventError) throw eventError;
   if (blockError) throw blockError;
+  if (activityRegistrationError && !['PGRST202','42883'].includes(activityRegistrationError.code)) throw activityRegistrationError;
   const courtMap = new Map((courtRows || []).map((court) => [court.id, court.name]));
   const timezone = venue.timezone || 'Asia/Manila';
   const courts = courtRows || [];
@@ -102,6 +105,18 @@ export async function loadOwnerWorkspace() {
     }
     return booking;
   }));
+  const communityActivityPayments = await Promise.all((activityRegistrationRows || []).map(async (row) => {
+    let receiptUrl = '';
+    if (row.receipt_path) {
+      const { data: signed } = await supabase.storage.from('courtly-payment-receipts').createSignedUrl(row.receipt_path, 600);
+      receiptUrl = signed?.signedUrl || '';
+    }
+    return {
+      ...row, receiptUrl, amount: Number(row.amount || 0),
+      player: row.player_name || 'Courtly Player',
+      event: row.event_title || 'Community activity'
+    };
+  }));
   const blocks = (blockRows || []).map((block) => {
     const start = timeParts(block.starts_at, timezone);
     return { id: block.id, date: start.date, time: formatHour(start.hour, start.minute), court: courtMap.get(block.court_id) || 'Court', reason: block.reason };
@@ -113,6 +128,7 @@ export async function loadOwnerWorkspace() {
     blocks,
     courts,
     bookings,
+    communityActivityPayments,
     venue: {
       id: venue.id, name: venue.name, owner: venue.owner_name || user.user_metadata?.owner_name || user.email?.split('@')[0] || 'Owner',
       email: venue.admin_email || user.email || '', phone: venue.phone || '', location: venue.address || venue.city || '', city: venue.city || '',
@@ -297,11 +313,19 @@ async function cancelBooking(bookingId) {
   if (error) throw error;
   return data;
 }
+async function reviewCommunityActivityPayment(registrationId, decision) {
+  const { data, error } = await supabase.rpc('review_community_activity_payment', {
+    p_registration_id: registrationId, p_decision: decision
+  });
+  if (error) throw error;
+  return data;
+}
 
 window.courtlyLoadOwnerWorkspace = loadOwnerWorkspace;
 window.courtlyPersistOwnerWorkspace = queueOwnerWorkspaceSave;
 window.courtlyReviewBooking = reviewBooking;
 window.courtlyCancelBooking = cancelBooking;
+window.courtlyReviewCommunityActivityPayment = reviewCommunityActivityPayment;
 window.courtlySupabase = supabase;
 window.courtlyBridgeReady = Promise.resolve(true);
 window.dispatchEvent(new Event('courtly-bridge-ready'));

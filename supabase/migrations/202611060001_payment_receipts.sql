@@ -3,7 +3,7 @@ create sequence if not exists public.courtly_receipt_number_seq start 1;
 
 create table if not exists public.payment_receipts (
   id uuid primary key default gen_random_uuid(),
-  receipt_number text not null unique,
+  receipt_number text not null unique default ('CR-' || to_char(now() at time zone 'Asia/Manila','YYYYMMDD') || '-' || lpad(nextval('public.courtly_receipt_number_seq')::text,6,'0')),
   source_type text not null check (source_type in ('court_booking','coaching_booking')),
   source_id uuid not null,
   player_id uuid not null references auth.users(id) on delete restrict,

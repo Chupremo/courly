@@ -170,7 +170,7 @@ AS $$
     e.host_id=auth.uid()
   FROM public.community_events e
   JOIN public.player_profiles pp ON pp.id=e.host_id
-  WHERE auth.uid() IS NOT NULL
+  WHERE (auth.uid() IS NOT NULL OR p_event_id IS NOT NULL)
     AND (p_event_id IS NULL OR e.id=p_event_id)
     AND (e.starts_at >= now() - interval '12 hours' OR e.host_id=auth.uid())
     AND (e.status='published' OR e.host_id=auth.uid())
@@ -342,8 +342,8 @@ REVOKE ALL ON FUNCTION public.rsvp_community_event(uuid) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.cancel_community_event_rsvp(uuid) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.cancel_community_event(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.create_community_event(text,text,text,timestamptz,integer,text,text,text,numeric,integer,text) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.get_community_events(uuid,integer) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.get_community_event_attendees(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_community_events(uuid,integer) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_community_event_attendees(uuid) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.rsvp_community_event(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.cancel_community_event_rsvp(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.cancel_community_event(uuid) TO authenticated;

@@ -38,7 +38,7 @@
     <button class="mobile-nav-backdrop" id="mobileNavBackdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
     <aside class="sidebar" id="playerSidebar" aria-label="Player navigation">
       <a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a>
-      <div class="side-user"><div class="avatar" id="sideAvatar">C</div><div class="user-meta"><strong id="sideName">Player</strong><span class="skill-pill" id="sideSkill">Player</span></div></div>
+      <div class="side-user"><a class="account-avatar-link" href="/player-dashboard.html?view=profile" aria-label="Update your player account and profile photo"><div class="avatar" id="sideAvatar">C</div></a><div class="user-meta"><strong id="sideName">Player</strong><span class="skill-pill" id="sideSkill">Player</span></div></div>
       <div class="side-label">Navigation</div>
       <nav class="side-nav" aria-label="Player navigation">
         <a class="nav-link" data-view="home" href="/player-dashboard.html?view=home"><span class="nav-ico">⌂</span><span>Home<small>Marketplace &amp; featured</small></span></a>
@@ -58,7 +58,7 @@
       <div class="side-bottom"><button id="logoutButton" type="button">↪ &nbsp; <span>Log out</span></button></div>
     </aside>
     <main class="main">
-      <header class="topbar"><button class="mobile-menu-toggle" id="mobileMenuButton" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="playerSidebar"><span></span><span></span><span></span></button><div class="crumb">COURTLY / <b id="crumbText">Player dashboard</b></div><div class="top-actions"><a class="top-btn" href="/players.html">Browse venues & coaches ↗</a><div class="top-profile"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></div></div></header>
+      <header class="topbar"><button class="mobile-menu-toggle" id="mobileMenuButton" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="playerSidebar"><span></span><span></span><span></span></button><div class="crumb">COURTLY / <b id="crumbText">Player dashboard</b></div><div class="top-actions"><a class="top-btn" href="/players.html">Browse venues & coaches ↗</a><a class="top-profile account-avatar-link" href="/player-dashboard.html?view=profile" aria-label="Update your player account and profile photo"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></a></div></header>
       <section class="content"><div id="viewRoot"><div class="loading">Loading your Courtly player space…</div></div></section>
     </main>
   </div>

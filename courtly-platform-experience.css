@@ -196,3 +196,8 @@ body:has(.app .side) .heading h1{font-family:Poppins,Inter,sans-serif;letter-spa
  body:has(#venueInfoPanel) .venue-amenity-item{padding:8px;font-size:10px}
  body:has(.app .side) .side .navbtn{padding-inline:10px!important}
 }
+@media(max-width:760px){
+ body:has(#viewRoot) .courtly-mobile-tabs{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:0!important}
+ body:has(#viewRoot) .courtly-mobile-tabs a{font-size:8px!important}
+ body:has(#viewRoot) .courtly-mobile-tabs a .tab-icon{font-size:17px!important}
+}

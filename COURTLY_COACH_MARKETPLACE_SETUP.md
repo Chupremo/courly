@@ -65,6 +65,14 @@ The `/admin-coaches` console uses the existing `public.is_courtly_admin()` autho
 
 Use the admin console to review coach details and grant/remove the Verified badge. Coaches cannot set their own verification fields.
 
+## Step 4A — Update the admin coach marketplace cards
+
+After migration 014 is installed, run this additive migration in Supabase SQL Editor:
+
+`019_admin_coach_marketplace_cards.sql`
+
+It updates the admin coach-data RPC to return each coach's profile photo, cover photo, biography, experience and public profile slug. The updated `admin-coaches.html` uses those fields to render marketplace-style coach cards while retaining the admin verification and remittance controls.
+
 ## Step 5 — Deploy website files
 
 Copy the files from the targeted patch into the existing GitHub `courly` repository, preserving the folder structure. The updated files include:

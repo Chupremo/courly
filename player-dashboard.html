@@ -62,6 +62,24 @@
     </main>
   </div>
   <div class="modal" id="sportModal" role="dialog" aria-modal="true" aria-labelledby="sportModalTitle"><section class="modal-box"><div class="modal-head"><h2 id="sportModalTitle">Select your sport</h2><button type="button" id="closeSportModal" aria-label="Close">✕</button></div><p class="modal-desc">Choose the sport marketplace you want to explore. You can change this any time.</p><input class="sport-modal-search" id="sportModalSearch" type="search" placeholder="Search sports…"><div class="sport-modal-grid" id="sportModalGrid"></div></section></div>
+    <nav class="courtly-mobile-tabs" aria-label="Player navigation">
+    <a href="/player-dashboard.html?view=home" aria-label="Home" data-mobile-tab="home"><span class="tab-icon">⌂</span><span>Home</span></a>
+    <a href="/player-dashboard.html?view=discover" aria-label="Discover" data-mobile-tab="discover"><span class="tab-icon">◎</span><span>Discover</span></a>
+    <a href="/player-dashboard.html?view=discover&amp;mode=openplay" aria-label="Open Play" data-mobile-tab="openplay"><span class="tab-icon">＋</span><span>Open Play</span></a>
+    <a href="/player-dashboard.html?view=bookings" aria-label="Bookings" data-mobile-tab="bookings"><span class="tab-icon">▣</span><span>Bookings</span></a>
+    <a href="/player-dashboard.html?view=profile" aria-label="Profile" data-mobile-tab="profile"><span class="tab-icon">♙</span><span>Profile</span></a>
+  </nav>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      let active = params.get('view') || 'home';
+      if (active === 'home' || !active) active = 'home';
+      if (active === 'discover' && params.get('mode') === 'openplay') active = 'openplay';
+      document.querySelectorAll('[data-mobile-tab]').forEach(link => {
+        if (link.dataset.mobileTab === active) link.setAttribute('aria-current','page');
+      });
+    })();
+  </script>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/player-dashboard.js?v=public-profile-details-20261106"></script>
 

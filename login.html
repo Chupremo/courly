@@ -20,7 +20,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 
 <link rel="stylesheet" href="/courtly-responsive.css">
   <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
-</head>
+<link rel="stylesheet" href="/account-recovery.css"></head>
 <body>
 <main class="card">
 <h1 id="heading">Welcome back</h1>
@@ -37,6 +37,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 </div>
 <div class="field"><label for="email">Email address</label><input id="email" type="email" required autocomplete="username" placeholder="you@example.com"></div>
 <div class="field"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password" placeholder="Your password"></div>
+<a id="forgotPasswordLink" class="courtly-recovery-link" href="/forgot-password.html?role=owner">Forgot your password?</a>
 <button id="submitButton" type="submit">Log in to owner portal →</button>
 <div id="msg" class="msg" role="alert" aria-live="polite"></div>
 </form>
@@ -45,6 +46,8 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 </main>
 <script type="module">
 import { supabase } from './supabase-client.js';
+import { safeReturnTo, setupRecoveryLink } from './account-recovery.js';
+setupRecoveryLink(document.getElementById('forgotPasswordLink'), 'owner');
 const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton');
 let signup=false;
 let authPending=false;
@@ -60,19 +63,20 @@ function prefillSignup(){
  if(signupParams.get('courtCount')) document.getElementById('courtCount').value=signupParams.get('courtCount');
 }
 function message(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
-function setMode(next){if(authPending)return;signup=next;const password=document.getElementById('password');password.minLength=signup?8:1;password.autocomplete=signup?'new-password':'current-password';password.placeholder=signup?'At least 8 characters':'Your password';document.getElementById('business').required=signup;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
+function setMode(next){if(authPending)return;signup=next;document.getElementById('forgotPasswordLink').hidden=signup;const password=document.getElementById('password');password.minLength=signup?8:1;password.autocomplete=signup?'new-password':'current-password';password.placeholder=signup?'At least 8 characters':'Your password';document.getElementById('business').required=signup;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
+function routeTo(fallback){location.replace(safeReturnTo(signupParams.get('returnTo'),fallback,location.origin));}
 async function routeSignedInAccount(user){
  const accountType=String(user.user_metadata?.account_type||'').toLowerCase();
- if(['club','sports_club'].includes(accountType)){location.replace('/club-dashboard.html');return;}
- if(['courtly_admin','admin'].includes(accountType)){location.replace('/admin-billing.html');return;}
- if(String(user.user_metadata?.account_type||'').toLowerCase()==='coach'){location.replace('/coach-portal.html');return;}
+ if(['club','sports_club'].includes(accountType)){routeTo('/club-dashboard.html');return;}
+ if(['courtly_admin','admin'].includes(accountType)){routeTo('/admin-billing.html');return;}
+ if(String(user.user_metadata?.account_type||'').toLowerCase()==='coach'){routeTo('/coach-portal.html');return;}
  const {data:coach}=await supabase.from('coach_profiles').select('id').eq('id',user.id).maybeSingle();
- if(coach){location.replace('/coach-portal.html');return;}
+ if(coach){routeTo('/coach-portal.html');return;}
  const {data:player}=await supabase.from('player_profiles').select('id').eq('id',user.id).maybeSingle();
- if(player || user.user_metadata?.account_type==='player'){location.replace('/player-dashboard.html');return;}
- location.replace('/owner-portal.html');
+ if(player || user.user_metadata?.account_type==='player'){routeTo('/player-dashboard.html');return;}
+ routeTo('/owner-portal.html');
 }
 (async()=>{if(!supabase){message('Sign-in is temporarily unavailable. Please try again shortly.');button.disabled=true;return;}const {data:{session}}=await supabase.auth.getSession();if(session?.user)await routeSignedInAccount(session.user);})().catch(e=>message(e.message));
 form.addEventListener('submit',async e=>{

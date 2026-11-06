@@ -53,13 +53,12 @@
         <div><h3>◉ &nbsp; Privacy Settings</h3><p>Keep your profile private from other players. Your name and profile details won't be shown on public player listings.</p></div>
         <label class="switch" aria-label="Make my player profile private"><input type="checkbox" id="isPrivate"><span class="slider"></span></label>
       </section>
-      <label class="terms"><input type="checkbox" id="agreeTerms" required><span>I agree to Courtly's <a href="#" data-legal="terms">Terms &amp; Conditions</a> and acknowledge the <a href="#" data-legal="privacy">Privacy Notice</a>.</span></label>
+      <label class="terms"><input type="checkbox" id="agreeTerms" required><span>I agree to Courtly's <a href="/terms.html" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a> and acknowledge the <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</span></label>
       <button class="submit" id="submitButton" type="submit">Create Player Account</button>
       <div class="message" id="message" role="alert" aria-live="polite"></div><p id="registrationNext" hidden><a class="upload" id="registrationNextLink" href="/player-login.html">Continue to your account →</a></p>
     </form><p class="coach-note">Registering as a coach? <a href="/coach-register.html">Create a coach account</a></p>
     <p class="bottom">Already manage a sports venue? <a href="/login.html">Go to the owner portal</a>.<br>© 2026 Courtly · Book. Play. Grow.</p>
   </main>
-  <div class="modal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalTitle"><section class="modal-card"><button class="modal-close" id="legalClose" type="button">Close</button><h2 id="legalTitle">Courtly notice</h2><div id="legalContent"></div><p><strong>Launch note:</strong> These are starter notices for the current player-account experience. Courtly should have its final Terms and Privacy Notice reviewed and approved before public launch.</p></section></div>
   <script type="module">
     import { supabase } from './supabase-client.js';
     import { syncPlayerProfile } from './player-profile-sync.js';
@@ -83,7 +82,7 @@
     let avatarPreviewUrl = null;
     const showMessage = (text, type='error') => { message.textContent=text; message.className=`message show ${type}`; };
     const emailNorm = (value) => value.trim().toLowerCase();
-    const PRODUCTION_APP_URL = 'https://courtly-ecru.vercel.app';
+    const PRODUCTION_APP_URL = 'https://www.courtlyph.com';
     function getCourtlyAppUrl() {
       const configured = String(import.meta.env.VITE_APP_URL || '').trim().replace(/\/$/, '');
       if (configured) return configured;
@@ -130,17 +129,6 @@
       avatarPreviewUrl = URL.createObjectURL(file);
       $('avatarPreview').innerHTML = `<img alt="Profile picture preview" src="${avatarPreviewUrl}">`;
     });
-    document.querySelectorAll('[data-legal]').forEach(link => link.addEventListener('click', event => {
-      event.preventDefault();
-      const type=link.dataset.legal;
-      $('legalTitle').textContent=type==='terms'?'Courtly Terms & Conditions':'Courtly Privacy Notice';
-      $('legalContent').innerHTML=type==='terms'
-        ? '<p>By creating a Courtly player account, you agree to provide accurate account details, keep your sign-in credentials secure, and use Courtly respectfully. Venue bookings and Open Play registrations are subject to the venue’s own schedules, payment instructions, cancellation rules and verification process.</p><ul><li>Submitting a payment receipt does not mean payment has been automatically verified.</li><li>Venue operators are responsible for confirming their own bookings and event registrations.</li><li>Paid Open Play registrations include a clearly displayed ₱10 transaction fee per player; free Open Play sessions have no transaction fee. Court rental platform fees are paid by venue owners and are not added to the player’s court checkout.</li><li>Do not use Courtly to impersonate another player or submit misleading information.</li><li>Contact the venue directly about changes, cancellations or refunds.</li></ul>'
-        : '<p>Courtly stores your account name, player name, email, contact number, skill level, optional profile image and privacy preference to provide your player account. Booking and Open Play details are associated with your account when you are signed in.</p><ul><li>If you keep your profile public, your player nickname, skill level, preferred sport and optional profile picture may appear to signed-in Courtly members in the player directory and community.</li><li>If you switch on Private Profile, you are excluded from public player discovery and your community posts are visible only to you.</li><li>Your email address, phone number and full name are not shown on public player cards.</li><li>Your profile image is stored in Courtly’s private player-avatar storage bucket and is displayed through access-controlled links.</li><li>Venue owners receive the player information required to manage a booking or event registration.</li><li>Never share your password or payment credentials.</li></ul>';
-      $('legalModal').classList.add('open');
-    }));
-    $('legalClose').addEventListener('click', ()=>$('legalModal').classList.remove('open'));
-    $('legalModal').addEventListener('click',e=>{if(e.target===$('legalModal'))$('legalModal').classList.remove('open')});
     form.addEventListener('input', event => { if (event.target.setCustomValidity) event.target.setCustomValidity(''); if (event.target.id === 'email') $('confirmEmail').setCustomValidity(''); if (event.target.id === 'password') $('confirmPassword').setCustomValidity(''); });
     form.addEventListener('submit', async (event) => {
       event.preventDefault();

@@ -1,4 +1,5 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
+import { dispatchBookingNotifications } from './notification-client.js';
 
 const DEMO_SLUGS = new Set([
   'demo-batangas-racquet-club', 'demo-lipa-pickleball-hub',
@@ -367,26 +368,14 @@ function queueOwnerWorkspaceSave(state, change) {
 async function reviewBooking(bookingId, decision) {
   const { data, error } = await supabase.rpc('review_court_booking_payment', { p_booking_id: bookingId, p_decision: decision });
   if (error) throw error;
-  if (decision === 'confirmed') {
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (token) {
-        const response = await fetch('/api/receipts/issue', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ type: 'court_booking', id: bookingId }) });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) console.warn('Payment confirmed; receipt delivery needs a retry:', result.error || response.status);
-      }
-    } catch (receiptError) {
-      // Payment is already committed. Receipt delivery must not turn it into
-      // a reported payment failure or invite a duplicate approval.
-      console.warn('Payment confirmed; receipt delivery needs a retry:', receiptError);
-    }
-  }
+  // Payment is committed; dispatch must not delay or reverse the visible result.
+  void dispatchBookingNotifications(supabase, { type: 'court_booking', id: bookingId }).catch(() => {});
   return data;
 }
 async function cancelBooking(bookingId) {
   const { data, error } = await supabase.rpc('cancel_owner_booking', { p_booking_id: bookingId });
   if (error) throw error;
+  void dispatchBookingNotifications(supabase, { type: 'court_booking', id: bookingId }).catch(() => {});
   return data;
 }
 async function reviewCommunityActivityPayment(registrationId, decision) {

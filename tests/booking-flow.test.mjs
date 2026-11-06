@@ -154,41 +154,23 @@ test('rapid coach booking taps create one attempt while authentication is pendin
 });
 
 test('a successful Open Play registration stays successful when the list refresh fails', async () => {
-  const nodes = {
-    gcashForm: { reportValidity: () => true },
-    paymentSubmitButton: {},
-    playerName: { value: 'Test Player', setCustomValidity() {} },
-    playerEmail: { value: 'test@example.invalid' },
-    playerPhone: { value: '' },
-    paymentScreenshot: { files: [] }
-  };
   let refreshCount = 0;
   let confirmationCount = 0;
-  const errors = [];
   const context = vm.createContext({
-    checkout: { kind: 'openplay', event: { id: 'event-1' }, amounts: { registration: 0, fee: 0, total: 0, free: true } },
-    paymentSubmission: submissionGuard(), $: (id) => nodes[id],
-    checkoutError: (message = '') => { if (message) errors.push(message); },
-    setPaymentBusy() {}, updateSummary() {}, paymentButtonLabel: () => 'Register for free',
-    refreshPublicVenueMedia: async () => true,
-    events: [{ id: 'event-1', fee: 0 }],
-    loadVenueEvents: async () => { if (++refreshCount > 1) throw new Error('Refresh offline'); },
-    openPlayAmounts,
+    recoverableHold: null,
+    $: () => ({ hidden: false }),
+    renderCheckoutRecovery() {},
     showOpenPlayConfirmation: () => { confirmationCount += 1; },
-    console: { warn() {}, error: (message) => errors.push(message) },
-    supabase: {
-      auth: { getUser: async () => ({ data: { user: { id: 'player-1' } }, error: null }) },
-      rpc: async () => ({ data: { id: 'registration-1', registration_reference: 'OP-TEST', requires_payment: false }, error: null })
-    }
+    loadVenueEvents: async () => { refreshCount += 1; throw new Error('Refresh offline'); },
+    notifyCheckoutCommitted: async () => {},
+    console: { warn() {} }
   });
-  vm.runInContext(between(venueSource, 'async function submitPayment(event)', 'async function loadVenueEvents()'), context);
-  await context.submitPayment({ preventDefault() {} });
+  vm.runInContext(between(venueSource, 'function completeCheckout(', 'async function submitPayment(event)'), context);
+  context.completeCheckout({ kind: 'openplay', amounts: { free: true }, hold: { status: 'confirmed', reference: 'OP-TEST' } });
   await Promise.resolve();
   assert.equal(confirmationCount, 1);
-  assert.equal(refreshCount, 2);
-  assert.deepEqual(errors, []);
-  assert.equal(context.paymentSubmission.busy, false);
-  assert.equal(nodes.paymentSubmitButton.textContent, 'Register for free');
+  assert.equal(refreshCount, 1);
+  assert.equal(context.recoverableHold.reference, 'OP-TEST');
 });
 
 test('invalid receipt files are rejected before upload or booking creation', () => {

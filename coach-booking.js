@@ -1,5 +1,6 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
 import { CONVENIENCE_FEE_LABEL, requestSequence, submissionGuard, validateReceipt } from './booking-utils.mjs';
+import { dispatchBookingNotifications } from './notification-client.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -244,6 +245,7 @@ async function submitPayment(event) {
     if (error) throw error;
     if (data?.success !== true || !data?.booking_reference) throw new Error('Payment submission could not be confirmed. Check your account bookings before submitting again.');
     paymentSubmitted = true;
+    void dispatchBookingNotifications(supabase, { type: 'coaching_booking', id: activeBooking.booking_id }).catch(() => {});
     clearInterval(expiryTimer);
     showMessage('Your payment details have been received. The coach will confirm the session after verification.', true);
     $('paymentPanel').innerHTML = '<div style="text-align:center;padding:20px"><h2 style="font:700 20px Poppins;color:#001a47">Payment details submitted</h2>'

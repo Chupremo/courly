@@ -1,6 +1,84 @@
 export const CONVENIENCE_FEE_LABEL = 'Convenience Fee';
 export const MAX_COURT_BOOKING_HOURS = 8;
 export const BOOKING_TOKEN_KEY = 'courtlyBookingAccessTokensV1';
+export const CHECKOUT_CONTRACT_VERSION = 1;
+export const CHECKOUT_REQUEST_KEY = 'courtlyCheckoutRequestsV1';
+
+export function requireBookingReadiness(value) {
+  if (value?.version !== CHECKOUT_CONTRACT_VERSION || value.ready !== true
+      || value.court_holds !== true || value.open_play_holds !== true
+      || value.idempotent_submission !== true || value.server_pricing !== true) {
+    throw new Error('Reservations are temporarily unavailable. Please do not transfer money. Try again later or contact the venue.');
+  }
+  return value;
+}
+
+const uuidPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+const checkoutMemory = new Map();
+const monotonicNow = () => globalThis.performance?.now() ?? Date.now();
+
+// Persist the key before the first network request. A timeout is an unknown
+// outcome, never permission to create a second booking with a new key.
+export function checkoutRequestKey(selection, { fresh = false, stores, randomUUID = () => globalThis.crypto.randomUUID() } = {}) {
+  const fingerprint = JSON.stringify([selection.playerId, selection.venueSlug, selection.kind,
+    selection.kind === 'court' ? [selection.courtId, Date.parse(selection.startsAt), Number(selection.durationHours)] : selection.eventId]);
+  stores ??= [browserStorage('localStorage'), browserStorage('sessionStorage')];
+  const saved = new Map(checkoutMemory);
+  for (const storage of stores) {
+    try {
+      const entries = JSON.parse(storage?.getItem(CHECKOUT_REQUEST_KEY) || '[]');
+      if (Array.isArray(entries)) entries.forEach((entry) => {
+        if (Array.isArray(entry) && typeof entry[0] === 'string' && uuidPattern.test(entry[1])) saved.set(entry[0], entry[1]);
+      });
+    } catch { /* Server recovery remains available when browser storage is blocked. */ }
+  }
+  let key = fresh ? null : saved.get(fingerprint);
+  if (!key) key = randomUUID();
+  if (!uuidPattern.test(key)) throw new Error('A secure checkout request could not be created. Please reload and try again.');
+  saved.delete(fingerprint);
+  saved.set(fingerprint, key);
+  checkoutMemory.set(fingerprint, key);
+  for (const storage of stores) {
+    try { storage?.setItem(CHECKOUT_REQUEST_KEY, JSON.stringify([...saved].slice(-60))); } catch { /* Optional recovery cache. */ }
+  }
+  return key;
+}
+
+export function normalizeCheckoutHold(value, expected = {}, receivedAt = monotonicNow()) {
+  const fail = () => { throw new Error('The reservation response could not be verified. Do not pay again. Reload to recover the checkout or contact the venue.'); };
+  if (!value || value.version !== CHECKOUT_CONTRACT_VERSION || !uuidPattern.test(value.hold_id)
+      || !uuidPattern.test(value.player_id) || !['court', 'openplay'].includes(value.kind)
+      || !['held', 'expired', 'submitted', 'confirmed', 'cancelled', 'rejected', 'refunded'].includes(value.status)
+      || !Number.isFinite(Date.parse(value.expires_at)) || !Number.isFinite(Date.parse(value.server_now))
+      || !Number.isFinite(Date.parse(value.starts_at))
+      || !value.reference || !value.venue_slug || typeof value.receipt_prefix !== 'string' || !value.receipt_prefix.endsWith('/')
+      || (expected.kind && value.kind !== expected.kind)
+      || (expected.playerId && value.player_id !== expected.playerId)
+      || (expected.holdId && value.hold_id !== expected.holdId)
+      || (expected.courtId && value.court_id !== expected.courtId)
+      || (expected.eventId && value.event_id !== expected.eventId)
+      || (expected.startsAt && Date.parse(value.starts_at) !== Date.parse(expected.startsAt))) fail();
+  const numeric = (field) => {
+    if (value[field] === null || value[field] === undefined || String(value[field]).trim() === '') fail();
+    const number = Number(value[field]);
+    if (!Number.isFinite(number) || number < 0) fail();
+    return number;
+  };
+  const subtotal = numeric('subtotal'), fee = numeric('convenience_fee'), total = numeric('total');
+  if (Math.abs(subtotal + fee - total) > 0.005
+      || (value.kind === 'court' && (!uuidPattern.test(value.booking_id) || !uuidPattern.test(value.court_id)
+        || !uuidPattern.test(value.customer_access_token) || fee !== 0 || value.fee_payer !== 'venue_owner'))
+      || (value.kind === 'openplay' && (!uuidPattern.test(value.event_id) || fee !== (subtotal > 0 ? 10 : 0) || value.fee_payer !== (subtotal > 0 ? 'player' : 'none')))) fail();
+  return { ...value, subtotal, convenience_fee: fee, total, checkedAt: receivedAt };
+}
+
+// Use server time plus monotonic elapsed time. A player's incorrect wall clock
+// cannot extend the displayed hold, and the server still enforces every expiry.
+export function holdRemainingMs(hold, now = monotonicNow()) {
+  if (!hold || hold.status !== 'held') return 0;
+  const remaining = Date.parse(hold.expires_at) - Date.parse(hold.server_now) - Math.max(0, now - hold.checkedAt);
+  return Number.isFinite(remaining) ? Math.max(0, remaining) : 0;
+}
 
 // An empty select is an incomplete selection, never midnight.
 export function selectedHour(value) {

@@ -1,0 +1,36 @@
+.courtly-recovery-link{display:flex;align-items:center;justify-content:flex-end;min-height:44px;margin:0 0 8px;color:#001a47;font-size:13px;font-weight:700;text-underline-offset:3px}
+.courtly-recovery-link:focus-visible{outline:3px solid #8ed502;outline-offset:3px;border-radius:5px}
+.courtly-recovery-link[hidden]{display:none!important}
+.recovery-page{margin:0;min-height:100vh;background:#f3f6fb;color:#172744;font-family:Inter,Arial,sans-serif;line-height:1.6}
+.recovery-page *{box-sizing:border-box}
+.recovery-page [hidden]{display:none!important}
+.recovery-header{padding:22px max(20px,calc((100% - 1120px)/2));background:#fff;border-bottom:1px solid #e2e8f1}
+.recovery-header a{display:inline-flex;align-items:center;min-height:44px}
+.recovery-logo{display:block;width:148px;height:42px;object-fit:contain}
+.recovery-card{width:min(480px,calc(100% - 32px));margin:48px auto;padding:32px;border:1px solid #dde5f0;border-radius:20px;background:#fff;box-shadow:0 16px 48px #001a470b}
+.recovery-kicker{margin:0 0 12px;color:#5d6c83;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.recovery-card h1{margin:0 0 10px;color:#001a47;font-size:30px;line-height:1.25;letter-spacing:-.8px}
+.recovery-lead{margin:0 0 24px;color:#596982;font-size:14px}
+.recovery-field{margin:0 0 18px}
+.recovery-field label{display:block;margin:0 0 7px;font-size:13px;font-weight:700}
+.recovery-field input{display:block;width:100%;min-height:48px;border:1px solid #cbd5e4;border-radius:10px;padding:12px;font:16px Inter,Arial,sans-serif;color:#172744;background:#fff}
+.recovery-field input:focus{outline:3px solid #8ed50244;border-color:#4e7209}
+.recovery-field small{display:block;color:#65718a;font-size:12px;margin-top:7px}
+.recovery-fields{border:0;padding:0;margin:0;min-width:0}
+.recovery-check{display:flex;align-items:center;gap:9px;min-height:44px;font-size:13px;margin:0 0 12px;cursor:pointer}
+.recovery-check input{width:18px;height:18px;accent-color:#001a47}
+.recovery-submit{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;border:0;border-radius:10px;background:#001a47;color:#fff;font:700 14px Inter,Arial,sans-serif;cursor:pointer;text-decoration:none}
+.recovery-submit:disabled{opacity:.6;cursor:wait}
+.recovery-submit:focus-visible,.recovery-page a:focus-visible{outline:3px solid #70a800;outline-offset:4px}
+.recovery-message{padding:13px 14px;margin:18px 0;border-radius:10px;font-size:13px;overflow-wrap:anywhere}
+.recovery-message.error{background:#fff0f0;color:#9b2631;border:1px solid #f2ccd0}
+.recovery-message.success{background:#edf8e6;color:#255422;border:1px solid #cbe3bd}
+.recovery-message.info{background:#eff4fa;color:#405673;border:1px solid #dae4f0}
+.recovery-help{padding:16px;background:#f6f8fb;border-radius:10px;font-size:13px;color:#596982;margin:18px 0}
+.recovery-help p{margin:0 0 8px}.recovery-help p:last-child{margin-bottom:0}
+.recovery-page a:not(.recovery-submit){color:#001a47;text-underline-offset:3px}
+.recovery-back{margin:24px 0 0;text-align:center;font-size:13px}
+.recovery-back a{display:inline-flex;align-items:center;min-height:44px}
+.recovery-footer{text-align:center;padding:0 20px 32px;color:#687891;font-size:12px}
+.recovery-footer a{display:inline-flex;align-items:center;min-height:44px;margin:0 7px}
+@media(max-width:480px){.recovery-header{padding:14px 18px}.recovery-card{margin:24px auto;padding:24px 20px}.recovery-card h1{font-size:27px}}

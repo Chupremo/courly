@@ -1,16 +1,20 @@
 import { supabase, supabaseConfigError } from './supabase-client.js';
 import { uploadCoachImage, coachMediaUrl } from './coach-media.js';
+import { dispatchBookingNotifications, notificationDeliveryMessage } from './notification-client.js';
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money = (v) => '₱' + Number(v || 0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
 const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 let user = null, profile = null, sessions = [], availability = [], billing = null, conversations = [], activeView = 'overview';
 let messageTimer = null;
+let coreRefreshId = 0;
+const pendingSessionReviews = new Set();
 function msg(text='', type='') { const n=$('coachPortalMessage'); if(n){n.textContent=text;n.className=`coach-msg ${type}`.trim();} }
 function panel(title, body, extra='') { return `<section class="coach-panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px"><h2>${title}</h2>${extra}</div>${body}</section>`; }
 function badge(status) { const s=String(status||'').toLowerCase(); const cls=['confirmed','completed','paid','active','approved'].includes(s)?'':(['awaiting_verification','pending','submitted','partially_paid'].includes(s)?'pending':'muted'); return `<span class="coach-pill ${cls}">${esc(String(status||'—').replaceAll('_',' '))}</span>`; }
 function setView(view) { activeView=view; const titles={overview:'Overview',calendar:'Booking calendar',sessions:'Coaching sessions',clients:'Clients',availability:'Availability & rates',earnings:'Earnings & transactions',profile:'Coach profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',messages:'Messages',notifications:'Notifications'}; $('coachPageTitle').textContent=titles[view]||'Coach Portal'; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view)); const url=new URL(location.href);url.searchParams.set('view',view);history.replaceState({},'',url); try { render(); } catch (e) { msg(e.message||'Unable to load this section.'); } $('coachSidebar').classList.remove('open');$('coachBackdrop').classList.remove('show'); }
 async function refreshCore() {
+  const requestId = ++coreRefreshId;
   const [p,s,a,b,c,f] = await Promise.all([
     supabase.from('coach_profiles').select('*').eq('id',user.id).single(),
     supabase.rpc('get_coach_sessions'),
@@ -19,6 +23,7 @@ async function refreshCore() {
     supabase.rpc('get_my_coach_conversations'),
     supabase.from('coach_follows').select('player_id',{count:'exact',head:true}).eq('coach_id',user.id)
   ]);
+  if (requestId !== coreRefreshId) return false;
   if (p.error) throw p.error; if(s.error) throw s.error; if(a.error) throw a.error; if(b.error) throw b.error; if(c.error) throw c.error; if(f.error) throw f.error;
   profile={...p.data,follower_count:f.count||0}; sessions=s.data||[]; availability=a.data||[]; billing=b.data||{}; conversations=c.data||[];
   const avatar=coachMediaUrl(profile.profile_image_path);
@@ -30,8 +35,54 @@ function sessionTable(rows) {
   if(!rows.length) return '<div class="coach-empty">No coaching sessions yet.</div>';
   return `<div class="coach-table-wrap"><table class="coach-table"><thead><tr><th>Player</th><th>Date & time</th><th>Duration</th><th>Total</th><th>Payment</th><th>Actions</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.player_name||'Player')}</strong><div class="coach-note">${esc(r.booking_reference)}</div></td><td>${new Date(r.starts_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'})}</td><td>${r.duration_hours} hr</td><td>${money(r.subtotal)}</td><td>${badge(r.payment_status)}</td><td><div class="coach-actions">${r.payment_status==='awaiting_verification'?`<button class="coach-btn lime" data-review="${r.id}" data-decision="confirmed">Confirm</button><button class="coach-btn outline" data-review="${r.id}" data-decision="rejected">Reject</button>`:''}${r.payment_status==='confirmed'&&r.booking_status!=='completed'&&new Date(r.starts_at)<=new Date()?`<button class="coach-btn outline" data-complete="${r.id}">Mark completed</button>`:''}${r.receipt_path?`<button class="coach-btn outline" data-receipt="${esc(r.receipt_path)}">View proof</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`;
 }
+function setSessionReviewBusy(id, busy) {
+  document.querySelectorAll('[data-review]').forEach(button => {
+    if (button.dataset.review === id) button.disabled = busy;
+  });
+}
+async function reviewSessionPayment(button) {
+  const id = button.dataset.review;
+  const decision = button.dataset.decision;
+  if (button.disabled || pendingSessionReviews.has(id) || !['confirmed', 'rejected'].includes(decision)) return;
+  const current = sessions.find(session => session.id === id);
+  if (current && current.payment_status !== 'awaiting_verification') return;
+  const note = decision === 'rejected' ? prompt('Optional reason for rejecting this payment:') || '' : null;
+  if (decision === 'rejected' && !confirm('Reject this payment submission?')) return;
+  pendingSessionReviews.add(id);
+  coreRefreshId++; // Ignore a periodic refresh started before this review.
+  setSessionReviewBusy(id, true);
+  let committed = false;
+  try {
+    const { data, error } = await supabase.rpc('review_coaching_booking', { p_booking_id: id, p_decision: decision, p_note: note });
+    if (error) throw error;
+    if (data?.success !== true) throw new Error('The review response could not be verified. Refresh the session before trying again.');
+    committed = true;
+    const base = data.already_processed ? 'This payment was already processed.' : `Payment ${decision}.`;
+    const savedRow = sessions.find(session => session.id === id) || current;
+    if (savedRow) Object.assign(savedRow, { payment_status: decision, booking_status: decision });
+    msg(base + ' Checking email delivery…', 'success');
+    const delivery = dispatchBookingNotifications(supabase, { type: 'coaching_booking', id });
+    let refreshed = true;
+    try { await refreshCore(); render(); }
+    catch {
+      refreshed = false;
+      // Retain the committed local status so stale buttons cannot invite a
+      // second review when a separate dashboard query fails.
+      try { render(); } catch { /* The success message remains available. */ }
+    }
+    const email = notificationDeliveryMessage(await delivery, { receipt: decision === 'confirmed' });
+    msg([base, email, refreshed ? '' : 'The review was saved. Refresh the dashboard for the latest totals.'].filter(Boolean).join(' '), 'success');
+  } catch (error) {
+    msg(committed ? `Payment ${decision}. The review was saved; refresh the dashboard for the latest status.` : (error.message || 'Unable to review this payment.'), committed ? 'success' : '');
+  } finally {
+    pendingSessionReviews.delete(id);
+    // A failed refresh can leave the original buttons in the DOM. Keep them
+    // disabled after a committed review until a fresh render replaces them.
+    setSessionReviewBusy(id, committed);
+  }
+}
 function bindSessionActions(root=$('coachView')) {
-  root.querySelectorAll('[data-review]').forEach(btn=>btn.addEventListener('click',async()=>{const decision=btn.dataset.decision;const note=decision==='rejected'?prompt('Optional reason for rejecting this payment:')||'':null;if(decision==='rejected'&&!confirm('Reject this payment submission?'))return;btn.disabled=true;try{const {data,error}=await supabase.rpc('review_coaching_booking',{p_booking_id:btn.dataset.review,p_decision:decision,p_note:note});if(error)throw error;let receiptMessage='';if(decision==='confirmed'){try{const {data:{session}}=await supabase.auth.getSession();const sent=await fetch('/api/receipts/issue',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({type:'coaching_booking',id:btn.dataset.review})});const result=await sent.json();if(!sent.ok)throw new Error(result.error||'Receipt email could not be sent.');receiptMessage=result.already_sent?' Receipt was already emailed.':' Receipt '+(result.receipt?.receipt_number||'')+' emailed to the player.';}catch(receiptError){console.error('Receipt issue failed:',receiptError);receiptMessage=' Payment is confirmed, but receipt email needs retry from the player dashboard.';}}await refreshCore();await render();msg((data?.already_processed?'This payment was already processed.':`Payment ${decision}.`)+receiptMessage,'success');}catch(e){msg(e.message);}finally{btn.disabled=false;}}));
+  root.querySelectorAll('[data-review]').forEach(button=>{button.disabled=pendingSessionReviews.has(button.dataset.review);button.addEventListener('click',()=>reviewSessionPayment(button));});
   root.querySelectorAll('[data-complete]').forEach(btn=>btn.addEventListener('click',async()=>{try{const {error}=await supabase.rpc('complete_coaching_booking',{p_booking_id:btn.dataset.complete});if(error)throw error;await refreshCore();await render();msg('Session marked completed.','success');}catch(e){msg(e.message);}}));
   root.querySelectorAll('[data-receipt]').forEach(btn=>btn.addEventListener('click',async()=>{try{const {data,error}=await supabase.storage.from('courtly-coach-payment-receipts').createSignedUrl(btn.dataset.receipt,600);if(error)throw error;window.open(data.signedUrl,'_blank','noopener');}catch(e){msg(e.message);}}));
 }
@@ -107,4 +158,4 @@ function bindBilling(){
 async function init(){if(!supabase)throw new Error(supabaseConfigError);const {data:{user:u},error}=await supabase.auth.getUser();if(error)throw error;if(!u){location.replace('/coach-login.html?next='+encodeURIComponent(location.pathname+location.search));return;}const {data:p,error:pe}=await supabase.from('coach_profiles').select('id').eq('id',u.id).maybeSingle();if(pe)throw pe;if(!p){await supabase.auth.signOut();location.replace('/coach-login.html');return;}user=u;const {error:termsError}=await supabase.rpc('accept_courtly_coach_terms');if(termsError)throw termsError;await refreshCore();const view=new URLSearchParams(location.search).get('view')||'overview';setView(view in {overview:1,calendar:1,sessions:1,clients:1,availability:1,profile:1,payments:1,earnings:1,billing:1,messages:1,notifications:1}?view:'overview');}
 $('coachNav').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));$('coachLogout').addEventListener('click',async()=>{await supabase.auth.signOut();location.assign('/coaches.html');});$('coachMenu').addEventListener('click',()=>{$('coachSidebar').classList.add('open');$('coachBackdrop').classList.add('show');});$('coachBackdrop').addEventListener('click',()=>{$('coachSidebar').classList.remove('open');$('coachBackdrop').classList.remove('show');});
 init().catch(e=>{console.error(e);$('coachView').innerHTML=`<div class="coach-empty">${esc(e.message||'Unable to load your Coach Portal.')}</div>`;});
-setInterval(async()=>{if(user){try{await refreshCore();if(activeView==='overview'||activeView==='sessions'||activeView==='calendar'||activeView==='billing')await render();}catch(e){console.warn(e);}}},60000);
+setInterval(async()=>{if(user&&!pendingSessionReviews.size){try{await refreshCore();if(activeView==='overview'||activeView==='sessions'||activeView==='calendar'||activeView==='billing')await render();}catch(e){console.warn(e);}}},60000);

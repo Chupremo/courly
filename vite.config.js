@@ -40,7 +40,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: resolve(process.cwd(), 'index.html'),
+        help: resolve(process.cwd(), 'help.html'),
+        terms: resolve(process.cwd(), 'terms.html'),
+        privacy: resolve(process.cwd(), 'privacy.html'),
+        adminSupport: resolve(process.cwd(), 'admin-support.html'),
         login: resolve(process.cwd(), 'login.html'),
+        forgotPassword: resolve(process.cwd(), 'forgot-password.html'),
+        resetPassword: resolve(process.cwd(), 'reset-password.html'),
         players: resolve(process.cwd(), 'players.html'),
         business: resolve(process.cwd(), 'business.html'),
         features: resolve(process.cwd(), 'features.html'),

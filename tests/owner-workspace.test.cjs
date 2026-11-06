@@ -8,9 +8,9 @@ const root = path.resolve(__dirname, '..');
 const portalSource = fs.readFileSync(path.join(root, 'owner-portal.html'), 'utf8')
   .match(/<script>\s*([\s\S]*?)<\/script>/)[1].replace('\ninitializeOwnerPortal();', '');
 const bridgeSource = fs.readFileSync(path.join(root, 'owner-portal-bridge.js'), 'utf8')
-  .replace(/^import .*;\n/m, '').replace('export async function loadOwnerWorkspace', 'async function loadOwnerWorkspace');
-const openPlaySource = fs.readFileSync(path.join(root, 'open-play-owner-sync.js'), 'utf8').replace(/^import .*;\n/m, '');
-const billingSource = fs.readFileSync(path.join(root, 'owner-billing.js'), 'utf8').replace(/^import .*;\n/m, '');
+  .replace(/^import .*;\n/gm, '').replace('export async function loadOwnerWorkspace', 'async function loadOwnerWorkspace');
+const openPlaySource = fs.readFileSync(path.join(root, 'open-play-owner-sync.js'), 'utf8').replace(/^import .*;\n/gm, '');
+const billingSource = fs.readFileSync(path.join(root, 'owner-billing.js'), 'utf8').replace(/^import .*;\n/gm, '');
 
 function element() {
   return { textContent: '', innerHTML: '', dataset: {}, isConnected: true,
@@ -22,6 +22,7 @@ function environment({ demo = false, storage = new Map(), document: suppliedDocu
   const document = suppliedDocument || { getElementById: id => nodes.get(id) || null, querySelectorAll: () => [],
     querySelector: () => null, addEventListener() {}, visibilityState: 'visible' };
   const context = { document, URL, URLSearchParams, Date, Intl, structuredClone, Map, Set, Promise,
+    dispatchBookingNotifications: async () => ({ status: 'unavailable', deliveries: [] }),
     console: { warn() {}, error() {}, info() {} },
     location: { search: demo ? '?demo=demo-lipa-pickleball-hub' : '', href: 'https://courtly.test/owner-portal.html', origin: 'https://courtly.test' },
     history: { pushState() {} }, matchMedia: () => ({ matches: false }),
@@ -77,6 +78,37 @@ test('demo court approvals and cancellations persist locally without invoking li
   const reopened = portal({ demo: true, storage });
   assert.equal(read(reopened.context, 'db.venue.baseRate'), 475);
   assert.equal(read(reopened.context, 'db.venue.courtCount'), 3);
+});
+
+test('overview prioritizes payment review and lists only today’s confirmed court bookings in time order', () => {
+  const { context } = portal({ demo: true });
+  vm.runInContext(`
+    const today=venueToday();
+    db.bookings=[
+      {id:'late',date:today,time:'4:00 PM – 5:00 PM',court:'Court 1',player:'Later',status:'Confirmed'},
+      {id:'cancelled',date:today,time:'8:00 AM – 9:00 AM',court:'Court 1',status:'Cancelled'},
+      {id:'early',date:today,time:'9:30 AM – 10:30 AM',court:'Court 2',player:'Earlier',status:'Completed'},
+      {id:'pending',date:today,time:'8:00 AM – 9:00 AM',court:'Court 1',status:'Pending'},
+      {id:'another-day',date:'2099-01-01',time:'8:00 AM – 9:00 AM',court:'Court 1',status:'Confirmed'}
+    ];
+  `, context);
+  assert.deepEqual(read(context, 'todayConfirmedBookings().map(booking=>booking.id)'), ['early', 'late']);
+  const html = read(context, 'overview()');
+  assert.ok(html.indexOf('id="ownerPaymentReview"') < html.indexOf('class="stats"'));
+  assert.ok(html.indexOf('id="ownerTodayBookings"') < html.indexOf('Recent reservations'));
+  assert.match(html, /View today’s calendar/);
+});
+
+test('cancelling a paid booking explains refunds separately and does not mark its payment refunded', async () => {
+  const { context } = portal();
+  let prompt = '';
+  context.confirm = message => { prompt = message; return true; };
+  context.courtlyCancelBooking = async () => true;
+  vm.runInContext('db.bookings=[{id:"paid-booking",status:"Confirmed",paymentStatus:"Paid"}];', context);
+  await vm.runInContext('cancel("paid-booking")', context);
+  assert.match(prompt, /does not refund any payment/);
+  assert.equal(read(context, 'db.bookings[0].status'), 'Cancelled');
+  assert.equal(read(context, 'db.bookings[0].paymentStatus'), 'Paid');
 });
 
 test('payment approval stays pending until the server succeeds and ignores repeated taps', async () => {
@@ -171,15 +203,30 @@ test('receipt delivery failure cannot undo or report failure for a confirmed pay
   const env = environment(); let confirmations = 0;
   env.context.supabase = { rpc: async () => { confirmations += 1; return { data: { status: 'confirmed' }, error: null }; },
     auth: { getSession: async () => ({ data: { session: { access_token: 'test-session' } } }) } };
-  env.context.fetch = async () => { throw new Error('Receipt server offline'); };
+  env.context.dispatchBookingNotifications = async () => { throw new Error('Receipt server offline'); };
   vm.runInContext(bridgeSource, env.context);
   const result = await vm.runInContext('reviewBooking("booking-1","confirmed")', env.context);
   assert.equal(result.status, 'confirmed');
   assert.equal(confirmations, 1);
 });
 
+test('owner rejection and cancellation dispatch only after their backend action succeeds', async () => {
+  const env = environment(); const notifications = []; let fail = false;
+  env.context.supabase = { rpc: async () => ({ data: true, error: fail ? new Error('Action denied') : null }) };
+  env.context.dispatchBookingNotifications = async (_client, source) => { notifications.push(source); return { status: 'queued' }; };
+  vm.runInContext(bridgeSource, env.context);
+  await vm.runInContext('reviewBooking("booking-1","rejected")', env.context);
+  await vm.runInContext('cancelBooking("booking-2")', env.context);
+  assert.deepEqual(JSON.parse(JSON.stringify(notifications)), [{ type: 'court_booking', id: 'booking-1' }, { type: 'court_booking', id: 'booking-2' }]);
+  fail = true;
+  await assert.rejects(vm.runInContext('cancelBooking("booking-3")', env.context), /Action denied/);
+  assert.equal(notifications.length, 2);
+});
+
 test('demo Open Play review and count refresh never query the live service', async () => {
   const env = environment({ demo: true });
+  let notifications = 0;
+  env.context.dispatchBookingNotifications = async () => { notifications++; return { status: 'queued' }; };
   env.storage.set('courtlyOwnerPortalDemoV1:demo-lipa-pickleball-hub', JSON.stringify({ venue: { slug: 'demo-lipa-pickleball-hub', name: 'Demo venue' } }));
   env.context.supabase = { auth: { getUser: () => { throw new Error('Live auth must not run'); } }, rpc: () => { throw new Error('Live RPC must not run'); } };
   vm.runInContext(openPlaySource, env.context);
@@ -187,6 +234,7 @@ test('demo Open Play review and count refresh never query the live service', asy
   await vm.runInContext('reviewPayment("demo-op-002","confirmed",true)', env.context);
   const rows = JSON.parse(env.storage.get('courtlyDemoOpenPlayTransactionsV1:demo-lipa-pickleball-hub'));
   assert.equal(rows.find(row => row.id === 'demo-op-002').payment_status, 'confirmed');
+  assert.equal(notifications, 0);
 });
 
 test('cancelled Open Play reservations cannot display approval actions', () => {

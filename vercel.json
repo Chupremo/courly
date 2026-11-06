@@ -2,7 +2,39 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "functions": {
+    "api/cron/send-billing-emails.js": {
+      "maxDuration": 60
+    },
+    "api/notifications/process.js": {
+      "maxDuration": 60
+    }
+  },
   "rewrites": [
+    {
+      "source": "/help",
+      "destination": "/help.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/admin-support",
+      "destination": "/admin-support.html"
+    },
+    {
+      "source": "/forgot-password",
+      "destination": "/forgot-password.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/reset-password.html"
+    },
     {
       "source": "/player/messages",
       "destination": "/player-messages.html"
@@ -140,6 +172,10 @@
     {
       "path": "/api/cron/send-billing-emails",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/notifications/process",
+      "schedule": "0 3 * * *"
     }
   ]
 }

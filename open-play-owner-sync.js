@@ -1,4 +1,5 @@
 import { supabase } from './supabase-client.js';
+import { dispatchBookingNotifications } from './notification-client.js';
 
 const DEMO_KEY_PREFIX = 'courtlyDemoOpenPlayTransactionsV1:';
 const DEMO_REQUEST = new URLSearchParams(location.search).get('demo');
@@ -144,6 +145,7 @@ function ensureTransactionPanel() {
 async function reviewPayment(id, decision, demo) {
   if (pendingReviews.has(id) || window.courtlyOwnerIsBusy?.()) return;
   const run = async () => {
+    let committed = false;
     pendingReviews.add(id);
     document.querySelectorAll(`[data-op-id="${CSS.escape(id)}"]`).forEach(button => { button.disabled = true; });
     try {
@@ -152,14 +154,19 @@ async function reviewPayment(id, decision, demo) {
       } else {
         const { error } = await supabase.rpc('review_open_play_payment', { p_registration_id: id, p_decision: decision });
         if (error) throw error;
+        void dispatchBookingNotifications(supabase, { type: 'open_play_registration', id }).catch(() => {});
       }
+      committed = true;
       // The mutation is already committed. A later list/receipt refresh cannot
       // turn a successful approval into a payment-failed message.
       window.toast?.(demo ? 'Demo Open Play payment updated in this browser.' : decision === 'confirmed' ? 'Open Play payment confirmed.' : 'Open Play payment rejected.');
-      await renderTransactions();
+      try { await renderTransactions(); }
+      catch {
+        window.toast?.('Open Play payment updated. Refresh the reservations list to see the latest status.');
+      }
     } finally {
       pendingReviews.delete(id);
-      document.querySelectorAll(`[data-op-id="${CSS.escape(id)}"]`).forEach(button => { button.disabled = false; });
+      document.querySelectorAll(`[data-op-id="${CSS.escape(id)}"]`).forEach(button => { button.disabled = committed; });
     }
   };
   if (typeof window.ownerAction === 'function') return window.ownerAction(run);

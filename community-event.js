@@ -14,7 +14,7 @@ function when(value){
 function time(value){return new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',timeZone:tz}).format(new Date(value));}
 function duration(n){const h=Math.floor(Number(n||0)/60),m=Number(n||0)%60;return h&&m?h+'h '+m+'m':h?h+' hour'+(h===1?'':'s'):m+' minutes';}
 async function signedAvatar(path){
- if(!path)return '';
+ if(!path||!state.user)return '';
  if(/^https?:\/\//i.test(path))return path;
  const {data,error}=await supabase.storage.from('courtly-player-avatars').createSignedUrl(path,3600);
  if(error){console.info('Could not load a community event avatar:',error.message);return '';}
@@ -85,6 +85,9 @@ function render(){
  }else{
    button.textContent=Number(e.fee_per_player||0)>0?'RSVP · '+money(e.fee_per_player)+' / player':'Confirm my RSVP';
  }
+ if(!state.user){button.textContent='Sign in to RSVP';button.disabled=true;}
+ else if(!state.isPlayer&&!e.viewer_is_host){button.textContent='Player account required';button.disabled=true;}
+ $('eventSignInPrompt').hidden=!!state.user&&state.isPlayer;
  button.classList.toggle('ce-button-confirmed',rsvp==='confirmed');
  $('eventRsvpStatus').textContent=rsvp==='confirmed'?'Your place is confirmed.':rsvp==='waitlist'?'You are on the waitlist and will be promoted if a place opens.':'';
  cancel.hidden=!e.viewer_is_host||e.event_status!=='published';

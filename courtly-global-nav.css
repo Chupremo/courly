@@ -1,31 +1,35 @@
 :root{--ct-navy:#001A47;--ct-lime:#8ED502;--ct-text:#172b4d;--ct-muted:#66748c}
-.courtly-global-header{position:sticky;top:0;z-index:1200;width:100%;background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 4px 18px rgba(0,26,71,.045)}
-.courtly-global-header .ct-nav-wrap{width:min(1240px,calc(100% - 40px));min-height:76px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:22px}
+.courtly-global-header,.courtly-global-header *{box-sizing:border-box}
+.courtly-global-header{position:sticky;top:0;z-index:1200;width:100%;padding-top:env(safe-area-inset-top);background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 4px 18px rgba(0,26,71,.045)}
+.courtly-global-header .ct-nav-wrap{width:min(1240px,calc(100% - 40px));min-height:76px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .courtly-global-header .ct-brand{display:inline-flex;align-items:center;flex:none;text-decoration:none}
 .courtly-global-header .ct-brand img{display:block;width:154px;height:48px;object-fit:contain;object-position:left center}
-.courtly-global-header .ct-nav{display:flex;align-items:center;gap:12px;margin-left:auto}
-.courtly-global-header .ct-nav>a,.courtly-global-header .ct-nav summary{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:10px;color:var(--ct-navy);font:500 13px Inter,Arial,sans-serif;text-decoration:none;cursor:pointer;list-style:none}
+.courtly-global-header .ct-nav{display:flex;align-items:center;gap:6px;margin-left:auto;min-width:0}
+.courtly-global-header .ct-nav>a,.courtly-global-header .ct-nav summary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 13px;border-radius:10px;color:var(--ct-navy);font:500 13px Inter,Arial,sans-serif;text-decoration:none;cursor:pointer;list-style:none;white-space:nowrap}
 .courtly-global-header .ct-nav summary::-webkit-details-marker{display:none}
 .courtly-global-header .ct-nav>a:hover,.courtly-global-header .ct-nav summary:hover{background:#f1f6e7}
+.courtly-global-header .ct-nav>a[aria-current="page"]{background:#f1f6e7;box-shadow:inset 0 -3px #8ed502;font-weight:700}
 .courtly-global-header .ct-dropdown{position:relative}
 .courtly-global-header .ct-dropdown>summary:after{content:'⌄';font-size:12px;margin-left:8px;color:#6d7a90}
-.courtly-global-header .ct-menu-panel{position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:#fff;border:1px solid #e3e9f1;border-radius:13px;padding:7px;box-shadow:0 18px 45px rgba(8,26,61,.16);display:grid;gap:3px}
-.courtly-global-header .ct-menu-panel a,.courtly-global-header .ct-menu-panel button{display:flex;align-items:center;width:100%;min-height:42px;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--ct-navy);font:500 13px Inter,Arial,sans-serif;text-align:left;text-decoration:none;cursor:pointer}
+.courtly-global-header .ct-menu-panel{position:absolute;top:calc(100% + 8px);right:0;min-width:220px;max-width:calc(100vw - 32px);max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;background:#fff;border:1px solid #e3e9f1;border-radius:13px;padding:7px;box-shadow:0 18px 45px rgba(8,26,61,.16);display:grid;gap:3px}
+.courtly-global-header .ct-dropdown:not([open])>.ct-menu-panel{display:none}
+.courtly-global-header .ct-menu-panel a,.courtly-global-header .ct-menu-panel button{display:flex;align-items:center;width:100%;min-height:44px;margin:0;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--ct-navy);font:500 13px Inter,Arial,sans-serif;text-align:left;text-decoration:none;cursor:pointer;white-space:normal}
 .courtly-global-header .ct-menu-panel a:hover,.courtly-global-header .ct-menu-panel button:hover{background:#f1f6e7}
 .courtly-global-header .ct-nav .ct-primary{background:var(--ct-navy);color:#fff}
 .courtly-global-header .ct-nav .ct-primary:hover{background:#12346d;color:#fff}
 .courtly-global-header .ct-nav .ct-register summary{background:var(--ct-lime);color:#142700;font-weight:700}
 .courtly-global-header .ct-user-label{font-size:12px;color:var(--ct-muted);padding:0 5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);font-size:23px;line-height:1;cursor:pointer}
+.courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;margin:0;padding:0;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);font-size:23px;line-height:1;cursor:pointer}
 .courtly-global-header .ct-community-user{display:none}
-@media(max-width:760px){
+.courtly-global-header :is(a,button,summary):focus-visible{outline:3px solid #2166b5;outline-offset:2px}
+@media(max-width:1024px){
  .courtly-global-header .ct-nav-wrap{width:calc(100% - 28px);min-height:66px;gap:12px}
  .courtly-global-header .ct-brand img{width:132px;height:42px}
  .courtly-global-header .ct-mobile-toggle{display:inline-grid;place-items:center;flex:none}
- .courtly-global-header .ct-nav{display:none;position:absolute;left:0;right:0;top:100%;margin:0;padding:12px 16px 18px;background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 18px 28px rgba(8,26,61,.12);align-items:stretch;flex-direction:column;gap:5px}
+ .courtly-global-header .ct-nav{display:none;position:absolute;left:0;right:0;top:100%;max-height:calc(100vh - 66px);max-height:calc(100dvh - 66px - env(safe-area-inset-top));overflow-y:auto;overscroll-behavior:contain;margin:0;padding:12px max(16px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 18px 28px rgba(8,26,61,.12);align-items:stretch;flex-direction:column;gap:5px}
  .courtly-global-header .ct-nav.is-open{display:flex}
  .courtly-global-header .ct-nav>a,.courtly-global-header .ct-nav summary{justify-content:flex-start;width:100%;min-height:46px;padding:0 13px}
  .courtly-global-header .ct-dropdown{width:100%}
- .courtly-global-header .ct-menu-panel{position:static;min-width:0;margin:3px 0 7px;box-shadow:none;background:#f8fafc}
+ .courtly-global-header .ct-menu-panel{position:static;min-width:0;max-width:none;max-height:none;overflow:visible;margin:3px 0 7px;box-shadow:none;background:#f8fafc}
  .courtly-global-header .ct-user-label{display:block;padding:9px 13px}
 }

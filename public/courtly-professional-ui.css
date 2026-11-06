@@ -1,0 +1,219 @@
+/* Courtly Professional UI — restrained iconography and shared mobile safeguards. */
+:root {
+  --ct-professional-navy: #001A47;
+  --ct-professional-lime: #8ED502;
+}
+
+:where(.btn-arrow:empty,
+  .feature-primary span:empty,
+  .feature-secondary span:empty,
+  .ce-map-link span:empty,
+  .community-primary span:empty,
+  .mobile-back span:empty) {
+  display: none !important;
+}
+
+/* Use one consistent three-line menu control rather than a text glyph. */
+:where(.menu-toggle, #menu-toggle, .mobile-menu, .ct-mobile-toggle,
+  .coach-mobile-toggle, #coachMenu, .mobile-menu-toggle:not(:has(span))) {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  align-items: center;
+  justify-content: center;
+}
+
+:where(.menu-toggle, #menu-toggle, .mobile-menu, .ct-mobile-toggle,
+  .coach-mobile-toggle, #coachMenu, .mobile-menu-toggle:not(:has(span)))::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 18px;
+  flex: 0 0 22px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    currentColor 0 2px,
+    transparent 2px 8px,
+    currentColor 8px 10px,
+    transparent 10px 16px,
+    currentColor 16px 18px
+  );
+}
+
+/* Conventional close control for icon-only modal buttons after glyph cleanup. */
+#closeSportModal:empty::before,
+button[aria-label="Close"]:empty::before {
+  content: "×";
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+/* Keep mobile touch targets, containers, and scrolling consistent across routes. */
+@media (max-width: 760px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overscroll-behavior-x: none;
+  }
+
+  body {
+    overflow-x: clip;
+  }
+
+  body :where(main, section, article, aside, form, header, footer,
+    .main, .content, .wrap, .container, .page, .layout,
+    .coach-page, .coach-dash-content, .ce-community-layout) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body :where(img, video, iframe, canvas) {
+    max-width: 100%;
+  }
+
+  body :where(input, select, textarea) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body :where(.table-wrap, .tablewrap, .table-scroll, .table-container,
+    .table-responsive, .overflow-x-auto) {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body .coach-page {
+    width: calc(100% - 32px);
+    padding: 24px 0 46px;
+  }
+
+  body .coach-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 27px 21px;
+  }
+
+  body .coach-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  body .coach-filter input:first-child {
+    grid-column: 1 / -1;
+  }
+
+  body .coach-list-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  body .coach-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  body .coach-grid .coach-full {
+    grid-column: 1 / -1;
+  }
+
+  body .coach-profile-actions {
+    margin-left: 0;
+  }
+
+  body.coach-dashboard .coach-sidebar {
+    width: min(300px, 88vw);
+    max-width: 88vw;
+  }
+
+  body.coach-dashboard .coach-dash-main {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  body.coach-dashboard .coach-dash-content {
+    min-width: 0;
+    padding: 18px 14px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  body.coach-dashboard .coach-topbar {
+    min-width: 0;
+    min-height: 60px;
+    gap: 9px;
+    padding-inline: 12px;
+  }
+
+  body.coach-dashboard .coach-topbar > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.coach-dashboard .coach-topbar > div:first-child strong {
+    display: block;
+    max-width: calc(100vw - 138px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 520px) {
+  body .coach-list-grid,
+  body .coach-filter,
+  body .coach-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body .coach-filter input:first-child {
+    grid-column: auto;
+  }
+
+  body .coach-grid .coach-full {
+    grid-column: auto;
+  }
+
+  body .coach-profile-overlap {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    padding-inline: 15px;
+  }
+
+  body .coach-profile-overlap .coach-avatar {
+    width: 88px;
+    height: 88px;
+  }
+
+  body .coach-profile-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  body .coach-profile-actions > * {
+    min-width: 0;
+  }
+
+  body .coach-slot-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body .coach-hero {
+    padding: 23px 17px;
+    border-radius: 16px;
+  }
+
+  body .coach-card-body {
+    padding: 16px;
+  }
+
+  body.coach-dashboard .coach-dash-content {
+    padding-inline: 12px;
+  }
+}

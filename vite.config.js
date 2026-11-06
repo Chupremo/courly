@@ -1,7 +1,39 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
+function courtlyProfessionalUi() {
+  return {
+    name: 'courtly-professional-ui',
+    transformIndexHtml: {
+      order: 'post',
+      handler() {
+        return {
+          tags: [
+            {
+              tag: 'link',
+              attrs: {
+                rel: 'stylesheet',
+                href: '/courtly-professional-ui.css'
+              },
+              injectTo: 'head'
+            },
+            {
+              tag: 'script',
+              attrs: {
+                src: '/courtly-professional-ui.js',
+                defer: true
+              },
+              injectTo: 'body'
+            }
+          ]
+        };
+      }
+    }
+  };
+}
+
 export default defineConfig({
+  plugins: [courtlyProfessionalUi()],
   build: {
     outDir: 'dist',
     emptyOutDir: true,

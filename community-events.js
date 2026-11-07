@@ -16,6 +16,7 @@ function durationText(n){const hours=Math.floor(Number(n||0)/60),minutes=Number(
 function mapsHref(e){if(e.map_place_id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.map_label||e.location_name)+'&query_place_id='+encodeURIComponent(e.map_place_id);if(e.map_lat&&e.map_lng)return 'https://www.google.com/maps/search/?api=1&query='+e.map_lat+','+e.map_lng;return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([e.map_label,e.location_name,e.address,e.city].filter(Boolean).join(', '));}
 function shareUrl(id){return location.origin+'/api/community-event-share?id='+encodeURIComponent(id);}
 async function shareEvent(id,title){
+ if(!state.user){location.href='/player-register.html?next='+encodeURIComponent(location.pathname+location.search);return;}
  const url=shareUrl(id);
  try{
   if(navigator.share)await navigator.share({title:title||'Courtly activity',text:'Join me for this Courtly activity.',url});
@@ -56,7 +57,7 @@ async function markActivitiesRead(){
 }
 async function loadRegisteredVenues(){
  const [{data:venues,error:venueError},{data:courts,error:courtError}]=await Promise.all([
-  supabase.from('venues').select('id,slug,name,address,city,sport,timezone,hours_open,hours_close,peak_hours_start,peak_hours_end,payment_qr_url,payment_method,payment_account,payment_instructions').eq('is_published',true).order('name'),
+  supabase.from('venues').select('id,slug,name,address,city,sport,timezone,hours_open,hours_close,peak_hours_start,peak_hours_end,payment_qr_url,payment_method,payment_account,payment_instructions,owner_id').eq('owner_id',state.user.id).eq('is_published',true).order('name'),
   supabase.from('courts').select('id,venue_id,name,sport,hourly_rate,off_peak_rate,peak_rate,is_active').eq('is_active',true).order('display_order')
  ]);
  if(venueError)throw venueError;if(courtError)throw courtError;
@@ -208,20 +209,17 @@ async function init(){
  const {data:{user},error}=await supabase.auth.getUser();if(error)throw error;
  state.user=user;
  const create=$('openEventComposer');
- if(!user){
-  create.hidden=true;
-  $('communityEventsFeed').innerHTML='<div class="community-state"><strong>Sign in to explore player activities</strong><a href="/player-login.html">Player login</a></div>';
-  return;
+ create.hidden=true;
+ if(user){
+  const {data:ownedVenues,error:ownerError}=await supabase.from('venues').select('id').eq('owner_id',user.id).eq('is_published',true).limit(1);
+  if(ownerError)throw ownerError;
+  if(ownedVenues?.length){
+    create.hidden=false;
+    create.addEventListener('click',()=>openComposer(true));
+    await loadRegisteredVenues();
+  }
  }
- const {data:profile,error:profileError}=await supabase.from('player_profiles').select('id,player_name,full_name,is_private').eq('id',user.id).maybeSingle();
- if(profileError)throw profileError;state.profile=profile;
- if(profile){
-  create.hidden=false;
-  if(profile.is_private){create.disabled=true;create.textContent='Make profile public to host';}
-  else create.addEventListener('click',()=>openComposer(true));
- }
- await loadRegisteredVenues();
- $('communityEventDate').min=localToday();$('communityEventDate').value=localToday();$('communityEventTime').value='18:00';
+ if(!create.hidden){$('communityEventDate').min=localToday();$('communityEventDate').value=localToday();$('communityEventTime').value='18:00';}
  $('communityEventVenue').addEventListener('change',updateCourtChoices);
  $('communityEventCourt').addEventListener('change',()=>{updateSuggestedFee();updateCourtChoicesAfterSelectedCourt();});
  $('communityEventCapacity').addEventListener('input',updateSuggestedFee);

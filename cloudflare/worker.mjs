@@ -12,6 +12,19 @@ function jsonError(status, message) {
 
 export async function handleRequest(request, env) {
   const url = new URL(request.url);
+
+  if (url.hostname === 'courtlyph.com') {
+    url.protocol = 'https:';
+    url.hostname = 'www.courtlyph.com';
+    return new Response(null, {
+      status: 308,
+      headers: {
+        Location: url.toString(),
+        'Cache-Control': 'no-store'
+      }
+    });
+  }
+
   const path = url.pathname.replace(/\/$/, '').replace(/\.js$/, '');
   if (path === '/api' || path.startsWith('/api/')) {
     const handler = createApiHandlers(env)[path];

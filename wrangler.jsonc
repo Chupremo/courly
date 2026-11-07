@@ -7,16 +7,6 @@
   "workers_dev": true,
   "preview_urls": true,
   "keep_vars": true,
-  "routes": [
-    {
-      "pattern": "www.courtlyph.com",
-      "custom_domain": true
-    },
-    {
-      "pattern": "courtlyph.com",
-      "custom_domain": true
-    }
-  ],
   "previews": {
     "vars": {
       "COURTLY_EMAIL_ENABLED": "false",
@@ -31,6 +21,8 @@
     "not_found_handling": "none",
     "run_worker_first": ["/api", "/api/*", "/player/*", "/coach/*", "/club/*", "/v/*"]
   },
+  // Custom domains are managed in the Cloudflare dashboard/DNS rather than
+  // this file so existing DNS records can be migrated deliberately.
   // Scheduled jobs stay disabled until the Vercel scheduler is deliberately retired.
   "triggers": { "crons": [] }
 }

@@ -67,7 +67,7 @@ export function normalizeCheckoutHold(value, expected = {}, receivedAt = monoton
   const subtotal = numeric('subtotal'), fee = numeric('convenience_fee'), total = numeric('total');
   if (Math.abs(subtotal + fee - total) > 0.005
       || (value.kind === 'court' && (!uuidPattern.test(value.booking_id) || !uuidPattern.test(value.court_id)
-        || !uuidPattern.test(value.customer_access_token) || fee !== 0 || value.fee_payer !== 'venue_owner'))
+        || !uuidPattern.test(value.customer_access_token) || fee !== 10 || value.fee_payer !== 'player'))
       || (value.kind === 'openplay' && (!uuidPattern.test(value.event_id) || fee !== (subtotal > 0 ? 10 : 0) || value.fee_payer !== (subtotal > 0 ? 'player' : 'none')))) fail();
   return { ...value, subtotal, convenience_fee: fee, total, checkedAt: receivedAt };
 }

@@ -24,12 +24,14 @@ const localVenueShowcase = [
     id:'external-lipa-elite', external:true, name:'Lipa Elite Pickleball',
     address:'Mercado De Lipa, Purok 6 MK Lina St, Brgy. San Sebastian',
     city:'Lipa City, Batangas', externalUrl:'https://lipaelitepickleball.com/',
+    logo_url:'https://lipaelitepickleball.com/logo.png', logoOnly:true,
     courts:Array.from({length:5},(_,i)=>({id:'lep-'+i,name:'Indoor Court '+(i+1),sport:'Pickleball',hourly_rate:500}))
   },
   {
     id:'external-pickle-yard', external:true, name:'The Pickle Yard Lipa South',
     address:'Purok 5, Lipa City, Batangas', city:'Lipa City, Batangas',
     externalUrl:'https://www.facebook.com/PYLipaSouth',
+    logo_url:'https://baseline-prod.sgp1.digitaloceanspaces.com/6d030b319415d5d3275a0fabcbe58164.png', logoOnly:true,
     courts:Array.from({length:4},(_,i)=>({id:'pyl-'+i,name:'Indoor Court '+(i+1),sport:'Pickleball',hourly_rate:500}))
   }
 ];
@@ -92,7 +94,7 @@ function render() {
     const min = rates.length ? Math.min(...rates) : null;
     const cover = venue.cover_url || venue.logo_url || courts.find(c => c.image_url)?.image_url;
     const bookingHref = venue.demoBookingUrl || venue.externalUrl || (venue.slug ? `/venue.html?slug=${encodeURIComponent(venue.slug)}` : '');
-    return `<article class="venue-card"><div class="cover"><span aria-hidden="true">⌂</span>${cover ? `<img src="${esc(cover)}" alt="${esc(venue.name)} venue photo" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>${venue.sample ? 'CLIENT DEMO' : venue.external ? 'NEARBY · NOT YET ON COURTLY' : 'COURTLY VENUE'}</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : ['Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${bookingHref ? `<a class="book" href="${bookingHref}" ${venue.external ? 'target="_blank" rel="noopener noreferrer"' : ''} aria-label="${venue.sample ? 'Open demo booking for' : 'View'} ${esc(venue.name)}">${venue.sample ? 'Try demo booking' : venue.external ? 'Visit official page' : 'View venue'} <span aria-hidden="true">→</span></a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
+    return `<article class="venue-card"><div class="cover"><span aria-hidden="true">⌂</span>${cover ? `<img class="${venue.logoOnly ? 'venue-logo-image' : ''}" src="${esc(cover)}" alt="${esc(venue.name)} ${venue.logoOnly ? 'logo' : 'venue photo'}" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>${venue.sample ? 'CLIENT DEMO' : venue.external ? 'NEARBY · NOT YET ON COURTLY' : 'COURTLY VENUE'}</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : ['Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${bookingHref ? `<a class="book" href="${bookingHref}" ${venue.external ? 'target="_blank" rel="noopener noreferrer"' : ''} aria-label="${venue.sample ? 'Open demo booking for' : 'View'} ${esc(venue.name)}">${venue.sample ? 'Try demo booking' : venue.external ? 'Visit official page' : 'View venue'} <span aria-hidden="true">→</span></a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
   }).join('');
 }
 

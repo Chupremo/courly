@@ -9,7 +9,17 @@ const city = $('city');
 const chips = $('activeFilters');
 const params = new URLSearchParams(location.search);
 const isDemo = params.get('demo') === '1';
-const sampleVenues = [{
+const clientDemoVenue = {
+  id: 'client-demo-lipa', sample: true, slug: 'client-demo-lipa',
+  demoBookingUrl: '/demo-booking.html',
+  name: 'DEMO · Lipa Pickleball Hub', address: 'Presentation venue · Lipa City',
+  city: 'Lipa City, Batangas', courts: [
+    { id: 'demo-c1', name: 'Court 1 · Indoor', sport: 'Pickleball', hourly_rate: 350 },
+    { id: 'demo-c2', name: 'Court 2 · Indoor', sport: 'Pickleball', hourly_rate: 350 },
+    { id: 'demo-c3', name: 'Court 3 · Outdoor', sport: 'Pickleball', hourly_rate: 300 }
+  ]
+};
+const sampleVenues = [clientDemoVenue, {
   id: 'sample-santos', sample: true, slug: 'demo-santos-pickleball-club',
   name: 'DEMO · Santos Pickleball Club', address: '12 Sample Street, Brgy. Marawoy',
   city: 'Lipa City, Batangas', courts: [
@@ -75,7 +85,8 @@ function render() {
     const rates = courts.map(rate).filter(value => value !== null);
     const min = rates.length ? Math.min(...rates) : null;
     const cover = venue.cover_url || venue.logo_url || courts.find(c => c.image_url)?.image_url;
-    return `<article class="venue-card"><div class="cover"><span aria-hidden="true">⌂</span>${cover ? `<img src="${esc(cover)}" alt="${esc(venue.name)} venue photo" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>${venue.sample ? 'DEMO VENUE' : 'COURTLY VENUE'}</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : ['Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${venue.slug ? `<a class="book" href="/venue.html?slug=${encodeURIComponent(venue.slug)}" aria-label="View ${esc(venue.name)}">View venue <span aria-hidden="true">→</span></a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
+    const bookingHref = venue.demoBookingUrl || (venue.slug ? `/venue.html?slug=${encodeURIComponent(venue.slug)}` : '');
+    return `<article class="venue-card"><div class="cover"><span aria-hidden="true">⌂</span>${cover ? `<img src="${esc(cover)}" alt="${esc(venue.name)} venue photo" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>${venue.sample ? 'CLIENT DEMO' : 'COURTLY VENUE'}</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : ['Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${bookingHref ? `<a class="book" href="${bookingHref}" aria-label="${venue.sample ? 'Open demo booking for' : 'View'} ${esc(venue.name)}">${venue.sample ? 'Try demo booking' : 'View venue'} <span aria-hidden="true">→</span></a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
   }).join('');
 }
 
@@ -101,7 +112,7 @@ async function load() {
       if (!supabase) throw new Error('Courtly venue service is not configured.');
       const result = await supabase.from('venues').select('id,slug,name,address,city,logo_url,cover_url,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url,image_fit)').eq('is_published', true).order('created_at', { ascending: false });
       if (result.error) throw result.error;
-      data = result.data || [];
+      data = [clientDemoVenue, ...(result.data || []).filter((venue) => venue.slug !== clientDemoVenue.slug)];
     }
     if (version !== requestVersion) return;
     venues = data.map(v => ({ ...v, courts: (v.courts || []).filter(c => c.is_active !== false) }));
@@ -111,9 +122,12 @@ async function load() {
   } catch (error) {
     if (version !== requestVersion) return;
     console.error('Courtly venue listings could not be loaded:', error);
-    loadState = 'error';
-    count.textContent = 'Venues unavailable';
-    list.innerHTML = '<div class="error" role="alert"><b>We couldn’t load the venues.</b><p>Please check your connection and try again. Your filters have been kept.</p><button class="results-action" type="button" data-action="retry">Try again</button></div>';
+    venues = [clientDemoVenue];
+    loadState = 'ready';
+    setCities();
+    updateFilters();
+    count.textContent = 'Demo venue available · live venues temporarily unavailable';
+    list.insertAdjacentHTML('beforeend','<div class="error" role="status"><b>Live venue listings are temporarily unavailable.</b><p>The client demo venue above is still fully interactive for presentations.</p><button class="results-action" type="button" data-action="retry">Retry live venues</button></div>');
   } finally {
     if (version === requestVersion) list.setAttribute('aria-busy', 'false');
   }

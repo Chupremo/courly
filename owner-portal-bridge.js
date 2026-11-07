@@ -156,8 +156,12 @@ export async function loadOwnerWorkspace() {
       qrData: venue.payment_qr_url || '', notifyEmail: venue.notify_email !== false,
       notifyPending: venue.notify_pending !== false, notifyCancelled: venue.notify_cancelled !== false,
       timezone, currency: venue.currency || 'PHP',
-      activationStatus: venue.activation_status || 'pending',
-      bookingActivationReady: (venue.activation_status || 'pending') === 'active' && venue.is_published !== false
+      trialStartedAt: venue.trial_started_at || null,
+      trialEndsAt: venue.trial_ends_at || null,
+      activationStatus: venue.activation_status || 'trial',
+      trialDaysRemaining: venue.trial_ends_at ? Math.max(0, Math.ceil((new Date(venue.trial_ends_at).getTime() - Date.now()) / 86400000)) : null,
+      trialExpired: venue.activation_status === 'on_hold' || (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now()),
+      bookingActivationReady: ['trial','active'].includes(venue.activation_status || 'trial') && venue.is_published !== false
     }
   };
   return db;

@@ -33,6 +33,15 @@ SET trial_started_at = coalesce(trial_started_at, created_at, clock_timestamp())
     trial_ends_at = coalesce(trial_ends_at, coalesce(trial_started_at, created_at, clock_timestamp()) + interval '7 days')
 WHERE activation_status='trial';
 
+-- A valid trial is live and bookable; expired trials will be moved to On Hold.
+UPDATE public.venues
+SET is_published=true,
+    updated_at=now()
+WHERE activation_status='trial'
+  AND trial_ends_at IS NOT NULL
+  AND trial_ends_at > clock_timestamp()
+  AND coalesce(billing_status,'active')='active';
+
 -- Owner workspace writes are allowed during trial and while on hold/suspended.
 -- A banned venue remains readable but cannot be modified by the owner.
 CREATE OR REPLACE FUNCTION public.courtly_owner_can_manage_venue(p_venue_id uuid)

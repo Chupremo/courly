@@ -180,10 +180,11 @@ DECLARE
   v_owner_id uuid;
   v_billing_status text;
   v_activation_status text;
+  v_trial_ends_at timestamptz;
   v_terms_version text;
 BEGIN
-  SELECT owner_id,billing_status,coalesce(activation_status,'trial')
-  INTO v_owner_id,v_billing_status,v_activation_status
+  SELECT owner_id,billing_status,coalesce(activation_status,'trial'),trial_ends_at
+  INTO v_owner_id,v_billing_status,v_activation_status,v_trial_ends_at
   FROM public.venues
   WHERE id=NEW.venue_id;
 
@@ -199,8 +200,12 @@ BEGIN
     RAISE EXCEPTION 'This venue is temporarily unavailable for new bookings while its Courtly account is suspended';
   END IF;
 
-  -- Trial is intentionally fee-free and does not require the paid billing terms.
+  -- Trial is intentionally fee-free and does not require the paid billing terms,
+  -- but the seven-day cutoff still applies to every transaction type.
   IF v_activation_status='trial' THEN
+    IF v_trial_ends_at IS NOT NULL AND v_trial_ends_at<=clock_timestamp() THEN
+      RAISE EXCEPTION 'This venue trial is on hold. Please contact Courtly Administration.';
+    END IF;
     RETURN NEW;
   END IF;
 

@@ -224,7 +224,7 @@ test('payment rendering never uses public venue QR details before a verified hol
   const details = { kind: 'court', court: { name: 'Court 1' }, date: '2030-11-08', startHour: 10, endHour: 12, amounts: { registration: 700, fee: 0, total: 700, free: false } };
   const context = vm.createContext({ checkout: details, venue: { payment_qr_url: 'https://example.invalid/unsafe-before-hold.png' },
     $: get, setText: (id, text) => { get(id).textContent = text; }, money: String, dateLabel: String, formatHour: String,
-    paymentButtonLabel: () => '', CONVENIENCE_FEE_LABEL: 'Convenience Fee', holdRemainingMs, updateHoldPresentation() {},
+    paymentButtonLabel: () => '', CONVENIENCE_FEE_LABEL: 'Convenience Fee', platformFee: () => 10, holdRemainingMs, updateHoldPresentation() {},
     slug: 'test-venue', URL, window: { location: { origin: 'https://example.invalid' } }, document: { createElement: () => ({}) } });
   vm.runInContext(slice('function renderCheckout(details', 'function updateHoldPresentation()'), context);
   context.renderCheckout(details);

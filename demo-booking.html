@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Demo Court Booking | Courtly</title>
+<meta name="description" content="Interactive Courtly court-booking demo for client presentations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1d3d;--blue:#1474e8;--lime:#8ed502;--ink:#172342;--muted:#6f7b92;--line:#e1e7f0;--bg:#f4f7fb;--green:#18864b}
+*{box-sizing:border-box}body{margin:0;font-family:Poppins,Arial,sans-serif;background:var(--bg);color:var(--ink)}a{color:inherit}.wrap{width:min(1100px,calc(100% - 28px));margin:auto}
+.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.nav{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{text-decoration:none;font-weight:700;font-size:22px;color:var(--navy)}.back{text-decoration:none;font-size:13px;color:#456180}
+.hero{background:linear-gradient(120deg,#0b1733,#1747ad);color:#fff;padding:34px 0}.eyebrow{font-size:11px;letter-spacing:.17em;color:#cbd9f8}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.08;margin:8px 0}.hero p{margin:0;color:#d6e1f5;max-width:760px;font-size:14px;line-height:1.7}
+.demo-alert{margin-top:18px;background:#effbdc;color:#365c09;border:1px solid #cfe8a6;border-radius:12px;padding:12px 14px;font-size:12px}.demo-alert strong{font-weight:700}
+main{padding:24px 0 60px}.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 30px #1b36560d}.card h2{margin:0 0 6px;font-size:19px}.sub{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}.step{padding:9px;border-radius:10px;background:#f2f5fa;font-size:11px;color:#5f6d84;text-align:center}.step.active{background:#eaf2ff;color:#1257b6;font-weight:700}
+.dates{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.date-btn,.time-btn,.court-btn{border:1px solid var(--line);background:#fff;border-radius:11px;cursor:pointer;font:inherit;color:var(--ink)}.date-btn{padding:11px 6px}.date-btn small{display:block;color:var(--muted);font-size:10px}.date-btn strong{display:block;font-size:16px;margin-top:2px}.date-btn.active,.time-btn.active,.court-btn.active{border-color:#1474e8;background:#eef5ff;box-shadow:0 0 0 2px #dceaff}
+.section{margin-top:20px}.section h3{font-size:14px;margin:0 0 10px}.times{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.time-btn{min-height:42px;font-size:12px}.time-btn.unavailable{background:#f5f6f8;color:#a0a8b6;text-decoration:line-through;cursor:not-allowed}
+.courts{display:grid;gap:9px}.court-btn{padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px}.court-main strong{display:block;font-size:13px}.court-main span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.price{font-weight:700;color:#135ab9;white-space:nowrap}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:600}.field input{height:44px;border:1px solid #d3dbe7;border-radius:9px;padding:0 11px;font:inherit;font-size:13px}
+.summary{position:sticky;top:84px}.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f5;font-size:12px}.summary-line strong{font-weight:600;text-align:right}.total{font-size:18px;border:0;padding-top:15px}.owner-fee{margin:13px 0;padding:11px;border-radius:10px;background:#effaf2;color:#28643f;font-size:11px;line-height:1.55}.btn{width:100%;min-height:48px;border:0;border-radius:11px;background:var(--blue);color:#fff;font:600 14px Poppins;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.secondary{display:block;margin-top:9px;text-align:center;text-decoration:none;padding:11px;border-radius:10px;border:1px solid #cfd9e8;color:#27456f;font-size:12px}
+.confirm{display:none;margin-top:18px;padding:18px;border:1px solid #bfe3ca;background:#eefbf2;border-radius:14px}.confirm.show{display:block}.confirm h3{margin:0 0 6px;color:#176a3a}.confirm p{margin:4px 0;color:#426350;font-size:12px;line-height:1.6}.ref{display:inline-block;margin-top:8px;padding:7px 10px;border-radius:8px;background:#fff;border:1px solid #cae7d3;font-weight:700;font-size:12px}
+.how{margin-top:18px}.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.how-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.how-item b{display:block;font-size:12px;margin-bottom:4px}.how-item span{font-size:11px;color:var(--muted);line-height:1.5}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.summary{position:static}.dates{grid-template-columns:repeat(4,1fr)}.times{grid-template-columns:repeat(3,1fr)}.how-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.dates{grid-template-columns:repeat(3,1fr)}.times{grid-template-columns:repeat(2,1fr)}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.steps{grid-template-columns:1fr 1fr}.how-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><a class="brand" href="/players">COURTLY</a><a class="back" href="/players">← Back to player directory</a></div></header>
+<section class="hero"><div class="wrap"><div class="eyebrow">INTERACTIVE CLIENT DEMO</div><h1>Book a court in under a minute.</h1><p>This presentation venue always has sample future availability so you can demonstrate Courtly’s player booking flow without relying on live venue data.</p><div class="demo-alert"><strong>Demo only:</strong> no real court is reserved and no payment is collected.</div></div></section>
+<main class="wrap">
+<div class="grid">
+<section class="card">
+<div class="steps"><div class="step active">1 · Date</div><div class="step">2 · Time</div><div class="step">3 · Court</div><div class="step">4 · Confirm</div></div>
+<h2>DEMO · Lipa Pickleball Hub</h2>
+<p class="sub">Lipa City, Batangas · Pickleball · Sample availability generated for presentation use.</p>
+<div class="section"><h3>Choose a date</h3><div id="dates" class="dates"></div></div>
+<div class="section"><h3>Choose a start time</h3><div id="times" class="times"></div></div>
+<div class="section"><h3>Choose a court</h3><div id="courts" class="courts"></div></div>
+<div class="section"><h3>Your details</h3><div class="fields">
+<div class="field"><label for="name">Name</label><input id="name" value="Client Demo"></div>
+<div class="field"><label for="email">Email</label><input id="email" type="email" value="demo@courtlyph.com"></div>
+<div class="field full"><label for="phone">Contact number</label><input id="phone" value="0917 000 0000"></div>
+</div></div>
+<div id="confirmation" class="confirm"><h3>Demo booking confirmed ✓</h3><p>This is what the player sees after a successful booking request. In a live venue, the booking would continue to payment/receipt verification according to the venue’s setup.</p><span id="reference" class="ref"></span></div>
+</section>
+<aside class="card summary">
+<h2>Booking summary</h2><p class="sub">Updates as you make selections.</p>
+<div class="summary-line"><span>Date</span><strong id="sumDate">Select a date</strong></div>
+<div class="summary-line"><span>Time</span><strong id="sumTime">Select a time</strong></div>
+<div class="summary-line"><span>Court</span><strong id="sumCourt">Select a court</strong></div>
+<div class="summary-line"><span>Court rental</span><strong id="sumRental">₱0.00</strong></div>
+<div class="summary-line total"><span>Total player payment</span><strong id="sumTotal">₱0.00</strong></div>
+<div class="owner-fee"><strong>Venue owner Convenience Fee: ₱10.00</strong><br>This is shown separately and is not added to the player’s court-rental total.</div>
+<button id="confirm" class="btn" type="button" disabled>Confirm demo booking</button>
+<a class="secondary" href="/players">Browse other venues</a>
+</aside>
+</div>
+<section class="how">
+<h2>How to present the booking flow</h2>
+<div class="how-grid">
+<div class="how-item"><b>1. Player discovers a venue</b><span>Search by sport or location from the Courtly player directory.</span></div>
+<div class="how-item"><b>2. Player picks availability</b><span>Select a future date, time and one of the venue’s available courts.</span></div>
+<div class="how-item"><b>3. Player reviews the price</b><span>Court rental is shown clearly before the player submits the reservation.</span></div>
+<div class="how-item"><b>4. Venue receives the booking</b><span>In production, the booking is saved for the venue owner to review and manage.</span></div>
+</div>
+</section>
+</main>
+<script>
+const money=n=>'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const courts=[
+ {id:'c1',name:'Court 1 · Indoor',sport:'Pickleball',rate:350},
+ {id:'c2',name:'Court 2 · Indoor',sport:'Pickleball',rate:350},
+ {id:'c3',name:'Court 3 · Outdoor',sport:'Pickleball',rate:300}
+];
+const dateHost=document.getElementById('dates'),timeHost=document.getElementById('times'),courtHost=document.getElementById('courts');
+let selectedDate=null,selectedTime=null,selectedCourt=null;
+function dateKey(d){return d.toISOString().slice(0,10)}
+function dateLabel(d){return new Intl.DateTimeFormat('en-PH',{weekday:'short',month:'short',day:'numeric'}).format(d)}
+const dates=Array.from({length:14},(_,i)=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i+1);return d});
+dateHost.innerHTML=dates.map((d,i)=>`<button class="date-btn" data-date="${dateKey(d)}"><small>${new Intl.DateTimeFormat('en-PH',{weekday:'short'}).format(d)}</small><strong>${d.getDate()}</strong><small>${new Intl.DateTimeFormat('en-PH',{month:'short'}).format(d)}</small></button>`).join('');
+const times=['8:00 AM','9:00 AM','10:00 AM','11:00 AM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM'];
+function renderTimes(){
+ timeHost.innerHTML=times.map((t,i)=>`<button class="time-btn${i===3||i===8?' unavailable':''}" ${i===3||i===8?'disabled':''} data-time="${t}">${t}${i===3||i===8?' · booked':''}</button>`).join('');
+}
+function renderCourts(){
+ courtHost.innerHTML=courts.map(c=>`<button class="court-btn" data-court="${c.id}"><span class="court-main"><strong>${c.name}</strong><span>${c.sport} · Available for demo</span></span><span class="price">${money(c.rate)}/hr</span></button>`).join('');
+}
+function update(){
+ document.getElementById('sumDate').textContent=selectedDate?dateLabel(new Date(selectedDate+'T12:00:00')):'Select a date';
+ document.getElementById('sumTime').textContent=selectedTime?selectedTime+' – 1 hour':'Select a time';
+ document.getElementById('sumCourt').textContent=selectedCourt?selectedCourt.name:'Select a court';
+ const rate=selectedCourt?.rate||0;document.getElementById('sumRental').textContent=money(rate);document.getElementById('sumTotal').textContent=money(rate);
+ document.getElementById('confirm').disabled=!(selectedDate&&selectedTime&&selectedCourt);
+}
+dateHost.addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;selectedDate=b.dataset.date;dateHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
+timeHost.addEventListener('click',e=>{const b=e.target.closest('[data-time]');if(!b||b.disabled)return;selectedTime=b.dataset.time;timeHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
+courtHost.addEventListener('click',e=>{const b=e.target.closest('[data-court]');if(!b)return;selectedCourt=courts.find(c=>c.id===b.dataset.court);courtHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
+document.getElementById('confirm').addEventListener('click',()=>{
+ const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim();
+ if(!name||!email){alert('Add a name and email to complete the demo booking.');return}
+ document.getElementById('reference').textContent='Reference: DEMO-'+Math.random().toString(36).slice(2,8).toUpperCase();
+ document.getElementById('confirmation').classList.add('show');
+ document.getElementById('confirmation').scrollIntoView({behavior:'smooth',block:'center'});
+});
+renderTimes();renderCourts();update();
+</script>
+</body>
+</html>

@@ -35,7 +35,7 @@ const localVenueShowcase = [
     courts:Array.from({length:4},(_,i)=>({id:'pyl-'+i,name:'Indoor Court '+(i+1),sport:'Pickleball',hourly_rate:500}))
   }
 ];
-const sampleVenues = [clientDemoVenue, ...localVenueShowcase];
+const sampleVenues = [...localVenueShowcase];
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));

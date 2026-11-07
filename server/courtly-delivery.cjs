@@ -88,7 +88,7 @@ function buildProviderPayload(job, env) {
 }
 
 async function processDeliveryJobs({ backend, env = process.env, fetchImpl = globalThis.fetch, now = Date.now,
-  category = 'booking', source = null, limit = 4, deadline = now() + 45000, pace = pause }) {
+  category = 'booking', source = null, limit = 4, maxDeliveryJobs = 20, deadline = now() + 45000, pace = pause }) {
   requireEmailConfiguration(env);
   const result = { claimed: 0, sent: 0, retry: 0, needs_review: 0, deferred: 0 };
 
@@ -106,7 +106,7 @@ async function processDeliveryJobs({ backend, env = process.env, fetchImpl = glo
     }
   }
 
-  for (let index = 0; index < Math.min(limit, 20); index++) {
+  for (let index = 0; index < Math.min(limit, maxDeliveryJobs, 20); index++) {
     if (index) await pace(550);
     // Leave room for claim + prepare + provider + acknowledgement timeouts.
     if (now() + 32000 > deadline) break;

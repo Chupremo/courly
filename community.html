@@ -69,21 +69,24 @@
       <div id="communityEventsFeed" class="ce-event-grid" aria-live="polite"><div class="community-state">Loading activities…</div></div>
     </section>
   </main>
-  <nav class="community-mobile-tabs" aria-label="Courtly mobile navigation">
-    <a href="/player-dashboard.html?view=home"><span>⌂</span><small>Home</small></a>
-    <a href="/player-dashboard.html?view=discover"><span>◎</span><small>Discover</small></a>
-    <a href="/player-dashboard.html?view=discover&amp;mode=openplay"><span></span><small>Open Play</small></a>
-    <a href="/community.html" aria-current="page"><span></span><small>Activities</small></a>
+  <nav class="courtly-mobile-tabs" aria-label="Player navigation">
+    <a href="/player-dashboard.html?view=home" aria-label="Home" data-mobile-tab="home"><span class="tab-icon">⌂</span><span>Home</span></a>
+    <a href="/player-dashboard.html?view=discover" aria-label="Discover" data-mobile-tab="discover"><span class="tab-icon">◎</span><span>Discover</span></a>
+    <a href="/player-dashboard.html?view=discover&amp;mode=openplay" aria-label="Open Play" data-mobile-tab="openplay"><span class="tab-icon">＋</span><span>Open Play</span></a>
+    <a href="/community.html" aria-label="Activities &amp; Games" data-mobile-tab="community" aria-current="page"><span class="tab-icon"></span><span>Activities</span><b class="player-community-badge mobile" data-community-badge hidden>0</b></a>
   </nav>
   <style>
-    .community-mobile-tabs{display:none}
+    .courtly-mobile-tabs{display:none}
     @media(max-width:760px){
-      body.ce-community-page{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
-      .community-mobile-tabs{position:fixed;left:0;right:0;bottom:0;z-index:120;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #e5eaf2;padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,26,71,.08)}
-      .community-mobile-tabs a{min-height:49px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:10px;color:#68758e;font:600 10px Inter,sans-serif}
-      .community-mobile-tabs a>span{font-size:18px;line-height:1}
-      .community-mobile-tabs a[aria-current="page"]{background:#eff7dc;color:#183c00}
-      .community-mobile-tabs small{font-size:9px}
+      body.ce-community-page{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+      .courtly-mobile-tabs{position:fixed;z-index:150;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #e5eaf2;box-shadow:0 -8px 26px rgba(0,26,71,.09);backdrop-filter:blur(18px)}
+      .courtly-mobile-tabs a{position:relative;display:flex;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#7b879b;text-decoration:none;font:650 10px/1.1 Inter,sans-serif;padding:3px 0;min-height:50px}
+      .courtly-mobile-tabs a .tab-icon{font-size:19px;line-height:1}
+      .courtly-mobile-tabs a[aria-current="page"]{color:#001a47;font-weight:700}
+      .courtly-mobile-tabs a[aria-current="page"] .tab-icon{color:#75b600}
+      .player-community-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#e33745;color:#fff;font-size:9px;font-weight:850;line-height:1}
+      .player-community-badge[hidden]{display:none}
+      .player-community-badge.mobile{position:absolute;top:0;right:calc(50% - 26px);min-width:16px;height:16px;font-size:8px}
     }
   </style>
   <div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>

@@ -45,9 +45,20 @@
         <h2>About this activity</h2>
         <div class="ce-description-text" id="eventDescription">Loading activity details…</div>
       </article>
+      <section class="ce-detail-card" id="eventCommentsCard">
+        <span class="ce-section-eyebrow">PLAYER DISCUSSION</span>
+        <h2>Comments</h2>
+        <div id="eventComments"><div class="ce-attendees-empty">Loading comments…</div></div>
+        <div id="eventCommentGate" class="ce-signin-prompt" hidden></div>
+        <form id="eventCommentForm" class="ce-registration-form" hidden>
+          <label for="eventCommentBody">Add a comment</label>
+          <textarea id="eventCommentBody" maxlength="1000" rows="3" placeholder="Write a comment about this activity…"></textarea>
+          <button class="ce-rsvp-button" id="eventCommentSubmit" type="submit">Post comment</button>
+        </form>
+      </section>
       <section class="ce-host-card">
         <span class="ce-host-avatar" id="eventHostAvatar">CP</span>
-        <div class="ce-host-copy"><small>Hosted by</small><strong id="eventHostName">Courtly Player</strong><span>Activity host · Courtly player</span></div>
+        <div class="ce-host-copy"><small>Hosted by</small><strong id="eventHostName">Courtly Venue</strong><span>Registered Courtly venue owner</span></div>
         <button id="eventCancelActivity" type="button" hidden>Cancel activity</button>
       </section>
     </section>

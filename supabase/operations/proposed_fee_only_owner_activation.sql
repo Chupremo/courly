@@ -168,6 +168,61 @@ BEGIN
   END IF;
 END $$;
 
+-- Trial accounts do not need to accept the paid Courtly billing terms before
+-- accepting bookings. Full activation keeps the existing terms requirement.
+CREATE OR REPLACE FUNCTION public.courtly_require_owner_terms_before_transaction()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path=public,pg_temp
+AS $
+DECLARE
+  v_owner_id uuid;
+  v_billing_status text;
+  v_activation_status text;
+  v_terms_version text;
+BEGIN
+  SELECT owner_id,billing_status,coalesce(activation_status,'trial')
+  INTO v_owner_id,v_billing_status,v_activation_status
+  FROM public.venues
+  WHERE id=NEW.venue_id;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'The venue for this transaction could not be found';
+  END IF;
+
+  IF v_activation_status NOT IN ('trial','active') THEN
+    RAISE EXCEPTION 'This venue is not currently accepting new bookings';
+  END IF;
+
+  IF v_billing_status='suspended' THEN
+    RAISE EXCEPTION 'This venue is temporarily unavailable for new bookings while its Courtly account is suspended';
+  END IF;
+
+  -- Trial is intentionally fee-free and does not require the paid billing terms.
+  IF v_activation_status='trial' THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT terms_version INTO v_terms_version
+  FROM public.courtly_platform_settings
+  WHERE singleton=true;
+
+  IF v_owner_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM public.courtly_venue_terms_acceptance t
+    WHERE t.venue_id=NEW.venue_id
+      AND t.owner_id=v_owner_id
+      AND t.terms_version=v_terms_version
+  ) THEN
+    RAISE EXCEPTION 'The venue owner must accept the current Courtly Venue Owner Terms before accepting new bookings or Open Play registrations';
+  END IF;
+
+  RETURN NEW;
+END;
+$;
+REVOKE ALL ON FUNCTION public.courtly_require_owner_terms_before_transaction() FROM PUBLIC,anon,authenticated;
+
 -- Booking gate + fee assignment.
 -- This runs before every booking insert, including SECURITY DEFINER checkout RPCs.
 CREATE OR REPLACE FUNCTION public.courtly_apply_owner_plan_to_booking()

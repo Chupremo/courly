@@ -392,6 +392,21 @@ $('sportModal').addEventListener('click',e=>{if(e.target===$('sportModal'))$('sp
 $('sportModalSearch').addEventListener('input',renderSportOptions);
 document.querySelectorAll('.nav-link').forEach(link=>link.addEventListener('click',async e=>{if(link.dataset.external==='true')return;e.preventDefault();setMobileMenu(false);mobileMenuButton.focus();view=link.dataset.view;history.pushState({},'',`/player-dashboard.html?view=${view}`);if(view==='players')await loadPlayerDirectory(directorySearch);if(view==='invites')await loadPlayerClubInvites();render();}));
 window.addEventListener('popstate',async()=>{setMobileMenu(false);view=new URLSearchParams(location.search).get('view')||'home';if(view==='players')await loadPlayerDirectory(directorySearch);if(view==='invites')await loadPlayerClubInvites();render();});
-$('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/player-login.html');});
+async function logoutPlayer(){await supabase.auth.signOut();location.replace('/player-login.html');}
+$('logoutButton').addEventListener('click',logoutPlayer);
+$('topLogoutButton')?.addEventListener('click',logoutPlayer);
+const topProfileButton=$('topProfileButton'), topProfileMenu=$('topProfileMenu');
+function setTopProfileMenu(open){
+  if(!topProfileButton||!topProfileMenu)return;
+  topProfileMenu.hidden=!open;
+  topProfileButton.setAttribute('aria-expanded',String(open));
+}
+topProfileButton?.addEventListener('click',event=>{
+  event.stopPropagation();
+  setTopProfileMenu(topProfileMenu.hidden);
+});
+topProfileMenu?.addEventListener('click',event=>event.stopPropagation());
+document.addEventListener('click',()=>setTopProfileMenu(false));
+document.addEventListener('keydown',event=>{if(event.key==='Escape')setTopProfileMenu(false);});
 supabase?.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.replace('/player-login.html');});
 init().catch(error=>{console.error('Courtly player dashboard failed:',error);root.innerHTML=`<div class="empty-state"><div class="empty-icon">!</div><strong>We could not load your player dashboard</strong><span>${esc(error.message||'Please refresh the page. If this is a new deployment, run the player account SQL migration in Supabase first.')}</span></div>`;});

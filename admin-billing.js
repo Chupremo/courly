@@ -26,8 +26,8 @@ function statusLabel(status){return String(status||'trial').replaceAll('_',' ').
 function ownerActions(v){
   const id=esc(v.venue_id), status=v.activation_status||'trial';
   const buttons=[];
-  if(status!=='active') buttons.push(`<button class="btn lime" data-owner-action="active" data-venue-id="${id}">Activate</button>`);
-  if(status==='suspended') buttons.push(`<button class="btn" data-owner-action="active" data-venue-id="${id}">Unsuspend</button>`);
+  if(status==='suspended') buttons.push(`<button class="btn lime" data-owner-action="active" data-venue-id="${id}">Unsuspend</button>`);
+  else if(status!=='active') buttons.push(`<button class="btn lime" data-owner-action="active" data-venue-id="${id}">Activate</button>`);
   if(status!=='on_hold') buttons.push(`<button class="btn ghost" data-owner-action="on_hold" data-venue-id="${id}">On Hold</button>`);
   if(status!=='suspended') buttons.push(`<button class="btn ghost" data-owner-action="suspended" data-venue-id="${id}">Suspend</button>`);
   if(status!=='trial') buttons.push(`<button class="btn ghost" data-owner-action="trial" data-venue-id="${id}">Return to Trial</button>`);

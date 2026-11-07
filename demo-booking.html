@@ -1,111 +1,202 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Demo Court Booking | Courtly</title>
-<meta name="description" content="Interactive Courtly court-booking demo for client presentations.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#001A47">
+<title>Courtly Demo | Book a Court</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0d1d3d;--blue:#1474e8;--lime:#8ed502;--ink:#172342;--muted:#6f7b92;--line:#e1e7f0;--bg:#f4f7fb;--green:#18864b}
-*{box-sizing:border-box}body{margin:0;font-family:Poppins,Arial,sans-serif;background:var(--bg);color:var(--ink)}a{color:inherit}.wrap{width:min(1100px,calc(100% - 28px));margin:auto}
-.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.nav{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{text-decoration:none;font-weight:700;font-size:22px;color:var(--navy)}.back{text-decoration:none;font-size:13px;color:#456180}
-.hero{background:linear-gradient(120deg,#0b1733,#1747ad);color:#fff;padding:34px 0}.eyebrow{font-size:11px;letter-spacing:.17em;color:#cbd9f8}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.08;margin:8px 0}.hero p{margin:0;color:#d6e1f5;max-width:760px;font-size:14px;line-height:1.7}
-.demo-alert{margin-top:18px;background:#effbdc;color:#365c09;border:1px solid #cfe8a6;border-radius:12px;padding:12px 14px;font-size:12px}.demo-alert strong{font-weight:700}
-main{padding:24px 0 60px}.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 30px #1b36560d}.card h2{margin:0 0 6px;font-size:19px}.sub{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.6}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}.step{padding:9px;border-radius:10px;background:#f2f5fa;font-size:11px;color:#5f6d84;text-align:center}.step.active{background:#eaf2ff;color:#1257b6;font-weight:700}
-.dates{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.date-btn,.time-btn,.court-btn{border:1px solid var(--line);background:#fff;border-radius:11px;cursor:pointer;font:inherit;color:var(--ink)}.date-btn{padding:11px 6px}.date-btn small{display:block;color:var(--muted);font-size:10px}.date-btn strong{display:block;font-size:16px;margin-top:2px}.date-btn.active,.time-btn.active,.court-btn.active{border-color:#1474e8;background:#eef5ff;box-shadow:0 0 0 2px #dceaff}
-.section{margin-top:20px}.section h3{font-size:14px;margin:0 0 10px}.times{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.time-btn{min-height:42px;font-size:12px}.time-btn.unavailable{background:#f5f6f8;color:#a0a8b6;text-decoration:line-through;cursor:not-allowed}
-.courts{display:grid;gap:9px}.court-btn{padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px}.court-main strong{display:block;font-size:13px}.court-main span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.price{font-weight:700;color:#135ab9;white-space:nowrap}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:600}.field input{height:44px;border:1px solid #d3dbe7;border-radius:9px;padding:0 11px;font:inherit;font-size:13px}
-.summary{position:sticky;top:84px}.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f5;font-size:12px}.summary-line strong{font-weight:600;text-align:right}.total{font-size:18px;border:0;padding-top:15px}.owner-fee{margin:13px 0;padding:11px;border-radius:10px;background:#effaf2;color:#28643f;font-size:11px;line-height:1.55}.btn{width:100%;min-height:48px;border:0;border-radius:11px;background:var(--blue);color:#fff;font:600 14px Poppins;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.secondary{display:block;margin-top:9px;text-align:center;text-decoration:none;padding:11px;border-radius:10px;border:1px solid #cfd9e8;color:#27456f;font-size:12px}
-.confirm{display:none;margin-top:18px;padding:18px;border:1px solid #bfe3ca;background:#eefbf2;border-radius:14px}.confirm.show{display:block}.confirm h3{margin:0 0 6px;color:#176a3a}.confirm p{margin:4px 0;color:#426350;font-size:12px;line-height:1.6}.ref{display:inline-block;margin-top:8px;padding:7px 10px;border-radius:8px;background:#fff;border:1px solid #cae7d3;font-weight:700;font-size:12px}
-.how{margin-top:18px}.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.how-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.how-item b{display:block;font-size:12px;margin-bottom:4px}.how-item span{font-size:11px;color:var(--muted);line-height:1.5}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.summary{position:static}.dates{grid-template-columns:repeat(4,1fr)}.times{grid-template-columns:repeat(3,1fr)}.how-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.dates{grid-template-columns:repeat(3,1fr)}.times{grid-template-columns:repeat(2,1fr)}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.steps{grid-template-columns:1fr 1fr}.how-grid{grid-template-columns:1fr}}
+:root{--navy:#0a1d40;--navy2:#102a57;--blue:#0754c8;--blue2:#2c75e8;--red:#e92c40;--gold:#f1d88c;--ink:#102047;--muted:#697895;--line:#e3e9f3;--pale:#eef4fc;--white:#fff;--green:#168344;--shadow:0 10px 35px rgba(18,48,92,.07)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f4f7fc;color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:14px}button,input,select{font:inherit}button{cursor:pointer}.topbar{height:69px;background:linear-gradient(110deg,#0b1e40,#071831);color:white;border-bottom:1px solid #385071;display:flex;align-items:center}.nav{width:min(1140px,94%);margin:auto;display:flex;align-items:center;gap:36px}.logo{font-size:24px;font-weight:900;letter-spacing:2px;white-space:nowrap;margin-right:46px}.logo span{color:var(--gold)}.navlinks{display:flex;align-items:center;gap:30px;flex:1}.navlinks a,.back{color:white;text-decoration:none;font-size:13px}.navlinks a:hover{color:var(--gold)}.navactions{display:flex;gap:15px;align-items:center;white-space:nowrap}.search-icon{font-size:23px}.signin,.listcourt{padding:11px 17px;border-radius:8px;color:white;text-decoration:none;font-size:12px;border:1px solid #91a3c3}.listcourt{background:var(--red);border-color:var(--red);font-weight:700;box-shadow:0 5px 14px #e92c4030}.mobile-menu{display:none;background:none;border:0;color:white;font-size:24px}
+.venue-hero{background:radial-gradient(ellipse at 75% 40%,#183967 0,#0c2349 42%,#071a38 100%);color:#fff;overflow:hidden}.hero-inner{max-width:1140px;width:94%;margin:auto;min-height:300px;display:grid;grid-template-columns:1fr 1.08fr;gap:32px;align-items:center;padding:23px 0 15px}.back{display:inline-flex;gap:8px;align-items:center;margin:3px 0 10px;opacity:.95}.hero-copy h1{font-size:clamp(38px,4.5vw,54px);letter-spacing:-1.7px;line-height:1.05;margin:0 0 10px;font-weight:850}.venue-brand-lockup{display:flex;align-items:center;min-height:94px;margin:0 0 10px;min-width:0}.venue-brand-lockup h1{margin:0!important}.venue-owner-logo{display:block;max-width:min(100%,380px);max-height:112px;width:auto;height:auto;object-fit:contain;object-position:left center;background:transparent!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;filter:drop-shadow(0 2px 8px rgba(0,0,0,.12))}.venue-owner-logo[hidden]{display:none!important}@media(max-width:600px){.venue-brand-lockup{min-height:74px;margin-bottom:8px}.venue-owner-logo{max-width:min(100%,290px);max-height:88px}}.location{font-size:15px;margin:0 0 13px;display:flex;gap:9px;align-items:center}.desc{font-size:14px;color:#e2eaf8;line-height:1.65;margin:0 0 27px;max-width:500px}.amenities{display:flex;gap:23px;align-items:center;flex-wrap:wrap}.amenity{display:flex;align-items:center;gap:10px;min-width:100px}.amenity-icon{height:42px;width:42px;border:1px solid #d4deef;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0}.amenity strong{display:block;font-size:12px;font-weight:700}.amenity small{display:block;color:#bdcbe1;font-size:12px;margin-top:4px}.gallery{min-width:0}.gallery-main{height:215px;border-radius:16px;overflow:hidden;border:1px solid #3b5578;background:#102b4d}.gallery-main img{height:100%;width:100%;object-fit:cover;display:block}.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:7px}.thumb{height:67px;border:2px solid transparent;padding:0;border-radius:9px;overflow:hidden;background:#17345d;position:relative}.thumb.active{border-color:#fff;box-shadow:0 0 0 1px #98b9e8}.thumb img{width:100%;height:100%;object-fit:cover}.thumb .more{position:absolute;inset:0;display:grid;place-items:center;background:#07183199;color:white;font-weight:700;font-size:12px}
+main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:center;justify-content:center;gap:16px;padding:18px 0 21px;color:#6b7892}.step{display:flex;align-items:center;gap:11px;white-space:nowrap;font-size:12px}.step-num{width:37px;height:37px;border-radius:50%;border:1.5px solid #c6d0e0;background:#eef2f8;display:grid;place-items:center;font-size:13px;font-weight:600;color:#53617c}.step.active{color:#064cc2;font-weight:700}.step.active .step-num,.step.done .step-num{background:#0754c8;color:white;border-color:#0754c8}.step-line{height:1px;background:#c3ccda;flex:1;max-width:100px;min-width:22px}
+.booking-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:stretch}.panel{background:#fff;border:1px solid #edf1f7;border-radius:14px;box-shadow:var(--shadow)}.date-panel{padding:23px 23px 18px;display:grid;grid-template-columns:minmax(245px,.9fr) minmax(280px,1.2fr);gap:16px}.section-title{font-size:18px;font-weight:800;letter-spacing:-.5px;margin:0 0 19px;display:flex;align-items:center;gap:12px}.title-icon{font-size:24px;color:#0754c8}.date-panel .section-title{grid-column:1/-1;margin-bottom:0}.calendar{border:1px solid #e5ebf5;border-radius:10px;padding:14px 12px 12px}.month-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;font-weight:700;font-size:13px}.month-row button{border:0;background:none;color:#132449;font-size:23px;padding:0 6px}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center}.weekdays{font-size:10px;color:#71809e;margin-bottom:9px}.days{gap:2px}.day{border:0;background:transparent;border-radius:7px;min-height:31px;color:#586987;font-size:11px}.day:hover:not(:disabled){background:#eaf2ff}.day:disabled{opacity:.22;cursor:default}.day.selected{background:#0754c8;color:#fff;font-weight:800;box-shadow:0 4px 9px #0754c82c}.day.today:not(.selected){border:1px solid #9cb9ed}.slots-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.slots-head h3{margin:0 0 5px;font-size:15px}.slots-head p{margin:0;color:#75829e;font-size:13px}.legend{display:flex;gap:11px;color:#7a87a1;font-size:10px}.legend span{display:flex;align-items:center;gap:5px}.dot{width:11px;height:11px;border-radius:50%;display:inline-block;background:#9fc3ff}.dot.booked{background:#ff9ca6}.dot.chosen{background:#0754c8}.duration-control{display:flex;align-items:center;gap:8px;margin-top:12px;color:#53627f;font-size:12px;font-weight:600}.duration-control select{border:1px solid #d7e2f2;border-radius:7px;background:#f4f8ff;color:#132449;padding:7px 10px;font-weight:700;outline-color:#2467d4}.duration-hint{font-size:11px;color:#75829e;font-weight:400}.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:11px}.slot{height:31px;border:1px solid #dfe8f6;border-radius:6px;background:#eef4fd;color:#19305b;font-size:12px;font-weight:600}.slot:hover:not(:disabled){border-color:#377ee8}.slot.selected{background:#2467d4;color:white;border-color:#2467d4;box-shadow:0 3px 8px #2467d42a}.slot:disabled{background:#fff0f1;color:#c47a82;border-color:#f8d8dc;text-decoration:line-through;cursor:not-allowed}.summary-panel{padding:13px;background:#fff;margin:0 0 38px}.time-selectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.time-field{display:flex;flex-direction:column;gap:7px;color:#53627f;font-size:12px;font-weight:700}.time-field select{width:100%;border:1px solid #d7e2f2;border-radius:8px;background:#f4f8ff;color:#132449;padding:12px 10px;font-size:14px;font-weight:700;outline-color:#2467d4}.range-hint{font-size:12px;color:#75829e;margin:12px 0 0}.slot.in-range{background:#2467d4;color:white;border-color:#2467d4}.slot.range-start{border-radius:7px 7px 7px 7px;box-shadow:inset 0 0 0 2px #0b4fb5}.slot.range-end{box-shadow:inset 0 0 0 2px #0b4fb5}.summary-inner{background:linear-gradient(180deg,#f4f8ff,#fff);border:1px solid #edf2fa;border-radius:10px;padding:16px}.summary-inner .section-title{font-size:17px;margin-bottom:23px}.summary-row{display:grid;grid-template-columns:22px minmax(125px,auto) minmax(0,1fr);gap:10px;align-items:start;color:#687897;margin:16px 0;min-width:0}.summary-row strong{white-space:normal;overflow-wrap:anywhere}.summary-row span:last-child{min-width:0;overflow-wrap:anywhere;text-align:left}.summary-row .ico{color:#5877ae;font-size:16px}.summary-row strong{font-weight:500;color:#53627f}.summary-row span:last-child{color:#4e5d7a;line-height:1.4}.sum-total{border-top:1px solid #dce5f2;padding-top:17px;margin-top:18px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700}.sum-total strong{font-size:18px}.next-btn{border:0;background:#0754c8;color:white;width:100%;padding:15px 12px;border-radius:9px;font-weight:700;margin-top:25px}.next-btn:disabled{background:#aab4c7;cursor:not-allowed}.next-btn span{font-size:17px;margin-left:6px}.court-panel{padding:21px 18px 16px;margin:16px 0 38px}.court-panel .section-title{margin:0 0 4px}.subheading{margin:0 0 13px 45px;color:#7a87a1;font-size:12px}.courts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.court-card{border:1px solid #e2e9f3;border-radius:10px;padding:8px;background:#fff;box-shadow:0 2px 5px #0a21400a;cursor:pointer;min-width:0;transition:border-color .15s,box-shadow .15s}.court-card.selected{border:2px solid #3983ff;padding:7px;box-shadow:0 0 0 2px #3983ff12}.court-card:hover{border-color:#75a7f3}.court-card img{width:100%;height:120px;object-fit:cover;border-radius:7px;display:block;background:#dfe9f6}.court-meta{padding:7px 4px 1px}.court-name-line{display:flex;align-items:center;justify-content:space-between;gap:5px}.court-name{font-size:12px;font-weight:800;color:#17243d}.radio{width:17px;height:17px;border:2px solid #b9c5d8;border-radius:50%;flex-shrink:0}.selected .radio{border:5px solid #0754c8}.available{color:var(--green);font-size:11px;margin:5px 0 7px}.available i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:7px}.price{font-weight:800;font-size:12px}.court-actions{display:flex;justify-content:flex-end;margin-top:20px}.court-actions .next-btn{max-width:220px;margin:0}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#10254a;color:white;padding:13px 18px;border-radius:10px;box-shadow:0 10px 25px #06152d30;z-index:10;display:none}.toast.show{display:block}.mobile-summary{display:none}
+@media(max-width:900px){.nav{gap:18px}.logo{margin-right:10px}.navlinks{gap:15px}.hero-inner{grid-template-columns:1fr 1fr;gap:20px}.amenities{gap:12px}.amenity{min-width:120px}.date-panel{grid-template-columns:1fr}.date-panel .section-title{grid-column:auto}.booking-layout{grid-template-columns:minmax(0,1.6fr) minmax(240px,.8fr)}.courts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.court-card img{height:150px}}
+@media(max-width:650px){.topbar{height:60px}.nav{width:92%;justify-content:space-between}.logo{font-size:21px;margin:0}.navlinks{display:none;position:absolute;top:60px;left:0;right:0;background:#091b38;padding:18px 5%;z-index:5;flex-direction:column;align-items:flex-start}.navlinks.open{display:flex}.mobile-menu{display:block}.navactions{gap:8px}.search-icon{display:none}.signin{padding:9px 11px}.listcourt{padding:9px 10px}.hero-inner{grid-template-columns:1fr;padding:20px 0 18px;gap:18px}.hero-copy h1{font-size:39px}.desc{margin-bottom:18px}.amenities{gap:12px}.amenity{min-width:calc(50% - 8px)}.gallery-main{height:190px}.thumb{height:55px}.steps{justify-content:flex-start;overflow-x:auto;gap:9px;padding:15px 0}.step{gap:7px;font-size:11px}.step-num{height:31px;width:31px;flex-shrink:0}.step-line{min-width:18px}.booking-layout{grid-template-columns:1fr;gap:12px}.time-selectors{grid-template-columns:1fr}.date-panel{padding:17px;grid-template-columns:1fr}.date-panel .section-title{grid-column:auto}.summary-panel{order:2}.calendar{max-width:none}.day{min-height:35px}.slots{gap:7px}.slot{height:36px}.court-panel{padding:17px 12px}.courts-grid{gap:8px}.court-card{padding:6px}.court-card.selected{padding:5px}.court-card img{height:105px}.court-name{font-size:11px}.court-actions .next-btn{max-width:none}.subheading{margin-left:0}.summary-inner .section-title{margin-bottom:14px}.summary-row{margin:12px 0}.next-btn{margin-top:18px}}
+
+.payment-overlay{position:fixed;inset:0;z-index:1000;background:rgba(5,12,30,.76);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}.payment-overlay[hidden]{display:none}.confirmation-overlay{position:fixed;inset:0;z-index:1200;background:rgba(5,12,30,.78);display:flex;align-items:center;justify-content:center;padding:18px}.confirmation-overlay[hidden]{display:none}.confirmation-dialog{width:min(480px,100%);background:#fff;color:#15213a;border-radius:20px;padding:28px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.3)}.confirmation-check{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#e6f8ed;color:#14804a;font-size:34px;margin:0 auto 14px}.confirmation-dialog h2{margin:0 0 8px}.confirmation-dialog p{color:#596579;line-height:1.55}.confirmation-ref{padding:12px;background:#f3f6fb;border-radius:10px;font-weight:800;overflow-wrap:anywhere}.confirmation-close{width:100%;border:0;border-radius:10px;background:#0876d9;color:white;font-weight:800;padding:14px;margin-top:12px}.payment-dialog{position:relative;width:min(620px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:20px;padding:28px;color:#15213a;box-shadow:0 24px 80px rgba(0,0,0,.28)}.payment-close{position:absolute;right:16px;top:12px;border:0;background:#f1f3f7;border-radius:50%;width:36px;height:36px;font-size:25px;color:#15213a}.payment-eyebrow{font-size:11px;letter-spacing:.18em;font-weight:800;color:#1474cf}.payment-dialog h2{margin:4px 0 8px;font-size:28px}.payment-help,.payment-note{color:#667085;font-size:13px}.gcash-recipient{background:#f5f8ff;border:1px solid #dce6f8;border-radius:14px;padding:16px;margin:16px 0}.gcash-recipient>strong{display:block;margin-bottom:6px}.gcash-total{margin-top:12px;display:flex;justify-content:space-between;gap:12px}.gcash-total strong{font-size:21px;color:#075ec8}.payment-field{display:grid;gap:6px;margin:14px 0}.payment-field label{font-size:13px;font-weight:700}.payment-field input{width:100%;min-height:44px;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;color:#101828}.payment-field small{font-size:12px;color:#667085}.payment-submit{width:100%;border:0;border-radius:10px;background:#0876d9;color:white;font-weight:800;padding:14px;margin-top:8px}.payment-submit:disabled{opacity:.55}.payment-note{margin:14px 0 0}.gcash-qr{display:block;max-width:180px;max-height:180px;object-fit:contain;background:white;padding:8px;border-radius:10px;margin-top:10px}.qr-download{display:inline-flex;align-items:center;justify-content:center;margin-top:10px;padding:10px 14px;border-radius:8px;background:#0754c8;color:#fff;text-decoration:none;font-size:13px;font-weight:700}.reservation-note{margin:12px 0;padding:12px;border-radius:10px;background:#ecfdf3;color:#166534;font-size:13px;line-height:1.5}#paymentImagePreview img{max-width:100%;max-height:160px;object-fit:contain;border-radius:8px;margin-top:8px}
+
+.openplay-wrap{max-width:1180px;margin:0 auto 22px;padding:0 22px}.openplay-card{display:grid;grid-template-columns:minmax(220px,36%) 1fr;background:#fff;border:1px solid #dce5f2;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px #10264a12;margin-bottom:14px}.openplay-card img{width:100%;height:100%;min-height:190px;object-fit:cover;background:#eaf0f8}.openplay-copy{padding:20px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}.openplay-kicker{font-size:10px;letter-spacing:.16em;color:#0754c8;font-weight:700;text-transform:uppercase}.openplay-copy h2{margin:0;color:#102449;font-size:23px}.openplay-copy p{margin:0;color:#53627f;line-height:1.55}.openplay-meta{display:flex;gap:10px 18px;flex-wrap:wrap;color:#354967;font-size:13px;margin-top:4px}.openplay-register{display:inline-flex;margin-top:8px;padding:11px 20px;border-radius:8px;background:#0754c8;color:#fff;text-decoration:none;font-weight:700}.openplay-register:hover{background:#063f98}.openplay-card{position:relative;border:1px solid #d7e4fa;box-shadow:0 12px 32px #0b2c5b18;animation:openPlayGlow 3.2s ease-in-out infinite}.openplay-card:before{content:'';position:absolute;inset:-2px;border-radius:18px;padding:2px;background:conic-gradient(from var(--op-angle,0deg),#0754c8,#20b56b,#f2c14e,#e92c40,#0754c8);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;animation:opBorder 5s linear infinite}@property --op-angle{syntax:'<angle>';initial-value:0deg;inherits:false}@keyframes opBorder{to{--op-angle:360deg}}@keyframes openPlayGlow{0%,100%{box-shadow:0 12px 32px #0b2c5b18}50%{box-shadow:0 16px 42px #0754c833}}.openplay-register{background:linear-gradient(100deg,#0754c8,#1475ee);box-shadow:0 7px 18px #0754c83b;transition:transform .2s,box-shadow .2s}.openplay-register:hover{transform:translateY(-2px);box-shadow:0 10px 22px #0754c855}@media(max-width:650px){.openplay-wrap{padding:0 14px}.openplay-card{grid-template-columns:1fr}.openplay-card img{height:155px;min-height:0}.openplay-copy{padding:16px}}
+@media(max-width:650px){.steps{justify-content:flex-start;overflow-x:auto;padding:14px 2px 18px;gap:8px}.step{font-size:10px;gap:6px}.step-num{width:30px;height:30px;min-width:30px}.step-line{min-width:12px}.date-panel{display:block;padding:14px;}.date-panel .section-title{margin-bottom:14px}.calendar{padding:12px 10px;margin-bottom:16px}.day{min-height:40px;font-size:14px;border-radius:9px;color:#263957}.day.selected{background:#064fc4!important;color:#fff!important;border:2px solid #003b9b!important;box-shadow:0 0 0 3px #cfe0ff,0 4px 10px #0754c833!important;font-weight:800!important}.day.today:not(.selected){border:2px solid #0754c8;color:#0754c8}.slots-head{align-items:flex-start}.time-selectors{display:grid;grid-template-columns:1fr 1fr;gap:10px}.time-field select{width:100%;min-width:0}.court-panel{padding:15px 12px;margin-top:14px}.courts-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.court-card img{height:100px}.summary-panel{margin-top:14px}.summary-inner{padding:15px}.next-btn,.payment-submit,.openplay-register{width:100%;min-height:48px;justify-content:center;padding:14px 18px}.payment-dialog{padding:22px 16px}.openplay-copy{gap:10px}.openplay-details{width:100%}.openplay-register{display:flex;margin-top:12px}.summary-row{display:grid;grid-template-columns:20px minmax(112px,auto) minmax(0,1fr);gap:8px;align-items:start}.summary-row span:last-child{margin-left:0;text-align:left}} 
+
+.auth-required-dialog{max-width:480px}.auth-required-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.auth-required-actions a{display:grid;place-items:center;text-align:center;text-decoration:none;min-height:48px}.auth-required-actions .auth-register{background:#8ED502;color:#132500}.auth-required-actions .auth-register:hover{background:#a3e52a}@media(max-width:540px){.auth-required-actions{grid-template-columns:1fr}}
+.payment-error{padding:12px;border:1px solid #f3c5c1;border-radius:10px;background:#fff4f2;color:#982b23;font-size:14px;line-height:1.55}.payment-error[hidden]{display:none}.payment-close:disabled{opacity:.5;cursor:wait}#checkoutDetails{white-space:pre-line;margin:0 0 14px}#confirmationDetails{white-space:pre-line;overflow-wrap:anywhere}.availability-retry{min-height:44px;border:1px solid currentColor;border-radius:8px;background:white;color:#1747ad;padding:8px 14px;margin-top:10px}
+.venue-hero .location,.venue-hero #venueAddress{color:#edf3ff}.venue-photo-fallback{height:100%;min-height:150px;display:grid;place-items:center;text-align:center;padding:24px;color:#edf3ff;background:#14345c;font-size:14px;line-height:1.5}.venue-photo-fallback[hidden]{display:none}.gallery-main.is-empty{height:160px}.court-photo-fallback{height:120px;border-radius:7px;background:#eef3f9;color:#53627f;display:grid;place-items:center;padding:14px;font-size:12px}.thumb:disabled{display:none}.gallery-main img[hidden],.court-card img[hidden]{display:none!important}
 </style>
+<style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
+
+<style id="court-availability-states">.court-card.unavailable{opacity:.58;border-color:#f2b8b5;background:#fff7f6;cursor:not-allowed}.court-card.unavailable .radio{border-color:#b42318}.court-card.unavailable .available{color:#b42318!important}.court-card.unavailable .available i{background:#b42318!important}</style>
+<link rel="stylesheet" href="/courtly-brand.css">
+
+<link rel="stylesheet" href="/courtly-responsive.css">
+
+<style>
+/* Public venue page back navigation */
+.venue-back-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:42px;margin:0 0 18px;padding:9px 15px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(255,255,255,.09);color:#fff;font:600 13px/1 Inter,Arial,sans-serif;letter-spacing:0;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.venue-back-button span:first-child{font-size:19px;line-height:1}
+.venue-back-button:hover{background:rgba(255,255,255,.17);border-color:rgba(255,255,255,.75);transform:translateX(-2px)}
+.venue-back-button:focus-visible{outline:3px solid #8ed502;outline-offset:3px}
+@media(max-width:650px){.venue-back-button{min-height:44px;margin-bottom:14px;padding:10px 14px;font-size:13px}.hero-inner{padding-top:16px}}
+</style>
+  <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
+<link rel="stylesheet" href="/courtly-mobile-experience.css?v=venue-tabs-20261106">
+  <link rel="stylesheet" href="/courtly-platform-experience.css?v=phase1-20261106">
 </head>
 <body>
-<header class="top"><div class="wrap nav"><a class="brand" href="/players">COURTLY</a><a class="back" href="/players">← Back to player directory</a></div></header>
-<section class="hero"><div class="wrap"><div class="eyebrow">INTERACTIVE CLIENT DEMO</div><h1>Book a court in under a minute.</h1><p>This presentation venue always has sample future availability so you can demonstrate Courtly’s player booking flow without relying on live venue data.</p><div class="demo-alert"><strong>Demo only:</strong> no real court is reserved and no payment is collected.</div></div></section>
-<main class="wrap">
-<div class="grid">
-<section class="card">
-<div class="steps"><div class="step active">1 · Date</div><div class="step">2 · Time</div><div class="step">3 · Court</div><div class="step">4 · Confirm</div></div>
-<h2>DEMO · Lipa Pickleball Hub</h2>
-<p class="sub">Lipa City, Batangas · Pickleball · Sample availability generated for presentation use.</p>
-<div class="section"><h3>Choose a date</h3><div id="dates" class="dates"></div></div>
-<div class="section"><h3>Choose a start time</h3><div id="times" class="times"></div></div>
-<div class="section"><h3>Choose a court</h3><div id="courts" class="courts"></div></div>
-<div class="section"><h3>Your details</h3><div class="fields">
-<div class="field"><label for="name">Name</label><input id="name" value="Client Demo"></div>
-<div class="field"><label for="email">Email</label><input id="email" type="email" value="demo@courtlyph.com"></div>
-<div class="field full"><label for="phone">Contact number</label><input id="phone" value="0917 000 0000"></div>
-</div></div>
-<div id="confirmation" class="confirm"><h3>Demo booking confirmed ✓</h3><p>This is what the player sees after a successful booking request. In a live venue, the booking would continue to payment/receipt verification according to the venue’s setup.</p><span id="reference" class="ref"></span></div>
-</section>
-<aside class="card summary">
-<h2>Booking summary</h2><p class="sub">Updates as you make selections.</p>
-<div class="summary-line"><span>Date</span><strong id="sumDate">Select a date</strong></div>
-<div class="summary-line"><span>Time</span><strong id="sumTime">Select a time</strong></div>
-<div class="summary-line"><span>Court</span><strong id="sumCourt">Select a court</strong></div>
-<div class="summary-line"><span>Court rental</span><strong id="sumRental">₱0.00</strong></div>
-<div class="summary-line total"><span>Total player payment</span><strong id="sumTotal">₱0.00</strong></div>
-<div class="owner-fee"><strong>Venue owner Convenience Fee: ₱10.00</strong><br>This is shown separately and is not added to the player’s court-rental total.</div>
-<button id="confirm" class="btn" type="button" disabled>Confirm demo booking</button>
-<a class="secondary" href="/players">Browse other venues</a>
-</aside>
+<header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></div></div></header>
+<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><button class="venue-back-button" id="venueBackButton" type="button" aria-label="Go back to previous page"><span aria-hidden="true">←</span><span>Back to venues</span></button><div class="venue-brand-lockup" id="venueBrandLockup"><img id="venueLogo" class="venue-owner-logo" alt="" hidden><h1 id="venueName">Loading venue…</h1></div><p class="location">♧ <span id="venueAddress">Loading location…</span></p><p class="desc" id="venueDescription">Loading venue details and court availability…</p></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" alt="" hidden><div id="venuePhotoFallback" class="venue-photo-fallback" role="status">Loading venue photos…</div></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div></div></div></section>
+<main><div class="venue-details-tabs" role="tablist" aria-label="Venue information">
+<button class="venue-info-tab active" type="button" role="tab" aria-selected="true" data-venue-tab="overview">Overview</button>
+<button class="venue-info-tab" type="button" role="tab" aria-selected="false" data-venue-tab="amenities">Amenities</button>
+<button class="venue-info-tab" type="button" role="tab" aria-selected="false" data-venue-tab="courts">Courts</button>
+<button class="venue-info-tab" type="button" role="tab" aria-selected="false" data-venue-tab="location">Location</button>
 </div>
-<section class="how">
-<h2>How to present the booking flow</h2>
-<div class="how-grid">
-<div class="how-item"><b>1. Player discovers a venue</b><span>Search by sport or location from the Courtly player directory.</span></div>
-<div class="how-item"><b>2. Player picks availability</b><span>Select a future date, time and one of the venue’s available courts.</span></div>
-<div class="how-item"><b>3. Player reviews the price</b><span>Court rental is shown clearly before the player submits the reservation.</span></div>
-<div class="how-item"><b>4. Venue receives the booking</b><span>In production, the booking is saved for the venue owner to review and manage.</span></div>
+<section class="venue-info-panel" id="venueInfoPanel" aria-live="polite">
+<div class="venue-info-content" data-venue-panel="overview"><span class="venue-info-eyebrow">ABOUT THIS VENUE</span><p id="venueOverviewText">Explore the venue, check available courts and choose a time that works for you.</p></div>
+<div class="venue-info-content" data-venue-panel="amenities" hidden><span class="venue-info-eyebrow">VENUE AMENITIES</span><div id="venueAmenitiesList" class="venue-amenities-list"><div class="venue-amenities-empty"><span aria-hidden="true">＋</span><strong>Amenities will appear here</strong><p>Venue facilities are provided by the owner.</p></div></div></div>
+<div class="venue-info-content" data-venue-panel="courts" hidden><span class="venue-info-eyebrow">AVAILABLE COURTS</span><p id="venueCourtCount">Choose from the active courts below.</p><a href="#courtSection">View courts and prices ↓</a></div>
+<div class="venue-info-content" data-venue-panel="location" hidden><span class="venue-info-eyebrow">VENUE LOCATION</span><p id="venueLocationText">Location details are shown above.</p></div>
+</section><div class="steps"><div class="step active" data-step="1"><span class="step-num">1</span><span>Select Date &amp; Time</span></div><div class="step-line"></div><div class="step" data-step="2"><span class="step-num">2</span><span>Choose Court</span></div><div class="step-line"></div><div class="step" data-step="3"><span class="step-num">3</span><span>Review Booking</span></div><div class="step-line"></div><div class="step" data-step="4"><span class="step-num">4</span><span>Payment</span></div></div>
+<section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><aside class="reservation-note" id="checkoutRecovery" hidden><p id="checkoutRecoveryText"></p><button class="qr-download" id="resumeCheckout" type="button">View my checkout</button></aside>
+<div class="booking-layout"><section class="panel date-panel" id="booking-calendar"><h2 class="section-title"><span class="title-icon">▦</span>1. Select Date &amp; Time</h2><div class="calendar"><div class="month-row"><button type="button" id="prevMonth" aria-label="Previous month">‹</button><span id="monthLabel" aria-live="polite">Loading calendar…</span><button type="button" id="nextMonth" aria-label="Next month">›</button></div><div class="weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days" id="daysGrid"></div></div><div class="slot-area"><div class="slots-head"><div><h3>Available Time Slots</h3><p id="selectedDateLabel" aria-live="polite">Loading availability…</p></div><div class="legend"><span><i class="dot"></i>Available</span><span><i class="dot booked"></i>Booked</span><span><i class="dot chosen"></i>Selected</span></div></div><div class="time-selectors"><label class="time-field" for="startTime">Start time<select id="startTime" aria-label="Booking start time"></select></label><label class="time-field" for="endTime">End time<select id="endTime" aria-label="Booking end time"></select></label></div><p class="range-hint">Choose a start and end time, then an available court. Book between 1 and 8 hours.</p><div class="slots" id="slots"></div></div></section>
 </div>
+<section class="panel court-panel" id="courtSection"><h2 class="section-title"><span class="title-icon">▦</span>2. Choose Your Court</h2><p class="subheading">Select an available court for your preferred time.</p><div class="courts-grid" id="courtsGrid"></div><section class="panel summary-panel"><div class="summary-inner"><h2 class="section-title"><span class="title-icon">▦</span>Booking Summary</h2><div class="summary-row"><span class="ico">▦</span><strong>Date</strong><span id="summaryDate">Select a date</span></div><div class="summary-row"><span class="ico">◷</span><strong>Time</strong><span id="summaryTime">Select a time</span></div><div class="summary-row"><span class="ico">▦</span><strong>Court</strong><span id="summaryCourt">Not selected yet</span></div><div class="summary-row"><span class="ico">₱</span><strong>Court rental</strong><span id="summarySubtotal">₱0</span></div><div class="summary-row" id="summaryPlatformFeeRow" hidden><span class="ico">＋</span><strong>Convenience Fee</strong><span id="summaryPlatformFee">₱0</span></div><div class="sum-total"><span>Total to pay</span><strong id="summaryTotal">₱0</strong></div><button class="next-btn" id="nextChoose" disabled>Review booking &amp; payment <span aria-hidden="true">→</span></button></div></section>
+</main><div class="payment-overlay" id="authRequiredModal" hidden><section class="payment-dialog auth-required-dialog" role="dialog" aria-modal="true" aria-labelledby="authRequiredTitle"><button class="payment-close" id="closeAuthRequired" type="button" aria-label="Close">×</button><p class="payment-eyebrow">COURTLY PLAYER ACCOUNT</p><h2 id="authRequiredTitle">Sign in to book this venue</h2><p class="payment-help">You can browse venues, courts and available times without an account. Create a free player account or log in to continue with this booking.</p><div class="auth-required-actions"><a class="payment-submit" id="authPlayerLogin" href="/player-login.html">Log in</a><a class="payment-submit auth-register" id="authPlayerRegister" href="/player-register.html">Create player account</a></div><p class="payment-note">Venue owners should use their owner account for venue management. Player accounts are required to make court reservations and Open Play registrations.</p></section></div><div class="payment-overlay" id="gcashModal" hidden>
+<section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="gcashTitle">
+<button class="payment-close" id="closeGcash" type="button" aria-label="Close">×</button>
+<p class="payment-eyebrow">COURTLY CHECKOUT</p>
+<h2 id="gcashTitle">Review your reservation</h2>
+<p class="payment-help" id="gcashHelp">Review your details. Courtly will reserve your place before showing payment instructions.</p>
+<p id="holdStatus" class="reservation-note" role="status" hidden></p>
+<p id="holdCountdown" class="payment-help" aria-live="off" hidden></p>
+<div class="gcash-recipient">
+<p id="checkoutDetails" class="payment-help"></p>
+<div id="paymentDetails" hidden>
+<strong id="gcashRecipient"></strong><div id="gcashInstructions"></div><div id="gcashQrWrap"></div>
+</div>
+<div class="gcash-total"><span id="gcashSubtotalLabel">Court rental</span><strong id="gcashSubtotal">—</strong></div>
+<div class="gcash-total" id="gcashPlatformFeeRow" hidden><span id="gcashFeeLabel">Convenience Fee</span><strong id="gcashPlatformFee">—</strong></div>
+<div class="gcash-total"><span>Total</span><strong id="gcashAmount">—</strong></div>
+</div>
+<form id="gcashForm">
+<p id="checkoutError" class="payment-error" role="alert" hidden></p>
+<div class="payment-field"><label for="playerName">Your name *</label><input id="playerName" required maxlength="100" autocomplete="name"></div>
+<div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div>
+<div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" type="tel" maxlength="40" autocomplete="tel"></div>
+<div class="payment-field" id="receiptField" hidden>
+<label for="paymentScreenshot">Payment receipt (max 100 MB)</label>
+<input id="paymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif">
+<small id="receiptHelp">Upload an image of the payment receipt before your hold expires.</small>
+<div id="paymentImagePreview"></div>
+</div>
+<button class="payment-submit" id="paymentSubmitButton" type="submit">Reserve court &amp; show payment details</button>
+</form>
+<button class="payment-submit" id="restartCheckout" type="button" hidden>Start again only if you have not paid</button>
+<p class="reservation-note" id="paymentReservationNote">The final price and a temporary hold are confirmed by the server before payment.</p>
+<p class="payment-note">Pay only once for your reservation reference. Receipt submission is followed by the venue's payment verification.</p>
 </section>
-</main>
-<script>
+</div>
+<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check">✓</div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module">
+const $=id=>document.getElementById(id);
+const params=new URLSearchParams(location.search);
+const demoSlug=params.get('slug')||'demo-lipa-pickleball-hub';
+const demoVenues={
+  'demo-lipa-pickleball-hub':{name:'DEMO · Lipa Pickleball Hub',address:'Lipa City proper, Batangas',description:'Presentation-ready Courtly demo venue. Explore the same booking experience your players will use.',sport:'Pickleball',rate:350,courts:2},
+  'demo-batangas-racquet-club':{name:'DEMO · Batangas Racquet Club',address:'Marawoy, Lipa City, Batangas',description:'Presentation-ready Courtly demo venue for badminton bookings.',sport:'Badminton',rate:250,courts:2},
+  'demo-santos-pickleball-club':{name:'DEMO · Santos Pickleball Club',address:'Marawoy, Lipa City, Batangas',description:'Presentation-ready Courtly demo venue with sample pickleball availability.',sport:'Pickleball',rate:400,courts:3},
+  'demo-southside-sports-center':{name:'DEMO · Southside Sports Center',address:'Sabang, Lipa City, Batangas',description:'Presentation-ready Courtly multi-sport venue demo.',sport:'Basketball',rate:500,courts:2}
+};
+const venue=demoVenues[demoSlug]||demoVenues['demo-lipa-pickleball-hub'];
 const money=n=>'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
-const courts=[
- {id:'c1',name:'Court 1 · Indoor',sport:'Pickleball',rate:350},
- {id:'c2',name:'Court 2 · Indoor',sport:'Pickleball',rate:350},
- {id:'c3',name:'Court 3 · Outdoor',sport:'Pickleball',rate:300}
-];
-const dateHost=document.getElementById('dates'),timeHost=document.getElementById('times'),courtHost=document.getElementById('courts');
-let selectedDate=null,selectedTime=null,selectedCourt=null;
-function dateKey(d){return d.toISOString().slice(0,10)}
-function dateLabel(d){return new Intl.DateTimeFormat('en-PH',{weekday:'short',month:'short',day:'numeric'}).format(d)}
-const dates=Array.from({length:14},(_,i)=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i+1);return d});
-dateHost.innerHTML=dates.map((d,i)=>`<button class="date-btn" data-date="${dateKey(d)}"><small>${new Intl.DateTimeFormat('en-PH',{weekday:'short'}).format(d)}</small><strong>${d.getDate()}</strong><small>${new Intl.DateTimeFormat('en-PH',{month:'short'}).format(d)}</small></button>`).join('');
-const times=['8:00 AM','9:00 AM','10:00 AM','11:00 AM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateKey=d=>d.toISOString().slice(0,10);
+const labelDate=d=>new Intl.DateTimeFormat('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(d);
+const labelMonth=d=>new Intl.DateTimeFormat('en-PH',{month:'long',year:'numeric'}).format(d);
+const hours=Array.from({length:15},(_,i)=>i+8);
+const bookedHours=new Set([11,16]);
+const courts=Array.from({length:venue.courts},(_,i)=>({id:i+1,name:'Court '+(i+1),sport:venue.sport,rate:venue.rate+(i===venue.courts-1&&venue.courts>2?-50:0)}));
+let selectedDate=new Date();selectedDate.setHours(12,0,0,0);selectedDate.setDate(selectedDate.getDate()+1);
+let viewDate=new Date(selectedDate);
+let startHour=null,endHour=null,selectedCourt=null;
+
+function hourLabel(h){const suffix=h>=12?'PM':'AM';const display=h%12||12;return display+':00 '+suffix}
+function setText(id,v){const n=$(id);if(n)n.textContent=v}
+function renderBrand(){
+  setText('venueName',venue.name);setText('venueAddress',venue.address);setText('venueDescription',venue.description);
+  setText('venueOverviewText',venue.description);setText('venueLocationText',venue.address);
+  setText('venueCourtCount',courts.length+' active '+(courts.length===1?'court':'courts')+' available for demo booking.');
+  const amenities=$('venueAmenitiesList');if(amenities) amenities.innerHTML='<div class="venue-amenity-chip">✓ Parking</div><div class="venue-amenity-chip">✓ Restrooms</div><div class="venue-amenity-chip">✓ Lighting</div><div class="venue-amenity-chip">✓ Demo availability</div>';
+  const fallback=$('venuePhotoFallback');if(fallback){fallback.hidden=false;fallback.textContent='COURTLY DEMO VENUE';}
+}
+function renderCalendar(){
+  const first=new Date(viewDate.getFullYear(),viewDate.getMonth(),1,12);
+  setText('monthLabel',labelMonth(first));
+  const host=$('daysGrid');host.innerHTML='';
+  for(let i=0;i<first.getDay();i++)host.insertAdjacentHTML('beforeend','<button class="day" disabled></button>');
+  const days=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let day=1;day<=days;day++){
+    const d=new Date(viewDate.getFullYear(),viewDate.getMonth(),day,12);
+    const disabled=d<today;
+    const b=document.createElement('button');b.type='button';b.className='day'+(dateKey(d)===dateKey(selectedDate)?' selected':'');b.textContent=day;b.disabled=disabled;
+    b.onclick=()=>{selectedDate=d;startHour=null;endHour=null;selectedCourt=null;renderCalendar();renderTimes();renderCourts();updateSummary();};
+    host.appendChild(b);
+  }
+}
 function renderTimes(){
- timeHost.innerHTML=times.map((t,i)=>`<button class="time-btn${i===3||i===8?' unavailable':''}" ${i===3||i===8?'disabled':''} data-time="${t}">${t}${i===3||i===8?' · booked':''}</button>`).join('');
+  setText('selectedDateLabel',labelDate(selectedDate)+' · Demo availability');
+  const start=$('startTime'),end=$('endTime');
+  start.innerHTML='<option value="">Select start time</option>'+hours.slice(0,-1).map(h=>'<option value="'+h+'" '+(bookedHours.has(h)?'disabled':'')+'>'+hourLabel(h)+(bookedHours.has(h)?' · booked':'')+'</option>').join('');
+  end.innerHTML='<option value="">Select end time</option>';
+  if(startHour!==null){start.value=String(startHour);end.innerHTML='<option value="">Select end time</option>'+hours.filter(h=>h>startHour&&h-startHour<=8).map(h=>'<option value="'+h+'">'+hourLabel(h)+'</option>').join('');if(endHour!==null)end.value=String(endHour);}
+  const slots=$('slots');slots.innerHTML=hours.slice(0,-1).map(h=>'<button type="button" class="slot '+(bookedHours.has(h)?'':'')+'" data-hour="'+h+'" '+(bookedHours.has(h)?'disabled':'')+'>'+hourLabel(h)+'</button>').join('');
+  slots.querySelectorAll('[data-hour]').forEach(b=>b.onclick=()=>{startHour=Number(b.dataset.hour);endHour=startHour+1;renderTimes();renderCourts();updateSummary();});
 }
 function renderCourts(){
- courtHost.innerHTML=courts.map(c=>`<button class="court-btn" data-court="${c.id}"><span class="court-main"><strong>${c.name}</strong><span>${c.sport} · Available for demo</span></span><span class="price">${money(c.rate)}/hr</span></button>`).join('');
+  const host=$('courtsGrid');host.innerHTML=courts.map(c=>'<button type="button" class="court-card '+(selectedCourt?.id===c.id?'selected':'')+'" data-court="'+c.id+'"><div class="court-photo" style="height:120px;background:linear-gradient(135deg,#102a57,#2c75e8);color:white;display:grid;place-items:center;font-weight:800">'+esc(c.sport.toUpperCase())+'</div><div class="court-meta"><div class="court-name-line"><span class="court-name">'+esc(c.name)+'</span><span class="radio"></span></div><div class="available"><i></i>Available for demo</div><div class="price">'+money(c.rate)+'/hr</div></div></button>').join('');
+  host.querySelectorAll('[data-court]').forEach(b=>b.onclick=()=>{selectedCourt=courts.find(c=>c.id===Number(b.dataset.court));renderCourts();updateSummary();});
 }
-function update(){
- document.getElementById('sumDate').textContent=selectedDate?dateLabel(new Date(selectedDate+'T12:00:00')):'Select a date';
- document.getElementById('sumTime').textContent=selectedTime?selectedTime+' – 1 hour':'Select a time';
- document.getElementById('sumCourt').textContent=selectedCourt?selectedCourt.name:'Select a court';
- const rate=selectedCourt?.rate||0;document.getElementById('sumRental').textContent=money(rate);document.getElementById('sumTotal').textContent=money(rate);
- document.getElementById('confirm').disabled=!(selectedDate&&selectedTime&&selectedCourt);
+function updateSummary(){
+  setText('summaryDate',labelDate(selectedDate));setText('summaryTime',startHour===null||endHour===null?'Select a time':hourLabel(startHour)+' – '+hourLabel(endHour)+' ('+(endHour-startHour)+' hour'+(endHour-startHour===1?'':'s')+')');
+  setText('summaryCourt',selectedCourt?selectedCourt.name:'Not selected yet');
+  const subtotal=selectedCourt&&startHour!==null&&endHour!==null?selectedCourt.rate*(endHour-startHour):0;
+  setText('summarySubtotal',money(subtotal));setText('summaryPlatformFee',money(10));setText('summaryTotal',money(subtotal));
+  const feeRow=$('summaryPlatformFeeRow');if(feeRow){feeRow.hidden=!selectedCourt;feeRow.querySelector('strong').textContent='Convenience Fee (venue owner)';}
+  $('nextChoose').disabled=!(selectedCourt&&startHour!==null&&endHour!==null);
 }
-dateHost.addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;selectedDate=b.dataset.date;dateHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
-timeHost.addEventListener('click',e=>{const b=e.target.closest('[data-time]');if(!b||b.disabled)return;selectedTime=b.dataset.time;timeHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
-courtHost.addEventListener('click',e=>{const b=e.target.closest('[data-court]');if(!b)return;selectedCourt=courts.find(c=>c.id===b.dataset.court);courtHost.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('confirmation').classList.remove('show');update()});
-document.getElementById('confirm').addEventListener('click',()=>{
- const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim();
- if(!name||!email){alert('Add a name and email to complete the demo booking.');return}
- document.getElementById('reference').textContent='Reference: DEMO-'+Math.random().toString(36).slice(2,8).toUpperCase();
- document.getElementById('confirmation').classList.add('show');
- document.getElementById('confirmation').scrollIntoView({behavior:'smooth',block:'center'});
-});
-renderTimes();renderCourts();update();
+function openCheckout(){
+  const subtotal=selectedCourt.rate*(endHour-startHour);
+  setText('gcashTitle','Your court reservation');setText('gcashHelp','Demo checkout — review the same booking summary a player sees on Courtly.');
+  setText('checkoutDetails',selectedCourt.name+'\n'+labelDate(selectedDate)+'\n'+hourLabel(startHour)+' – '+hourLabel(endHour));
+  setText('gcashSubtotal',money(subtotal));setText('gcashPlatformFee',money(10));setText('gcashAmount',money(subtotal));
+  $('gcashPlatformFeeRow').hidden=false;setText('gcashFeeLabel','Convenience Fee (venue owner)');
+  setText('paymentReservationNote','The venue owner pays a flat ₱10 Convenience Fee per court booking separately. It is not added to the player total.');
+  $('paymentDetails').hidden=false;setText('gcashRecipient','GCash · Courtly Demo Venue');setText('gcashInstructions','Demo only — no real payment is required.');
+  $('receiptField').hidden=true;$('gcashModal').hidden=false;
+  $('paymentSubmitButton').textContent='Confirm demo booking';
+}
+function confirmDemo(e){
+  e.preventDefault();
+  const name=$('playerName').value.trim()||'Demo Player',email=$('playerEmail').value.trim()||'demo@courtlyph.com';
+  const ref='CT-DEMO-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  $('gcashModal').hidden=true;setText('confirmationTitle','Demo booking received!');setText('confirmationMessage','This simulates the successful player booking experience. No payment was collected.');
+  setText('confirmationReference','Reference: '+ref);setText('confirmationDetails',selectedCourt.name+'\n'+labelDate(selectedDate)+' · '+hourLabel(startHour)+' – '+hourLabel(endHour)+'\nTotal: '+money(selectedCourt.rate*(endHour-startHour)));
+  $('confirmationModal').hidden=false;
+  const payload={type:'courtly-demo-booking-created',booking:{id:ref,slug:demoSlug,date:dateKey(selectedDate),time:hourLabel(startHour)+' – '+hourLabel(endHour),duration:endHour-startHour,court:selectedCourt.id,price:selectedCourt.rate*(endHour-startHour),method:'Demo',player:name,email,createdAt:new Date().toISOString()}};
+  try{window.opener?.postMessage(payload,location.origin)}catch{}
+  try{localStorage.setItem('courtlyDemoLatestBooking:'+demoSlug,JSON.stringify(payload.booking))}catch{}
+}
+$('startTime').addEventListener('change',e=>{startHour=e.target.value===''?null:Number(e.target.value);endHour=startHour===null?null:startHour+1;renderTimes();renderCourts();updateSummary();});
+$('endTime').addEventListener('change',e=>{endHour=e.target.value===''?null:Number(e.target.value);renderTimes();updateSummary();});
+$('prevMonth').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1,12);renderCalendar();};
+$('nextMonth').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1,12);renderCalendar();};
+$('nextChoose').onclick=openCheckout;$('closeGcash').onclick=()=>{$('gcashModal').hidden=true};$('gcashForm').addEventListener('submit',confirmDemo);
+$('confirmationClose').onclick=()=>{$('confirmationModal').hidden=true};
+$('venueBackButton').onclick=()=>{location.href='/players'};
+document.querySelector('.venue-details-tabs')?.addEventListener('click',e=>{const b=e.target.closest('[data-venue-tab]');if(!b)return;document.querySelectorAll('[data-venue-tab]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));});document.querySelectorAll('[data-venue-panel]').forEach(p=>p.hidden=p.dataset.venuePanel!==b.dataset.venueTab);});
+const demoBanner=document.createElement('div');demoBanner.className='reservation-note';demoBanner.style.cssText='max-width:1140px;width:94%;margin:14px auto 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap';demoBanner.innerHTML='<span><strong>Client demo:</strong> this page uses the exact Courtly booking layout with sample availability. No real payment or reservation is created.</span><a class="qr-download" style="margin:0" href="/owner-portal.html?demo='+encodeURIComponent(demoSlug)+'">View venue owner demo ↗</a>';document.querySelector('main').prepend(demoBanner);
+renderBrand();renderCalendar();renderTimes();renderCourts();updateSummary();
 </script>
-</body>
-</html>
+<script type="module" src="/courtly-responsive.js"></script>
+  <script type="module" src="/courtly-global-nav.js?v=player-home-20261106"></script>
+</body></html>

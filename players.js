@@ -11,7 +11,7 @@ const params = new URLSearchParams(location.search);
 const isDemo = params.get('demo') === '1';
 const clientDemoVenue = {
   id: 'client-demo-lipa', sample: true, slug: 'client-demo-lipa',
-  demoBookingUrl: '/demo-booking.html',
+  demoBookingUrl: '/demo-booking.html?slug=demo-lipa-pickleball-hub',
   name: 'DEMO · Lipa Pickleball Hub', address: 'Presentation venue · Lipa City',
   city: 'Lipa City, Batangas', courts: [
     { id: 'demo-c1', name: 'Court 1 · Indoor', sport: 'Pickleball', hourly_rate: 350 },

@@ -331,7 +331,7 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <script type="module" src="/owner-portal-bridge.js"></script>
 <script>
-const DEMO_SLUGS=['demo-batangas-racquet-club','demo-lipa-pickleball-hub','demo-santos-pickleball-club','demo-southside-sports-center'];const DEMO_REQUEST=new URLSearchParams(location.search).get('demo');const ACTIVE_DEMO=DEMO_SLUGS.includes(DEMO_REQUEST)?DEMO_REQUEST:'';const KEY=ACTIVE_DEMO?`courtlyOwnerPortalDemoV1:${ACTIVE_DEMO}`:'courtlyOwnerPortalV1',FEE_PER_HOUR=10;function bookingFee(b){const stored=Number(b?.platformFee??b?.platform_fee);return Number.isFinite(stored)&&stored>=0&&(b?.platformFee!=null||b?.platform_fee!=null)?stored:FEE_PER_HOUR*Math.max(1,Number(b?.duration||b?.hours||1))}
+const DEMO_SLUGS=['demo-batangas-racquet-club','demo-lipa-pickleball-hub','demo-santos-pickleball-club','demo-southside-sports-center'];const DEMO_REQUEST=new URLSearchParams(location.search).get('demo');const ACTIVE_DEMO=DEMO_SLUGS.includes(DEMO_REQUEST)?DEMO_REQUEST:'';const KEY=ACTIVE_DEMO?`courtlyOwnerPortalDemoV1:${ACTIVE_DEMO}`:'courtlyOwnerPortalV1',COURT_BOOKING_FEE=10;function bookingFee(b){const stored=Number(b?.platformFee??b?.platform_fee);return Number.isFinite(stored)&&stored>=0&&(b?.platformFee!=null||b?.platform_fee!=null)?stored:COURT_BOOKING_FEE}
 const seed={openPlays:[],venue:{id:'kalinaw',name:'Kalinaw Courts',owner:'Demo Owner',email:'owner@courtly.demo',phone:'0917 123 4567',location:'Davao City, Philippines',sport:'Pickleball',description:'Premium pickleball courts for casual games, training, and group play.',slug:'kalinaw-courts',hoursOpen:'08:00',hoursClose:'22:00',baseRate:350,peakRate:450,courtCount:3,courtImages:[],logoData:'',coverData:'',paymentName:'QR Ph',paymentAccount:'Kalinaw Courts',paymentInstructions:'Please scan the venue QR code and include your booking reference in the payment note.',qrData:'',notifyEmail:true,notifyPending:true,notifyCancelled:true},bookings:[]};
 const OWNER_VIEWS=['overview','calendar','openplay','bookings','courts','transactions','venue','payments','billing','notifications'];
 const requestedView=new URLSearchParams(location.search).get('view');
@@ -376,7 +376,7 @@ function prepareOwnerTables(){
  document.querySelectorAll('#content .toggleline').forEach((line,index)=>{const title=line.querySelector('strong'),control=line.querySelector('input');if(title&&control){title.id='owner-toggle-label-'+index;control.setAttribute('aria-labelledby',title.id);}});
 }
 function sortedBookings(){return db.bookings.slice().sort((a,b)=>new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date));}
-function publicVenueUrl(){return new URL('/v/'+encodeURIComponent(db.venue.slug||''),location.origin).href;}
+function publicVenueUrl(){return ACTIVE_DEMO?new URL('/demo-booking.html?slug='+encodeURIComponent(db.venue.slug||''),location.origin).href:new URL('/v/'+encodeURIComponent(db.venue.slug||''),location.origin).href;}
 
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}

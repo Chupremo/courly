@@ -21,11 +21,11 @@
       <div>
         <span class="ce-eyebrow">COURTLY COMMUNITY</span>
         <h1>Activities &amp; Games <span id="communityUnreadBadge" class="ce-notification-badge" hidden>0</span></h1>
-        <p>Join games hosted at registered Courtly venues. Your place is confirmed after the venue owner verifies your payment.</p>
+        <p>Browse activities hosted by Courtly venue owners. Anyone can read activity details; a player account is required to register or interact.</p>
       </div>
       <div class="ce-heading-actions">
         <button type="button" class="ce-button-secondary" id="refreshCommunityEvents">↻ Refresh</button>
-        <button type="button" class="ce-button-primary" id="openEventComposer" hidden>＋ Host an activity</button>
+        <button type="button" class="ce-button-primary" id="openEventComposer" hidden>＋ Publish an activity</button>
       </div>
     </section>
 
@@ -69,6 +69,23 @@
       <div id="communityEventsFeed" class="ce-event-grid" aria-live="polite"><div class="community-state">Loading activities…</div></div>
     </section>
   </main>
+  <nav class="community-mobile-tabs" aria-label="Courtly mobile navigation">
+    <a href="/player-dashboard.html?view=home"><span>⌂</span><small>Home</small></a>
+    <a href="/player-dashboard.html?view=discover"><span>◎</span><small>Discover</small></a>
+    <a href="/player-dashboard.html?view=discover&amp;mode=openplay"><span>＋</span><small>Open Play</small></a>
+    <a href="/community.html" aria-current="page"><span>✦</span><small>Activities</small></a>
+  </nav>
+  <style>
+    .community-mobile-tabs{display:none}
+    @media(max-width:760px){
+      body.ce-community-page{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+      .community-mobile-tabs{position:fixed;left:0;right:0;bottom:0;z-index:120;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #e5eaf2;padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,26,71,.08)}
+      .community-mobile-tabs a{min-height:49px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:10px;color:#68758e;font:600 10px Inter,sans-serif}
+      .community-mobile-tabs a>span{font-size:18px;line-height:1}
+      .community-mobile-tabs a[aria-current="page"]{background:#eff7dc;color:#183c00}
+      .community-mobile-tabs small{font-size:9px}
+    }
+  </style>
   <div class="community-toast" id="communityToast" role="status" aria-live="polite"></div>
   <script type="module" src="/community-events.js?v=activities-only-20261106"></script>
   <script type="module" src="/courtly-global-nav.js?v=activities-only-20261106"></script>

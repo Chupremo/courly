@@ -29,7 +29,9 @@ function mapsUrl(e){
 }
 function shareUrl(id){return location.origin+'/api/community-event-share?id='+encodeURIComponent(id);}
 async function shareActivity(){
- const e=state.event;if(!e)return;const url=shareUrl(e.event_id);
+ const e=state.event;if(!e)return;
+ if(!state.user){location.href='/player-register.html?next='+encodeURIComponent(location.pathname+location.search);return;}
+ const url=shareUrl(e.event_id);
  try{if(navigator.share)await navigator.share({title:e.title,text:'Join me for '+e.title+' at '+e.venue_name+'.',url});else{await navigator.clipboard.writeText(url);toast('Share link copied.');}}
  catch(error){if(error?.name!=='AbortError'){try{await navigator.clipboard.writeText(url);toast('Share link copied.');}catch{toast('Copy this link: '+url);}}}
 }
@@ -126,6 +128,36 @@ async function loadEvent(){
  }
  render();
 }
+async function loadEventComments(){
+ const host=$('eventComments'),gate=$('eventCommentGate'),form=$('eventCommentForm');
+ if(!host)return;
+ host.innerHTML='<div class="ce-attendees-empty">Loading comments…</div>';
+ const {data,error}=await supabase.rpc('get_community_event_comments',{p_event_id:state.event.event_id});
+ if(error){host.innerHTML='<div class="ce-attendees-empty">Comments are unavailable right now.</div>';return;}
+ const rows=await Promise.all((data||[]).map(async row=>({...row,avatar_url:await signedAvatar(row.avatar_path)})));
+ host.innerHTML=rows.length?rows.map(row=>'<div class="comment-item" style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #edf0f4"><span class="ce-attendee-avatar">'+(row.avatar_url?'<img src="'+esc(row.avatar_url)+'" alt="">':esc(initials(row.author_name)))+'</span><div style="min-width:0;flex:1"><div style="display:flex;justify-content:space-between;gap:10px"><strong>'+esc(row.author_name)+'</strong><small>'+esc(new Intl.DateTimeFormat('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:TZ}).format(new Date(row.created_at)))+'</small></div><p style="margin:6px 0 0;white-space:pre-wrap;line-height:1.6">'+esc(row.body)+'</p></div></div>').join(''):'<div class="ce-attendees-empty">No comments yet.</div>';
+ if(!state.user){
+  form.hidden=true;gate.hidden=false;gate.innerHTML='Create a free Courtly player account to comment. <a href="/player-register.html?next='+encodeURIComponent(location.pathname+location.search)+'">Register</a> or <a href="/player-login.html?next='+encodeURIComponent(location.pathname+location.search)+'">log in</a>.';
+ }else if(!state.isPlayer){
+  form.hidden=true;gate.hidden=false;gate.textContent='Comments are available to registered Courtly player accounts.';
+ }else{
+  gate.hidden=true;form.hidden=false;
+ }
+}
+async function submitEventComment(event){
+ event.preventDefault();
+ if(!state.user){location.href='/player-register.html?next='+encodeURIComponent(location.pathname+location.search);return;}
+ if(!state.isPlayer){toast('Use a registered player account to comment.');return;}
+ const field=$('eventCommentBody'),button=$('eventCommentSubmit'),body=field.value.trim();
+ if(!body)return;
+ button.disabled=true;button.textContent='Posting…';
+ try{
+  const {error}=await supabase.from('community_event_comments').insert({event_id:state.event.event_id,author_id:state.user.id,body});
+  if(error)throw error;
+  field.value='';await loadEventComments();toast('Comment posted.');
+ }catch(error){toast(error.message||'Could not post your comment.');}
+ finally{button.disabled=false;button.textContent='Post comment';}
+}
 async function registerActivity(event){
  event.preventDefault();if(state.busy||!state.event)return;
  if(!state.user||!state.isPlayer){toast('Sign in with a Courtly player account to register.');return;}
@@ -189,7 +221,9 @@ async function init(){
  $('eventRegistrationForm').addEventListener('submit',registerActivity);
  $('eventCancelRegistration').addEventListener('click',cancelRegistration);
  $('eventCancelActivity').addEventListener('click',cancelActivity);
+ $('eventCommentForm')?.addEventListener('submit',submitEventComment);
  await loadEvent();
+ await loadEventComments();
 }
 init().catch(error=>{
  console.error('Courtly activity page failed:',error);

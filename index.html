@@ -198,7 +198,7 @@
         <a class="nav-login" href="/player-login.html">Player login</a>
         <a class="nav-login" href="/login.html">Owner login</a>
         <a class="btn btn-primary" href="/player-register.html">Join as a player</a>
-        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-nav" id="menu-toggle">☰</button>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-nav" id="menu-toggle">Menu</button>
       </div>
     </div>
   </header>
@@ -452,14 +452,14 @@
           document.body.classList.toggle('nav-open', open);
           toggle.setAttribute('aria-expanded', String(open));
           toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-          toggle.textContent = open ? '×' : '☰';
+          toggle.textContent = open ? 'Close' : 'Menu';
         });
         nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
           nav.classList.remove('open');
           document.body.classList.remove('nav-open');
           toggle.setAttribute('aria-expanded', 'false');
           toggle.setAttribute('aria-label', 'Open navigation');
-          toggle.textContent = '☰';
+          toggle.textContent = 'Menu';
         }));
       }
       const items = document.querySelectorAll('.reveal');

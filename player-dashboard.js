@@ -8,7 +8,7 @@ const money = (value) => '₱' + Number(value || 0).toLocaleString('en-PH', { ma
 const sports = [
   ['Pickleball','🏓'],['Basketball','🏀'],['Padel','🎾'],['Archery','🏹'],['Badminton','🏸'],['Lawn Tennis','🎾'],['Billiards','🎱'],['Dart','🎯'],['Golf','⛳'],['Boxing','🥊'],['Swimming','🏊'],['Muay Thai','🥊'],['Volleyball','🏐'],['Gym','🏋️'],['Gymnastics','🤸'],['Table Tennis','🏓'],['Yoga','🧘'],['Dance Studio','💃'],['Football','⚽'],['Futsal','⚽'],['Bowling','🎳'],['Other','＋']
 ];
-let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], paymentReceipts = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [];
+let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], paymentReceipts = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [], playerHomePosts = [];
 let inviteTargetPlayerId = null;
 let directorySearch = '';
 let view = new URLSearchParams(location.search).get('view') || 'home';
@@ -64,18 +64,53 @@ function setHeader() {
   document.querySelectorAll('.nav-link').forEach(link=>link.classList.toggle('active',link.dataset.view===view));
   $('crumbText').textContent=({home:'Home',discover:'Discover',players:'Players',tournaments:'My Tournaments',bookings:'My Bookings',memberships:'Memberships',invites:'Club Invitations',profile:'Profile'})[view]||'Home';
 }
+function playerHomePostCard(post) {
+  const mine=String(post.player_id)===String(user?.id);
+  return `<article class="panel" style="padding:16px 17px;margin-bottom:10px"><div style="display:flex;align-items:flex-start;gap:11px"><span class="avatar" style="width:40px;height:40px">${post.avatar_url?`<img src="${esc(post.avatar_url)}" alt="">`:esc(initials(post.author_name))}</span><div style="min-width:0;flex:1"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><strong style="display:block;color:var(--navy);font-size:12px">${esc(post.author_name||'Courtly Player')}</strong><small style="color:var(--muted);font-size:9px">${esc(formatDate(post.created_at))} · ${esc(formatTime(post.created_at))}</small></div>${mine?`<button type="button" data-delete-home-post="${esc(post.id)}" style="border:0;background:transparent;color:#9b4350;font-size:10px;padding:6px">Delete</button>`:''}</div><p style="margin:10px 0 0;white-space:pre-wrap;word-break:break-word;line-height:1.65;font-size:12px;color:#3d4b65">${esc(post.body)}</p></div></div></article>`;
+}
+async function loadPlayerHomePosts() {
+  const {data,error}=await supabase.from('player_home_posts').select('id,player_id,author_name,avatar_path,body,created_at').order('created_at',{ascending:false}).limit(50);
+  if(error){console.warn('Could not load player home posts:',error.message);playerHomePosts=[];return;}
+  playerHomePosts=await Promise.all((data||[]).map(async post=>({...post,avatar_url:await signPlayerAvatar(post.avatar_path)})));
+}
+async function submitPlayerHomePost(event) {
+  event.preventDefault();
+  const field=$('playerHomePostBody'), button=$('playerHomePostSubmit');
+  const body=field?.value.trim()||'';
+  if(!body)return;
+  button.disabled=true;button.textContent='Posting…';
+  try{
+    const {error}=await supabase.from('player_home_posts').insert({player_id:user.id,author_name:playerDisplayName(profile,user),body});
+    if(error)throw error;
+    field.value='';
+    await loadPlayerHomePosts();
+    renderHome();
+    notify('Your post is now visible to registered Courtly players.');
+  }catch(error){notify(error.message||'Could not publish your post.');}
+  finally{if(button){button.disabled=false;button.textContent='Post';}}
+}
+async function deletePlayerHomePost(id) {
+  const {error}=await supabase.from('player_home_posts').delete().eq('id',id).eq('player_id',user.id);
+  if(error){notify(error.message||'Could not delete your post.');return;}
+  await loadPlayerHomePosts();renderHome();notify('Post deleted.');
+}
 function renderHome() {
   const name=playerDisplayName(profile,user).split(' ')[0];
   const current=selectedSport||profile?.preferred_sport||'';
   const homeSports=[...new Set(['Pickleball','Basketball','Padel','Badminton','Lawn Tennis','Volleyball',...(current?[current]:[])])];
   const chips=homeSports.map(s=>`<button class="sport-chip ${s===current?'active':''}" data-home-sport="${esc(s)}"><span class="sico">${sports.find(x=>x[0]===s)?.[1]||'⚽'}</span>${esc(s)}</button>`).join('');
   root.innerHTML=`
-    <div class="player-home-intro"><div><span class="player-home-kicker">YOUR SPORTS COMMUNITY</span><h1>Good day, ${esc(name)} <span>✦</span></h1><p>Your Courtly home is ready. Use Discover when you want to browse live venues and Open Play.</p></div><a class="player-home-avatar-link" href="/player-dashboard.html?view=profile" aria-label="Open your profile">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'player-home-avatar')}<span>My profile ↗</span></a></div>
-    <section class="player-home-hero"><div class="player-home-hero-copy"><span class="player-home-kicker">READY WHEN YOU ARE</span><h2>Make time to <em>play.</em></h2><p>Search live courts, manage your bookings, or update your profile when you're ready.</p><div class="player-home-hero-actions"><a class="player-home-primary" href="/player-dashboard.html?view=discover">Explore courts <span>↗</span></a><a class="player-home-secondary" href="/player-dashboard.html?view=bookings">My bookings</a></div></div><div class="player-home-hero-art" aria-hidden="true"><div class="player-home-ball">●</div><div class="player-home-court-line"></div><span>COURTLY / PLAY TOGETHER</span></div></section>
+    <div class="player-home-intro"><div><span class="player-home-kicker">YOUR SPORTS COMMUNITY</span><h1>Good day, ${esc(name)} <span>✦</span></h1><p>Share an update, find players and keep up with your Courtly community.</p></div><a class="player-home-avatar-link" href="/player-dashboard.html?view=profile" aria-label="Open your profile">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'player-home-avatar')}<span>My profile ↗</span></a></div>
+    <section class="player-home-hero"><div class="player-home-hero-copy"><span class="player-home-kicker">READY WHEN YOU ARE</span><h2>Make time to <em>play.</em></h2><p>Search live courts, manage your bookings, or connect with other registered players.</p><div class="player-home-hero-actions"><a class="player-home-primary" href="/player-dashboard.html?view=discover">Explore courts <span>↗</span></a><a class="player-home-secondary" href="/player-dashboard.html?view=bookings">My bookings</a></div></div><div class="player-home-hero-art" aria-hidden="true"><div class="player-home-ball">●</div><div class="player-home-court-line"></div><span>COURTLY / PLAY TOGETHER</span></div></section>
     <section class="player-home-sports"><div class="player-home-section-head"><div><span class="player-home-kicker">CHOOSE YOUR GAME</span><h2>Explore sports</h2></div><button class="player-home-text-btn" id="openSportModal">All sports +</button></div><div class="sport-chips">${chips}<button class="sport-chip more" id="openSportModal">＋ More sports</button></div></section>
-    <section class="section-block"><div class="empty-state"><div class="empty-icon">⌂</div><strong>Home feed cleared</strong><span>Demo venues, test featured games, test posts and sample activity are no longer shown on your player home page.</span><div style="margin-top:14px"><a class="btn" href="/player-dashboard.html?view=discover">Browse live venues</a></div></div></section>`;
+    <section class="section-block" aria-label="Player community feed"><div class="section-title"><div><span class="player-home-kicker">PLAYER FEED</span><h2>Share with Courtly players</h2><p>Posts here are visible to registered player accounts.</p></div></div>
+      <form id="playerHomePostForm" class="panel" style="padding:15px;margin-bottom:14px"><div style="display:flex;gap:11px;align-items:flex-start">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'avatar')}<div style="flex:1;min-width:0"><textarea id="playerHomePostBody" maxlength="500" rows="3" placeholder="What do you want to share? Looking for a game, a partner, or just saying hello?" style="width:100%;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:12px Inter;line-height:1.55;outline:none"></textarea><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px"><small style="color:var(--muted)">Up to 500 characters</small><button class="btn" id="playerHomePostSubmit" type="submit">Post</button></div></div></div></form>
+      <div id="playerHomeFeed">${playerHomePosts.length?playerHomePosts.map(playerHomePostCard).join(''):'<div class="empty-state"><div class="empty-icon">✦</div><strong>No player posts yet</strong><span>Be the first registered player to post an update.</span></div>'}</div>
+    </section>`;
   root.querySelectorAll('[data-home-sport]').forEach(btn=>btn.addEventListener('click',()=>selectSport(btn.dataset.homeSport)));
   root.querySelectorAll('#openSportModal').forEach(btn=>btn.addEventListener('click',openSportModal));
+  $('playerHomePostForm')?.addEventListener('submit',submitPlayerHomePost);
+  root.querySelectorAll('[data-delete-home-post]').forEach(button=>button.addEventListener('click',()=>deletePlayerHomePost(button.dataset.deleteHomePost)));
 }
 function playerCardMarkup(player) {
   const name=player.player_name||'Courtly Player';
@@ -333,7 +368,7 @@ async function init() {
   profile=await syncPlayerProfile(supabase,user);
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
-  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity()]);
+  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts()]);
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
   window.addEventListener('focus',refreshCommunityActivityBadge);

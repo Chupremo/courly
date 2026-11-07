@@ -158,10 +158,10 @@ export async function loadOwnerWorkspace() {
       timezone, currency: venue.currency || 'PHP',
       trialStartedAt: venue.trial_started_at || null,
       trialEndsAt: venue.trial_ends_at || null,
-      activationStatus: venue.activation_status || 'trial',
+      activationStatus: (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now()) ? 'on_hold' : (venue.activation_status || 'trial'),
       trialDaysRemaining: venue.trial_ends_at ? Math.max(0, Math.ceil((new Date(venue.trial_ends_at).getTime() - Date.now()) / 86400000)) : null,
       trialExpired: venue.activation_status === 'on_hold' || (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now()),
-      bookingActivationReady: ['trial','active'].includes(venue.activation_status || 'trial') && venue.is_published !== false
+      bookingActivationReady: ['trial','active'].includes(venue.activation_status || 'trial') && (!venue.trial_ends_at || new Date(venue.trial_ends_at).getTime() > Date.now() || venue.activation_status === 'active') && venue.is_published !== false
     }
   };
   return db;

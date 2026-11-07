@@ -184,7 +184,7 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path=public,pg_temp
-AS $
+AS $$
 DECLARE
   v_owner_id uuid;
   v_billing_status text;
@@ -234,7 +234,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 REVOKE ALL ON FUNCTION public.courtly_require_owner_terms_before_transaction() FROM PUBLIC,anon,authenticated;
 
 -- Booking gate + fee assignment.

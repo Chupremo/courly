@@ -78,6 +78,11 @@
       }
     }
     loadPublicPlayerCount();
+    const PLAYER_COUNT_REFRESH_MS = 3 * 60 * 60 * 1000;
+    setInterval(loadPublicPlayerCount, PLAYER_COUNT_REFRESH_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') loadPublicPlayerCount();
+    });
     let avatarFile = null;
     let avatarPreviewUrl = null;
     const showMessage = (text, type='error') => { message.textContent=text; message.className=`message show ${type}`; };

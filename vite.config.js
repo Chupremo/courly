@@ -79,6 +79,7 @@ export default defineConfig({
         clubLogin: resolve(process.cwd(), 'club-login.html'),
         clubDashboard: resolve(process.cwd(), 'club-dashboard.html'),
         demoPlayground: resolve(process.cwd(), 'demo.html'),
+        demoBooking: resolve(process.cwd(), 'demo-booking.html'),
         playerMessages: resolve(process.cwd(), 'player-messages.html')
       }
     }

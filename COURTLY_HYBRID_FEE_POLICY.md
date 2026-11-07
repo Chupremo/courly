@@ -2,7 +2,7 @@
 
 ## Official fee rules
 
-- **Court rental:** PHP 10 per successfully booked court-hour. The venue owner pays this fee. It is deducted from the owner’s court-rental earnings, not added to the player’s court checkout.
+- **Court rental:** PHP 10 per successful court-booking transaction, regardless of booking duration. The venue owner pays this fee. It is billed/remitted separately and is not added to the player’s court checkout.
 - **Paid Open Play:** PHP 10 transaction fee per paid registration. It is added on top of the event’s registration amount and paid by the player.
 - **Free Open Play:** PHP 0 transaction fee. No receipt is required and the registration is confirmed immediately.
 - No monthly subscription, setup fee, or upfront platform charge.
@@ -40,8 +40,8 @@ Court rental platform fees are different: they are the venue owner’s own oblig
 | Court rate | PHP 350/hour |
 | Booking duration | 2 hours |
 | Player pays venue | PHP 700.00 |
-| Venue owner’s Courtly platform fee | PHP 20.00 |
-| **Owner net before other expenses** | **PHP 680.00** |
+| Venue owner’s Courtly Convenience Fee | PHP 10.00 |
+| **Owner net before other expenses** | **PHP 690.00** |
 
 ## Database behavior
 
@@ -57,7 +57,7 @@ The migration also updates owner reporting RPCs. It does not replace the payment
 4. Test a paid Open Play event priced at PHP 150: checkout must show PHP 150 + PHP 10 = PHP 160.
 5. Test a free Open Play event: PHP 0 total, no receipt field, immediate confirmation.
 6. Confirm an Open Play payment as the venue owner; verify registration revenue remains PHP 150, player transaction fees show PHP 10 to remit, and venue Open Play net remains PHP 150.
-7. Test a two-hour court rental at PHP 350/hour: player pays PHP 700 and owner platform fee is PHP 20.
+7. Test a two-hour court rental at PHP 350/hour: player pays PHP 700 and the owner Convenience Fee is PHP 10.
 8. Verify repeated payment confirmation does not create a second fee or transaction.
 
 ## Important limitation

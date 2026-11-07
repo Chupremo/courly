@@ -71,7 +71,7 @@
         const {data,error}=await supabase.rpc('get_public_player_count');
         if(error)throw error;
         const count=Math.max(0,Number(data||0));
-        target.textContent=`${count.toLocaleString('en-PH')} verified ${count===1?'player':'players'} already on Courtly`;
+        target.textContent=`${count.toLocaleString('en-PH')} verified ${count===1?'player':'players'} on Courtly · Help us reach 452`;
       }catch(error){
         console.warn('Courtly player count is unavailable:',error.message);
         target.textContent='Join the Courtly player community';

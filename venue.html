@@ -53,7 +53,7 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 <section class="venue-info-panel" id="venueInfoPanel" aria-live="polite">
 <div class="venue-info-content" data-venue-panel="overview"><span class="venue-info-eyebrow">ABOUT THIS VENUE</span><p id="venueOverviewText">Explore the venue, check available courts and choose a time that works for you.</p></div>
 <div class="venue-info-content" data-venue-panel="amenities" hidden><span class="venue-info-eyebrow">VENUE AMENITIES</span><div id="venueAmenitiesList" class="venue-amenities-list"><div class="venue-amenities-empty"><span aria-hidden="true"></span><strong>Amenities will appear here</strong><p>Venue facilities are provided by the owner.</p></div></div></div>
-<div class="venue-info-content" data-venue-panel="courts" hidden><span class="venue-info-eyebrow">AVAILABLE COURTS</span><p id="venueCourtCount">Choose from the active courts below.</p><a href="#courtSection">View courts and prices ↓</a></div>
+<div class="venue-info-content" data-venue-panel="courts" hidden><span class="venue-info-eyebrow">AVAILABLE COURTS</span><p id="venueCourtCount">Choose from the active courts below.</p><a href="#courtSection">View courts and prices </a></div>
 <div class="venue-info-content" data-venue-panel="location" hidden><span class="venue-info-eyebrow">VENUE LOCATION</span><p id="venueLocationText">Location details are shown above.</p></div>
 </section><div class="steps"><div class="step active" data-step="1"><span class="step-num">1</span><span>Select Date &amp; Time</span></div><div class="step-line"></div><div class="step" data-step="2"><span class="step-num">2</span><span>Choose Court</span></div><div class="step-line"></div><div class="step" data-step="3"><span class="step-num">3</span><span>Review Booking</span></div><div class="step-line"></div><div class="step" data-step="4"><span class="step-num">4</span><span>Payment</span></div></div>
 <section id="openPlayAnnouncements" class="openplay-wrap" aria-label="Open play announcements" hidden></section><aside class="reservation-note" id="checkoutRecovery" hidden><p id="checkoutRecoveryText"></p><button class="qr-download" id="resumeCheckout" type="button">View my checkout</button></aside>
@@ -395,9 +395,9 @@ async function restoreCheckoutHold() {
 }
 
 const venueAmenityCatalog = [
-  ['Parking','P'],['Restrooms','WC'],['Night lighting',''],['Changing rooms','↔'],
+  ['Parking','P'],['Restrooms','WC'],['Night lighting',''],['Changing rooms',''],
   ['Showers','≈'],['Water station',''],['Seating area',''],['Equipment rental',''],
-  ['Pro shop','▣'],['Food & drinks',''],['Wi-Fi',''],['Air conditioning','']
+  ['Pro shop',''],['Food & drinks',''],['Wi-Fi',''],['Air conditioning','']
 ];
 function renderVenueAmenities(){
   const host=$('venueAmenitiesList'); if(!host)return;

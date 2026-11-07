@@ -155,7 +155,12 @@ export async function loadOwnerWorkspace() {
       paymentAccount: venue.payment_account || '', paymentInstructions: venue.payment_instructions || '',
       qrData: venue.payment_qr_url || '', notifyEmail: venue.notify_email !== false,
       notifyPending: venue.notify_pending !== false, notifyCancelled: venue.notify_cancelled !== false,
-      timezone, currency: venue.currency || 'PHP'
+      timezone, currency: venue.currency || 'PHP',
+      trialStartedAt: venue.trial_started_at || null,
+      trialEndsAt: venue.trial_ends_at || null,
+      activationStatus: venue.activation_status || 'active',
+      trialDaysRemaining: venue.trial_ends_at ? Math.max(0, Math.ceil((new Date(venue.trial_ends_at).getTime() - Date.now()) / 86400000)) : null,
+      trialFrozen: venue.activation_status === 'frozen' || (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now())
     }
   };
   return db;
@@ -262,6 +267,7 @@ async function saveCourtImage(state, index) {
 async function persistOwnerWorkspace(state, change = {}) {
   if (!state?.venue?.id) throw new Error('Your venue has not finished loading. Please try again.');
   const v = state.venue;
+  if (v?.trialFrozen) throw new Error('Your 7-day Courtly trial has ended. This workspace is read-only until Courtly activates your venue.');
   await assertCurrentOwnerCanManageVenue(v.id);
   if (change.scope === 'profile') {
     v.logoData = await uploadDataUrlOrKeep(v.logoData, v.id, 'logo');

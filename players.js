@@ -154,3 +154,22 @@ list.addEventListener('error', event => {
   if (event.target.tagName === 'IMG') event.target.hidden = true;
 }, true);
 load();
+async function refreshPublicPlayerCount(){
+  const target = document.getElementById('playersLiveCount');
+  if (!target || !supabase) return;
+  try {
+    const { data, error } = await supabase.rpc('get_public_player_count');
+    if (error) throw error;
+    const count = Math.max(0, Number(data || 0));
+    target.textContent = `${count.toLocaleString('en-PH')} verified ${count === 1 ? 'player' : 'players'} on Courtly`;
+  } catch (error) {
+    console.warn('Courtly player count is unavailable:', error?.message || error);
+    target.textContent = 'Join the Courtly player community';
+  }
+}
+refreshPublicPlayerCount();
+setInterval(refreshPublicPlayerCount, 3 * 60 * 60 * 1000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') refreshPublicPlayerCount();
+});
+

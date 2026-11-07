@@ -694,7 +694,7 @@ async function openPayment(event = null) {
       ? { kind: 'openplay', playerId: user.id, event: { ...event }, amounts: openPlayAmounts(event.fee) }
       : { kind: 'court', playerId: user.id, court: { ...selectedCourt() }, date: localDateForSelection(selectedDate),
           startHour: selectedStart, endHour: selectedEnd, range: selectedRangeIso(),
-          amounts: { registration: bookingSubtotal(), fee: 0, total: bookingTotal(), free: bookingTotal() === 0 } };
+          amounts: { registration: bookingSubtotal(), fee: platformFee(), total: bookingTotal(), free: bookingSubtotal() === 0 } };
     checkoutError('');
     $('paymentScreenshot').value = '';
     $('paymentImagePreview').replaceChildren();

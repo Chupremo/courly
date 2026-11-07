@@ -22,7 +22,7 @@ function hold(overrides = {}) {
     court_id: ids.court, court_name: 'Court 1', venue_slug: 'test-venue', venue_name: 'Test Venue',
     reference: 'CT-TEST', status: 'held', payment_status: 'unpaid',
     starts_at: '2030-11-08T02:00:00Z', ends_at: '2030-11-08T04:00:00Z', duration_hours: 2,
-    subtotal: 700, convenience_fee: 0, owner_fee: 20, total: 700, fee_payer: 'venue_owner',
+    subtotal: 700, convenience_fee: 0, owner_fee: 10, total: 700, fee_payer: 'venue_owner',
     server_now: '2030-11-07T00:00:00Z', expires_at: '2030-11-07T00:20:00Z',
     customer_access_token: ids.token, receipt_prefix: `test-venue/${ids.booking}/${ids.hold}/`,
     payment_qr_url: 'https://example.invalid/qr.png', payment_account: 'Test Venue',

@@ -71,13 +71,18 @@
         const {data,error}=await supabase.rpc('get_public_player_count');
         if(error)throw error;
         const count=Math.max(0,Number(data||0));
-        target.textContent=`${count.toLocaleString('en-PH')} verified ${count===1?'player':'players'} already on Courtly`;
+        target.textContent=`${count.toLocaleString('en-PH')} verified ${count===1?'player':'players'} on Courtly · Help us reach 452`;
       }catch(error){
         console.warn('Courtly player count is unavailable:',error.message);
         target.textContent='Join the Courtly player community';
       }
     }
     loadPublicPlayerCount();
+    const PLAYER_COUNT_REFRESH_MS = 3 * 60 * 60 * 1000;
+    setInterval(loadPublicPlayerCount, PLAYER_COUNT_REFRESH_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') loadPublicPlayerCount();
+    });
     let avatarFile = null;
     let avatarPreviewUrl = null;
     const showMessage = (text, type='error') => { message.textContent=text; message.className=`message show ${type}`; };

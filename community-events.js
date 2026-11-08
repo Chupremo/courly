@@ -32,10 +32,10 @@ function renderCard(e){
    '<a class="ce-event-card-banner" href="/community-event.html?id='+encodeURIComponent(e.event_id)+'">'+image+'</a>'+
    '<div class="ce-event-card-content"><div class="ce-event-card-top"><span class="ce-sport-pill">'+esc(e.sport)+'</span><span class="ce-type-pill">'+esc(e.event_type)+'</span><span class="ce-event-status">'+esc(badge)+'</span></div>'+
    '<a class="ce-event-card-title" href="/community-event.html?id='+encodeURIComponent(e.event_id)+'">'+esc(e.title)+'</a>'+
-   '<div class="ce-event-card-meta"><span>◷ '+esc(phDate(e.starts_at))+' · '+esc(phTime(e.starts_at))+'</span><span>⌖ '+esc(location||e.location_name)+' · '+esc(e.city||'')+'</span></div>'+
+   '<div class="ce-event-card-meta"><span>'+esc(phDate(e.starts_at))+' · '+esc(phTime(e.starts_at))+'</span><span>'+esc(location||e.location_name)+' · '+esc(e.city||'')+'</span></div>'+
    '<p>'+esc(e.description||'Join other Courtly players for this activity.')+'</p>'+
    '<div class="ce-event-card-foot"><div><strong>'+esc(money(e.fee_per_player))+'</strong><small>'+confirmed+(capacity?' / '+capacity:'')+' confirmed · '+esc(durationText(e.duration_minutes))+'</small></div>'+
-   '<div class="ce-card-actions"><button type="button" class="ce-share-button" data-share-event="'+esc(e.event_id)+'" data-share-title="'+esc(e.title)+'" aria-label="Share activity">↗ Share</button><a class="community-primary" href="/community-event.html?id='+encodeURIComponent(e.event_id)+'">View activity →</a></div></div></div></article>';
+   '<div class="ce-card-actions"><button type="button" class="ce-share-button" data-share-event="'+esc(e.event_id)+'" data-share-title="'+esc(e.title)+'" aria-label="Share activity">Share</button><a class="community-primary" href="/community-event.html?id='+encodeURIComponent(e.event_id)+'">View activity</a></div></div></div></article>';
 }
 function updateUnreadBadge(count){
  const value=Math.max(0,Number(count||0));
@@ -206,7 +206,20 @@ async function submitEvent(event){
 }
 async function init(){
  if(!supabase){$('communityEventsFeed').innerHTML='<div class="community-state">Courtly is not connected to Supabase.</div>';return;}
- const {data:{user},error}=await supabase.auth.getUser();if(error)throw error;
+ let user=null;
+ const {data:userResult,error:userError}=await supabase.auth.getUser();
+ if(userError){
+  const message=String(userError.message||'');
+  const staleSession=/sub claim|user.*does not exist|invalid.*jwt|jwt.*invalid|session.*not found/i.test(message);
+  if(staleSession){
+   console.warn('Clearing stale Courtly session:',message);
+   try{await supabase.auth.signOut({scope:'local'});}catch{}
+  }else{
+   console.warn('Courtly session check failed; continuing as guest:',message);
+  }
+ }else{
+  user=userResult?.user||null;
+ }
  state.user=user;
  const create=$('openEventComposer');
  create.hidden=true;

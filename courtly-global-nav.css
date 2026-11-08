@@ -21,11 +21,12 @@
 .courtly-global-header .ct-nav .ct-register summary{background:var(--ct-lime);color:#142700;font-weight:700}
 .courtly-global-header .ct-user-label{font-size:12px;color:var(--ct-muted);padding:0 5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;margin:0;padding:0;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);cursor:pointer;align-items:center;justify-content:center;position:relative}
-.courtly-global-header .ct-mobile-toggle svg{display:block;position:absolute;top:50%;left:50%;width:24px;height:24px;margin:0;transform:translate(-50%,-50%);overflow:hidden;pointer-events:none}
-.courtly-global-header .ct-mobile-toggle .ct-icon-menu,.courtly-global-header .ct-mobile-toggle .ct-icon-close{fill:none;stroke:currentColor;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round}
-.courtly-global-header .ct-mobile-toggle .ct-icon-close{display:none}
-.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-icon-menu{display:none}
-.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-icon-close{display:block}
+.courtly-global-header .ct-mobile-toggle .ct-mobile-glyph{display:block!important;position:absolute!important;top:50%!important;left:50%!important;width:24px!important;height:20px!important;margin:0!important;padding:0!important;transform:translate(-50%,-50%)!important;background:linear-gradient(currentColor,currentColor) center 2px/22px 3px no-repeat,linear-gradient(currentColor,currentColor) center 9px/22px 3px no-repeat,linear-gradient(currentColor,currentColor) center 16px/22px 3px no-repeat;pointer-events:none}
+.courtly-global-header .ct-mobile-toggle .ct-mobile-glyph:before,.courtly-global-header .ct-mobile-toggle .ct-mobile-glyph:after{content:none}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-glyph{background:none}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-glyph:before,.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-glyph:after{content:"";display:block;position:absolute;left:1px;top:8.5px;width:22px;height:3px;border-radius:2px;background:currentColor}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-glyph:before{transform:rotate(45deg)}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-glyph:after{transform:rotate(-45deg)}
 .courtly-global-header .ct-community-user{display:none}
 .courtly-global-header :is(a,button,summary):focus-visible{outline:3px solid #2166b5;outline-offset:2px}
 @media(max-width:1024px){

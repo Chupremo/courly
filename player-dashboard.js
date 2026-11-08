@@ -277,8 +277,51 @@ function renderPlayers() {
   bindFollowButtons();
 }
 
+const nearbyCourts = [
+  {
+    name:'Lipa Elite Pickleball',
+    city:'Lipa City, Batangas',
+    address:'Mercado De Lipa, Purok 6 MK Lina St, Brgy. San Sebastian',
+    sport:'Pickleball',
+    courtCount:'5 indoor courts',
+    image:'https://lipaelitepickleball.com/logo.png',
+    imageFit:'contain',
+    url:'https://lipaelitepickleball.com/'
+  },
+  {
+    name:'The Pickle Yard Lipa South',
+    city:'Lipa City, Batangas',
+    address:'Purok 5, Lipa City, Batangas',
+    sport:'Pickleball',
+    courtCount:'4 indoor courts',
+    image:'https://baseline-prod.sgp1.digitaloceanspaces.com/6d030b319415d5d3275a0fabcbe58164.png',
+    imageFit:'contain',
+    url:'https://www.facebook.com/PYLipaSouth'
+  },
+  {
+    name:'Lipa City Community Park Sports Area',
+    city:'Lipa City, Batangas',
+    address:'Lipa City, Batangas',
+    sport:'Multi-sport',
+    courtCount:'Public sports facilities',
+    image:'https://www.dpwh.gov.ph/dpwh/sites/default/files/lipa_city_park_upgraded_facilities.jpg',
+    imageFit:'contain',
+    url:'https://www.google.com/maps/search/?api=1&query=Lipa+City+Community+Park+Batangas'
+  }
+];
+
+function nearbyCourtsSection() {
+  const matching=nearbyCourts.filter(venue=>{
+    const hay=[venue.name,venue.city,venue.address,venue.sport].join(' ').toLowerCase();
+    return (!discoverSearch||hay.includes(discoverSearch.toLowerCase()))
+      &&(!discoverCity||venue.city===discoverCity)
+      &&(!discoverSport||venue.sport.toLowerCase().includes(discoverSport.toLowerCase()));
+  });
+  return `<section class="section-block" aria-labelledby="discoverNearbyTitle"><div class="section-title"><div><h2 id="discoverNearbyTitle">Nearby courts</h2><p>Local court references near Batangas. Contact these venues directly for bookings and availability.</p></div></div>${matching.length?`<div class="venue-grid">${matching.map(venue=>`<article class="venue-card"><div class="venue-cover">${venue.image?`<img loading="lazy" src="${esc(venue.image)}" alt="${esc(venue.name)}" style="object-fit:contain;background:#fff;padding:14px">`:esc(initials(venue.name))}<span class="sport-label">NEARBY COURT</span></div><div class="venue-body"><h3>${esc(venue.name)}</h3><div class="venue-loc">${esc([venue.city,venue.address].filter(Boolean).join(' · '))}</div><div class="venue-tags"><span class="tag">${esc(venue.sport)}</span><span class="tag">${esc(venue.courtCount)}</span></div><div class="venue-foot"><span>External venue</span><a class="btn light" href="${esc(venue.url)}" target="_blank" rel="noopener noreferrer">View court</a></div></div></article>`).join('')}</div>`:'<div class="empty-state"><strong>No nearby courts match your filters</strong><span>Try another sport, location or search term.</span></div>'}</section>`;
+}
+
 function renderDiscover() {
-  const cities=[...new Set([...venues.map(v=>v.city),...discoverCoaches.map(v=>v.city)].filter(Boolean))].sort();
+  const cities=[...new Set([...venues.map(v=>v.city),...nearbyCourts.map(v=>v.city),...discoverCoaches.map(v=>v.city)].filter(Boolean))].sort();
   const sportOptions=[...new Set([...sports.map(s=>s[0]),...allVenueSports(),...discoverCoaches.map(v=>v.sport).filter(Boolean)])].sort();
   const filtered=venues.filter(v=>{
     const cs=v.courts||[]; const hay=[v.name,v.city,v.address,...cs.map(c=>c.name),...cs.map(c=>c.sport)].join(' ').toLowerCase();
@@ -312,6 +355,7 @@ function renderDiscover() {
   }else{
     content=filtered.length?`<div class="venue-grid">${filtered.map(venueCard).join('')}</div>`:`<div class="empty-state"><div class="empty-icon">⌕</div><strong>No venues found</strong><span>Try another sport, location or search term. Published venues will appear here automatically.</span></div>`;
   }
+  if(discoverMode==='list')content+=nearbyCourtsSection();
   root.innerHTML=`${heading('DISCOVER COURTLY','Discover sports venues','Find a court, sports hub or Open Play venue near you.')}
     <section class="toolbar"><div class="search"><input id="discoverSearch" type="search" placeholder="Search by venue name or location…" value="${esc(discoverSearch)}"></div><select id="discoverSport"><option value="">All sports</option>${sportOptions.map(s=>`<option value="${esc(s)}" ${discoverSport===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="discoverCity"><option value="">All locations</option>${cities.map(c=>`<option value="${esc(c)}" ${discoverCity===c?'selected':''}>${esc(c)}</option>`).join('')}</select><div class="segmented"><button data-discover-mode="list" class="${discoverMode==='list'?'active':''}">Venues</button><button data-discover-mode="players" class="${discoverMode==='players'?'active':''}">Players</button><button data-discover-mode="coaches" class="${discoverMode==='coaches'?'active':''}">Coaches</button></div></section>
     <div class="section-title"><div><h2>${count} ${discoverMode==='players'?(count===1?'player':'players'):discoverMode==='coaches'?(count===1?'coach':'coaches'):discoverMode==='openplay'?(count===1?'session':'sessions'):(count===1?'venue':'venues')} found</h2><p>${discoverMode==='players'?'People you may know — discover players with shared sports interests.':discoverMode==='coaches'?'Browse coaches and book training sessions.':discoverMode==='openplay'?'Upcoming published Open Play sessions.':'Published Courtly venues with active courts.'}</p></div></div>${content}`;

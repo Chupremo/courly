@@ -97,6 +97,33 @@ async function deletePlayerHomePost(id) {
   if(error){notify(error.message||'Could not delete your post.');return;}
   await loadPlayerHomePosts();renderHome();notify('Post deleted.');
 }
+
+let sportsNews = [], sportsNewsState = 'loading';
+function sportsNewsSection() {
+  const cards=sportsNews.map(item=>`<article class="panel" style="padding:16px;min-width:0"><small style="color:var(--muted)">${esc(item.source)} · ${esc(formatDate(item.published_at))}</small><h3 style="font-size:16px;line-height:1.4;margin:10px 0">${esc(item.title)}</h3><p style="font-size:12px;line-height:1.6;color:var(--muted)">${esc(item.summary)}</p><a class="btn light" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read article</a></article>`).join('');
+  return `<section id="sportsNewsSection" class="section-block" aria-labelledby="sportsNewsTitle"><div class="section-title"><div><span class="player-home-kicker">PHILIPPINE SPORTS</span><h2 id="sportsNewsTitle">Philippine Sports News</h2><p>Hourly news checks. New stories include the publisher and original article link.</p></div></div><div class="venue-grid">${cards||`<div class="empty-state"><strong>${sportsNewsState==='loading'?'Loading sports news…':sportsNewsState==='error'?'Sports news is temporarily unavailable':'Sports news is coming soon'}</strong><span>${sportsNewsState==='error'?'Please refresh to try again.':'Fresh stories will appear here when available.'}</span></div>`}</div></section>`;
+}
+async function loadSportsNews() {
+  try {
+    const response=await fetch('https://raw.githubusercontent.com/Chupremo/courly/main/public/sports-news.json',{cache:'no-store'});
+    if(!response.ok)throw new Error('News unavailable');
+    const payload=await response.json();
+    if(!Array.isArray(payload.items))throw new Error('Invalid news feed');
+    const seen=new Set();
+    sportsNews=payload.items.filter(item=>{
+      if(!item||!item.title||!item.summary||!item.source||!Number.isFinite(Date.parse(item.published_at)))return false;
+      try {
+        const url=new URL(item.url);
+        if(url.protocol!=='https:'||seen.has(url.href))return false;
+        seen.add(url.href);return true;
+      }catch{return false;}
+    }).sort((a,b)=>Date.parse(b.published_at)-Date.parse(a.published_at)).slice(0,6);
+    sportsNewsState='ready';
+  }catch{
+    sportsNewsState='error';
+  }
+}
+
 function renderHome() {
   const name=playerDisplayName(profile,user).split(' ')[0];
   const current=selectedSport||profile?.preferred_sport||'';
@@ -106,6 +133,7 @@ function renderHome() {
     <div class="player-home-intro"><div><span class="player-home-kicker">YOUR SPORTS COMMUNITY</span><h1>Good day, ${esc(name)} <span></span></h1><p>Share an update, find players and keep up with your Courtly community.</p></div><a class="player-home-avatar-link" href="/player-dashboard.html?view=profile" aria-label="Open your profile">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'player-home-avatar')}<span>My profile </span></a></div>
     <section class="player-home-hero"><div class="player-home-hero-copy"><span class="player-home-kicker">READY WHEN YOU ARE</span><h2>Make time to <em>play.</em></h2><p>Search live courts, manage your bookings, or connect with other registered players.</p><div class="player-home-hero-actions"><a class="player-home-primary" href="/player-dashboard.html?view=discover">Explore courts <span></span></a><a class="player-home-secondary" href="/player-dashboard.html?view=bookings">My bookings</a></div></div><div class="player-home-hero-art" aria-hidden="true"><div class="player-home-ball">●</div><div class="player-home-court-line"></div><span>COURTLY / PLAY TOGETHER</span></div></section>
     <section class="player-home-sports"><div class="player-home-section-head"><div><span class="player-home-kicker">CHOOSE YOUR GAME</span><h2>Explore sports</h2></div><button class="player-home-text-btn" id="openSportModal">All sports +</button></div><div class="sport-chips">${chips}<button class="sport-chip more" id="openSportModal">＋ More sports</button></div></section>
+    ${sportsNewsSection()}
     <section class="section-block" aria-label="Player community feed"><div class="section-title"><div><span class="player-home-kicker">PLAYER FEED</span><h2>Share with Courtly players</h2><p>Posts here are visible to registered player accounts.</p></div></div>
       <form id="playerHomePostForm" class="panel" style="padding:15px;margin-bottom:14px"><div style="display:flex;gap:11px;align-items:flex-start">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'avatar')}<div style="flex:1;min-width:0"><textarea id="playerHomePostBody" maxlength="500" rows="3" placeholder="What do you want to share? Looking for a game, a partner, or just saying hello?" style="width:100%;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:12px Inter;line-height:1.55;outline:none"></textarea><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px"><small style="color:var(--muted)">Up to 500 characters</small><button class="btn" id="playerHomePostSubmit" type="submit">Post</button></div></div></div></form>
       <div id="playerHomeFeed">${playerHomePosts.length?playerHomePosts.map(playerHomePostCard).join(''):'<div class="empty-state"><strong>No player posts yet</strong><span>Be the first registered player to post an update.</span></div>'}</div>
@@ -484,9 +512,10 @@ async function init() {
   profile=await syncPlayerProfile(supabase,user);
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
-  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts()]);
+  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews()]);
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
+  window.setInterval(async()=>{await loadSportsNews();const section=$('sportsNewsSection');if(view==='home'&&section)section.outerHTML=sportsNewsSection();},60*60*1000);
   window.addEventListener('focus',refreshCommunityActivityBadge);
   if(view==='players')await Promise.all([loadPlayerDirectory(directorySearch),loadPlayerFriendRequests()]);
   if(view==='invites')await loadPlayerClubInvites();

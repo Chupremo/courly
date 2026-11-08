@@ -12,6 +12,7 @@ let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEve
 let inviteTargetPlayerId = null;
 let directorySearch = '';
 let discoverPlayersLoaded = false;
+let playerFriendRequests = [];
 let view = new URLSearchParams(location.search).get('view') || 'home';
 let discoverCoaches = [], discoverCoachesLoaded = false, discoverCoachesError = ''; 
 let selectedSport = '', discoverSearch = '', discoverCity = '', discoverSport = '', discoverMode = new URLSearchParams(location.search).get('mode') === 'openplay' ? 'openplay' : 'list';
@@ -118,11 +119,13 @@ function playerCardMarkup(player) {
   const name=player.player_name||'Courtly Player';
   const playerId=String(player.player_id||'');
   const svg=(paths)=>'<svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+  const friendRequest=playerFriendRequests.find(r=>(r.sender_id===user.id&&r.receiver_id===playerId)||(r.receiver_id===user.id&&r.sender_id===playerId));
+  const friendLabel=friendRequest?.status==='accepted'?'Friends':friendRequest?.status==='pending'?(friendRequest.sender_id===user.id?'Request Sent':'Respond to Request'):'Add as Friend';
   const friendIcon=svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6m-3-3h6"/>');
   const followIcon=svg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="m17 11 2 2 4-4"/>');
   const chatIcon=svg('<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5Z"/>');
   const inviteIcon=svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/><path d="M17 2v6m-3-3h6"/>');
-  return `<article class="player-social-card player-people-card"><button type="button" class="player-profile-trigger" data-open-player-profile="${esc(playerId)}" aria-haspopup="dialog" aria-label="View ${esc(name)}'s public profile">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<span class="player-social-copy"><strong>${esc(name)}</strong><span>${esc(player.public_location||'Location not shared')}</span><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></span></button><div class="player-social-actions player-discover-actions"><button type="button" class="btn people-icon-btn" disabled title="Add as Friend — coming soon" aria-label="Add as Friend">${friendIcon}<span>Add as Friend</span></button><button type="button" class="btn people-icon-btn ${player.is_following?'light':'social-follow'}" title="${player.is_following?'Following':'Follow'}" aria-label="${player.is_following?'Following':'Follow'}" data-follow-player="${esc(playerId)}" data-following="${player.is_following?'1':'0'}">${followIcon}<span>${player.is_following?'Following':'Follow'}</span></button><a class="btn people-icon-btn light" href="/player-messages.html?player=${encodeURIComponent(playerId)}" title="Chat" aria-label="Chat">${chatIcon}<span>Chat</span></a><button type="button" class="btn people-icon-btn light" data-invite-player="${esc(playerId)}" data-player-name="${esc(name)}" title="Invite to the Club" aria-label="Invite to the Club">${inviteIcon}<span>Invite to Club</span></button></div></article>`;
+  return `<article class="player-social-card player-people-card"><button type="button" class="player-profile-trigger" data-open-player-profile="${esc(playerId)}" aria-haspopup="dialog" aria-label="View ${esc(name)}'s public profile">${avatarMarkup(player.avatar_url,name,'player-social-avatar')}<span class="player-social-copy"><strong>${esc(name)}</strong><span>${esc(player.public_location||'Location not shared')}</span><span>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</span><small>${Number(player.follower_count||0).toLocaleString('en-PH')} followers</small></span></button><div class="player-social-actions player-discover-actions"><button type="button" class="btn people-icon-btn" data-friend-player="${esc(playerId)}" title="${esc(friendLabel)}" aria-label="${esc(friendLabel)}" ${friendRequest?.status==='pending'&&friendRequest.sender_id===user.id||friendRequest?.status==='accepted'?'disabled':''}>${friendIcon}<span>${esc(friendLabel)}</span></button><button type="button" class="btn people-icon-btn ${player.is_following?'light':'social-follow'}" title="${player.is_following?'Following':'Follow'}" aria-label="${player.is_following?'Following':'Follow'}" data-follow-player="${esc(playerId)}" data-following="${player.is_following?'1':'0'}">${followIcon}<span>${player.is_following?'Following':'Follow'}</span></button><a class="btn people-icon-btn light" href="/player-messages.html?player=${encodeURIComponent(playerId)}" title="Chat" aria-label="Chat">${chatIcon}<span>Chat</span></a><button type="button" class="btn people-icon-btn light" data-invite-player="${esc(playerId)}" data-player-name="${esc(name)}" title="Invite to the Club" aria-label="Invite to the Club">${inviteIcon}<span>Invite to Club</span></button></div></article>`;
 }
 function ensurePlayerDetailsDialog() {
   let dialog=$('playerDetailsDialog');
@@ -228,7 +231,26 @@ function renderClubInvites(){
     catch(error){button.disabled=false;notify(error.message||'Could not update this invitation.');}
   }));
 }
+async function loadPlayerFriendRequests(){
+  const {data,error}=await supabase.from('player_friend_requests').select('id,sender_id,receiver_id,status').in('status',['pending','accepted']);
+  if(error){console.warn('Friend requests unavailable:',error.message);return;}
+  playerFriendRequests=data||[];
+}
 function bindFollowButtons() {
+  root.querySelectorAll('[data-friend-player]').forEach(button=>button.addEventListener('click',async()=>{
+    const receiverId=button.dataset.friendPlayer;
+    if(receiverId===user.id){notify('You cannot add yourself as a friend.');return;}
+    const existing=playerFriendRequests.find(r=>(r.sender_id===user.id&&r.receiver_id===receiverId)||(r.receiver_id===user.id&&r.sender_id===receiverId));
+    if(existing?.status==='pending'&&existing.receiver_id===user.id){notify('This player already sent you a request. Accept it from your friend requests.');return;}
+    button.disabled=true;
+    try{
+      const {error}=await supabase.from('player_friend_requests').insert({sender_id:user.id,receiver_id:receiverId,status:'pending'});
+      if(error)throw error;
+      await loadPlayerFriendRequests();
+      if(view==='discover'&&discoverMode==='players')renderDiscover();else if(view==='players')renderPlayers();
+      notify('Friend request sent!');
+    }catch(error){button.disabled=false;notify(error.code==='23505'?'Friend request already exists.':error.message||'Could not send friend request.');}
+  }));
   root.querySelectorAll('[data-open-player-profile]').forEach(button=>button.addEventListener('click',()=>openPlayerDetails(button.dataset.openPlayerProfile)));
   root.querySelectorAll('[data-invite-player]').forEach(button=>button.addEventListener('click',()=>openClubInvite(button.dataset.invitePlayer,button.dataset.playerName||'this player')));
   root.querySelectorAll('[data-follow-player]').forEach(button=>button.addEventListener('click',async()=>{
@@ -297,7 +319,7 @@ function renderDiscover() {
   $('discoverSport')?.addEventListener('change',e=>{discoverSport=e.target.value;renderDiscover()});
   $('discoverCity')?.addEventListener('change',e=>{discoverCity=e.target.value;renderDiscover()});
   if(discoverMode==='players')bindFollowButtons();
-  root.querySelectorAll('[data-discover-mode]').forEach(btn=>btn.addEventListener('click',async()=>{discoverMode=btn.dataset.discoverMode;renderDiscover();if(discoverMode==='coaches'&&!discoverCoachesLoaded)await loadDiscoverCoaches();if(discoverMode==='players'&&!discoverPlayersLoaded){await loadPlayerDirectory();discoverPlayersLoaded=true;renderDiscover();}}));
+  root.querySelectorAll('[data-discover-mode]').forEach(btn=>btn.addEventListener('click',async()=>{discoverMode=btn.dataset.discoverMode;renderDiscover();if(discoverMode==='coaches'&&!discoverCoachesLoaded)await loadDiscoverCoaches();if(discoverMode==='players'&&!discoverPlayersLoaded){await Promise.all([loadPlayerDirectory(),loadPlayerFriendRequests()]);discoverPlayersLoaded=true;renderDiscover();}}));
 }
 function bookingCard(row) {
   const status=statusInfo(row); const date=formatDate(row.starts_at); const time=row.ends_at?`${formatTime(row.starts_at)} – ${formatTime(row.ends_at)}`:'';
@@ -422,7 +444,7 @@ async function init() {
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
   window.addEventListener('focus',refreshCommunityActivityBadge);
-  if(view==='players')await loadPlayerDirectory(directorySearch);
+  if(view==='players')await Promise.all([loadPlayerDirectory(directorySearch),loadPlayerFriendRequests()]);
   if(view==='invites')await loadPlayerClubInvites();
   render();
   const params = new URLSearchParams(location.search);

@@ -37,7 +37,7 @@ const nearbyCourts = [
     sport:'Pickleball',
     courtCount:'4 indoor courts',
     image:'https://baseline-prod.sgp1.digitaloceanspaces.com/6d030b319415d5d3275a0fabcbe58164.png',
-    imageFit:'cover',
+    imageFit:'contain',
     url:'https://www.facebook.com/PYLipaSouth'
   },
   {
@@ -47,7 +47,7 @@ const nearbyCourts = [
     sport:'Multi-sport',
     courtCount:'Public sports facilities',
     image:'https://www.dpwh.gov.ph/dpwh/sites/default/files/lipa_city_park_upgraded_facilities.jpg',
-    imageFit:'cover',
+    imageFit:'contain',
     url:'https://www.google.com/maps/search/?api=1&query=Lipa+City+Community+Park+Batangas'
   }
 ];
@@ -88,7 +88,7 @@ function renderNearbyCourts() {
   nearbyList.innerHTML = nearbyCourts.map(venue => {
     const query = encodeURIComponent([venue.name, venue.address, venue.city].filter(Boolean).join(', '));
     const href = venue.url || `https://www.google.com/maps/search/?api=1&query=${query}`;
-    return `<article class="venue-card nearby-card"><div class="cover">${venue.image ? `<img src="${esc(venue.image)}" alt="${esc(venue.name)}" loading="lazy" decoding="async" style="object-fit:${venue.imageFit === 'contain' ? 'contain' : 'cover'};${venue.imageFit === 'contain' ? 'background:#fff;padding:18px;' : ''}" onerror="this.hidden=true">` : ''}<small>NEARBY COURT</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · '))}</div><div class="tags"><span class="tag">${esc(venue.sport)}</span><span class="tag">${esc(venue.courtCount)}</span></div><p class="nearby-note">Local court reference. Booking and availability are handled directly by the venue until they join Courtly.</p><div class="card-foot"><span class="rate">External venue</span><a class="book" href="${href}" target="_blank" rel="noopener noreferrer">View court</a></div></div></article>`;
+    return `<article class="venue-card nearby-card"><div class="cover">${venue.image ? `<img src="${esc(venue.image)}" alt="${esc(venue.name)}" loading="lazy" decoding="async" style="object-fit:contain;background:#fff;padding:14px;" onerror="this.hidden=true">` : ''}<small>NEARBY COURT</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · '))}</div><div class="tags"><span class="tag">${esc(venue.sport)}</span><span class="tag">${esc(venue.courtCount)}</span></div><p class="nearby-note">Local court reference. Booking and availability are handled directly by the venue until they join Courtly.</p><div class="card-foot"><span class="rate">External venue</span><a class="book" href="${href}" target="_blank" rel="noopener noreferrer">View court</a></div></div></article>`;
   }).join('');
 }
 

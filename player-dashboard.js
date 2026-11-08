@@ -12,6 +12,7 @@ let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEve
 let inviteTargetPlayerId = null;
 let directorySearch = '';
 let view = new URLSearchParams(location.search).get('view') || 'home';
+let discoverCoaches = [], discoverCoachesLoaded = false, discoverCoachesError = ''; 
 let selectedSport = '', discoverSearch = '', discoverCity = '', discoverSport = '', discoverMode = new URLSearchParams(location.search).get('mode') === 'openplay' ? 'openplay' : 'list';
 let bookingFilter = 'all', tournamentTab = 'active', bookingFrom = '', bookingTo = '';
 let toastTimer;
@@ -249,8 +250,8 @@ function renderPlayers() {
 }
 
 function renderDiscover() {
-  const cities=[...new Set(venues.map(v=>v.city).filter(Boolean))].sort();
-  const sportOptions=[...new Set([...sports.map(s=>s[0]),...allVenueSports()])].sort();
+  const cities=[...new Set([...venues.map(v=>v.city),...discoverCoaches.map(v=>v.city)].filter(Boolean))].sort();
+  const sportOptions=[...new Set([...sports.map(s=>s[0]),...allVenueSports(),...discoverCoaches.map(v=>v.sport).filter(Boolean)])].sort();
   const filtered=venues.filter(v=>{
     const cs=v.courts||[]; const hay=[v.name,v.city,v.address,...cs.map(c=>c.name),...cs.map(c=>c.sport)].join(' ').toLowerCase();
     return (!discoverSearch||hay.includes(discoverSearch.toLowerCase()))&&(!discoverCity||v.city===discoverCity)&&(!discoverSport||cs.some(c=>String(c.sport||'').toLowerCase().includes(discoverSport.toLowerCase())));
@@ -260,7 +261,17 @@ function renderDiscover() {
     return (!discoverSearch||hay.includes(discoverSearch.toLowerCase()))&&(!discoverCity||v.city===discoverCity)&&(!discoverSport||String(v.sport||'').toLowerCase().includes(discoverSport.toLowerCase()));
   });
   let content=''; let count=filtered.length;
-  if(discoverMode==='openplay'){
+  if(discoverMode==='coaches'){
+    const matching=discoverCoaches.filter(coach=>{
+      const hay=[coach.coach_name,coach.sport,coach.city,coach.location_text].join(' ').toLowerCase();
+      return (!discoverSearch||hay.includes(discoverSearch.toLowerCase()))&&(!discoverCity||coach.city===discoverCity)&&(!discoverSport||String(coach.sport||'').toLowerCase().includes(discoverSport.toLowerCase()));
+    });
+    count=matching.length;
+    content=discoverCoachesError?'<div class="empty-state"><strong>Could not load coaches</strong><span>Please try again later.</span></div>':!discoverCoachesLoaded?'<div class="empty-state">Loading coaches...</div>':matching.length?'<div class="venue-grid">'+matching.map(coach=>{
+      const photo=coach.profile_image_path?(coach.profile_image_path.startsWith('http')?coach.profile_image_path:supabase.storage.from('courtly-coach-media').getPublicUrl(coach.profile_image_path).data.publicUrl):'';
+      return '<article class="venue-card"><div class="venue-cover">'+(photo?'<img loading="lazy" src="'+esc(photo)+'" alt="'+esc(coach.coach_name)+'" style="object-fit:contain">':esc(initials(coach.coach_name)))+'<span class="sport-label">'+esc(coach.sport||'Coach')+'</span></div><div class="venue-body"><h3>'+esc(coach.coach_name)+'</h3><div class="venue-loc">'+esc(coach.city||coach.location_text||'Location not provided')+(coach.is_verified?' · Verified':'')+'</div><div class="venue-tags"><span class="tag">₱'+Number(coach.hourly_rate||0).toLocaleString('en-PH')+'/hr</span></div><div class="venue-foot"><a class="btn" href="/coach/'+encodeURIComponent(coach.slug)+'">View coach</a><a class="btn" href="/coach-booking.html?coach='+encodeURIComponent(coach.slug)+'">Book</a></div></div></article>';
+    }).join('')+'</div>':'<div class="empty-state"><strong>No coaches found</strong><span>Published coaches will appear here.</span></div>';
+  }else if(discoverMode==='openplay'){
     count=filteredEvents.length;
     content=filteredEvents.length?`<div class="venue-grid">${filteredEvents.map(eventCard).join('')}</div>`:`<div class="empty-state"><strong>No upcoming Open Play sessions</strong><span>Published sessions appear here automatically. Check back as more venues add games.</span></div>`;
   }else if(discoverMode==='map'){
@@ -269,12 +280,12 @@ function renderDiscover() {
     content=filtered.length?`<div class="venue-grid">${filtered.map(venueCard).join('')}</div>`:`<div class="empty-state"><div class="empty-icon">⌕</div><strong>No venues found</strong><span>Try another sport, location or search term. Published venues will appear here automatically.</span></div>`;
   }
   root.innerHTML=`${heading('DISCOVER COURTLY','Discover sports venues','Find a court, sports hub or Open Play venue near you.')}
-    <section class="toolbar"><div class="search"><input id="discoverSearch" type="search" placeholder="Search by venue name or location…" value="${esc(discoverSearch)}"></div><select id="discoverSport"><option value="">All sports</option>${sportOptions.map(s=>`<option value="${esc(s)}" ${discoverSport===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="discoverCity"><option value="">All locations</option>${cities.map(c=>`<option value="${esc(c)}" ${discoverCity===c?'selected':''}>${esc(c)}</option>`).join('')}</select><div class="segmented"><button data-discover-mode="list" class="${discoverMode==='list'?'active':''}">Venues</button><button data-discover-mode="openplay" class="${discoverMode==='openplay'?'active':''}">Open Play</button><button data-discover-mode="map" class="${discoverMode==='map'?'active':''}">Map</button></div></section>
-    <div class="section-title"><div><h2>${count} ${discoverMode==='openplay'?(count===1?'session':'sessions'):(count===1?'venue':'venues')} found</h2><p>${discoverMode==='openplay'?'Upcoming published Open Play sessions.':'Published Courtly venues with active courts.'}</p></div></div>${content}`;
+    <section class="toolbar"><div class="search"><input id="discoverSearch" type="search" placeholder="Search by venue name or location…" value="${esc(discoverSearch)}"></div><select id="discoverSport"><option value="">All sports</option>${sportOptions.map(s=>`<option value="${esc(s)}" ${discoverSport===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="discoverCity"><option value="">All locations</option>${cities.map(c=>`<option value="${esc(c)}" ${discoverCity===c?'selected':''}>${esc(c)}</option>`).join('')}</select><div class="segmented"><button data-discover-mode="list" class="${discoverMode==='list'?'active':''}">Venues</button><button data-discover-mode="coaches" class="${discoverMode==='coaches'?'active':''}">Coaches</button><button data-discover-mode="openplay" class="${discoverMode==='openplay'?'active':''}">Open Play</button><button data-discover-mode="map" class="${discoverMode==='map'?'active':''}">Map</button></div></section>
+    <div class="section-title"><div><h2>${count} ${discoverMode==='coaches'?(count===1?'coach':'coaches'):discoverMode==='openplay'?(count===1?'session':'sessions'):(count===1?'venue':'venues')} found</h2><p>${discoverMode==='coaches'?'Browse coaches and book training sessions.':discoverMode==='openplay'?'Upcoming published Open Play sessions.':'Published Courtly venues with active courts.'}</p></div></div>${content}`;
   $('discoverSearch')?.addEventListener('input',e=>{const value=e.target.value;const caret=e.target.selectionStart;discoverSearch=value;renderDiscover();const next=$('discoverSearch');if(next){next.focus();next.setSelectionRange(caret,caret);}});
   $('discoverSport')?.addEventListener('change',e=>{discoverSport=e.target.value;renderDiscover()});
   $('discoverCity')?.addEventListener('change',e=>{discoverCity=e.target.value;renderDiscover()});
-  root.querySelectorAll('[data-discover-mode]').forEach(btn=>btn.addEventListener('click',()=>{discoverMode=btn.dataset.discoverMode;renderDiscover()}));
+  root.querySelectorAll('[data-discover-mode]').forEach(btn=>btn.addEventListener('click',async()=>{discoverMode=btn.dataset.discoverMode;renderDiscover();if(discoverMode==='coaches'&&!discoverCoachesLoaded)await loadDiscoverCoaches();}));
 }
 function bookingCard(row) {
   const status=statusInfo(row); const date=formatDate(row.starts_at); const time=row.ends_at?`${formatTime(row.starts_at)} – ${formatTime(row.ends_at)}`:'';
@@ -355,6 +366,13 @@ async function loadPlayerActivity() {
   const receiptResult=await supabase.from('payment_receipts').select('id,receipt_number,description,reference,amount,paid_at,email_status').eq('player_id',user.id).order('paid_at',{ascending:false}).limit(100);
   if(receiptResult.error){if(receiptResult.error.code==='42P01'||receiptResult.error.code==='PGRST205'){console.warn('Apply the Courtly payment receipts migration in Supabase to enable receipt history.');paymentReceipts=[];}else throw receiptResult.error;}
   else paymentReceipts=receiptResult.data||[];
+}
+async function loadDiscoverCoaches(){
+  discoverCoachesError='';
+  const {data,error}=await supabase.rpc('browse_coaches',{p_search:null,p_sport:null,p_city:null,p_limit:100,p_offset:0});
+  if(error){discoverCoachesError=error.message;console.warn('Coach directory:',error.message);}
+  else{discoverCoaches=data||[];discoverCoachesLoaded=true;}
+  if(view==='discover'&&discoverMode==='coaches')renderDiscover();
 }
 async function loadVenues() {
   const {data,error}=await supabase.from('venues').select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)').eq('is_published',true).order('created_at',{ascending:false});

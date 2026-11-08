@@ -141,8 +141,9 @@ async function load() {
 
     const { data, error } = await supabase
       .from('venues')
-      .select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)')
+      .select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,activation_status,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)')
       .eq('is_published', true)
+      .eq('activation_status', 'active')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -193,8 +194,7 @@ chips.addEventListener('click', event => {
 
 list.addEventListener('click', event => {
   const action = event.target.closest('[data-action]')?.dataset.action;
-  if (action === 'retry') renderNearbyCourts();
-load();
+  if (action === 'retry') load();
   else if (action === 'clear') clearFilters();
 });
 
@@ -202,4 +202,5 @@ list.addEventListener('error', event => {
   if (event.target.tagName === 'IMG') event.target.hidden = true;
 }, true);
 
+renderNearbyCourts();
 load();

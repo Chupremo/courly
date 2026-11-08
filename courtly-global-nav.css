@@ -10,7 +10,8 @@
 .courtly-global-header .ct-nav>a:hover,.courtly-global-header .ct-nav summary:hover{background:#f1f6e7}
 .courtly-global-header .ct-nav>a[aria-current="page"]{background:#f1f6e7;box-shadow:inset 0 -3px #8ed502;font-weight:700}
 .courtly-global-header .ct-dropdown{position:relative}
-.courtly-global-header .ct-dropdown>summary:after{content:'⌄';font-size:12px;margin-left:8px;color:#6d7a90}
+.courtly-global-header .ct-dropdown>summary:after{content:"";width:7px;height:7px;margin-left:10px;border-right:1.8px solid #6d7a90;border-bottom:1.8px solid #6d7a90;transform:rotate(45deg) translateY(-1px);transform-origin:center;flex:none;transition:transform .18s ease}
+.courtly-global-header .ct-dropdown[open]>summary:after{transform:rotate(225deg) translate(-1px,-1px)}
 .courtly-global-header .ct-menu-panel{position:absolute;top:calc(100% + 8px);right:0;min-width:220px;max-width:calc(100vw - 32px);max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;background:#fff;border:1px solid #e3e9f1;border-radius:13px;padding:7px;box-shadow:0 18px 45px rgba(8,26,61,.16);display:grid;gap:3px}
 .courtly-global-header .ct-dropdown:not([open])>.ct-menu-panel{display:none}
 .courtly-global-header .ct-menu-panel a,.courtly-global-header .ct-menu-panel button{display:flex;align-items:center;width:100%;min-height:44px;margin:0;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--ct-navy);font:500 13px Inter,Arial,sans-serif;text-align:left;text-decoration:none;cursor:pointer;white-space:normal}
@@ -19,7 +20,15 @@
 .courtly-global-header .ct-nav .ct-primary:hover{background:#12346d;color:#fff}
 .courtly-global-header .ct-nav .ct-register summary{background:var(--ct-lime);color:#142700;font-weight:700}
 .courtly-global-header .ct-user-label{font-size:12px;color:var(--ct-muted);padding:0 5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;margin:0;padding:0;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);font-size:23px;line-height:1;cursor:pointer}
+.courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;margin:0;padding:0;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);cursor:pointer;align-items:center;justify-content:center;position:relative}
+.courtly-global-header .ct-mobile-toggle-icon{position:relative;display:block;width:24px;height:18px;flex:none}
+.courtly-global-header .ct-mobile-toggle-icon:before,.courtly-global-header .ct-mobile-toggle-icon:after,.courtly-global-header .ct-mobile-toggle-icon span{content:"";position:absolute;left:0;width:24px;height:3px;border-radius:999px;background:currentColor;transition:transform .18s ease,top .18s ease,opacity .18s ease}
+.courtly-global-header .ct-mobile-toggle-icon:before{top:0}
+.courtly-global-header .ct-mobile-toggle-icon span{top:7.5px}
+.courtly-global-header .ct-mobile-toggle-icon:after{top:15px}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-toggle-icon:before{top:7.5px;transform:rotate(45deg)}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-toggle-icon span{opacity:0}
+.courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-mobile-toggle-icon:after{top:7.5px;transform:rotate(-45deg)}
 .courtly-global-header .ct-community-user{display:none}
 .courtly-global-header :is(a,button,summary):focus-visible{outline:3px solid #2166b5;outline-offset:2px}
 @media(max-width:1024px){
@@ -29,6 +38,8 @@
  .courtly-global-header .ct-nav{display:none;position:absolute;left:0;right:0;top:100%;max-height:calc(100vh - 66px);max-height:calc(100dvh - 66px - env(safe-area-inset-top));overflow-y:auto;overscroll-behavior:contain;margin:0;padding:12px max(16px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 18px 28px rgba(8,26,61,.12);align-items:stretch;flex-direction:column;gap:5px}
  .courtly-global-header .ct-nav.is-open{display:flex}
  .courtly-global-header .ct-nav>a,.courtly-global-header .ct-nav summary{justify-content:flex-start;width:100%;min-height:46px;padding:0 13px}
+ .courtly-global-header .ct-nav summary{display:flex;align-items:center}
+ .courtly-global-header .ct-nav summary:after{margin-left:10px}
  .courtly-global-header .ct-dropdown{width:100%}
  .courtly-global-header .ct-menu-panel{position:static;min-width:0;max-width:none;max-height:none;overflow:visible;margin:3px 0 7px;box-shadow:none;background:#f8fafc}
  .courtly-global-header .ct-user-label{display:block;padding:9px 13px}

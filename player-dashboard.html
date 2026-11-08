@@ -40,8 +40,9 @@
       box-sizing:border-box;
     }
   </style>
+<link rel="stylesheet" href="/courtly-player-v2.css?v=20261109">
 </head>
-<body>
+<body class="courtly-player-v2">
   <div class="shell">
     <button class="mobile-nav-backdrop" id="mobileNavBackdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
     <aside class="sidebar" id="playerSidebar" aria-label="Player navigation">
@@ -72,10 +73,11 @@
   </div>
   <div class="modal" id="sportModal" role="dialog" aria-modal="true" aria-labelledby="sportModalTitle"><section class="modal-box"><div class="modal-head"><h2 id="sportModalTitle">Select your sport</h2><button type="button" id="closeSportModal" aria-label="Close"></button></div><p class="modal-desc">Choose the sport marketplace you want to explore. You can change this any time.</p><input class="sport-modal-search" id="sportModalSearch" type="search" placeholder="Search sports…"><div class="sport-modal-grid" id="sportModalGrid"></div></section></div>
     <nav class="courtly-mobile-tabs" aria-label="Player navigation">
-    <a href="/player-dashboard.html?view=home" aria-label="Home" data-mobile-tab="home"><span class="tab-icon">⌂</span><span>Home</span></a>
-    <a href="/player-dashboard.html?view=discover" aria-label="Discover" data-mobile-tab="discover"><span class="tab-icon">◎</span><span>Discover</span></a>
-    <a href="/player-dashboard.html?view=discover&amp;mode=openplay" aria-label="Open Play" data-mobile-tab="openplay"><span class="tab-icon">＋</span><span>Open Play</span></a>
-    <a href="/community.html" aria-label="Activities &amp; Games" data-mobile-tab="community"><span class="tab-icon" aria-hidden="true">▦</span><span>Activities</span><b class="player-community-badge mobile" data-community-badge hidden>0</b></a>
+    <a href="/player-dashboard.html?view=home" aria-label="Home" data-mobile-tab="home"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg></span><span>Home</span></a>
+    <a href="/player-dashboard.html?view=discover" aria-label="Discover" data-mobile-tab="discover"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span><span>Discover</span></a>
+    <a href="/player-dashboard.html?view=discover&amp;mode=openplay" aria-label="Open Play" data-mobile-tab="openplay"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 4 13 8-13 8V4Z"/></svg></span><span>Play</span></a>
+    <a href="/player-dashboard.html?view=bookings" aria-label="My bookings" data-mobile-tab="bookings"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 11h18"/></svg></span><span>Bookings</span></a>
+    <a href="/player-dashboard.html?view=profile" aria-label="My profile" data-mobile-tab="profile"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg></span><span>Profile</span></a>
   </nav>
   <script>
     (() => {

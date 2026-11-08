@@ -129,14 +129,34 @@ function ensurePlayerDetailsDialog() {
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   return dialog;
 }
-function openPlayerDetails(playerId) {
+async function openPlayerDetails(playerId) {
   const player=playerDirectory.find(item=>String(item.player_id)===String(playerId));
   if(!player)return;
   const name=player.player_name||'Courtly Player';
   const location=String(player.public_location||'').trim();
   const dialog=ensurePlayerDetailsDialog();
-  $('playerDetailsContent').innerHTML=`<div class="player-detail-profile">${avatarMarkup(player.avatar_url,name,'player-detail-avatar')}<div><span class="player-detail-eyebrow">PUBLIC PLAYER PROFILE</span><h2>${esc(name)}</h2><p>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</p></div></div><div class="player-detail-facts"><div><span>Name</span><strong>${esc(name)}</strong></div><div><span>Address / location</span><strong>${location?esc(location):'Not shared by this player'}</strong></div></div><p class="player-detail-note">Only information this player has chosen to share on their public profile is shown here.</p>`;
+  const followText=player.is_following?'Following':'Follow';
+  $('playerDetailsContent').innerHTML=`<div class="player-detail-profile">${avatarMarkup(player.avatar_url,name,'player-detail-avatar')}<div><span class="player-detail-eyebrow">PUBLIC PLAYER PROFILE</span><h2>${esc(name)}</h2><p>${esc([player.preferred_sport,player.skill_level].filter(Boolean).join(' · ')||'Courtly player')}</p></div></div><div class="player-detail-facts"><div><span>Name</span><strong>${esc(name)}</strong></div><div><span>Location</span><strong>${location?esc(location):'Not shared by this player'}</strong></div></div><div class="player-detail-social-actions"><button type="button" class="btn light" id="detailFollow">${followText}</button><a class="btn light" href="/player-messages.html?player=${encodeURIComponent(playerId)}">Message</a><button type="button" class="btn light" id="detailInvite">Invite to Club</button></div><section class="player-detail-clubs"><h3>My Clubs</h3><div id="detailClubList" aria-live="polite">Loading clubs…</div></section><p class="player-detail-note">Only information this player has chosen to share on their public profile is shown here.</p>`;
+  $('detailFollow').addEventListener('click',async()=>{
+    const button=$('detailFollow');button.disabled=true;
+    const query=supabase.from('player_follows');
+    const {error}=player.is_following
+      ?await query.delete().eq('follower_id',user.id).eq('following_id',playerId)
+      :await query.insert({follower_id:user.id,following_id:playerId});
+    if(error && error.code!=='23505'){notify(error.message||'Could not update follow.');button.disabled=false;return;}
+    player.is_following=!player.is_following;button.textContent=player.is_following?'Following':'Follow';button.disabled=false;
+  });
+  $('detailInvite').addEventListener('click',()=>{dialog.close();openClubInvite(playerId,name);});
   if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+  try{
+    const {data:members,error}=await supabase.from('club_members').select('club_id').eq('player_id',playerId).eq('status','approved');
+    if(error)throw error;
+    if(!members?.length){$('detailClubList').textContent='No clubs to display yet.';return;}
+    const ids=members.map(m=>m.club_id);
+    const {data:clubs,error:clubError}=await supabase.from('club_profiles').select('id,club_name,slug,logo_url').in('id',ids).eq('is_published',true);
+    if(clubError)throw clubError;
+    $('detailClubList').innerHTML=clubs?.length?clubs.map(club=>`<a class="player-detail-club" href="/club.html?slug=${encodeURIComponent(club.slug||'')}">${club.logo_url?`<img src="${esc(club.logo_url)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<span class="player-club-fallback">${esc((club.club_name||'C').slice(0,2).toUpperCase())}</span>`}<span>${esc(club.club_name)}</span></a>`).join(''):'No clubs to display yet.';
+  }catch(error){console.warn('Club memberships unavailable:',error.message);if($('detailClubList'))$('detailClubList').textContent='Clubs unavailable right now.';}
 }
 async function signPlayerAvatar(path) {
   if(!path)return '';

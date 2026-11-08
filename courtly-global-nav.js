@@ -30,7 +30,7 @@ function headerMarkup(role, displayName) {
   }
   return `<div class="ct-nav-wrap">
     <a class="ct-brand" href="/" aria-label="Courtly home"><img src="${LOGO}" alt="Courtly"></a>
-    <button class="ct-mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="ctGlobalNav"><span class="ct-mobile-toggle-icon" aria-hidden="true"><span></span></span></button>
+    <button class="ct-mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="ctGlobalNav"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="ct-icon-menu" d="M4 6h16 M4 12h16 M4 18h16"/><path class="ct-icon-close" d="M5 5l14 14 M19 5L5 19"/></svg></button>
     <nav class="ct-nav" id="ctGlobalNav" aria-label="Main navigation">${links}</nav>
     <span class="ct-community-user" id="communityUser">${safeText(displayName || (guest ? 'Guest' : ''))}</span>
   </div>`;
@@ -78,7 +78,7 @@ function closeMenus(header, restoreFocus = false) {
   nav?.classList.remove('is-open');
   toggle?.setAttribute('aria-expanded', 'false');
   toggle?.setAttribute('aria-label', 'Open navigation');
-  if (toggle) toggle.innerHTML = '<span class="ct-mobile-toggle-icon" aria-hidden="true"><span></span></span>';
+  if (toggle) toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="ct-icon-menu" d="M4 6h16 M4 12h16 M4 18h16"/><path class="ct-icon-close" d="M5 5l14 14 M19 5L5 19"/></svg>';
   header.querySelectorAll('.ct-dropdown[open]').forEach(details => { details.open = false; });
   if (restoreFocus) toggle?.focus();
 }
@@ -109,7 +109,7 @@ function bindHeader(header) {
       nav.classList.toggle('is-open', open);
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-      toggle.innerHTML = '<span class="ct-mobile-toggle-icon" aria-hidden="true"><span></span></span>';
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="ct-icon-menu" d="M4 6h16 M4 12h16 M4 18h16"/><path class="ct-icon-close" d="M5 5l14 14 M19 5L5 19"/></svg>';
       if (!open) closeMenus(header);
       else if (event.detail === 0) nav.querySelector('a')?.focus();
       return;

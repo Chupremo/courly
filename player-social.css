@@ -135,3 +135,14 @@
 .player-directory-grid .player-people-card .player-discover-actions .people-icon-btn svg{width:16px!important;height:16px!important;flex-shrink:0!important}
 .player-directory-grid .player-people-card .player-discover-actions .people-icon-btn span{display:inline!important;font-size:11px!important;font-weight:650!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
 @media(max-width:390px){.player-directory-grid .player-people-card .player-discover-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(2,44px)!important}.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn{height:44px!important;min-height:44px!important;font-size:10px!important}.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn span{font-size:10px!important}}
+
+/* Courtly Discover player actions: white/navy by default, neon lime on hover or selection. */
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn,
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn.social-follow,
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn.light{background:#fff!important;color:#071b45!important;border:1px solid #dce4ee!important;box-shadow:none!important;transition:background-color .18s ease,border-color .18s ease,color .18s ease!important}
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn:hover:not(:disabled),
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn:focus-visible,
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn:active:not(:disabled),
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn[data-following="1"]{background:#a3d936!important;color:#071b45!important;border-color:#a3d936!important}
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn:focus-visible{outline:2px solid #071b45!important;outline-offset:2px!important}
+.player-directory-grid .player-people-card .player-discover-actions .people-icon-btn:disabled{opacity:.55!important;cursor:not-allowed!important}

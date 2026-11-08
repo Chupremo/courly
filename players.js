@@ -7,6 +7,7 @@ const search = $('search');
 const sport = $('sport');
 const city = $('city');
 const chips = $('activeFilters');
+const nearbyList = $('nearbyListings');
 const params = new URLSearchParams(location.search);
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -17,6 +18,33 @@ const money = value => `₱${Number(value).toLocaleString('en-PH', { maximumFrac
 
 let venues = [];
 let loadState = 'loading';
+
+const nearbyCourts = [
+  {
+    name:'Lipa Elite Pickleball',
+    city:'Lipa City, Batangas',
+    address:'Mercado De Lipa, Purok 6 MK Lina St, Brgy. San Sebastian',
+    sport:'Pickleball',
+    courtCount:'5 indoor courts',
+    url:'https://lipaelitepickleball.com/'
+  },
+  {
+    name:'The Pickle Yard Lipa South',
+    city:'Lipa City, Batangas',
+    address:'Purok 5, Lipa City, Batangas',
+    sport:'Pickleball',
+    courtCount:'4 indoor courts',
+    url:'https://www.facebook.com/PYLipaSouth'
+  },
+  {
+    name:'Lipa City Community Park Sports Area',
+    city:'Lipa City, Batangas',
+    address:'Lipa City, Batangas',
+    sport:'Multi-sport',
+    courtCount:'Public sports facilities',
+    url:'https://www.google.com/maps/search/?api=1&query=Lipa+City+Community+Park+Batangas'
+  }
+];
 let requestVersion = 0;
 
 search.value = params.get('q') || '';
@@ -47,6 +75,15 @@ function updateFilters() {
   ).join('');
   chips.hidden = !selections.some(([, value]) => value);
   render();
+}
+
+function renderNearbyCourts() {
+  if (!nearbyList) return;
+  nearbyList.innerHTML = nearbyCourts.map(venue => {
+    const query = encodeURIComponent([venue.name, venue.address, venue.city].filter(Boolean).join(', '));
+    const href = venue.url || `https://www.google.com/maps/search/?api=1&query=${query}`;
+    return `<article class="venue-card nearby-card"><div class="cover"><small>NEARBY COURT</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · '))}</div><div class="tags"><span class="tag">${esc(venue.sport)}</span><span class="tag">${esc(venue.courtCount)}</span></div><p class="nearby-note">Local court reference. Booking and availability are handled directly by the venue until they join Courtly.</p><div class="card-foot"><span class="rate">External venue</span><a class="book" href="${href}" target="_blank" rel="noopener noreferrer">View court</a></div></div></article>`;
+  }).join('');
 }
 
 function render() {
@@ -156,7 +193,8 @@ chips.addEventListener('click', event => {
 
 list.addEventListener('click', event => {
   const action = event.target.closest('[data-action]')?.dataset.action;
-  if (action === 'retry') load();
+  if (action === 'retry') renderNearbyCourts();
+load();
   else if (action === 'clear') clearFilters();
 });
 

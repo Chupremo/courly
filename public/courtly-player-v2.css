@@ -109,3 +109,32 @@ body.courtly-player-v2 #viewRoot button:focus-visible,body.courtly-player-v2 #vi
  body.courtly-player-v2 #viewRoot #sportsNewsSection{padding-top:24px;border-top:1px solid var(--v2-line);margin-top:32px}
 }
 @media(prefers-reduced-motion:reduce){body.courtly-player-v2 *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Explicit profile identity wrapper avoids inherited grid placement rules. */
+body.courtly-player-v2 #viewRoot .profile-card{display:block!important;height:auto!important;min-height:0!important}
+body.courtly-player-v2 #viewRoot .v2-profile-identity{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;row-gap:7px;align-items:center;text-align:left}
+body.courtly-player-v2 #viewRoot .v2-profile-identity>.profile-large{grid-column:1;grid-row:1 / span 4;display:grid!important;place-items:center;width:72px!important;height:72px!important;min-width:72px!important;flex:none!important;margin:0!important;font-size:25px!important;border-radius:50%;overflow:hidden}
+body.courtly-player-v2 #viewRoot .v2-profile-identity>.profile-large img{display:block;width:100%;height:100%;object-fit:cover}
+body.courtly-player-v2 #viewRoot .v2-profile-identity>h2,body.courtly-player-v2 #viewRoot .v2-profile-identity>p,body.courtly-player-v2 #viewRoot .v2-profile-identity>label{grid-column:2;margin:0!important;min-width:0;overflow-wrap:anywhere}
+body.courtly-player-v2 #viewRoot .v2-profile-identity>h2{font-size:20px!important;line-height:1.25}
+body.courtly-player-v2 #viewRoot .v2-profile-identity>p{font-size:12px!important;line-height:1.5;color:#63718a}
+body.courtly-player-v2 #viewRoot .v2-photo-upload{justify-self:start!important;min-height:42px!important;width:auto!important;padding:9px 13px!important;font-size:13px!important;cursor:pointer;margin-top:4px!important}
+body.courtly-player-v2 #viewRoot .v2-photo-upload[aria-disabled=true]{pointer-events:none;opacity:.6}
+body.courtly-player-v2 #viewRoot .v2-avatar-status{font-size:11px!important;color:#63718a;line-height:1.5;margin:15px 0 0!important;text-align:left;overflow-wrap:anywhere}
+body.courtly-player-v2 #viewRoot .profile-card .my-sports-card{margin:18px 0 0!important;padding-top:18px!important;width:100%;text-align:left}
+body.courtly-player-v2 #viewRoot .profile-card .my-sports-card h3{margin:0 0 13px!important;font-size:15px!important}
+body.courtly-player-v2 #viewRoot .my-sport-row{padding:12px!important;gap:12px!important;align-items:center!important}
+body.courtly-player-v2 #viewRoot .my-sport-row .sport-badge{min-width:38px;width:38px!important;height:38px!important;font-size:12px!important;display:grid;place-items:center;flex:none}
+body.courtly-player-v2 #viewRoot .rating-note{margin-top:12px!important;padding:12px!important;font-size:12px!important;line-height:1.55}
+@media(max-width:760px){
+ body.courtly-player-v2 #viewRoot .profile-card,body.courtly-player-v2 #viewRoot .profile-form{padding:18px!important}
+ body.courtly-player-v2 #viewRoot .profile-form .panel-head{display:block!important;margin:0 0 20px!important;padding:0!important}
+ body.courtly-player-v2 #viewRoot .profile-form .panel-head h2{font-size:20px!important;margin:0!important;line-height:1.3}
+ body.courtly-player-v2 #viewRoot .profile-form .panel-head .subtle{display:block!important;font-size:12px!important;margin-top:6px!important;line-height:1.5}
+ body.courtly-player-v2 #viewRoot .profile-form .form-grid{gap:16px!important;align-items:start!important;grid-auto-rows:max-content!important}
+ body.courtly-player-v2 #viewRoot .profile-form .field{display:flex!important;flex-direction:column!important;gap:7px!important;margin:0!important;padding:0!important;height:auto!important;min-height:0!important}
+ body.courtly-player-v2 #viewRoot .profile-form .field label{font-size:13px!important;line-height:1.4!important;margin:0!important}
+ body.courtly-player-v2 #viewRoot .profile-form .field input,body.courtly-player-v2 #viewRoot .profile-form .field select{height:48px!important;min-height:48px!important;padding:11px 12px!important;margin:0!important;border-radius:11px!important}
+ body.courtly-player-v2 #viewRoot .profile-form .privacy-row{margin:20px 0!important;padding:16px 0!important;gap:12px!important}
+ body.courtly-player-v2 #viewRoot .profile-form .privacy-row small{font-size:12px!important;line-height:1.5!important}
+}

@@ -8,39 +8,13 @@ const sport = $('sport');
 const city = $('city');
 const chips = $('activeFilters');
 const params = new URLSearchParams(location.search);
-const isDemo = params.get('demo') === '1';
-const clientDemoVenue = {
-  id: 'client-demo-lipa', sample: true, slug: 'client-demo-lipa',
-  demoBookingUrl: '/demo-booking.html?slug=demo-lipa-pickleball-hub',
-  name: 'DEMO · Lipa Pickleball Hub', address: 'Presentation venue · Lipa City',
-  city: 'Lipa City, Batangas', courts: [
-    { id: 'demo-c1', name: 'Court 1 · Indoor', sport: 'Pickleball', hourly_rate: 350 },
-    { id: 'demo-c2', name: 'Court 2 · Indoor', sport: 'Pickleball', hourly_rate: 350 },
-    { id: 'demo-c3', name: 'Court 3 · Outdoor', sport: 'Pickleball', hourly_rate: 300 }
-  ]
-};
-const localVenueShowcase = [
-  {
-    id:'external-lipa-elite', external:true, name:'Lipa Elite Pickleball',
-    address:'Mercado De Lipa, Purok 6 MK Lina St, Brgy. San Sebastian',
-    city:'Lipa City, Batangas', externalUrl:'https://lipaelitepickleball.com/',
-    logo_url:'https://lipaelitepickleball.com/logo.png', logoOnly:true,
-    courts:Array.from({length:5},(_,i)=>({id:'lep-'+i,name:'Indoor Court '+(i+1),sport:'Pickleball',hourly_rate:500}))
-  },
-  {
-    id:'external-pickle-yard', external:true, name:'The Pickle Yard Lipa South',
-    address:'Purok 5, Lipa City, Batangas', city:'Lipa City, Batangas',
-    externalUrl:'https://www.facebook.com/PYLipaSouth',
-    logo_url:'https://baseline-prod.sgp1.digitaloceanspaces.com/6d030b319415d5d3275a0fabcbe58164.png', logoOnly:true,
-    courts:Array.from({length:4},(_,i)=>({id:'pyl-'+i,name:'Indoor Court '+(i+1),sport:'Pickleball',hourly_rate:500}))
-  }
-];
-const sampleVenues = [clientDemoVenue, ...localVenueShowcase];
+
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
 const norm = value => String(value || '').toLowerCase();
-const money = value => `₱${value.toLocaleString('en-PH', { maximumFractionDigits: 2 })}`;
+const money = value => `₱${Number(value).toLocaleString('en-PH', { maximumFractionDigits: 2 })}`;
+
 let venues = [];
 let loadState = 'loading';
 let requestVersion = 0;
@@ -48,7 +22,10 @@ let requestVersion = 0;
 search.value = params.get('q') || '';
 sport.value = params.get('sport') || '';
 const initialCity = params.get('city');
-if (initialCity) { city.insertAdjacentHTML('beforeend', `<option value="${esc(initialCity)}">${esc(initialCity)}</option>`); city.value = initialCity; }
+if (initialCity) {
+  city.insertAdjacentHTML('beforeend', `<option value="${esc(initialCity)}">${esc(initialCity)}</option>`);
+  city.value = initialCity;
+}
 
 function rate(court) {
   const raw = court.off_peak_rate != null && String(court.off_peak_rate).trim() !== '' ? court.off_peak_rate : court.hourly_rate;
@@ -73,28 +50,36 @@ function updateFilters() {
 }
 
 function render() {
-  // Changing a filter must not replace a network error or a pending request with a false empty result.
   if (loadState !== 'ready') return;
-  const q = norm(search.value.trim()), selectedSport = norm(sport.value), selectedCity = norm(city.value);
+  const q = norm(search.value.trim());
+  const selectedSport = norm(sport.value);
+  const selectedCity = norm(city.value);
+
   const filtered = venues.filter(venue => {
     const courts = venue.courts || [];
-    const text = [venue.name, venue.address, venue.city, ...courts.map(c => c.name), ...courts.map(c => c.sport)].join(' ').toLowerCase();
-    return (!q || text.includes(q)) && (!selectedSport || courts.some(c => norm(c.sport).includes(selectedSport))) && (!selectedCity || norm(venue.city) === selectedCity);
+    const text = [venue.name, venue.address, venue.city, venue.sport, ...courts.map(c => c.name), ...courts.map(c => c.sport)].join(' ').toLowerCase();
+    return (!q || text.includes(q))
+      && (!selectedSport || courts.some(c => norm(c.sport).includes(selectedSport)) || norm(venue.sport).includes(selectedSport))
+      && (!selectedCity || norm(venue.city) === selectedCity);
   });
-  count.textContent = `${filtered.length} ${filtered.length === 1 ? 'venue' : 'venues'} found${isDemo ? ' · demo listings' : ''}`;
+
+  count.textContent = `${filtered.length} ${filtered.length === 1 ? 'venue' : 'venues'} found`;
+
   if (!filtered.length) {
     const hasFilters = Boolean(q || selectedSport || selectedCity);
-    list.innerHTML = `<div class="empty"><b>${hasFilters ? 'No venues match these filters.' : 'No venues are listed yet.'}</b><p>${hasFilters ? 'Try a different search, sport or location.' : 'Please check back soon for courts near you.'}</p>${hasFilters ? '<button type="button" class="results-action" data-action="clear">Clear all filters</button>' : ''}</div>`;
+    list.innerHTML = `<div class="empty"><b>${hasFilters ? 'No venues match these filters.' : 'No published venues are available yet.'}</b><p>${hasFilters ? 'Try a different search, sport or location.' : 'Published Courtly venues will appear here automatically.'}</p>${hasFilters ? '<button type="button" class="results-action" data-action="clear">Clear all filters</button>' : ''}</div>`;
     return;
   }
+
   list.innerHTML = filtered.map(venue => {
     const courts = (venue.courts || []).filter(c => !selectedSport || norm(c.sport).includes(selectedSport));
     const sports = [...new Set(courts.map(c => c.sport).filter(Boolean))];
     const rates = courts.map(rate).filter(value => value !== null);
     const min = rates.length ? Math.min(...rates) : null;
     const cover = venue.cover_url || venue.logo_url || courts.find(c => c.image_url)?.image_url;
-    const bookingHref = venue.demoBookingUrl || venue.externalUrl || (venue.slug ? `/venue.html?slug=${encodeURIComponent(venue.slug)}` : '');
-    return `<article class="venue-card"><div class="cover"><span aria-hidden="true">⌂</span>${cover ? `<img class="${venue.logoOnly ? 'venue-logo-image' : ''}" src="${esc(cover)}" alt="${esc(venue.name)} ${venue.logoOnly ? 'logo' : 'venue photo'}" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>${venue.sample ? 'CLIENT DEMO' : venue.external ? 'NEARBY · NOT YET ON COURTLY' : 'COURTLY VENUE'}</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : ['Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${bookingHref ? `<a class="book" href="${bookingHref}" ${venue.external ? 'target="_blank" rel="noopener noreferrer"' : ''} aria-label="${venue.sample ? 'Open demo booking for' : 'View'} ${esc(venue.name)}">${venue.sample ? 'Try demo booking' : venue.external ? 'Visit official page' : 'View venue'} <span aria-hidden="true">→</span></a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
+    const bookingHref = venue.slug ? `/venue.html?slug=${encodeURIComponent(venue.slug)}` : '';
+
+    return `<article class="venue-card"><div class="cover">${cover ? `<img src="${esc(cover)}" alt="${esc(venue.name)} venue photo" loading="lazy" decoding="async" width="640" height="360">` : ''}<small>COURTLY VENUE</small></div><div class="card-body"><h3>${esc(venue.name)}</h3><div class="location">${esc([venue.city, venue.address].filter(Boolean).join(' · ') || 'Location not provided')}</div><div class="tags">${(sports.length ? sports : [venue.sport || 'Sports venue']).slice(0, 4).map(s => `<span class="tag">${esc(s)}</span>`).join('')}<span class="tag">${courts.length} ${selectedSport ? 'matching' : 'active'} ${courts.length === 1 ? 'court' : 'courts'}</span></div><div class="courts">${courts.slice(0, 3).map(c => `<div class="court-row"><span>${esc(c.name)}${c.sport ? ' · ' + esc(c.sport) : ''}</span><b>${rate(c) === null ? 'Rate not listed' : money(rate(c)) + '/hr'}</b></div>`).join('')}${courts.length > 3 ? `<div class="court-row"><span>+ ${courts.length - 3} more ${courts.length - 3 === 1 ? 'court' : 'courts'}</span></div>` : ''}</div><div class="card-foot"><div class="rate">${min === null ? 'Rates not listed' : `From <strong>${money(min)}</strong>/hr`}</div>${bookingHref ? `<a class="book" href="${bookingHref}" aria-label="View ${esc(venue.name)}">View venue</a>` : '<span class="tag">Details coming soon</span>'}</div></div></article>`;
   }).join('');
 }
 
@@ -113,46 +98,70 @@ async function load() {
   list.setAttribute('aria-busy', 'true');
   count.textContent = 'Loading venues…';
   list.innerHTML = '<div class="loading" role="status">Finding courts and venues…</div>';
+
   try {
-    let data;
-    data = sampleVenues;
+    if (!supabase) throw new Error('Courtly venue service is not configured.');
+
+    const { data, error } = await supabase
+      .from('venues')
+      .select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
     if (version !== requestVersion) return;
-    venues = data.map(v => ({ ...v, courts: (v.courts || []).filter(c => c.is_active !== false) }));
+
+    venues = (data || []).map(v => ({
+      ...v,
+      courts: (v.courts || []).filter(c => c.is_active !== false)
+    }));
+
     loadState = 'ready';
     setCities();
     updateFilters();
   } catch (error) {
     if (version !== requestVersion) return;
     console.error('Courtly venue listings could not be loaded:', error);
-    venues = sampleVenues;
+    venues = [];
     loadState = 'ready';
     setCities();
-    updateFilters();
-    count.textContent = 'Demo venue available · live venues temporarily unavailable';
-    list.insertAdjacentHTML('beforeend','<div class="error" role="status"><b>Live venue listings are temporarily unavailable.</b><p>The client demo venue above is still fully interactive for presentations.</p><button class="results-action" type="button" data-action="retry">Retry live venues</button></div>');
+    render();
+    count.textContent = 'Venue listings unavailable';
+    list.innerHTML = '<div class="error" role="status"><b>Venue listings could not be loaded.</b><p>Please try again.</p><button class="results-action" type="button" data-action="retry">Retry</button></div>';
   } finally {
     if (version === requestVersion) list.setAttribute('aria-busy', 'false');
   }
 }
 
 function clearFilters() {
-  search.value = ''; sport.value = ''; city.value = '';
+  search.value = '';
+  sport.value = '';
+  city.value = '';
   updateFilters();
   search.focus();
 }
+
 [search, sport, city].forEach(el => el.addEventListener('input', updateFilters));
 $('clear').addEventListener('click', clearFilters);
+
 chips.addEventListener('click', event => {
   const key = event.target.closest('[data-clear-filter]')?.dataset.clearFilter;
   const input = { q: search, sport, city }[key];
-  if (input) { input.value = ''; updateFilters(); input.focus(); }
+  if (input) {
+    input.value = '';
+    updateFilters();
+    input.focus();
+  }
 });
+
 list.addEventListener('click', event => {
   const action = event.target.closest('[data-action]')?.dataset.action;
   if (action === 'retry') load();
   else if (action === 'clear') clearFilters();
 });
+
 list.addEventListener('error', event => {
   if (event.target.tagName === 'IMG') event.target.hidden = true;
 }, true);
+
 load();

@@ -21,7 +21,7 @@
 .courtly-global-header .ct-nav .ct-register summary{background:var(--ct-lime);color:#142700;font-weight:700}
 .courtly-global-header .ct-user-label{font-size:12px;color:var(--ct-muted);padding:0 5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .courtly-global-header .ct-mobile-toggle{display:none;width:46px;height:44px;margin:0;padding:0;border:1px solid #dce4ee;border-radius:12px;background:#fff;color:var(--ct-navy);cursor:pointer;align-items:center;justify-content:center;position:relative}
-.courtly-global-header .ct-mobile-toggle svg{display:block;width:25px;height:25px;flex:none;overflow:visible}
+.courtly-global-header .ct-mobile-toggle svg{display:block;position:absolute;top:50%;left:50%;width:24px;height:24px;margin:0;transform:translate(-50%,-50%);overflow:hidden;pointer-events:none}
 .courtly-global-header .ct-mobile-toggle .ct-icon-menu,.courtly-global-header .ct-mobile-toggle .ct-icon-close{fill:none;stroke:currentColor;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round}
 .courtly-global-header .ct-mobile-toggle .ct-icon-close{display:none}
 .courtly-global-header .ct-mobile-toggle[aria-expanded="true"] .ct-icon-menu{display:none}
@@ -31,7 +31,7 @@
 @media(max-width:1024px){
  .courtly-global-header .ct-nav-wrap{width:calc(100% - 28px);min-height:66px;gap:12px}
  .courtly-global-header .ct-brand img{width:132px;height:42px}
- .courtly-global-header .ct-mobile-toggle{display:inline-grid;place-items:center;flex:none}
+ .courtly-global-header .ct-mobile-toggle{display:flex;align-items:center;justify-content:center;flex:none;min-width:46px;min-height:44px;line-height:0;vertical-align:middle;appearance:none;-webkit-appearance:none}
  .courtly-global-header .ct-nav{display:none;position:absolute;left:0;right:0;top:100%;max-height:calc(100vh - 66px);max-height:calc(100dvh - 66px - env(safe-area-inset-top));overflow-y:auto;overscroll-behavior:contain;margin:0;padding:12px max(16px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e4eaf2;box-shadow:0 18px 28px rgba(8,26,61,.12);align-items:stretch;flex-direction:column;gap:5px}
  .courtly-global-header .ct-nav.is-open{display:flex}
  .courtly-global-header .ct-nav>a,.courtly-global-header .ct-nav summary{justify-content:flex-start;width:100%;min-height:46px;padding:0 13px}

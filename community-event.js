@@ -213,7 +213,21 @@ async function cancelActivity(){
 }
 async function init(){
  if(!supabase)throw new Error('Courtly is not connected to Supabase.');
- const {data:{user},error}=await supabase.auth.getUser();if(error)throw error;state.user=user;
+ let user=null;
+ const {data:userResult,error:userError}=await supabase.auth.getUser();
+ if(userError){
+  const message=String(userError.message||'');
+  const staleSession=/sub claim|user.*does not exist|invalid.*jwt|jwt.*invalid|session.*not found/i.test(message);
+  if(staleSession){
+   console.warn('Clearing stale Courtly session:',message);
+   try{await supabase.auth.signOut({scope:'local'});}catch{}
+  }else{
+   console.warn('Courtly session check failed; continuing as guest:',message);
+  }
+ }else{
+  user=userResult?.user||null;
+ }
+ state.user=user;
  if(!user)$('eventSignInPrompt').hidden=false;
  $('eventShareButton').addEventListener('click',shareActivity);
  $('eventStickyJoin').addEventListener('click',openRegistration);

@@ -102,7 +102,7 @@ let sportsNews = [], sportsNewsState = 'loading';
 function sportsNewsBanner(item) {
   let imageUrl='';
   try { const url=new URL(item.image_url);if(url.protocol==='https:')imageUrl=url.href; }catch{}
-  return `<div style="aspect-ratio:16/9;position:relative;display:grid;place-items:center;background:#f0f3f8;overflow:hidden;border-radius:12px 12px 0 0"><span aria-hidden="true" style="font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--navy)">PHILIPPINE SPORTS</span>${imageUrl?`<img src="${esc(imageUrl)}" alt="${esc(item.image_alt||item.title)}" loading="lazy" decoding="async" style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#f0f3f8" onerror="this.hidden=true;this.style.display='none'">`:''}</div>${imageUrl&&item.image_credit?`<small style="display:block;padding:6px 16px 0;color:var(--muted);font-size:10px">Photo: ${esc(item.image_credit)}</small>`:''}`;
+  return `<div style="aspect-ratio:16/9;position:relative;display:grid;place-items:center;background:#f0f3f8;overflow:hidden;border-radius:12px 12px 0 0"><span aria-hidden="true" style="font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--navy)">PHILIPPINE SPORTS</span>${imageUrl?`<img src="${esc(imageUrl)}" alt="${esc(item.image_alt||item.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#f0f3f8" onerror="this.hidden=true;this.style.display='none'">`:''}</div>${imageUrl&&item.image_credit?`<small style="display:block;padding:6px 16px 0;color:var(--muted);font-size:10px">Photo: ${esc(item.image_credit)}</small>`:''}`;
 }
 
 function sportsNewsSection() {
@@ -111,7 +111,7 @@ function sportsNewsSection() {
 }
 async function loadSportsNews() {
   try {
-    const response=await fetch('https://raw.githubusercontent.com/Chupremo/courly/main/public/sports-news.json',{cache:'no-store'});
+    const response=await fetch(`https://raw.githubusercontent.com/Chupremo/courly/main/public/sports-news.json?t=${Date.now()}`,{cache:'no-store'});
     if(!response.ok)throw new Error('News unavailable');
     const payload=await response.json();
     if(!Array.isArray(payload.items))throw new Error('Invalid news feed');
@@ -521,7 +521,15 @@ async function init() {
   await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews()]);
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
-  window.setInterval(async()=>{await loadSportsNews();const section=$('sportsNewsSection');if(view==='home'&&section)section.outerHTML=sportsNewsSection();},60*60*1000);
+  const refreshSportsNews=async()=>{
+    if(document.visibilityState==='hidden')return;
+    await loadSportsNews();
+    const section=$('sportsNewsSection');
+    if(view==='home'&&section)section.outerHTML=sportsNewsSection();
+  };
+  window.setInterval(refreshSportsNews,60*1000);
+  window.addEventListener('focus',refreshSportsNews);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshSportsNews();});
   window.addEventListener('focus',refreshCommunityActivityBadge);
   if(view==='players')await Promise.all([loadPlayerDirectory(directorySearch),loadPlayerFriendRequests()]);
   if(view==='invites')await loadPlayerClubInvites();

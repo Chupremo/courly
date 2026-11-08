@@ -99,8 +99,14 @@ async function deletePlayerHomePost(id) {
 }
 
 let sportsNews = [], sportsNewsState = 'loading';
+function sportsNewsBanner(item) {
+  let imageUrl='';
+  try { const url=new URL(item.image_url);if(url.protocol==='https:')imageUrl=url.href; }catch{}
+  return `<div style="aspect-ratio:16/9;position:relative;display:grid;place-items:center;background:#f0f3f8;overflow:hidden;border-radius:12px 12px 0 0"><span aria-hidden="true" style="font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--navy)">PHILIPPINE SPORTS</span>${imageUrl?`<img src="${esc(imageUrl)}" alt="${esc(item.image_alt||item.title)}" loading="lazy" decoding="async" style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#f0f3f8" onerror="this.hidden=true;this.style.display='none'">`:''}</div>${imageUrl&&item.image_credit?`<small style="display:block;padding:6px 16px 0;color:var(--muted);font-size:10px">Photo: ${esc(item.image_credit)}</small>`:''}`;
+}
+
 function sportsNewsSection() {
-  const cards=sportsNews.map(item=>`<article class="panel" style="padding:16px;min-width:0"><small style="color:var(--muted)">${esc(item.source)} · ${esc(formatDate(item.published_at))}</small><h3 style="font-size:16px;line-height:1.4;margin:10px 0">${esc(item.title)}</h3><p style="font-size:12px;line-height:1.6;color:var(--muted)">${esc(item.summary)}</p><a class="btn light" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read article</a></article>`).join('');
+  const cards=sportsNews.map(item=>`<article class="panel" style="padding:0;min-width:0;overflow:hidden">${sportsNewsBanner(item)}<div style="padding:16px"><small style="color:var(--muted)">${esc(item.source)} · ${esc(formatDate(item.published_at))}</small><h3 style="font-size:16px;line-height:1.4;margin:10px 0">${esc(item.title)}</h3><p style="font-size:12px;line-height:1.6;color:var(--muted)">${esc(item.summary)}</p><a class="btn light" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read article</a></div></article>`).join('');
   return `<section id="sportsNewsSection" class="section-block" aria-labelledby="sportsNewsTitle"><div class="section-title"><div><span class="player-home-kicker">PHILIPPINE SPORTS</span><h2 id="sportsNewsTitle">Philippine Sports News</h2><p>Hourly news checks. New stories include the publisher and original article link.</p></div></div><div class="venue-grid">${cards||`<div class="empty-state"><strong>${sportsNewsState==='loading'?'Loading sports news…':sportsNewsState==='error'?'Sports news is temporarily unavailable':'Sports news is coming soon'}</strong><span>${sportsNewsState==='error'?'Please refresh to try again.':'Fresh stories will appear here when available.'}</span></div>`}</div></section>`;
 }
 async function loadSportsNews() {

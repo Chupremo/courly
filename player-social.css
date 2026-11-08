@@ -106,3 +106,7 @@
 .player-detail-club{width:90px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;color:#17233e;text-decoration:none;font-weight:600;font-size:11px;overflow-wrap:anywhere}
 .player-detail-club img,.player-club-fallback{width:64px;height:64px;border-radius:14px;object-fit:contain;background:#f3f5fa;display:grid;place-items:center;color:#001a47;font-size:20px}
 @media(max-width:440px){.player-detail-social-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Coaches marketplace: four compact actions on one row, including mobile. */
+.coach-marketplace-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;align-items:stretch;width:100%;flex-wrap:nowrap!important}
+.coach-marketplace-actions .btn{min-width:0;width:100%;padding:9px 3px!important;font-size:clamp(8px,2.1vw,11px)!important;line-height:1.15;text-align:center;display:flex;align-items:center;justify-content:center;white-space:normal;min-height:42px;box-sizing:border-box}

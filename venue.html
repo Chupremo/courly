@@ -361,6 +361,14 @@ async function refreshCheckoutHold() {
   details.statusUnverified = true;
   updateHoldPresentation();
   try {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      if (checkout === details && details.revision === revision) {
+        $('paymentDetails').hidden = true;
+        checkoutError('Your player session has expired. Sign in again before checking or submitting this reservation.');
+      }
+      return;
+    }
     const { data, error } = await supabase.rpc('get_checkout_hold', { p_hold_id: details.hold.hold_id });
     if (error) throw error;
     if (checkout !== details || details.revision !== revision || $('gcashModal').hidden) return;

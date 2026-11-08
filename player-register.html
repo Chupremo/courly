@@ -69,11 +69,10 @@
     const emailNorm = (value) => value.trim().toLowerCase();
     const PRODUCTION_APP_URL = 'https://www.courtlyph.com';
     function getCourtlyAppUrl() {
-      const configured = String(import.meta.env.VITE_APP_URL || '').trim().replace(/\/$/, '');
-      if (configured) return configured;
       const host = location.hostname.toLowerCase();
+      if (host === 'www.courtlyph.com' || host === 'courtlyph.com') return PRODUCTION_APP_URL;
       if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return PRODUCTION_APP_URL;
-      return location.origin;
+      return PRODUCTION_APP_URL;
     }
     function safeReturnTo(value) {
       if (!value || typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return '/player-dashboard.html?welcome=1';

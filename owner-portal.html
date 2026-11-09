@@ -751,6 +751,15 @@ async function toggleVenuePublication(){
    toast('This venue cannot be published because the trial is no longer active.');
    return;
  }
+ if(publish){
+   const activeCourts=(db.courts||[]).filter(court=>court.is_active!==false);
+   const validCourts=activeCourts.filter(court=>Number(court.off_peak_rate??court.hourly_rate??0)>0);
+   if(!validCourts.length){
+     toast('Set at least one active court with an hourly rate before publishing.');
+     go('courts');
+     return;
+   }
+ }
  return ownerAction(async()=>{
    const previous=db.venue.isPublished;
    db.venue.isPublished=publish;

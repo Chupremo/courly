@@ -4,6 +4,7 @@ import receiptIssue from '../api/receipts/issue.js';
 import receiptDownload from '../api/receipts/download.js';
 import communityShare from '../api/community-event-share.js';
 import accountDelete from '../api/account/delete.js';
+import playerSignup from '../api/auth/player-signup.js';
 
 // Each successful job makes four subrequests. Eight jobs plus readiness/billing
 // setup use at most 34, leaving room below the Workers Free limit of 50.
@@ -19,6 +20,7 @@ export function createApiHandlers(env = {}, overrides = {}) {
     '/api/receipts/issue': receiptIssue.createHandler(dependencies),
     '/api/receipts/download': receiptDownload.createHandler(dependencies),
     '/api/community-event-share': communityShare.createHandler(dependencies),
-    '/api/account/delete': accountDelete.createHandler(dependencies)
+    '/api/account/delete': accountDelete.createHandler(dependencies),
+    '/api/auth/player-signup': playerSignup.createHandler(dependencies)
   });
 }

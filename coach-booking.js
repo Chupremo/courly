@@ -102,7 +102,9 @@ function renderSummary() {
   if (!coach) return;
   const duration = booking ? Number(booking.duration_hours) : Number($('duration').value || 1);
   const rate = Number(booking?.hourly_rate ?? coach.hourly_rate);
-  const total = Number(booking?.player_total ?? rate * duration);
+  const subtotal = Number(booking?.subtotal ?? rate * duration);
+  const convenienceFee = Number(booking?.booker_convenience_fee ?? 25);
+  const total = Number(booking?.player_total ?? subtotal + convenienceFee);
   const start = booking?.starts_at || selected?.slot_start;
   let html = summaryRow('Coach', coach.coach_name);
   if (start) {
@@ -110,9 +112,10 @@ function renderSummary() {
   }
   html += summaryRow('Rate', money(rate) + '/hour')
     + summaryRow('Duration', duration + ' hour' + (duration === 1 ? '' : 's'))
-    + summaryRow('Coaching session', money(total))
+    + summaryRow('Coaching session', money(subtotal))
+    + summaryRow(CONVENIENCE_FEE_LABEL, money(convenienceFee))
     + '<div class="coach-summary-row total"><span>Total payable</span><strong>' + money(total) + '</strong></div>'
-    + '<p class="coach-note" style="margin:12px 0 0"><strong>' + CONVENIENCE_FEE_LABEL + ': ₱50</strong> — paid by the coach per successful booking. It is not added to your total.</p>';
+    + '<p class="coach-note" style="margin:12px 0 0">The ₱25 ' + CONVENIENCE_FEE_LABEL + ' is paid by the booker once per successful coaching booking. It is not deducted from the coach\'s coaching rate.</p>';
   $('summary').innerHTML = html;
 }
 function setSelectionLocked(locked) {
@@ -264,7 +267,7 @@ async function createBooking() {
     renderSummary();
     const expires = booking.expires_at
       ? new Date(booking.expires_at).toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: 'numeric', minute: '2-digit' }) + ' (Philippines time)'
-      : '20 minutes from now';
+      : '5 minutes from now';
     showMessage('This time is held until ' + expires + '. Submit your payment reference before the hold expires. Your date and duration are now reserved.', true);
     clearInterval(expiryTimer);
     expiryTimer = setInterval(refreshHoldStatus, 15000);

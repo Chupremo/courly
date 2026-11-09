@@ -101,7 +101,7 @@ function setHeader() {
   $('sideName').textContent=name; $('topName').textContent=name; $('sideSkill').textContent=profile?.skill_level||'Player';
   const img=profileAvatarUrl; $('sideAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name)); $('topAvatar').innerHTML=img?`<img src="${esc(img)}" alt="">`:esc(initials(name));
   document.querySelectorAll('.nav-link').forEach(link=>link.classList.toggle('active',link.dataset.view===view));
-  $('crumbText').textContent=({home:'Home',discover:'Discover',players:'Players',tournaments:'My Tournaments',bookings:'My Bookings',memberships:'Memberships',invites:'Club Invitations',profile:'Profile'})[view]||'Home';
+
 }
 function playerHomePostCard(post) {
   const mine=String(post.player_id)===String(user?.id);

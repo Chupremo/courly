@@ -211,24 +211,23 @@ async function saveCourtSettings(state) {
   if (readError) throw readError;
   const currentById = new Map((currentRows || []).map((court) => [court.id, court]));
   const loadedCourts = state.courts || [];
-  const usedNames = new Set((currentRows || []).map((court) => court.name));
+  const inactiveCourts = (currentRows || [])
+    .filter((court) => court.is_active === false)
+    .sort((a,b) => Number(a.display_order || 0) - Number(b.display_order || 0));
   const selected = [];
   for (let index = 0; index < count; index += 1) {
     const loaded = loadedCourts[index];
     let court = loaded ? currentById.get(loaded.id) : null;
-    if (loaded && (!court || court.is_active === false)) {
+    if (loaded && !court) {
       throw new Error('A court changed since this page loaded. Refresh the workspace before saving.');
     }
     if (!court) {
-      let number = index + 1;
-      while (usedNames.has(`Court ${number}`)) number += 1;
-      court = { id: crypto.randomUUID(), name: `Court ${number}`, sport: v.sport || 'Multi-sport' };
-      usedNames.add(court.name);
+      court = inactiveCourts.shift() || { id: crypto.randomUUID(), sport: v.sport || 'Multi-sport' };
     }
-    // Preserve existing identities, names, sports and photos. Saving a rate
-    // must not silently create a replacement for a named court.
+    // Court names are display positions, so active courts always remain
+    // sequential: Court 1, Court 2, Court 3... even after count changes.
     selected.push({
-      id: court.id, venue_id: v.id, name: court.name, sport: court.sport || v.sport || 'Multi-sport',
+      id: court.id, venue_id: v.id, name: `Court ${index + 1}`, sport: court.sport || v.sport || 'Multi-sport',
       hourly_rate: rates[0], off_peak_rate: rates[0], peak_rate: rates[1],
       image_url: court.image_url || null, image_fit: court.image_fit || 'cover',
       display_order: index + 1, is_active: true

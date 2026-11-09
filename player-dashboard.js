@@ -607,7 +607,33 @@ function renderProfile() {
     <div class="profile-layout"><section class="panel profile-card"><div class="v2-profile-identity">${avatarMarkup(profileAvatarUrl,name,'profile-large')}<h2>${esc(name)}</h2><p>${esc(p.email||user.email||'')}</p><p style="margin-top:8px"><span class="skill-pill">${esc(p.skill_level||'Beginner')}</span></p><label class="btn light v2-photo-upload">Upload photo<input id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none"></label></div><p class="v2-avatar-status" id="profileAvatarStatus" role="status" aria-live="polite">JPG, PNG or WEBP. Maximum 8 MB.</p><div class="my-sports-card"><h3>My Sports</h3><div class="my-sport-row"><span class="sport-badge">${sports.find(s=>s[0]===p.preferred_sport)?.[1]||'＋'}</span><div><strong>${esc(p.preferred_sport||'Choose your sport')}</strong><small>${esc(p.skill_level||'Beginner')} · Self-rated skill level</small></div></div><div class="rating-note"><b>Official player rating</b><span>Rating provider integration is not connected yet. Your skill level is currently self-reported.</span></div></div></section>
     <form class="panel profile-form" id="profileForm"><div class="panel-head"><h2>Personal details</h2><span class="subtle">Saved to your player account</span></div><div class="form-grid"><div class="field"><label for="profileFullName">Full name</label><input id="profileFullName" required maxlength="100" value="${esc(p.full_name||'')}"></div><div class="field"><label for="profilePlayerName">Player name</label><input id="profilePlayerName" required maxlength="40" value="${esc(p.player_name||'')}"></div><div class="field"><label for="profileEmail">Email address</label><input id="profileEmail" disabled value="${esc(p.email||user.email||'')}"></div><div class="field"><label for="profilePhone">Contact number</label><input id="profilePhone" maxlength="30" value="${esc(p.phone||'')}"></div><div class="field"><label for="profilePublicLocation">Public address / location</label><input id="profilePublicLocation" maxlength="160" value="${esc(p.public_location||'')}" placeholder="City or barangay"><small class="field-help">Use a general area only, such as your city or barangay. Do not enter your home or street address. This appears only while your player profile is public.</small></div><div class="field"><label for="profileSkill">Skill level</label><select id="profileSkill">${['Beginner','Intermediate','Advanced','Professional'].map(s=>`<option ${p.skill_level===s?'selected':''}>${s}</option>`).join('')}</select></div><div class="field"><label for="profileSport">Preferred sport</label><select id="profileSport"><option value="">Choose a sport</option>${sports.map(([s])=>`<option value="${esc(s)}" ${p.preferred_sport===s?'selected':''}>${esc(s)}</option>`).join('')}</select></div></div>
     <div class="privacy-row"><div><strong>Private player profile</strong><small>Keep your profile details out of public player listings. Your bookings still share necessary contact details with the venue you book.</small></div><label class="toggle"><input id="profilePrivate" type="checkbox" ${p.is_private?'checked':''}><span></span></label></div><button class="btn" type="submit">Save changes</button><div class="subtle" id="profileSaveStatus" style="margin-top:10px" aria-live="polite"></div></form></div>`;
+  root.insertAdjacentHTML('beforeend',`<section class="panel" style="margin-top:16px"><div class="panel-head"><h2>Install Courtly</h2><span class="subtle">App settings</span></div><p class="subtle" style="line-height:1.7">Add Courtly to your phone for faster access, notifications and app-icon badges.</p><button class="btn" id="profileInstallCourtly" type="button">Install Courtly</button><div class="subtle" id="profileInstallStatus" style="margin-top:10px" aria-live="polite"></div></section>`);
   root.insertAdjacentHTML('beforeend',`<section class="panel" style="margin-top:16px;border-color:#efd4d8"><div class="panel-head"><h2 style="color:#9b2635">Delete account</h2><span class="subtle">Permanent</span></div><p class="subtle" style="line-height:1.7">Deleting your Courtly player account removes your profile, social activity, messages and account access. Booking and payment records that must remain for transaction history are anonymised and disconnected from your account.</p><button class="btn light" id="profileDeleteAccount" type="button" style="border-color:#d9a3aa;color:#9b2635">Delete my Courtly account</button><div class="subtle" id="profileDeleteStatus" style="margin-top:10px" aria-live="polite"></div></section><button class="v2-logout" id="profileLogout" type="button">Log out of Courtly</button>`);
+  $('profileInstallCourtly')?.addEventListener('click',async()=>{
+    const status=$('profileInstallStatus');
+    const button=$('profileInstallCourtly');
+    if(button){button.disabled=true;button.textContent='Opening install…';}
+    try{
+      if(typeof window.requestCourtlyInstall!=='function'){
+        if(status)status.textContent='Installation is not available in this browser.';
+        return;
+      }
+      const result=await window.requestCourtlyInstall();
+      if(result?.installed){
+        if(status)status.textContent='Courtly is installed on this device.';
+        if(button)button.textContent='Installed';
+      }else if(result?.ios){
+        if(status)status.textContent='On iPhone/iPad: tap Share in Safari, then choose Add to Home Screen.';
+        if(button){button.disabled=false;button.textContent='Install Courtly';}
+      }else{
+        if(status)status.textContent='Use your browser menu and choose Install app or Add to Home Screen.';
+        if(button){button.disabled=false;button.textContent='Install Courtly';}
+      }
+    }catch(error){
+      if(status)status.textContent=error.message||'Could not start installation.';
+      if(button){button.disabled=false;button.textContent='Install Courtly';}
+    }
+  });
   $('profileLogout').addEventListener('click',logoutPlayer);
   $('profileDeleteAccount').addEventListener('click',deletePlayerAccount);
   $('profileForm').addEventListener('submit',saveProfile);

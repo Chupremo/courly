@@ -71,6 +71,8 @@ jobs:
         run: npm run build
       - name: Create Android project
         run: npx cap add android
+      - name: Generate approved Courtly Android icons
+        run: npx @capacitor/assets generate --android --assetPath assets --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000' --splashBackgroundColor '#000000' --splashBackgroundColorDark '#000000'
       - name: Sync Android project
         run: npx cap sync android
       - name: Build debug APK
@@ -99,6 +101,8 @@ jobs:
         run: npm run build
       - name: Create iOS project
         run: npx cap add ios
+      - name: Generate approved Courtly iOS icons
+        run: npx @capacitor/assets generate --ios --assetPath assets --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000' --splashBackgroundColor '#000000' --splashBackgroundColorDark '#000000'
       - name: Sync iOS project
         run: npx cap sync ios
       - name: Compile for iOS Simulator

@@ -10,6 +10,7 @@ const slotRequests = requestSequence();
 const reservationSubmission = submissionGuard();
 const paymentSubmission = submissionGuard();
 const receiptTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+const media=p=>p?(/^https?:/i.test(p)?p:supabase.storage.from('courtly-coach-media').getPublicUrl(p).data.publicUrl):'';
 let coach = null;
 let selected = null;
 let selectionKey = '';
@@ -74,6 +75,26 @@ function formSelection() {
   if (!Number.isInteger(duration) || duration < 1 || duration > 8) throw new Error('Choose between 1 and 8 hours.');
   return { date, duration, key: date + ':' + duration };
 }
+
+function renderCoachBookingHero() {
+  const host=$('coachBookingHero');
+  if(!host||!coach)return;
+  const avatar=media(coach.profile_image_path);
+  const cover=media(coach.cover_image_path);
+  const location=[coach.city,coach.location_text].filter(Boolean).join(' · ');
+  host.innerHTML=
+    '<div class="coach-booking-cover">'+(cover?'<img src="'+esc(cover)+'" alt="'+esc(coach.coach_name)+' banner">':'<div class="coach-booking-cover-fallback"></div>')+'</div>'
+    +'<div class="coach-booking-profile">'
+      +'<div class="coach-booking-avatar-wrap">'+(avatar?'<img class="coach-booking-avatar" src="'+esc(avatar)+'" alt="'+esc(coach.coach_name)+' profile photo">':'<div class="coach-booking-avatar coach-booking-avatar-fallback">'+esc((coach.coach_name||'C').slice(0,1))+'</div>')+'</div>'
+      +'<div class="coach-booking-profile-copy">'
+        +'<div class="coach-booking-name-row"><h2>'+esc(coach.coach_name)+'</h2>'+(coach.is_verified?'<span class="coach-booking-verified">✓ Verified coach</span>':'')+'</div>'
+        +'<div class="coach-booking-meta"><span>'+esc(coach.sport||'Coach')+'</span>'+(location?'<span>'+esc(location)+'</span>':'')+'<span>'+Number(coach.follower_count||0)+' followers</span></div>'
+        +(coach.coaching_bio?'<p class="coach-booking-bio">'+esc(coach.coaching_bio)+'</p>':'')
+        +'<div class="coach-booking-facts"><div><small>Experience</small><strong>'+Number(coach.experience_years||0)+' years</strong></div><div><small>Coaching rate</small><strong>'+money(coach.hourly_rate)+'/hr</strong></div></div>'
+      +'</div>'
+    +'</div>';
+}
+
 function summaryRow(label, value) {
   return '<div class="coach-summary-row"><span>' + esc(label) + '</span><strong>' + esc(value) + '</strong></div>';
 }
@@ -331,8 +352,8 @@ async function init() {
   if (!coach || !Number.isFinite(Number(coach.hourly_rate)) || Number(coach.hourly_rate) <= 0) throw new Error('This coach is not currently accepting bookings.');
   document.title = 'Book ' + coach.coach_name + ' | Courtly';
   $('backCoach').href = '/coach.html?slug=' + encodeURIComponent(slug);
-  $('coachBookingIdentity').innerHTML = '<div style="font:700 17px Poppins;color:#001a47">' + esc(coach.coach_name) + (coach.is_verified ? ' · Verified' : '') + '</div>'
-    + '<div class="coach-note">' + esc(coach.sport) + ' · ' + esc(coach.city) + ' · ' + money(coach.hourly_rate) + '/hour</div>';
+  renderCoachBookingHero();
+  $('coachBookingIdentity').innerHTML = '<div class="coach-booking-calendar-title"><strong>Choose your session</strong><span>' + esc(coach.coach_name) + ' · ' + money(coach.hourly_rate) + '/hour</span></div>';
   const initialDate=todayManila(new Date(Date.now()+86400000));
   $('bookingDate').value=initialDate;
   const initialParts=dateParts(initialDate);

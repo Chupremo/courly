@@ -18,3 +18,49 @@ self.addEventListener('fetch',event=>{
     }).catch(()=>cached)));
   }
 });
+
+
+const COURTLY_PUSH_ICON='/courtly-app-icon.svg';
+
+self.addEventListener('push',event=>{
+  let payload={};
+  try{payload=event.data?event.data.json():{};}catch{payload={title:'Courtly',body:event.data?.text?.()||'You have a new Courtly notification.'};}
+  const title=payload.title||'Courtly';
+  const body=payload.body||'You have a new Courtly notification.';
+  const badgeCount=Math.max(0,Number(payload.badge||payload.unreadCount||0));
+  const url=payload.url||'/player-dashboard.html?view=bookings';
+  event.waitUntil((async()=>{
+    try{
+      if(self.navigator?.setAppBadge){
+        if(badgeCount>0)await self.navigator.setAppBadge(badgeCount);
+        else if(self.navigator.clearAppBadge)await self.navigator.clearAppBadge();
+      }
+    }catch{}
+    await self.registration.showNotification(title,{
+      body,
+      icon:COURTLY_PUSH_ICON,
+      badge:COURTLY_PUSH_ICON,
+      tag:payload.tag||'courtly-notification',
+      renotify:true,
+      data:{url}
+    });
+  })());
+});
+
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  const target=event.notification?.data?.url||'/player-dashboard.html?view=bookings';
+  event.waitUntil((async()=>{
+    const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    for(const client of windows){
+      try{
+        const clientUrl=new URL(client.url);
+        if(clientUrl.origin===self.location.origin){
+          await client.navigate(target);
+          return client.focus();
+        }
+      }catch{}
+    }
+    return self.clients.openWindow(target);
+  })());
+});

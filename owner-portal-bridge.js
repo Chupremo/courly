@@ -76,18 +76,21 @@ export async function loadOwnerWorkspace() {
   const { user, venue } = await currentOwnerVenue();
   const [{ data: courtRows, error: courtError }, { data: bookingRows, error: bookingError },
     { data: eventRows, error: eventError }, { data: blockRows, error: blockError },
-    { data: activityRegistrationRows, error: activityRegistrationError }] = await Promise.all([
+    { data: activityRegistrationRows, error: activityRegistrationError },
+    { data: notificationRows, error: notificationError }] = await Promise.all([
     supabase.from('courts').select('*').eq('venue_id', venue.id).order('display_order', { ascending: true }),
     supabase.from('bookings').select('*').eq('venue_id', venue.id).order('created_at', { ascending: false }),
     supabase.from('open_play_events').select('*').eq('venue_id', venue.id).order('starts_at', { ascending: true }),
     supabase.from('court_blocks').select('*').eq('venue_id', venue.id).order('starts_at', { ascending: true }),
-    supabase.rpc('get_owner_community_activity_registrations')
+    supabase.rpc('get_owner_community_activity_registrations'),
+    supabase.from('user_notifications').select('*').eq('recipient_user_id', user.id).eq('audience','owner').order('created_at',{ascending:false}).limit(50)
   ]);
   if (courtError) throw courtError;
   if (bookingError) throw bookingError;
   if (eventError) throw eventError;
   if (blockError) throw blockError;
   if (activityRegistrationError && !['PGRST202','42883'].includes(activityRegistrationError.code)) throw activityRegistrationError;
+  if (notificationError) throw notificationError;
   const courtMap = new Map((courtRows || []).map((court) => [court.id, court.name]));
   const timezone = venue.timezone || 'Asia/Manila';
   // Inactive courts remain in the lookup for historical reservations, but do
@@ -141,6 +144,7 @@ export async function loadOwnerWorkspace() {
     courts,
     bookings,
     communityActivityPayments,
+    notifications: notificationRows || [],
     venue: {
       id: venue.id, name: venue.name, owner: venue.owner_name || user.user_metadata?.owner_name || user.email?.split('@')[0] || 'Owner',
       email: venue.admin_email || user.email || '', phone: venue.phone || '', location: venue.address || venue.city || '', city: venue.city || '',
@@ -407,7 +411,34 @@ window.courtlyLoadOwnerWorkspace = loadOwnerWorkspace;
 window.courtlyPersistOwnerWorkspace = queueOwnerWorkspaceSave;
 window.courtlyReviewBooking = reviewBooking;
 window.courtlyCancelBooking = cancelBooking;
+
+async function markOwnerNotificationsRead(ids=[]) {
+  if (!ids.length) return true;
+  const { error } = await supabase.from('user_notifications').update({ read_at: new Date().toISOString() }).in('id', ids);
+  if (error) throw error;
+  return true;
+}
+async function startOwnerRealtime(onUpdate) {
+  const { user, venue } = await currentOwnerVenue();
+  const refresh = async (kind, payload) => {
+    try {
+      const workspace = await loadOwnerWorkspace();
+      onUpdate?.({ kind, payload, workspace });
+    } catch (error) {
+      console.warn('Courtly owner realtime refresh failed:', error);
+    }
+  };
+  const channel = supabase.channel('courtly-owner-live-'+venue.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'user_notifications',filter:`recipient_user_id=eq.${user.id}`},payload=>refresh('notification',payload))
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'user_notifications',filter:`recipient_user_id=eq.${user.id}`},payload=>refresh('notification',payload))
+    .on('postgres_changes',{event:'*',schema:'public',table:'bookings',filter:`venue_id=eq.${venue.id}`},payload=>refresh('booking',payload))
+    .subscribe();
+  return channel;
+}
+
 window.courtlyReviewCommunityActivityPayment = reviewCommunityActivityPayment;
+window.courtlyMarkOwnerNotificationsRead = markOwnerNotificationsRead;
+window.courtlyStartOwnerRealtime = startOwnerRealtime;
 window.courtlySupabase = supabase;
 window.courtlyBridgeReady = Promise.resolve(true);
 window.dispatchEvent(new Event('courtly-bridge-ready'));

@@ -16,6 +16,7 @@ let selectionKey = '';
 let booking = null;
 let paymentSubmitted = false;
 let expiryTimer = null;
+let calendarView = new Date();
 
 function todayManila(date = new Date()) {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
@@ -28,6 +29,44 @@ function showMessage(message = '', success = false) {
   node.className = 'coach-msg' + (success ? ' success' : '');
   node.setAttribute('role', success ? 'status' : 'alert');
 }
+function dateParts(value) {
+  const [year,month,day]=String(value).split('-').map(Number);
+  return {year,month,day};
+}
+function calendarDateString(year, monthIndex, day) {
+  return String(year)+'-'+String(monthIndex+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+}
+function renderCoachCalendar() {
+  const grid=$('coachCalendarDays'),label=$('coachMonthLabel');
+  if(!grid||!label)return;
+  const year=calendarView.getFullYear(),month=calendarView.getMonth();
+  label.textContent=new Date(year,month,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+  grid.innerHTML='';
+  const first=new Date(year,month,1).getDay();
+  const days=new Date(year,month+1,0).getDate();
+  const today=todayManila();
+  const chosen=$('bookingDate').value;
+  for(let i=0;i<first;i++){const blank=document.createElement('span');blank.className='coach-calendar-empty';grid.appendChild(blank);}
+  for(let day=1;day<=days;day++){
+    const value=calendarDateString(year,month,day);
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='coach-calendar-day'+(value===chosen?' selected':'')+(value===today?' today':'');
+    button.textContent=String(day);
+    button.disabled=value<today||Boolean(booking);
+    button.setAttribute('aria-label',new Date(year,month,day).toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'}));
+    button.setAttribute('aria-pressed',String(value===chosen));
+    button.addEventListener('click',async()=>{
+      if(booking)return;
+      $('bookingDate').value=value;
+      selected=null;selectionKey='';
+      renderCoachCalendar();
+      await loadSlots();
+    });
+    grid.appendChild(button);
+  }
+}
+
 function formSelection() {
   const date = $('bookingDate').value;
   const duration = Number($('duration').value);
@@ -58,6 +97,9 @@ function renderSummary() {
 function setSelectionLocked(locked) {
   $('bookingDate').disabled = locked;
   $('duration').disabled = locked;
+  $('prevCoachMonth').disabled = locked;
+  $('nextCoachMonth').disabled = locked;
+  renderCoachCalendar();
   $('slotList').querySelectorAll('[data-slot]').forEach((button) => { button.disabled = locked; });
 }
 async function ensurePlayer() {
@@ -90,7 +132,7 @@ async function loadSlots({ keepMessage = false } = {}) {
   renderSummary();
   try {
     const selection = formSelection();
-    const { data, error } = await supabase.rpc('get_coach_available_slots', {
+    const { data, error } = await supabase.rpc('get_coach_calendar_slots', {
       p_coach_id: coach.coach_id, p_date: selection.date, p_duration_hours: selection.duration
     });
     if (!slotRequests.isCurrent(request) || booking) return;
@@ -98,21 +140,29 @@ async function loadSlots({ keepMessage = false } = {}) {
     if (formSelection().key !== selection.key) return;
     const slots = data || [];
     if (!slots.length) {
-      $('slotList').innerHTML = '<div class="coach-empty" style="grid-column:1/-1">No available times for this date and duration. Try another day or a shorter session.</div>';
+      $('slotList').innerHTML = '<div class="coach-empty" style="grid-column:1/-1">The coach has no scheduled hours on this date. Choose another day.</div>';
       return;
     }
-    $('slotList').innerHTML = slots.map((slot, index) => '<button type="button" class="coach-slot" data-slot="' + index + '" aria-pressed="false">'
-      + esc(new Date(slot.slot_start).toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: 'numeric', minute: '2-digit' })) + '</button>').join('');
-    $('slotList').querySelectorAll('[data-slot]').forEach((button, index) => {
-      button.addEventListener('click', () => {
-        if (booking || reservationSubmission.busy || !slotRequests.isCurrent(request)) return;
-        selected = slots[index];
-        selectionKey = selection.key;
-        $('slotList').querySelectorAll('[data-slot]').forEach((item) => {
-          item.classList.toggle('selected', item === button);
-          item.setAttribute('aria-pressed', String(item === button));
+    $('slotList').innerHTML = slots.map((slot, index) => {
+      const status=slot.slot_status||'available';
+      const time=esc(new Date(slot.slot_start).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'}));
+      const label=status==='booked'?'Booked':status==='past'?'Past':'Available';
+      return '<button type="button" class="coach-slot '+esc(status)+'" data-slot="'+index+'" aria-pressed="false" '+(status==='available'?'':'disabled')+'>'
+        +'<span class="coach-slot-time">'+time+'</span><span class="coach-slot-status">'+label+'</span></button>';
+    }).join('');
+    $('slotList').querySelectorAll('[data-slot]').forEach((button,index)=>{
+      const slot=slots[index];
+      if((slot.slot_status||'available')!=='available')return;
+      button.addEventListener('click',()=>{
+        if(booking||reservationSubmission.busy||!slotRequests.isCurrent(request))return;
+        selected=slot;
+        selectionKey=selection.key;
+        $('slotList').querySelectorAll('[data-slot]').forEach((item)=>{
+          const active=item===button;
+          item.classList.toggle('selected',active);
+          item.setAttribute('aria-pressed',String(active));
         });
-        $('reserveSlot').disabled = false;
+        $('reserveSlot').disabled=false;
         renderSummary();
       });
     });
@@ -266,7 +316,8 @@ async function submitPayment(event) {
 
 $('reserveSlot').addEventListener('click', createBooking);
 $('duration').addEventListener('change', () => { loadSlots(); });
-$('bookingDate').addEventListener('change', () => { loadSlots(); });
+$('prevCoachMonth').addEventListener('click',()=>{calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()-1,1);renderCoachCalendar();});
+$('nextCoachMonth').addEventListener('click',()=>{calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()+1,1);renderCoachCalendar();});
 $('paymentForm').addEventListener('submit', submitPayment);
 $('paymentReference').addEventListener('input', () => { $('paymentReference').setCustomValidity(''); });
 
@@ -282,9 +333,12 @@ async function init() {
   $('backCoach').href = '/coach.html?slug=' + encodeURIComponent(slug);
   $('coachBookingIdentity').innerHTML = '<div style="font:700 17px Poppins;color:#001a47">' + esc(coach.coach_name) + (coach.is_verified ? ' · Verified' : '') + '</div>'
     + '<div class="coach-note">' + esc(coach.sport) + ' · ' + esc(coach.city) + ' · ' + money(coach.hourly_rate) + '/hour</div>';
-  $('bookingDate').min = todayManila();
-  $('bookingDate').value = todayManila(new Date(Date.now() + 86400000));
+  const initialDate=todayManila(new Date(Date.now()+86400000));
+  $('bookingDate').value=initialDate;
+  const initialParts=dateParts(initialDate);
+  calendarView=new Date(initialParts.year,initialParts.month-1,1);
   setSelectionLocked(false);
+  renderCoachCalendar();
   await loadSlots();
 }
 init().catch((error) => {

@@ -33,7 +33,7 @@ import { supabase, supabaseConfigError } from './supabase-client.js';
 import { uploadCoachImage } from './coach-media.js';
 const $=id=>document.getElementById(id), form=$('coachRegisterForm'), button=$('submitButton'), message=$('message');
 let avatarFile=null,coverFile=null;
-const APP_URL=String(import.meta.env.VITE_APP_URL||'https://courtly-ecru.vercel.app').replace(/\/$/,'');
+const APP_URL=String(import.meta.env.VITE_APP_URL||'https://www.courtlyph.com').replace(/\/$/,'');
 function show(text,type='error'){message.textContent=text;message.className=`msg show ${type}`;}
 function imagePreview(inputId,previewId,setter){$(inputId).addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;try{if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>100*1024*1024)throw new Error('Choose a JPG, PNG or WEBP image no larger than 100 MB.');setter(file);$(previewId).innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Selected image preview">`;}catch(err){setter(null);e.target.value='';show(err.message);}});}
 imagePreview('coachAvatar','avatarPreview',f=>avatarFile=f);imagePreview('coachCover','coverPreview',f=>coverFile=f);
@@ -45,7 +45,7 @@ form.addEventListener('submit',async e=>{
  button.disabled=true;button.textContent='Creating coach profile…';
  try{
    const {data:{session}}=await supabase.auth.getSession();if(session)await supabase.auth.signOut();
-   const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:`${APP_URL}/coach-login.html?confirmed=1`,data:{account_type:'coach',full_name:fullName,coach_name:coachName,phone,sport,coaching_bio:bio,experience_years:experienceYears,hourly_rate:hourlyRate,location_text:locationText,city}}});
+   const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:`${APP_URL}/coach-portal.html?confirmed=1&welcome=1`,data:{account_type:'coach',full_name:fullName,coach_name:coachName,phone,sport,coaching_bio:bio,experience_years:experienceYears,hourly_rate:hourlyRate,location_text:locationText,city}}});
    if(error)throw error;
    if(data.session&&data.user){
      const {error:termsError}=await supabase.rpc('accept_courtly_coach_terms');if(termsError)throw termsError;
@@ -55,7 +55,7 @@ form.addEventListener('submit',async e=>{
      if(Object.keys(updates).length){const {error:saveError}=await supabase.from('coach_profiles').update(updates).eq('id',data.user.id);if(saveError)throw saveError;}
      show(`Welcome, ${coachName}! Your coach account is ready. Complete your weekly availability and payment settings in the Coach Portal.`, 'success');setTimeout(()=>location.replace('/coach-portal.html?welcome=1'),700);
    }else{
-     show(`Your coach account has been created. Confirm the email sent to ${email}, then log in at Coach Login. If you selected profile or cover photos, upload them from Coach Profile after confirming your email.`, 'success');
+     show(`Your coach account has been created. Confirm the email sent to ${email}. After confirmation, Courtly will take you directly to your Coach Dashboard. If you selected profile or cover photos, upload them from Coach Profile after confirming your email.`, 'success');
    }
  }catch(err){console.error(err);show(err.message||'Could not create your coach account.');}
  finally{button.disabled=false;button.textContent='Create Coach Account';}

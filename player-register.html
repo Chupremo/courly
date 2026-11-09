@@ -60,7 +60,6 @@
   </main>
   <script type="module">
     import { supabase } from './supabase-client.js';
-    import { syncPlayerProfile } from './player-profile-sync.js';
     const $ = (id) => document.getElementById(id);
     const form = $('registerForm'), button = $('submitButton'), message = $('message');
     let avatarFile = null;
@@ -80,7 +79,6 @@
     }
     const returnTo = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
     document.querySelector('.login-cta').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
-    const emailConfirmationRedirect = `${getCourtlyAppUrl()}/player-login.html?confirmed=1&returnTo=${encodeURIComponent(returnTo)}`;
     // Registered players return to their dashboard; owners can explicitly switch to a player account.
     supabase?.auth.getSession().then(async ({data,error})=>{
       if(error || !data?.session?.user) return;
@@ -138,40 +136,34 @@
           await supabase.auth.signOut();
           window.dispatchEvent(new Event('courtly:auth-changed'));
         }
-        const {data,error}=await supabase.auth.signUp({email,password,options:{
-          emailRedirectTo: emailConfirmationRedirect,
-          data:{account_type:'player',full_name:fullName,player_name:playerName,phone,skill_level:skillLevel,is_private:isPrivate}
-        }});
-        if(error) throw error;
-        if(!data?.user) throw new Error('We could not confirm account creation. Please try signing in before registering again.');
-        // Authentication succeeded. Profile/photo failures must never invite another sign-up.
-        registrationCompleted = true;
-        $('registrationNextLink').href = data.session ? returnTo : `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
-        if(data.session && data.user){
-          const profile=await syncPlayerProfile(supabase,data.user);
-          if(avatarFile){
-            const ext=avatarFile.type==='image/png'?'png':avatarFile.type==='image/webp'?'webp':'jpg';
-            const path=`${data.user.id}/avatar-${Date.now()}.${ext}`;
-            const {error:uploadError}=await supabase.storage.from('courtly-player-avatars').upload(path,avatarFile,{upsert:true,contentType:avatarFile.type});
-            if(uploadError) throw new Error(`Your account was created, but the profile photo was not uploaded: ${uploadError.message}`);
-            const {error:avatarSaveError}=await supabase.from('player_profiles').update({avatar_url:path,updated_at:new Date().toISOString()}).eq('id',data.user.id);
-            if(avatarSaveError) throw avatarSaveError;
-          }
-          registrationCompleted = true;
-          button.textContent='Account created';
-          showMessage(`Welcome to Courtly, ${profile.player_name || profile.full_name || playerName}! Opening your player dashboard…`,'success');
-          setTimeout(()=>location.replace(returnTo),650);
-        }else{
-          registrationCompleted = true;
-          button.textContent='Confirmation email sent';
-          showMessage(`Your player account for ${playerName} has been created. We sent a confirmation link to ${email}. Open that email to verify your address. You will be returned to Courtly automatically. Your registered player name will appear in your dashboard after verification. If you selected a profile photo, you can upload it from Profile after signing in.`, 'success');
+        const response = await fetch('/api/auth/player-signup', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({email,password,fullName,playerName,phone,skillLevel,isPrivate,returnTo})
+        });
+        const result = await response.json().catch(()=>({}));
+        if(!response.ok) {
+          const err = new Error(result.error || 'We could not create your account. Please try again.');
+          err.code = result.code || '';
+          throw err;
         }
+        registrationCompleted = true;
+        button.textContent='Confirmation email sent';
+        $('registrationNextLink').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
+        $('registrationNext').hidden=false;
+        showMessage(`Your player account for ${playerName} has been created. We sent a confirmation link to ${email}. Open that email to verify your address, then sign in to finish your profile. If you selected a profile photo, you can upload it after signing in.`, 'success');
       }catch(error){
         console.error('Player registration error:',error);
         if(registrationCompleted){
           button.textContent='Account created';
           $('registrationNext').hidden=false;
           showMessage('Your account was created. We couldn’t finish saving your profile or photo. Continue to your account to review your profile; you do not need to register again.', 'success');
+        }else if(error.code==='SIGNUP_COOLDOWN' || error.code==='EMAIL_PROVIDER_RATE_LIMIT') {
+          showMessage(error.message || 'A verification email was already requested. Please wait a minute before trying again.');
+        }else if(error.code==='ACCOUNT_EXISTS') {
+          $('registrationNext').hidden=false;
+          $('registrationNextLink').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
+          showMessage('An account already exists for this email. Please sign in instead.');
         }else showMessage(error.message||'We could not create your account. Please try again.');
       }
       finally{if(!registrationCompleted){button.disabled=false;button.textContent='Create Player Account';}else{button.disabled=true;}}

@@ -1,0 +1,3 @@
+-- Historical production migration marker.
+-- Applied remotely as part of owner trial/admin activation rollout.
+-- Current owner activation behavior is preserved by the live schema and subsequent hardening migrations.

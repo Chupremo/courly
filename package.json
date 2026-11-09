@@ -10,14 +10,21 @@
     "deploy:cloudflare": "npm run build && wrangler deploy",
     "check:cloudflare": "npm run build && wrangler deploy --dry-run",
     "check": "node scripts/check-app.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "mobile:sync": "npm run build && npx cap sync",
+    "mobile:android": "npm run build && npx cap sync android",
+    "mobile:ios": "npm run build && npx cap sync ios"
   },
   "devDependencies": {
     "vite": "^6.4.1",
-    "wrangler": "4.158.0"
+    "wrangler": "4.158.0",
+    "@capacitor/cli": "8.6.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
-    "tus-js-client": "^4.3.1"
+    "tus-js-client": "^4.3.1",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/android": "8.6.0",
+    "@capacitor/ios": "8.6.0"
   }
 }

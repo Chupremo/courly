@@ -183,6 +183,9 @@ document.getElementById('viewRoot').addEventListener('click',e=>{
  if(action==='confirm-session'||action==='decline-session'){const s=data.coach.sessions.find(x=>x.id===id);if(s){s.status=action==='confirm-session'?'Confirmed':'Declined';s.payment=s.status==='Confirmed'?'Confirmed':'Declined';const pb=data.player.bookings.find(x=>x.id===id);if(pb)pb.status=s.status;toast('Session '+s.status.toLowerCase()+'.');}}
  if(action==='book-coach'){const idNew='s'+Date.now();const booking={id:idNew,coach:data.coach.name,date:future(3,10),hours:1,amount:Number(data.coach.rate),status:'Pending'};data.player.bookings.unshift(booking);data.coach.sessions.unshift({id:idNew,player:data.player.name,date:booking.date,hours:1,amount:booking.amount,payment:'Awaiting verification',status:'Pending'});toast('Demo coaching request created. Switch to Coach to review it.');}
  if(action==='message-coach'){data.coach.messages.push({from:data.player.name,text:'Hi Coach Miguel! I would like to ask about your next available coaching session.',time:'Just now'});data.player.messages.push('Message sent to Coach Miguel');toast('Demo message added to Coach inbox.');}
+ if(action==='toggle-coach-publish'){data.coach.published=!data.coach.published;toast(data.coach.published?'Demo coach profile published.':'Demo coach profile unpublished.');}
+ if(action==='copy-coach-link'){const url=coachPublicUrl();navigator.clipboard?.writeText(url).then(()=>toast('Public coaching link copied.')).catch(()=>{const input=document.getElementById('demoPublicCoachUrl');input?.select();document.execCommand('copy');toast('Public coaching link copied.');});}
+ if(action==='share-coach-link'){const url=coachPublicUrl();if(navigator.share){navigator.share({title:data.coach.name+' on Courtly',text:'Book a coaching session with me on Courtly.',url}).catch(()=>{});}else{navigator.clipboard?.writeText(url);toast('Sharing is not supported here, so the link was copied.');}}
  if(action==='go'){setView(id);return}
  render();
 });
@@ -193,7 +196,8 @@ document.getElementById('viewRoot').addEventListener('submit',e=>{
  if(kind==='club-profile'){Object.assign(data.club,{name:v.name,sport:v.sport,city:v.city,phone:v.phone,address:v.address,about:v.about,email:v.email,website:v.website});toast('Demo club profile saved.');}
  if(kind==='club-post'){const date=v.date?new Date(v.date).toISOString():future(7);data.club.posts.unshift({id:'a'+Date.now(),title:v.title,type:v.type,date,location:v.location,description:v.description,published:true});toast('Demo activity published.');}
  if(kind==='coach-profile'){Object.assign(data.coach,{name:v.name,sport:v.sport,city:v.city,experience:Number(v.experience||0),location:v.location,bio:v.bio});toast('Demo coach profile saved.');}
- if(kind==='coach-availability'){data.coach.rate=Number(v.rate||data.coach.rate);data.coach.location=v.location;data.coach.availability.forEach((a,i)=>{a.start=v['start-'+i]||a.start;a.end=v['end-'+i]||a.end;a.active=fd.has('active-'+i)});toast('Demo availability and rates saved.');}
+ if(kind==='coach-availability'){data.coach.rate=Number(v.rate||data.coach.rate);data.coach.sport=v.sport||data.coach.sport;data.coach.location=v.location||data.coach.location;toast('Demo rate and sport saved.');}
+ if(kind==='coach-payments'){data.coach.paymentProvider=v.paymentProvider;data.coach.paymentAccountName=v.paymentAccountName;data.coach.paymentAccountNumber=v.paymentAccountNumber;data.coach.paymentInstructions=v.paymentInstructions;toast('Demo payment settings saved.');}
  if(kind==='coach-message'){data.coach.messages.push({from:data.coach.name,text:v.text,time:'Just now'});toast('Demo reply sent in the local conversation.');}
  save();render();
 });

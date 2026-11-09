@@ -7,6 +7,7 @@ import accountDelete from '../api/account/delete.js';
 import playerSignup from '../api/auth/player-signup.js';
 import ownerSignup from '../api/auth/owner-signup.js';
 import ownerResendConfirmation from '../api/auth/owner-resend-confirmation.js';
+import pushConfig from '../api/push/config.js';
 
 // Each successful job makes four subrequests. Eight jobs plus readiness/billing
 // setup use at most 34, leaving room below the Workers Free limit of 50.
@@ -25,6 +26,7 @@ export function createApiHandlers(env = {}, overrides = {}) {
     '/api/account/delete': accountDelete.createHandler(dependencies),
     '/api/auth/player-signup': playerSignup.createHandler(dependencies),
     '/api/auth/owner-signup': ownerSignup.createHandler(dependencies),
-    '/api/auth/owner-resend-confirmation': ownerResendConfirmation.createHandler(dependencies)
+    '/api/auth/owner-resend-confirmation': ownerResendConfirmation.createHandler(dependencies),
+    '/api/push/config': pushConfig.createHandler(dependencies)
   });
 }

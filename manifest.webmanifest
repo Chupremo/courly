@@ -7,7 +7,6 @@
   "scope": "/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "standalone"
   ],
   "background_color": "#ffffff",
@@ -21,16 +20,22 @@
   "lang": "en-PH",
   "icons": [
     {
-      "src": "/courtly-app-icon-180.png?v=20261109",
+      "src": "/courtly-app-icon-180.png?v=20261109-repaired",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/courtly-app-icon.svg?v=20261109",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/courtly-app-icon-192.png?v=20261109-repaired",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/courtly-app-icon-512.png?v=20261109-repaired",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [

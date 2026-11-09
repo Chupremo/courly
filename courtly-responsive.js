@@ -110,7 +110,7 @@
     if (!document.querySelector('link[rel="apple-touch-icon"]')) {
       const icon = document.createElement('link');
       icon.rel = 'apple-touch-icon';
-      icon.href = '/apple-touch-icon.png?v=20261109b';
+      icon.href = '/apple-touch-icon.png?v=20261109-repaired';
       document.head.appendChild(icon);
     }
     if ('serviceWorker' in navigator && location.protocol === 'https:') {

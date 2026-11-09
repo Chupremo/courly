@@ -9,6 +9,9 @@ function createHandler(dependencies = {}) {
     }
     const env = dependencies.env || process.env;
     try {
+      let body = {};
+      try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch {}
+      if (body.confirmation !== 'DELETE') throw new ServiceError(400, 'CONFIRMATION_REQUIRED', 'Type DELETE to confirm permanent account deletion.');
       const backend = dependencies.backend || createBackend({ env, fetchImpl: dependencies.fetchImpl });
       const actor = await backend.authenticate(req);
       const profiles = await backend.rest(`player_profiles?id=eq.${actor.id}&select=id,avatar_url`);

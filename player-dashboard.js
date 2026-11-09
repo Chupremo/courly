@@ -22,7 +22,7 @@ let toastTimer;
 
 function notify(text) { const node=$('toast'); node.textContent=text; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),3400); }
 function playerUnreadNotifications(){return playerNotifications.filter(n=>!n.read_at).length;}
-const COURTLY_VAPID_PUBLIC_KEY='BHZUQmax-3Y5L8BNx0HS5KkN7NRo8BZtBCzAuDBmZVNbAMAaQMX06g3TEoTNSjZ_DH7eQ-x7dXLnRTBZxxsXMTM';
+let courtlyVapidPublicKey='';
 function urlBase64ToUint8Array(value){
   const padding='='.repeat((4-value.length%4)%4);
   const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
@@ -65,9 +65,15 @@ async function ensureCourtlyPush({askPermission=false}={}){
   if(!registration)return false;
   let subscription=await registration.pushManager.getSubscription();
   if(!subscription){
+    if(!courtlyVapidPublicKey){
+      const response=await fetch('/api/push/config',{cache:'no-store'});
+      const config=await response.json().catch(()=>({}));
+      if(!response.ok||!config.publicKey)throw new Error(config.error||'Courtly push notifications are not configured.');
+      courtlyVapidPublicKey=config.publicKey;
+    }
     subscription=await registration.pushManager.subscribe({
       userVisibleOnly:true,
-      applicationServerKey:urlBase64ToUint8Array(COURTLY_VAPID_PUBLIC_KEY)
+      applicationServerKey:urlBase64ToUint8Array(courtlyVapidPublicKey)
     });
   }
   await savePushSubscription(subscription);

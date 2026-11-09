@@ -101,7 +101,7 @@ function createHandler(dependencies = {}) {
       }
     });
 
-    if (error || !data?.properties?.action_link) {
+    if (error || !data?.properties?.action_link || !data?.user?.id) {
       recent.delete(key);
       const message = String(error?.message || '').toLowerCase();
       const exists = message.includes('already') || message.includes('registered') || message.includes('exists');
@@ -109,6 +109,20 @@ function createHandler(dependencies = {}) {
         success: false,
         code: exists ? 'ACCOUNT_EXISTS' : 'SIGNUP_LINK_FAILED',
         error: exists ? 'An account already exists for this email. Please sign in instead.' : 'We could not prepare your verification email. Please try again.'
+      });
+    }
+
+    // Authorize the account with server-controlled metadata. RLS must never
+    // depend on user-editable user_metadata for role decisions.
+    const { error: roleError } = await admin.auth.admin.updateUserById(data.user.id, {
+      app_metadata: { account_type: 'player' }
+    });
+    if (roleError) {
+      recent.delete(key);
+      return sendJson(res, 503, {
+        success: false,
+        code: 'PLAYER_ROLE_SETUP_FAILED',
+        error: 'We could not finish preparing your player account. Please try again.'
       });
     }
 

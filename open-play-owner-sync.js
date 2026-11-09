@@ -181,11 +181,12 @@ function bindReview(rows, demo, host = document.getElementById('opRecentTransact
 
 
 function renderUnifiedRows(rows, demo = false) {
-  const tbody = document.getElementById('unifiedReservationRows');
-  if (!tbody) return false;
-  tbody.querySelector('#unifiedOpenPlayLoading')?.remove();
-  tbody.querySelector('#openPlayLoadError')?.remove();
-  tbody.querySelectorAll('[data-openplay-row="true"]').forEach(node => node.remove());
+  const host = document.getElementById('unifiedReservationRows');
+  if (!host) return false;
+  host.querySelector('#unifiedOpenPlayLoading')?.remove();
+  host.querySelector('#openPlayLoadError')?.remove();
+  host.querySelectorAll('[data-openplay-row="true"]').forEach(node => node.remove());
+  const cardMode = host.tagName !== 'TBODY';
   const html = (rows || []).map(row => {
     const status = reservationStatus(row);
     const pill = status === 'Cancelled' ? 'cancelled' : row.payment_status === 'confirmed' ? 'confirmed' : row.payment_status === 'rejected' ? 'rejected' : 'pending';
@@ -193,18 +194,33 @@ function renderUnifiedRows(rows, demo = false) {
     const txnFee = Number(row.transaction_fee || 0);
     const feePayer = row.transaction_fee_payer || 'venue_owner';
     const venueNet = feePayer === 'player' || feePayer === 'none' ? fee : fee - txnFee;
+    if (cardMode) {
+      return `<article class="booking-card-v2" data-openplay-row="true" data-reservation-status="${esc(status)}">
+        <div class="booking-card-main">
+          <div class="booking-card-title"><strong>${esc(row.registration_reference || row.id)}</strong><span>${esc(row.player_name)}</span></div>
+          <div class="booking-card-meta"><span>Open Play</span><span>${esc(row.event_date || '')}</span><span>${esc(row.event_time || '')}</span><span>${esc(row.event_title || 'Open Play session')}</span></div>
+          <div class="booking-card-money"><strong>${fmtMoney(fee)}</strong><span>Venue net ${fmtMoney(row.payment_status === 'confirmed' ? venueNet : 0)}</span></div>
+          <div class="booking-card-status"><span class="pill ${pill}">${status}</span>${row.billing_eligible===false?'<span class="muted small">Historical</span>':''}</div>
+        </div>
+        <div class="booking-card-actions">
+          ${row.receipt_path && !demo ? `<span class="muted small" data-op-receipt-id="${esc(row.id)}">Loading receipt…</span>` : demo ? '<span class="muted small">Demo receipt</span>' : ''}
+          ${row.payment_status === 'awaiting_verification' && row.registration_status !== 'cancelled' ? `<button class="btn primary sm" data-op-review="confirmed" data-op-id="${esc(row.id)}">${demo ? 'Mark paid (demo)' : 'Confirm paid'}</button><button class="btn danger sm" data-op-review="rejected" data-op-id="${esc(row.id)}">Reject</button>` : ''}
+        </div>
+      </article>`;
+    }
     return `<tr data-openplay-row="true" data-reservation-status="${esc(status)}">
-      <td class="nowrap"><span class="pill" style="background:#f3ecdc;color:#8a672b">Open Play</span></td>
+      <td class="nowrap"><span class="pill">Open Play</span></td>
       <td><strong>${esc(row.registration_reference || row.id)}</strong><br>${esc(row.player_name)}<br><span class="muted">${esc(row.player_email || '')}</span></td>
       <td>${esc(row.event_date || '')}<br>${esc(row.event_time || '')}</td>
       <td>${esc(row.event_title || 'Open Play session')}</td>
-      <td class="num">${fmtMoney(fee)}</td><td class="num">${fmtMoney(row.payment_status === 'confirmed' ? txnFee : 0)}<br><span class="muted small">${feePayer === 'player' ? 'paid by player' : feePayer === 'none' ? 'no fee' : 'legacy owner fee'}</span></td><td class="num"><strong>${fmtMoney(row.payment_status === 'confirmed' ? venueNet : 0)}</strong></td>
-      <td class="nowrap"><span class="pill ${pill}">${status}</span>${row.billing_eligible===false?'<br><span class="muted small">Historical · excluded from current invoices</span>':''}${row.receipt_path && !demo ? `<br><span class="muted small" data-op-receipt-id="${esc(row.id)}">Loading receipt…</span>` : demo ? '<br><span class="muted small">Demo receipt</span>' : ''}</td>
+      <td class="num">${fmtMoney(fee)}</td><td class="num">${fmtMoney(row.payment_status === 'confirmed' ? txnFee : 0)}</td><td class="num"><strong>${fmtMoney(row.payment_status === 'confirmed' ? venueNet : 0)}</strong></td>
+      <td class="nowrap"><span class="pill ${pill}">${status}</span>${row.receipt_path && !demo ? `<br><span class="muted small" data-op-receipt-id="${esc(row.id)}">Loading receipt…</span>` : ''}</td>
       <td class="nowrap"><div class="actions">${row.payment_status === 'awaiting_verification' && row.registration_status !== 'cancelled' ? `<button class="btn primary sm" data-op-review="confirmed" data-op-id="${esc(row.id)}">${demo ? 'Mark paid (demo)' : 'Confirm paid'}</button><button class="btn danger sm" data-op-review="rejected" data-op-id="${esc(row.id)}">Reject</button>` : ''}</div></td>
     </tr>`;
   }).join('');
-  tbody.insertAdjacentHTML('beforeend', html || '<tr data-openplay-row="true"><td colspan="9" class="muted small">No Open Play reservations.</td></tr>');
-  bindReview(rows, demo, tbody);
+  if (html) host.insertAdjacentHTML('beforeend', html);
+  else host.insertAdjacentHTML('beforeend', cardMode ? '<div data-openplay-row="true" class="ov-empty">No Open Play reservations.</div>' : '<tr data-openplay-row="true"><td colspan="9" class="muted small">No Open Play reservations.</td></tr>');
+  bindReview(rows, demo, host);
   window.prepareOwnerTables?.();
   window.filterBookings?.();
   return true;
@@ -273,7 +289,10 @@ async function renderTransactions() {
     const message = esc(error.message || 'Could not load Open Play reservations.');
     if (tbody) {
       tbody.querySelectorAll('[data-openplay-row],#unifiedOpenPlayLoading,#openPlayLoadError').forEach(node => node.remove());
-      tbody.insertAdjacentHTML('beforeend', `<tr id="openPlayLoadError"><td colspan="9"><div role="alert">${message}</div><button type="button" class="btn sm" onclick="window.loadOpenPlayTransactions()">Try again</button></td></tr>`);
+      const cardMode = tbody.tagName !== 'TBODY';
+      tbody.insertAdjacentHTML('beforeend', cardMode
+        ? `<div id="openPlayLoadError" class="notice" role="alert">${message}<br><button type="button" class="btn sm" onclick="window.loadOpenPlayTransactions()">Try again</button></div>`
+        : `<tr id="openPlayLoadError"><td colspan="9"><div role="alert">${message}</div><button type="button" class="btn sm" onclick="window.loadOpenPlayTransactions()">Try again</button></td></tr>`);
       window.filterBookings?.();
     } else {
       body.innerHTML = `<div class="notice" role="alert">${message}</div><button type="button" class="btn sm" onclick="window.loadOpenPlayTransactions()">Try again</button>`;

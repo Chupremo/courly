@@ -10,15 +10,15 @@ This release adds a separate coach account type and a coach marketplace to the e
 - Coach profile and cover uploads (JPG/PNG/WEBP, max 100 MB each, using resumable uploads).
 - Coach Portal at `/coach/dashboard` with Overview, Booking Calendar, Coaching Sessions, Clients, Availability & Rates, Earnings & Transactions, Coach Profile, Payment Settings, Courtly Fees & Invoices, Messages and Notifications.
 - Player booking flow at `/coach/booking?coach=<slug>` with date, duration and live available-time selection.
-- Player payment to the coach's own configured QR/account. Player checkout is the coach's hourly rate multiplied by selected hours. The Courtly ₱50 fee is not added to the player's checkout.
-- Coach-paid ₱50 fee recorded once when a paid coaching booking is confirmed; weekly coach invoices and 72-hour remittance deadline.
+- Player payment to the coach's own configured QR/account. Player checkout is the coach's hourly rate multiplied by selected hours, plus one ₱25 Courtly Convenience Fee per successful booking.
+- Booker-paid ₱25 Convenience Fee recorded once when a paid coaching booking is confirmed; where the coach receives the full payment directly, the collected fee is included in weekly remittance reporting.
 - Player/coach messaging, player follow/unfollow and player coaching-session history.
 - Courtly admin coach verification and coach-remittance review at `/admin-coaches`.
 - Coaches can publish to the existing Community feed.
 
 ## Fee rule implemented
 
-The ₱50 Courtly coaching fee is charged to the coach for each successful paid coaching booking/session (one fee per confirmed paid booking, **not** per coaching hour). The player pays only the coach's hourly rate multiplied by the booked duration. The coach receives the player's payment directly through the coach's configured payment account and remits the ₱50 Courtly fee through the weekly invoicing process.
+The ₱25 Courtly Convenience Fee is charged to the booker for each successful coaching booking (one fee per confirmed paid booking, **not** per coaching hour). The player pays the coach's hourly rate multiplied by the booked duration plus the ₱25 Convenience Fee. The fee is not deducted from the coach's coaching rate. Where the coach receives the full payment directly, the collected ₱25 fee is tracked separately for Courtly remittance.
 
 Payments are manual in this release: the player enters a payment reference and the coach verifies the payment in the Coach Portal. This is not an automatic payment-gateway integration.
 
@@ -110,8 +110,8 @@ Migration 014 attempts to register its Friday 09:00 Asia/Manila weekly-invoice j
 2. Open a coach profile to review rate, location, availability and verified status.
 3. Follow or message the coach after signing in with a player account.
 4. Choose Book Coaching Session, date, duration and one available slot.
-5. The player pays the displayed session subtotal directly to the coach and submits the payment reference (receipt is optional).
-6. The coach reviews the payment in Coach Portal → Coaching Sessions. Once confirmed, the booking is confirmed and the ₱50 coach fee is recorded once in the coach fee ledger.
+5. The player pays the displayed session subtotal plus the ₱25 Convenience Fee directly to the coach and submits the payment reference (receipt is optional).
+6. The coach reviews the payment in Coach Portal → Coaching Sessions. Once confirmed, the booking is confirmed and the ₱25 booker-paid Convenience Fee is recorded once for remittance tracking.
 7. The player can see the session at `/my-coaching-sessions`.
 
 ## Post-deployment test checklist
@@ -126,8 +126,8 @@ Migration 014 attempts to register its Friday 09:00 Asia/Manila weekly-invoice j
 - [ ] Player can follow/unfollow and start a coach conversation.
 - [ ] Guest can browse but must sign in as a player to create a coaching booking.
 - [ ] Overlapping booking attempts for the same coach/time cannot both succeed.
-- [ ] Player checkout excludes the ₱50 coach fee.
-- [ ] Coach confirmation creates exactly one ₱50 fee ledger entry.
+- [ ] Player checkout includes one ₱25 Convenience Fee paid by the booker.
+- [ ] Coach confirmation creates exactly one ₱25 booker-paid Convenience Fee ledger entry.
 - [ ] Repeated confirmation does not create a duplicate fee.
 - [ ] Weekly coach invoices and 72-hour overdue rules work in staging before production activation.
 - [ ] Coach can access their own sessions, clients, earnings, payment settings and invoices, but not another coach's data.

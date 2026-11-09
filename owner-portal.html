@@ -472,6 +472,87 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 }
 </style>
 
+
+<style id="courtly-owner-portal-v3">
+:root{--navy:#001a47;--navy2:#082a5c;--bg:#f4f7fb;--surface:#fff;--line:#e2e8f0;--ink:#14213d;--muted:#6a7890;--shadow:0 8px 24px rgba(18,42,78,.06);--r:15px;--goldsoft:#f1f9df}
+body{background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{grid-template-columns:238px minmax(0,1fr)}
+.side{background:#fff;color:var(--navy);border-right:1px solid var(--line);padding:24px 14px 18px;box-shadow:none}
+.brand{padding:0 12px 4px}.courtly-brand-logo{max-width:155px;max-height:46px}.brand-powered{color:#8a98ad;padding:0 12px 20px;font-size:8px}
+.side>small{color:#8a98ad;padding:6px 12px 10px}
+.navlist{gap:5px}.navbtn{display:flex;align-items:center;gap:10px;color:#52617a;padding:11px 12px;border-radius:10px;font-size:13px}
+.navbtn span:nth-child(1){min-width:0}.navbtn:hover{background:#f5f8fc;color:var(--navy)}
+.navbtn.active{background:#eef9d7;color:var(--navy);font-weight:700}.navbtn.active:before{display:none}
+.notify-badge{margin-left:auto}.owner-nav-separator{background:var(--line);margin:10px 8px}
+.side-bottom{color:#7b8799;border-top:1px solid var(--line);font-size:10px}.side-bottom span{color:#8a98ad!important}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);padding:0 30px;backdrop-filter:none;-webkit-backdrop-filter:none}
+.crumb{color:#91a0b5;font-size:9px}.topbar h2{font-family:Inter,system-ui,sans-serif;font-size:18px;font-weight:800}
+.topright a{color:#516078!important}.avatar{background:#effbd9;color:var(--navy);box-shadow:0 0 0 1px #d5e6b5}
+.content{max-width:1280px;padding:28px 30px 64px}
+.heading{margin-bottom:20px}.eyebrow{color:#688f16}.heading h1{font-family:Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.04em}.heading p{font-size:13px}
+.panel,.stat,.court-card{border-color:var(--line);box-shadow:var(--shadow);border-radius:15px}.panel{padding:20px 22px;margin-bottom:16px}
+.panelhead{margin-bottom:14px}.panelhead h3{font-family:Inter,system-ui,sans-serif;font-size:16px;font-weight:800}
+.btn{border-radius:10px;box-shadow:none;font-size:13px}.btn.primary{background:var(--navy);box-shadow:none}.btn.primary:hover{background:#092d64;color:#fff}
+.empty{background:#f8fafc;border:1px dashed #d9e1ec}
+.field input,.field select,.field textarea,.select{border-color:#d9e1ec;border-radius:10px;background:#fff}.field label{color:#34435d}
+.notice{background:#f7f9fc;border-color:#e2e8f0;border-left-color:#8ed502}.notice.gold{background:#f8fce9;border-color:#dbe9bd;border-left-color:#8ed502;color:#526b1f}
+.pill{background:#eff9d9;color:#426c08}.pill.pending{background:#fff5dd;color:#8b6517}.pill.confirmed,.pill.completed{background:#eff9d9;color:#376b06}
+
+/* Booking cards */
+.booking-summary-v2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.booking-summary-v2>div{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow)}
+.booking-summary-v2 span{display:block;color:var(--muted);font-size:11px}.booking-summary-v2 strong{display:block;color:var(--navy);font-size:24px;margin-top:4px}
+.booking-panel-v2{padding-bottom:8px}.booking-list-v2{display:grid}
+.booking-card-v2{border-top:1px solid #edf1f5;padding:0}.booking-card-v2:first-child{border-top:0}
+.booking-card-main{width:100%;display:grid;grid-template-columns:1.1fr 1.7fr 1fr auto;gap:16px;align-items:center;border:0;background:transparent;text-align:left;padding:15px 4px;color:var(--ink)}
+.booking-card-main:hover{background:#fbfcfe}.booking-card-title strong,.booking-card-money strong{display:block;color:var(--navy);font-size:13px}.booking-card-title span,.booking-card-money span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.booking-card-meta{display:flex;gap:6px 12px;flex-wrap:wrap;color:#516078;font-size:12px}.booking-card-status{display:grid;gap:4px;justify-items:end}
+.booking-card-actions{display:flex;gap:7px;justify-content:flex-end;padding:0 4px 13px}.booking-openplay-loading{padding:14px 4px}
+
+/* Calendar */
+.owner-calendar-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:14px}.owner-calendar-mode{display:flex;gap:6px}
+.owner-calendar-date,.owner-calendar-court{display:grid;gap:5px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.owner-calendar-date input,.owner-calendar-court select{height:42px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:0 10px}
+.owner-calendar-heading{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:10px;margin:8px 0 10px}.owner-calendar-heading h3{text-align:center;font-size:15px;color:var(--navy);margin:0}
+.calendar table{border-spacing:5px}.calendar th{font-size:10px}.slot{border-radius:8px;box-shadow:none}.slot.available{background:#fff;border-color:#d8e2ef;color:#29405f}.slot.booked{background:#eff9d9;border-color:#d5eaa9;color:#376b06}.slot.pending{background:#fff5dd;border-color:#f0d89d;color:#805b12}.slot.blocked{background:#fff1f2;border-color:#f0c9ce;color:#9a3440}
+
+/* Settings shortcuts */
+.settings-links-v2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.settings-link-v2{border:1px solid var(--line);background:#fff;border-radius:13px;padding:16px;text-align:left;display:grid;grid-template-columns:1fr auto;gap:3px 10px;box-shadow:var(--shadow);color:var(--navy)}
+.settings-link-v2 span{font-weight:800}.settings-link-v2 small{grid-column:1;color:var(--muted);line-height:1.4}.settings-link-v2 b{grid-column:2;grid-row:1/3;align-self:center;font-size:22px;color:#7f8ca0}.payment-qr-v2{max-width:360px;height:220px}
+
+/* Notifications */
+.notification-list{gap:8px}.notification-item{box-shadow:none;border-color:var(--line);padding:13px 14px}.notification-item.unread{background:#fbfef4;border-color:#dbe9bd}
+.notification-item h4{font-size:13px}.notification-item p{font-size:11px}
+
+/* Forms/profile/courts */
+.formgrid{gap:14px}.court-cards{gap:14px}.court-card{padding:15px}.court-photo{height:180px;background:#f8fafc}.photo-preview{background:#f8fafc;border-color:var(--line)}
+.tablewrap{border:0}.table th{font-size:9px;color:#8090a5}.table td{font-size:12px;padding:12px 10px}
+
+/* Mobile */
+@media(max-width:680px){
+ body{background:#f4f7fb}
+ .app{display:block}.side{position:sticky!important;top:0!important;height:auto!important;background:var(--navy)!important;border-right:0!important;padding:9px 12px!important;color:#fff!important}
+ .brand{padding:0!important}.courtly-brand-logo{max-width:112px!important;max-height:34px!important;background:#fff;border-radius:5px;padding:3px}
+ .mobile-menu-toggle{border-color:#ffffff55!important;background:transparent!important}.mobile-menu-toggle span{background:#fff!important}
+ .navlist{display:none!important}.side.menu-open .navlist{display:grid!important;grid-template-columns:1fr!important;background:#fff;border-radius:12px;padding:8px!important;margin-top:10px!important;box-shadow:0 14px 30px rgba(0,0,0,.18)}
+ .side.menu-open .navbtn{color:#52617a!important;border:0!important;background:#fff!important}.side.menu-open .navbtn.active{background:#eef9d7!important;color:var(--navy)!important}
+ .owner-nav-separator{background:var(--line)!important}
+ .side>small,.side-bottom,.brand-powered{display:none!important}
+ .topbar{min-height:54px!important;height:auto!important;padding:9px 12px!important}.topbar .crumb{display:none}.topbar h2{font-size:15px!important}.owner-email{display:none!important}
+ .content{padding:14px 8px 42px!important;max-width:none!important}.heading{padding:0 2px}.heading h1{font-size:25px!important}.heading p{font-size:12px!important}
+ .panel{padding:14px!important;border-radius:13px!important;margin-bottom:11px!important}
+ .booking-summary-v2{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.booking-summary-v2>div{padding:11px 9px}.booking-summary-v2 strong{font-size:20px}.booking-summary-v2 span{font-size:9px}
+ .booking-card-main{grid-template-columns:1fr auto;gap:7px 12px;padding:13px 2px}.booking-card-title{grid-column:1}.booking-card-meta{grid-column:1;display:grid;gap:2px}.booking-card-money{grid-column:1}.booking-card-status{grid-column:2;grid-row:1/4;align-self:center}
+ .booking-card-actions{display:grid;grid-template-columns:1fr;width:100%;padding:0 2px 12px}.booking-card-actions .btn{width:100%}
+ .settings-links-v2{grid-template-columns:1fr;gap:8px}.settings-link-v2{padding:13px}
+ .formgrid{grid-template-columns:1fr!important}.field.full{grid-column:auto!important}
+ .owner-calendar-toolbar{display:grid!important;grid-template-columns:1fr!important}.owner-calendar-mode{display:grid!important;grid-template-columns:1fr!important}.owner-calendar-mode button:nth-child(2){display:none!important}
+ .calendar{overflow:visible!important}.calendar table{min-width:0!important;table-layout:fixed!important;border-spacing:3px!important}.calendar th:first-child{width:65px!important}.slot{min-width:0!important;font-size:10px!important;min-height:48px!important;padding:6px 3px!important}
+ .table td{font-size:11px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -480,14 +561,16 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 <button class="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="ownerNavigation" onclick="toggleMobileMenu(this)"><span></span><span></span><span></span></button>
 <small>OWNER WORKSPACE</small>
 <nav class="navlist" id="ownerNavigation" aria-label="Owner workspace">
-<button class="navbtn active" data-view="overview" onclick="go('overview',this)">⌂ &nbsp; Overview</button>
-<button class="navbtn" data-view="bookings" onclick="go('bookings',this)">▤ &nbsp; Bookings</button>
-<button class="navbtn" data-view="calendar" onclick="go('calendar',this)">▦ &nbsp; Calendar</button>
-<button class="navbtn" data-view="transactions" onclick="go('transactions',this)">₱ &nbsp; Earnings</button>
-<button class="navbtn" data-view="notifications" onclick="go('notifications',this)">◌ &nbsp; Notifications <span class="notify-badge" id="ownerNotificationBadge">0</span></button>
+<button class="navbtn active" data-view="overview" onclick="go('overview',this)">⌂ <span>Overview</span></button>
+<button class="navbtn" data-view="bookings" onclick="go('bookings',this)">▤ <span>Bookings</span></button>
+<button class="navbtn" data-view="calendar" onclick="go('calendar',this)">▦ <span>Calendar</span></button>
+<button class="navbtn" data-view="openplay" onclick="go('openplay',this)">◎ <span>Open Play</span></button>
+<button class="navbtn" data-view="transactions" onclick="go('transactions',this)">₱ <span>Earnings</span></button>
+<button class="navbtn" data-view="notifications" onclick="go('notifications',this)">◌ <span>Notifications</span><span class="notify-badge" id="ownerNotificationBadge">0</span></button>
 <div class="owner-nav-separator"></div>
-<button class="navbtn" data-view="venue" onclick="go('venue',this)">⌂ &nbsp; Venue Profile</button>
-<button class="navbtn" data-view="payments" onclick="go('payments',this)">⚙ &nbsp; Settings</button>
+<button class="navbtn" data-view="venue" onclick="go('venue',this)">⌂ <span>Venue Profile</span></button>
+<button class="navbtn" data-view="courts" onclick="go('courts',this)">▦ <span>Courts & Rates</span></button>
+<button class="navbtn" data-view="payments" onclick="go('payments',this)">⚙ <span>Settings</span></button>
 </nav>
 <div class="side-bottom">COURTLY OWNER PORTAL<br><span id="workspaceModeLabel">Connecting to your secure workspace…</span></div>
 </aside>
@@ -707,16 +790,53 @@ async function deleteOpenPlay(id){
  return ownerAction(async()=>{await persist({scope:'openPlay',id,remove:true});db.openPlays=db.openPlays.filter(event=>event.id!==id);if(ACTIVE_DEMO)await persist();render();toast('Open Play announcement deleted.');});
 }
 
-function bookingsPage(){const rows=sortedBookings();return `${heading('Reservations','Court rentals and Open Play registrations in one place. Use the Type label to distinguish each reservation.',`<button class="btn" onclick="exportCsv()"> Export court bookings</button>`)}<section class="panel"><div class="panelhead"><h3>All reservations</h3><select class="select" id="bookingFilter" aria-label="Filter reservations by status" onchange="filterBookings()">${['All statuses','Pending','Confirmed','Completed','Cancelled','Awaiting verification','Rejected'].map(status=>`<option ${bookingFilterValue===status?'selected':''}>${status}</option>`).join('')}</select></div><p class="muted small">Cancelling a reservation changes its booking status only. Arrange any refund separately with the player under your venue’s policy.</p><div class="tablewrap"><table class="table"><thead><tr><th>Type</th><th>Reference / Player</th><th>Date & time</th><th>Court / Event</th><th>Registration amount</th><th>Convenience Fee & payer</th><th>Venue net</th><th>Status</th><th>Actions</th></tr></thead><tbody id="unifiedReservationRows">${rows.map(b=>`<tr data-reservation-status="${esc(displayBookingStatus(b))}"><td><span class="pill">Court Rental</span></td><td><strong>${esc(b.reference||b.id)}</strong><br>${esc(b.player)}<br><span class="muted">${esc(b.email)}</span></td><td>${esc(b.date)}<br>${esc(b.time)}</td><td>${esc(b.court)}</td><td>${money(b.price)}</td><td>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?bookingFee(b):0)}<br><span class="muted small">Owner-paid Convenience Fee</span></td><td><strong>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</strong></td><td>${statusPill(displayBookingStatus(b))}<br><span class="muted small">${esc(b.paymentStatus||'')}</span>${b.paymentScreenshotUrl?`<br><a class="btn sm" href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer">View receipt </a>`:''}</td><td><div class="actions">${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${b.id}')">Confirm paid</button>`:''}${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${b.id}')">Cancel</button>`:''}</div></td></tr>`).join('')}<tr id="unifiedOpenPlayLoading"><td colspan="9" class="muted small">Loading Open Play reservations…</td></tr></tbody></table></div></section>${renderCommunityActivityPaymentQueue()}`}
+function bookingsPage(){
+ const rows=sortedBookings();
+ const counts={
+  all:rows.length,
+  pending:rows.filter(b=>displayBookingStatus(b)==='Pending'||String(b.paymentStatus||'').toLowerCase().includes('await')).length,
+  confirmed:rows.filter(b=>['Confirmed','Completed'].includes(displayBookingStatus(b))).length
+ };
+ const cards=rows.map(b=>`
+  <article class="booking-card-v2" data-reservation-status="${esc(displayBookingStatus(b))}">
+   <button type="button" class="booking-card-main" onclick="showBooking('${esc(b.id)}')">
+    <div class="booking-card-title"><strong>${esc(b.reference||b.id)}</strong><span>${esc(b.player)}</span></div>
+    <div class="booking-card-meta"><span>${esc(b.date)}</span><span>${esc(b.time)}</span><span>${esc(b.court)}</span></div>
+    <div class="booking-card-money"><strong>${money(b.price)}</strong><span>Venue net ${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</span></div>
+    <div class="booking-card-status">${statusPill(displayBookingStatus(b))}<span class="muted small">${esc(b.paymentStatus||'')}</span></div>
+   </button>
+   <div class="booking-card-actions">
+    ${b.paymentScreenshotUrl?`<a class="btn sm" href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer">View receipt</a>`:''}
+    ${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${esc(b.id)}')">Confirm paid</button>`:''}
+    ${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${esc(b.id)}')">Cancel</button>`:''}
+   </div>
+  </article>`).join('')||'<div class="ov-empty">No bookings yet.</div>';
+ return `${heading('Bookings','Review court reservations, payment status and booking details.',`<button class="btn" onclick="exportCsv()">Export bookings</button>`)}
+  <div class="booking-summary-v2">
+   <div><span>All bookings</span><strong>${counts.all}</strong></div>
+   <div><span>Need attention</span><strong>${counts.pending}</strong></div>
+   <div><span>Confirmed</span><strong>${counts.confirmed}</strong></div>
+  </div>
+  <section class="panel booking-panel-v2">
+   <div class="panelhead"><div><h3>Reservations</h3><p class="muted small">Tap any booking to view full details.</p></div>
+    <select class="select" id="bookingFilter" aria-label="Filter reservations by status" onchange="filterBookings()">${['All statuses','Pending','Confirmed','Completed','Cancelled','Awaiting verification','Rejected'].map(status=>`<option ${bookingFilterValue===status?'selected':''}>${status}</option>`).join('')}</select>
+   </div>
+   <div id="unifiedReservationRows" class="booking-list-v2">${cards}<div id="unifiedOpenPlayLoading" class="muted small booking-openplay-loading">Loading Open Play reservations…</div></div>
+  </section>
+  ${renderCommunityActivityPaymentQueue()}`;
+}
 function filterBookings(){
  const select=$('bookingFilter');if(!select)return;
  bookingFilterValue=select.value;
  let visible=0;
- document.querySelectorAll('#unifiedReservationRows tr[data-reservation-status]').forEach(row=>{row.hidden=!(bookingFilterValue==='All statuses'||row.dataset.reservationStatus===bookingFilterValue);if(!row.hidden)visible++;});
+ document.querySelectorAll('#unifiedReservationRows [data-reservation-status]').forEach(row=>{
+   row.hidden=!(bookingFilterValue==='All statuses'||row.dataset.reservationStatus===bookingFilterValue);
+   if(!row.hidden)visible++;
+ });
  let empty=$('reservationFilterEmpty');
- if(!empty){empty=document.createElement('p');empty.id='reservationFilterEmpty';empty.className='empty';$('unifiedReservationRows')?.closest('.tablewrap')?.after(empty);}
+ if(!empty){empty=document.createElement('p');empty.id='reservationFilterEmpty';empty.className='ov-empty';$('unifiedReservationRows')?.append(empty);}
  empty.hidden=visible>0||Boolean($('unifiedOpenPlayLoading'));
- empty.textContent=bookingFilterValue==='All statuses'?'No reservations yet. Share your booking page to start receiving bookings.':'No reservations match this status. Choose another status to view more bookings.';
+ empty.textContent=bookingFilterValue==='All statuses'?'No reservations yet. Share your booking page to start receiving bookings.':'No bookings match this status.';
 }
 function timeMinutes(value){const text=String(value||'').trim();const match=text.match(/^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?/i);if(!match)return null;let hour=Number(match[1]);const minute=Number(match[2]);if(minute>59||hour>23)return null;if(match[3]){hour=hour%12+(match[3].toUpperCase()==='PM'?12:0);}return hour*60+minute;}
 function calendarRange(item){
@@ -897,8 +1017,14 @@ async function saveVenue(e){
 }
 
 function billingPage(){if(ACTIVE_DEMO)return `${heading('Convenience Fees & Invoices','Weekly Convenience Fee invoices and remittances for live venue accounts.')}<section class="panel"><div class="notice">Billing is disabled in demo workspaces. Sign in with your real venue owner account to view Courtly invoices and remittances.</div></section>`;return `${heading('Convenience Fees & Invoices','View your weekly Convenience Fees, pay your invoice, and submit your remittance reference.')}<div id="ownerBillingApp" class="billing-app"><section class="panel"><div class="muted">Loading your Courtly billing account…</div></section></div>`}
-function paymentsPage(){const v=db.venue;return `${heading('Payment settings','Configure payment instructions that players see after making a booking.')}<section class="panel"><div class="panelhead"><h3>Venue payment method</h3><span class="pill">Venue checkout settings</span></div><form onsubmit="savePayment(event)"><div class="formgrid"><div class="field"><label>Payment method label</label><select id="payName">${['QR Ph','GCash QR','Maya QR','Bank transfer','Cash at venue','Other'].map(s=>`<option ${v.paymentName===s?'selected':''}>${s}</option>`).join('')}</select></div><div class="field"><label>Account / recipient name</label><input id="payAccount" value="${esc(v.paymentAccount)}" placeholder="Account name"></div><div class="field full"><label>Payment instructions for players</label><textarea id="payInstructions" rows="3">${esc(v.paymentInstructions)}</textarea></div><div class="field full"><label>Venue payment QR code (shown to players at checkout)</label><input id="payQr" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewImage(this,'qrPreview')"><div id="qrPreview" class="photo-preview" style="background:#fff;border:1px dashed #d9cfb6">${v.qrData?`<img src="${v.qrData}" alt="Saved venue payment QR code">`:'＋ Upload official GCash / payment QR image'}</div><small class="muted">PNG, JPG, or WebP · Maximum 100 MB. After saving, this QR is displayed in the public page's PAY NOW checkout for this venue.</small></div></div><div class="formactions"><button class="btn primary">Save payment settings</button></div></form><div class="notice gold">Courtly cannot verify QR payments automatically yet. For launch, connect a payment provider with payment notifications/webhooks or use a manual review workflow before confirming bookings.</div></section>`}
-async function savePayment(e){
+function paymentsPage(){const v=db.venue;return `${heading('Settings','Manage payment checkout and the main configuration areas for your venue.')}
+<section class="settings-links-v2">
+ <button class="settings-link-v2" onclick="go('venue')"><span>Venue Profile</span><small>Public listing, contact details and photos</small><b>›</b></button>
+ <button class="settings-link-v2" onclick="go('courts')"><span>Courts & Rates</span><small>Opening hours, court pricing and photos</small><b>›</b></button>
+ <button class="settings-link-v2" onclick="go('billing')"><span>Invoices & Fees</span><small>Convenience Fees and Courtly invoices</small><b>›</b></button>
+</section>
+<section class="panel settings-payment-v2"><div class="panelhead"><div><h3>Payment checkout</h3><p class="muted small">These details are shown to players after they reserve a court.</p></div><span class="pill">Checkout</span></div>
+<form onsubmit="savePayment(event)"><div class="formgrid"><div class="field"><label>Payment method</label><select id="payName">${['QR Ph','GCash QR','Maya QR','Bank transfer','Cash at venue','Other'].map(s=>`<option ${v.paymentName===s?'selected':''}>${s}</option>`).join('')}</select></div><div class="field"><label>Account / recipient name</label><input id="payAccount" value="${esc(v.paymentAccount)}" placeholder="Account name"></div><div class="field full"><label>Payment instructions</label><textarea id="payInstructions" rows="3">${esc(v.paymentInstructions)}</textarea></div><div class="field full"><label>Payment QR code</label><input id="payQr" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewImage(this,'qrPreview')"><div id="qrPreview" class="photo-preview payment-qr-v2">${v.qrData?`<img src="${v.qrData}" alt="Saved venue payment QR code">`:'Upload GCash / payment QR image'}</div><small class="muted">PNG, JPG or WebP. This is displayed during public checkout.</small></div></div><div class="formactions"><button class="btn primary">Save payment settings</button></div></form></section>`}async function savePayment(e){
  e.preventDefault();if(ownerBusy)return;
  const values={paymentName:$('payName').value,paymentAccount:$('payAccount').value.trim(),paymentInstructions:$('payInstructions').value.trim()};
  return ownerAction(async()=>{const previous={paymentName:db.venue.paymentName,paymentAccount:db.venue.paymentAccount,paymentInstructions:db.venue.paymentInstructions};Object.assign(db.venue,values);try{await persist({scope:'payments'});render();toast(ACTIVE_DEMO?'Demo payment settings saved in this browser.':'Payment settings saved for public checkout.');}catch(error){Object.assign(db.venue,previous);throw error;}});

@@ -49,7 +49,7 @@ async function syncInstalledAppBadge(){
 }
 async function registerCourtlyServiceWorker(){
   if(!('serviceWorker' in navigator))return null;
-  try{return await navigator.serviceWorker.register('/service-worker.js?v=push-badge-20261109',{scope:'/'});}
+  try{return await navigator.serviceWorker.register('/service-worker.js',{scope:'/',updateViaCache:'none'});}
   catch(error){console.warn('Courtly service worker registration failed:',error.message);return null;}
 }
 async function savePushSubscription(subscription){

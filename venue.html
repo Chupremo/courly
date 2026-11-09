@@ -803,7 +803,7 @@ async function notifyCheckoutCommitted(hold) {
     if (error || !session?.access_token) return;
     const type = hold.kind === 'court' ? 'court_booking' : 'open_play_registration';
     const id = hold.kind === 'court' ? hold.booking_id : hold.registration_id;
-    const response = await fetch('/api/notifications/process', { method: 'POST',
+    const response = await fetch('/api/notifications/process', { method: 'POST', keepalive: true,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ type, id }) });
     if (!response.ok) console.warn('Reservation saved; its notification remains queued for retry.');
   } catch (error) { console.warn('Reservation saved; notification delivery will be retried:', error); }

@@ -23,6 +23,7 @@ function environment({ demo = false, storage = new Map(), document: suppliedDocu
     querySelector: () => null, addEventListener() {}, visibilityState: 'visible' };
   const context = { document, URL, URLSearchParams, Date, Intl, structuredClone, Map, Set, Promise,
     dispatchBookingNotifications: async () => ({ status: 'unavailable', deliveries: [] }),
+    ownerPushCard: () => '', syncOwnerBadge: async () => {}, configureOwnerPush() {},
     console: { warn() {}, error() {}, info() {} },
     location: { search: demo ? '?demo=demo-lipa-pickleball-hub' : '', href: 'https://courtly.test/owner-portal.html', origin: 'https://courtly.test' },
     history: { pushState() {} }, matchMedia: () => ({ matches: false }),

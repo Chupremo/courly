@@ -918,8 +918,9 @@ async function markOwnerNotificationsRead(){
  unread.forEach(n=>n.read_at=new Date().toISOString());
  try{await window.courtlyMarkOwnerNotificationsRead?.(unread.map(n=>n.id));}catch(error){console.warn('Could not mark notifications read',error);}
 }
-function updateOwnerNotificationBadge(){const badge=$('ownerNotificationBadge');if(!badge)return;const count=unreadOwnerNotifications();badge.textContent=count>99?'99+':String(count);badge.classList.toggle('show',count>0)}
-function render(){const titles={overview:'Overview',calendar:'Booking calendar',openplay:'Open play events',bookings:'Reservations',courts:'Courts & rates',transactions:'Earnings & transactions',venue:'Venue profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',notifications:'Notifications'};$('pageTitle').textContent=titles[view];$('headerVenue').textContent=db.venue.name;const workspaceMode=$('workspaceModeLabel');if(workspaceMode)workspaceMode.textContent=ACTIVE_DEMO?'Demo workspace · saved in this browser':'Live venue workspace';const brand=$('sidebarBrand');if(brand){const logo=db.venue.logoData||'';brand.innerHTML=logo?'<img class="owner-venue-brand-logo" src="'+esc(logo)+'" alt="'+esc(db.venue.name||'Venue')+' logo">':'<img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly">';}const powered=$('brandPowered');if(powered)powered.textContent='Powered by Courtly Philippines';$('avatar').textContent=(db.venue.owner||'CO').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();const mobileOwnerName=$('mobileOwnerName');if(mobileOwnerName)mobileOwnerName.textContent=db.venue.owner||'Owner account';const mobileOwnerVenue=$('mobileOwnerVenue');if(mobileOwnerVenue)mobileOwnerVenue.textContent=db.venue.name||'';const c=$('content');if(view==='overview')c.innerHTML=overview();if(view==='calendar')c.innerHTML=calendar();if(view==='openplay')c.innerHTML=openPlayPage();if(view==='bookings')c.innerHTML=bookingsPage();if(view==='courts')c.innerHTML=courtsPage();if(view==='transactions')c.innerHTML=transactionsPage();if(view==='venue')c.innerHTML=venuePage();if(view==='payments')c.innerHTML=paymentsPage();if(view==='billing')c.innerHTML=billingPage();if(view==='notifications')c.innerHTML=notificationsPage();
+window.courtlyOwnerToast=message=>toast(message);
+function updateOwnerNotificationBadge(){void window.courtlySyncOwnerBadge?.(unreadOwnerNotifications());const badge=$('ownerNotificationBadge');if(!badge)return;const count=unreadOwnerNotifications();badge.textContent=count>99?'99+':String(count);badge.classList.toggle('show',count>0)}
+function render(){const titles={overview:'Overview',calendar:'Booking calendar',openplay:'Open play events',bookings:'Reservations',courts:'Courts & rates',transactions:'Earnings & transactions',venue:'Venue profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',notifications:'Notifications'};$('pageTitle').textContent=titles[view];$('headerVenue').textContent=db.venue.name;const workspaceMode=$('workspaceModeLabel');if(workspaceMode)workspaceMode.textContent=ACTIVE_DEMO?'Demo workspace · saved in this browser':'Live venue workspace';const brand=$('sidebarBrand');if(brand){const logo=db.venue.logoData||'';brand.innerHTML=logo?'<img class="owner-venue-brand-logo" src="'+esc(logo)+'" alt="'+esc(db.venue.name||'Venue')+' logo">':'<img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly">';}const powered=$('brandPowered');if(powered)powered.textContent='Powered by Courtly Philippines';$('avatar').textContent=(db.venue.owner||'CO').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();const mobileOwnerName=$('mobileOwnerName');if(mobileOwnerName)mobileOwnerName.textContent=db.venue.owner||'Owner account';const mobileOwnerVenue=$('mobileOwnerVenue');if(mobileOwnerVenue)mobileOwnerVenue.textContent=db.venue.name||'';const c=$('content');if(view==='overview')c.innerHTML=overview();if(view==='calendar')c.innerHTML=calendar();if(view==='openplay')c.innerHTML=openPlayPage();if(view==='bookings')c.innerHTML=bookingsPage();if(view==='courts')c.innerHTML=courtsPage();if(view==='transactions')c.innerHTML=transactionsPage();if(view==='venue')c.innerHTML=venuePage();if(view==='payments')c.innerHTML=paymentsPage();if(view==='billing')c.innerHTML=billingPage();if(view==='notifications')c.innerHTML=notificationsPage();if(!ACTIVE_DEMO&&['overview','notifications'].includes(view))c.insertAdjacentHTML('afterbegin',window.courtlyOwnerPushCard?.()||'');
  if(window.matchMedia?.('(max-width:680px)').matches){
    c.querySelectorAll('.table').forEach(table=>{
      const labels=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim());
@@ -1363,6 +1364,25 @@ if(ACTIVE_DEMO){window.addEventListener('message',function(event){
  db.bookings.push({id,player:'Online customer',email:'Not collected in demo',date:incoming.date,time:incoming.time,duration:Math.min(8,Math.max(1,Number(incoming.duration||1))),court:'Court '+Number(incoming.court||1),price:Number(incoming.price||db.venue.baseRate||0),status:'Pending',paymentMethod:incoming.method||'Not specified',createdAt:incoming.createdAt||new Date().toISOString()});
  persist();render();toast('New booking received from the public preview.');
 });}
+let pendingOwnerLiveWorkspace=null,ownerLiveRenderTimer;
+function queueOwnerLiveWorkspace(workspace){
+ pendingOwnerLiveWorkspace=workspace;clearTimeout(ownerLiveRenderTimer);
+ applyOwnerLiveWorkspace();
+}
+function applyOwnerLiveWorkspace(){
+ if(!pendingOwnerLiveWorkspace)return;
+ if(ownerBusy||document.activeElement?.matches('input,textarea,select,[contenteditable=true]')){
+  ownerLiveRenderTimer=setTimeout(applyOwnerLiveWorkspace,500);return;
+ }
+ const workspace=pendingOwnerLiveWorkspace;pendingOwnerLiveWorkspace=null;
+ const known=new Set((db.notifications||[]).map(n=>n.id));
+ const incoming=(workspace.notifications||[]).filter(n=>!n.read_at&&!known.has(n.id));
+ // Keep settings and uploads intact while booking data and badges update.
+ if(!['overview','calendar','bookings','transactions','notifications'].includes(view)){
+  db.bookings=workspace.bookings;db.notifications=workspace.notifications;updateOwnerNotificationBadge();
+ }else{db=workspace;window.courtlyOwnerState=db;render();}
+ if(incoming.length)toast(incoming[0].title||'New booking update received.');
+}
 async function initializeOwnerPortal(){
  if(ACTIVE_DEMO){workspaceReady=true;calendarDate=new Date(venueToday()+'T12:00:00');render();return;}
  workspaceReady=false;
@@ -1372,7 +1392,7 @@ async function initializeOwnerPortal(){
    const timer=setTimeout(()=>{window.removeEventListener('courtly-bridge-ready',ready);reject(new Error('The connection is taking too long. Please try again.'));},10000);
    window.addEventListener('courtly-bridge-ready',ready,{once:true});
   });
-  const loaded=await window.courtlyLoadOwnerWorkspace();db=loaded;window.courtlyOwnerState=db;workspaceReady=true;calendarDate=new Date(venueToday()+'T12:00:00');render();window.courtlyStartOwnerRealtime?.(({kind,workspace})=>{const prevUnread=unreadOwnerNotifications();db=workspace;window.courtlyOwnerState=db;render();if(kind==='notification'&&unreadOwnerNotifications()>prevUnread)toast('New Courtly notification received.');});
+  const loaded=await window.courtlyLoadOwnerWorkspace();db=loaded;window.courtlyOwnerState=db;workspaceReady=true;calendarDate=new Date(venueToday()+'T12:00:00');render();await window.courtlyStartOwnerRealtime?.(({workspace})=>queueOwnerLiveWorkspace(workspace));
  }catch(error){
   console.warn('Owner workspace could not be loaded:',error);
   $('workspaceModeLabel').textContent='Workspace unavailable';

@@ -314,6 +314,96 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
  .app .toast{bottom:calc(16px + env(safe-area-inset-bottom));font-size:14px}
 }
 </style>
+
+<style id="courtly-owner-mobile-vertical-v2">
+@media(max-width:680px){
+  html,body{max-width:100%;overflow-x:hidden!important}
+  body{background:#f5f7fb}
+  .app,.main,.content,.panel,.stats,.stat,.twocol,.court-cards,.billing-app,.billing-grid{min-width:0!important;max-width:100%!important}
+  .content{width:100%!important;padding:16px 12px 44px!important}
+  .side{position:sticky!important;top:0!important;width:100%!important;max-width:100%!important;padding:10px 12px!important}
+  .brand-logo{max-width:138px!important;height:38px!important;margin:0!important}
+  .brand-powered{display:none!important}
+  .mobile-menu-toggle{width:44px!important;height:44px!important}
+  .navlist{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:10px 0 3px!important}
+  .side.menu-open .navlist{display:grid!important}
+  .navbtn{min-width:0!important;min-height:46px!important;padding:10px 11px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:10px!important;font-size:12px!important;line-height:1.25!important}
+  .navbtn.active{background:var(--gold)!important;color:var(--navy)!important}
+  .topbar{position:static!important;min-height:58px!important;padding:10px 12px!important;gap:8px!important}
+  .topbar .crumb{font-size:9px!important;letter-spacing:.1em!important}
+  .topbar h2{font-size:17px!important;line-height:1.2!important}
+  .topright{gap:8px!important}.topright .muted.small,.owner-email{display:none!important}
+  .avatar{width:36px!important;height:36px!important;flex:0 0 36px!important}
+  .heading{display:block!important;margin-bottom:16px!important}
+  .heading h1{font-size:26px!important;line-height:1.12!important;margin:5px 0 7px!important}
+  .heading p{font-size:13px!important;line-height:1.55!important}
+  .heading>div:last-child,.heading .actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important;margin-top:12px!important;gap:8px!important}
+  .panel{padding:15px!important;margin-bottom:12px!important;border-radius:14px!important}
+  .panelhead{align-items:flex-start!important;margin-bottom:12px!important;gap:9px!important}
+  .panelhead h3{font-size:17px!important;line-height:1.25!important}
+  .panelhead>div:last-child{width:100%!important}
+  .stats,.statgrid{grid-template-columns:1fr!important;gap:9px!important}
+  .stat{padding:14px!important;border-radius:13px!important}
+  .stat strong{font-size:25px!important;margin-top:8px!important}
+  .stat-top{font-size:12px!important}
+  .twocol,.formgrid,.form-row,.court-cards,.billing-grid,.billing-form{grid-template-columns:1fr!important;gap:12px!important}
+  .field.full,.billing-form .full{grid-column:auto!important}
+  .field input,.field select,.field textarea,.select,.billing-form input,.billing-form select,.billing-form textarea{width:100%!important;max-width:100%!important;font-size:16px!important;min-height:48px!important}
+  .btn,.actions .btn,.formactions .btn,.billing-actions .btn{width:100%!important;min-width:0!important;min-height:46px!important;white-space:normal!important}
+  .actions,.formactions,.billing-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;overflow:visible!important;border-bottom:0!important}
+  .tab{width:100%!important;min-width:0!important;white-space:normal!important;border:1px solid var(--line)!important;border-radius:10px!important;background:#fff!important;padding:10px!important}
+  .tab.active{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
+  .range-filter,.earnings-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;max-width:100%!important;gap:6px!important;padding:6px!important}
+  .range-btn{width:100%!important;min-width:0!important;padding:10px 8px!important;white-space:normal!important}
+  .earnings-tabs .range-btn:last-child{grid-column:1/-1!important}
+
+  /* Every owner table becomes a readable vertical card list. */
+  .tablewrap{width:100%!important;max-width:100%!important;overflow:visible!important}
+  .table{display:block!important;width:100%!important;min-width:0!important;table-layout:auto!important}
+  .table thead{display:none!important}
+  .table tbody{display:grid!important;gap:10px!important;width:100%!important}
+  .table tr{display:block!important;width:100%!important;padding:12px!important;border:1px solid var(--line)!important;border-radius:12px!important;background:#fff!important;box-shadow:0 2px 10px rgba(10,17,40,.04)!important}
+  .table td{display:grid!important;grid-template-columns:minmax(92px,38%) minmax(0,1fr)!important;gap:8px!important;align-items:start!important;width:100%!important;max-width:100%!important;padding:7px 0!important;border-bottom:1px solid #eef1f5!important;font-size:12px!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  .table td:last-child{border-bottom:0!important}
+  .table td::before{content:attr(data-label);font-size:10px!important;line-height:1.35!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:var(--muted)!important;font-weight:700!important}
+  .table td[colspan]{display:block!important}
+  .table td[colspan]::before{display:none!important}
+  .table td .actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important}
+  .table td .pill{white-space:normal!important}
+
+  /* Mobile calendar is day-only and fully vertical. */
+  .owner-calendar-mode button:nth-child(2){display:none!important}
+  .owner-calendar-toolbar{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+  .owner-calendar-mode{display:grid!important;grid-template-columns:1fr!important}
+  .owner-calendar-date,.owner-calendar-court{width:100%!important}
+  .owner-calendar-date input,.owner-calendar-court select{width:100%!important;max-width:100%!important}
+  .owner-calendar-heading{display:grid!important;grid-template-columns:46px minmax(0,1fr) 46px!important;gap:8px!important;align-items:center!important}
+  .owner-calendar-heading .btn{width:46px!important;min-height:44px!important;padding:0!important}
+  .owner-calendar-heading h3{font-size:14px!important;text-align:center!important;min-width:0!important}
+  .calendar{width:100%!important;max-width:100%!important;overflow:visible!important}
+  .calendar table{width:100%!important;min-width:0!important;border-spacing:4px!important;table-layout:fixed!important}
+  .calendar th:first-child{width:70px!important}
+  .calendar th,.calendar td{min-width:0!important;padding:4px!important}
+  .calendar td:first-child{white-space:normal!important}
+  .slot{min-width:0!important;width:100%!important;min-height:50px!important;padding:8px 5px!important;font-size:11px!important}
+  .owner-calendar-legend{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+  .owner-calendar-legend .pill{justify-content:center!important;white-space:normal!important}
+
+  .photo-preview,.court-photo{max-width:100%!important;height:auto!important;min-height:160px!important}
+  .photo-preview img,.court-photo img{max-width:100%!important}
+  .notice{font-size:12px!important;line-height:1.55!important;padding:12px!important}
+  .toggleline{align-items:flex-start!important}
+  .footer-note{padding-bottom:max(8px,env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){
+  .navlist{grid-template-columns:1fr!important}
+  .tabs,.range-filter,.earnings-tabs{grid-template-columns:1fr!important}
+  .earnings-tabs .range-btn:last-child{grid-column:auto!important}
+  .table td{grid-template-columns:1fr!important;gap:3px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -446,7 +536,17 @@ function activationBanner(){
  if(status==='banned')return '<section class="panel" style="border:2px solid #b42318;background:#fff1f0;margin-bottom:18px;padding:28px"><div class="panelhead"><h3 style="font-size:28px">ACCOUNT BANNED</h3><span class="pill" style="background:#b42318;color:#fff">Banned</span></div><p class="muted">This venue account has been disabled by Courtly Administration. Contact Courtly Administration if you believe this needs review.</p></section>';
  return '';
 }
-function render(){const titles={overview:'Overview',calendar:'Booking calendar',openplay:'Open play events',bookings:'Reservations',courts:'Courts & rates',transactions:'Earnings & transactions',venue:'Venue profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',notifications:'Notifications'};$('pageTitle').textContent=titles[view];$('headerVenue').textContent=db.venue.name;const workspaceMode=$('workspaceModeLabel');if(workspaceMode)workspaceMode.textContent=ACTIVE_DEMO?'Demo workspace · saved in this browser':'Live venue workspace';const brand=$('sidebarBrand');if(brand)brand.innerHTML='<img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly">';$('avatar').textContent=(db.venue.owner||'CO').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();const c=$('content');if(view==='overview')c.innerHTML=overview();if(view==='calendar')c.innerHTML=calendar();if(view==='openplay')c.innerHTML=openPlayPage();if(view==='bookings')c.innerHTML=bookingsPage();if(view==='courts')c.innerHTML=courtsPage();if(view==='transactions')c.innerHTML=transactionsPage();if(view==='venue')c.innerHTML=venuePage();if(view==='payments')c.innerHTML=paymentsPage();if(view==='billing')c.innerHTML=billingPage();if(view==='notifications')c.innerHTML=notificationsPage();if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});prepareOwnerTables();if(view==='bookings')filterBookings();if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner)c.insertAdjacentHTML('afterbegin',banner)}
+function render(){const titles={overview:'Overview',calendar:'Booking calendar',openplay:'Open play events',bookings:'Reservations',courts:'Courts & rates',transactions:'Earnings & transactions',venue:'Venue profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',notifications:'Notifications'};$('pageTitle').textContent=titles[view];$('headerVenue').textContent=db.venue.name;const workspaceMode=$('workspaceModeLabel');if(workspaceMode)workspaceMode.textContent=ACTIVE_DEMO?'Demo workspace · saved in this browser':'Live venue workspace';const brand=$('sidebarBrand');if(brand)brand.innerHTML='<img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly">';$('avatar').textContent=(db.venue.owner||'CO').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();const c=$('content');if(view==='overview')c.innerHTML=overview();if(view==='calendar')c.innerHTML=calendar();if(view==='openplay')c.innerHTML=openPlayPage();if(view==='bookings')c.innerHTML=bookingsPage();if(view==='courts')c.innerHTML=courtsPage();if(view==='transactions')c.innerHTML=transactionsPage();if(view==='venue')c.innerHTML=venuePage();if(view==='payments')c.innerHTML=paymentsPage();if(view==='billing')c.innerHTML=billingPage();if(view==='notifications')c.innerHTML=notificationsPage();
+ if(window.matchMedia?.('(max-width:680px)').matches){
+   c.querySelectorAll('.table').forEach(table=>{
+     const labels=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim());
+     table.querySelectorAll('tbody tr').forEach(row=>{
+       [...row.children].forEach((cell,index)=>{
+         if(cell.tagName==='TD' && !cell.hasAttribute('colspan'))cell.dataset.label=labels[index]||'Details';
+       });
+     });
+   });
+ }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});prepareOwnerTables();if(view==='bookings')filterBookings();if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner)c.insertAdjacentHTML('afterbegin',banner)}
 function heading(title,desc,action=''){return `<div class="heading"><div><div class="eyebrow">YOUR COURT BUSINESS</div><h1>${title}</h1><p>${desc}</p></div>${action}</div>`}
 function stats(){const rows=confirmed();const courtGross=gross();const transactionFee=fees();return `<div class="stats"><div class="stat"><div class="stat-top">Court Rental Bookings <span class="stat-icon"></span></div><strong id="overviewCourtBookings">${rows.length}</strong><small>Confirmed and completed · ${earningsRange==='7d'?'Last 7 days':earningsRange==='30d'?'Last 30 days':'Last year'}</small></div><div class="stat"><div class="stat-top">Open Play Bookings <span class="stat-icon"></span></div><strong id="overviewOpenPlayBookings">—</strong><small>Confirmed registrations</small></div><div class="stat"><div class="stat-top">Court & Open Play Gross <span class="stat-icon">₱</span></div><strong id="overviewCombinedGross">${money(courtGross)}</strong><small>Court rental + confirmed Open Play registration amounts</small></div><div class="stat"><div class="stat-top">Convenience Fees to Remit <span class="stat-icon">−₱</span></div><strong id="overviewTransactionFee">${money(transactionFee)}</strong><small>Court rental fees you owe + player-paid Convenience Fees collected for Courtly</small></div><div class="stat"><div class="stat-top">Owner Net Earnings <span class="stat-icon"></span></div><strong id="overviewTotalGross">${money(courtGross-transactionFee)}</strong><small>Venue revenue after owner-paid fees; player fees are excluded from revenue</small></div></div>`}
 function table(items,actions=false){if(!items.length)return '<div class="empty">No reservations yet. Share your booking page to start receiving bookings.</div>';return `<div class="tablewrap"><table class="table"><thead><tr><th>Booking / Player</th><th>Date & time</th><th>Court</th><th>Court rental</th><th>Convenience Fee (owner)</th><th>Your net</th><th>Status / receipt</th>${actions?'<th>Actions</th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td><strong>${esc(b.reference||b.id)}</strong><br>${esc(b.player)}<br><span class="muted">${esc(b.email)}</span></td><td>${esc(b.date)}<br>${esc(b.time)}</td><td class="nowrap">${esc(b.court)}</td><td class="num">${money(b.price)}</td><td class="num">${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?bookingFee(b):0)}</td><td class="num"><strong>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</strong></td><td class="nowrap">${statusPill(displayBookingStatus(b))}${b.paymentScreenshotUrl?`<br><a href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer" class="muted small">View receipt </a>`:''}</td>${actions?`<td class="nowrap"><div class="actions">${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${b.id}')">Confirm paid</button>`:''}${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${b.id}')">Cancel</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
@@ -521,8 +621,9 @@ function calendarSlot(date,court,time,duration=1){
 function venueToday(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:db.venue.timezone||'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const part=name=>parts.find(p=>p.type===name)?.value;return `${part('year')}-${part('month')}-${part('day')}`;}
 function calendarToday(){calendarDate=new Date(venueToday()+'T12:00:00');render();}
 function setCalendarDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return;const date=new Date(value+'T12:00:00');if(!Number.isNaN(date.getTime())){calendarDate=date;render();}}
-function setCalendarMode(mode){calendarMode=mode==='day'?'day':'week';render();}
+function setCalendarMode(mode){calendarMode=window.matchMedia?.('(max-width:680px)').matches?'day':(mode==='day'?'day':'week');render();}
 function calendar(){
+ if(window.matchMedia?.('(max-width:680px)').matches)calendarMode='day';
  const start=new Date(calendarDate);if(calendarMode==='week')start.setDate(start.getDate()-((start.getDay()+6)%7));
  const days=Array.from({length:calendarMode==='day'?1:7},(_,i)=>plusDays(start,i));
  const open=timeMinutes(db.venue.hoursOpen),close=timeMinutes(db.venue.hoursClose),times=[];

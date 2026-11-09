@@ -117,12 +117,33 @@
       navigator.serviceWorker.register('/service-worker.js').catch(error => console.warn('Courtly service worker unavailable:', error.message));
     }
 
-    // Installation is offered from the player's Settings/Profile view only.
-    // Do not inject a floating install button across every Courtly page.
-    window.COURTLY_INSTALL_AVAILABLE = !(
-      window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true
-    );
+    // Installation is offered from Settings/Profile only.
+    // Capture the browser install event without injecting a floating button.
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    let installEvent = null;
+    window.COURTLY_INSTALL_AVAILABLE = !standalone;
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      installEvent = event;
+      window.COURTLY_INSTALL_AVAILABLE = true;
+    });
+    window.addEventListener('appinstalled', () => {
+      installEvent = null;
+      window.COURTLY_INSTALL_AVAILABLE = false;
+      window.dispatchEvent(new CustomEvent('courtly:installed'));
+    });
+    window.requestCourtlyInstall = async () => {
+      if (standalone || window.navigator.standalone === true) return { installed: true };
+      if (installEvent) {
+        installEvent.prompt();
+        const choice = await installEvent.userChoice;
+        if (choice?.outcome === 'accepted') installEvent = null;
+        return { installed: choice?.outcome === 'accepted', outcome: choice?.outcome || 'dismissed' };
+      }
+      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      if (isIos) return { installed: false, ios: true };
+      return { installed: false, unavailable: true };
+    };
   };
 
   const init = () => {

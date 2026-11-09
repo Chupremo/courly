@@ -161,6 +161,7 @@ export async function loadOwnerWorkspace() {
       activationStatus: (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now()) ? 'on_hold' : (venue.activation_status || 'trial'),
       trialDaysRemaining: venue.trial_ends_at ? Math.max(0, Math.ceil((new Date(venue.trial_ends_at).getTime() - Date.now()) / 86400000)) : null,
       trialExpired: venue.activation_status === 'on_hold' || (venue.activation_status === 'trial' && venue.trial_ends_at && new Date(venue.trial_ends_at).getTime() <= Date.now()),
+      isPublished: venue.is_published === true,
       bookingActivationReady: ['trial','active'].includes(venue.activation_status || 'trial') && (!venue.trial_ends_at || new Date(venue.trial_ends_at).getTime() > Date.now() || venue.activation_status === 'active') && venue.is_published !== false
     }
   };
@@ -277,6 +278,16 @@ async function persistOwnerWorkspace(state, change = {}) {
       address: v.location, city: v.city || null, sport: v.sport, description: v.description,
       amenities: Array.isArray(v.amenities) ? v.amenities : [], logo_url: v.logoData || null, cover_url: v.coverData || null
     });
+  } else if (change.scope === 'publication') {
+    const publish = change.publish === true;
+    if (publish) {
+      const status = v.activationStatus || 'trial';
+      const trialValid = status === 'active' || (status === 'trial' && (!v.trialEndsAt || new Date(v.trialEndsAt).getTime() > Date.now()));
+      if (!trialValid) throw new Error('This venue cannot be published because the trial is no longer active. Contact Courtly Administration for activation.');
+    }
+    await updateVenueFields(v.id, { is_published: publish });
+    v.isPublished = publish;
+    v.bookingActivationReady = publish && ['trial','active'].includes(v.activationStatus || 'trial') && (!v.trialEndsAt || new Date(v.trialEndsAt).getTime() > Date.now() || v.activationStatus === 'active');
   } else if (change.scope === 'payments') {
     v.qrData = await uploadDataUrlOrKeep(v.qrData, v.id, 'payment-qr');
     await updateVenueFields(v.id, {

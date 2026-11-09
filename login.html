@@ -67,6 +67,9 @@ function setMode(next){if(authPending)return;signup=next;document.getElementById
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
 function routeTo(fallback){location.replace(safeReturnTo(signupParams.get('returnTo'),fallback,location.origin));}
+if(signupParams.get('confirmed')==='1'){
+ message('Your email has been confirmed. Log in to open your owner portal.','success');
+}
 async function routeSignedInAccount(user){
  const accountType=String(user.user_metadata?.account_type||'').toLowerCase();
  if(['club','sports_club'].includes(accountType)){routeTo('/club-dashboard.html');return;}
@@ -87,17 +90,39 @@ form.addEventListener('submit',async e=>{
   if(signup){
    const business=document.getElementById('business').value.trim();
    if(!business)throw new Error('Please enter your venue or business name.');
-   const {data,error}=await supabase.auth.signUp({email,password,options:{data:{account_type:'venue_owner',owner_name:document.getElementById('ownerName').value.trim(),owner_phone:document.getElementById('ownerPhone').value.trim(),business_name:business,business_address:document.getElementById('address').value.trim(),city:document.getElementById('city').value.trim(),sport:document.getElementById('sport').value.trim()||'Multi-sport',court_count:document.getElementById('courtCount').value||'1'}}});
-   if(error)throw error;
-   if(data.session){message('Account created. Opening your owner portal...','success');location.replace('/owner-portal.html');}
-   else message('Account created. Please confirm your email, then return here to log in.','success');
+   const response=await fetch('/api/auth/owner-signup',{
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({
+       email,password,
+       ownerName:document.getElementById('ownerName').value.trim(),
+       ownerPhone:document.getElementById('ownerPhone').value.trim(),
+       businessName:business,
+       businessAddress:document.getElementById('address').value.trim(),
+       city:document.getElementById('city').value.trim(),
+       sport:document.getElementById('sport').value.trim()||'Multi-sport',
+       courtCount:document.getElementById('courtCount').value||'1',
+       returnTo:safeReturnTo(signupParams.get('returnTo'),'/owner-portal.html',location.origin)
+     })
+   });
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok){
+     const error=new Error(result.error||'Unable to create your owner account. Please try again.');
+     error.code=result.code||'';
+     throw error;
+   }
+   message('Owner account created. We sent a confirmation link to '+email+'. Open that email to verify your address, then return here to log in.','success');
   }else{
    const {data,error}=await supabase.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data.session)throw new Error('Login did not create a session. Please try again.');
    message('Login successful. Opening your workspace…','success');await routeSignedInAccount(data.user);
   }
- }catch(err){message(err.message||'Unable to continue. Please try again.');}
+ }catch(err){
+   if(err.code==='SIGNUP_COOLDOWN'||err.code==='EMAIL_PROVIDER_RATE_LIMIT') message(err.message||'A verification email was already requested. Please wait a minute before trying again.');
+   else if(err.code==='ACCOUNT_EXISTS') message('An account already exists for this email. Switch to Log in and use your existing password.');
+   else message(err.message||'Unable to continue. Please try again.');
+ }
  finally{authPending=false;button.disabled=false;document.getElementById('toggleMode').disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
 });
 </script>

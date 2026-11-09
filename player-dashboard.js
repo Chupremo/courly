@@ -8,7 +8,7 @@ const money = (value) => '₱' + Number(value || 0).toLocaleString('en-PH', { ma
 const sports = [
   ['Pickleball','PKL'],['Basketball','BKB'],['Padel','PDL'],['Archery','ARC'],['Badminton','BDM'],['Lawn Tennis','TNS'],['Billiards','BIL'],['Dart','DRT'],['Golf','GLF'],['Boxing','BOX'],['Swimming','SWM'],['Muay Thai','MT'],['Volleyball','VBL'],['Gym','GYM'],['Gymnastics','GYM'],['Table Tennis','TT'],['Yoga','YGA'],['Dance Studio','DNC'],['Football','FTB'],['Futsal','FTS'],['Bowling','BWL'],['Other','OTH']
 ];
-let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], paymentReceipts = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [], playerHomePosts = [];
+let user = null, profile = null, profileAvatarUrl = '', venues = [], openPlayEvents = [], bookings = [], registrations = [], paymentReceipts = [], playerDirectory = [], clubInviteTargets = [], playerClubInvites = [], playerHomePosts = [], playerNotifications = [];
 let inviteTargetPlayerId = null;
 let directorySearch = '';
 let discoverPlayersLoaded = false;
@@ -21,6 +21,35 @@ let bookingFilter = 'all', tournamentTab = 'active', bookingFrom = '', bookingTo
 let toastTimer;
 
 function notify(text) { const node=$('toast'); node.textContent=text; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),3400); }
+function playerUnreadNotifications(){return playerNotifications.filter(n=>!n.read_at).length;}
+function renderPlayerNotifications(){
+  const badge=$('playerNotificationBadge'),menu=$('playerNotificationMenu');
+  const count=playerUnreadNotifications();
+  if(badge){badge.textContent=count>99?'99+':String(count);badge.classList.toggle('show',count>0);}
+  if(menu)menu.innerHTML=playerNotifications.length?playerNotifications.map(n=>'<a class="player-notify-item '+(n.read_at?'':'unread')+'" href="'+esc(n.href||'/player-dashboard.html?view=bookings')+'" data-notification-id="'+esc(n.id)+'"><strong>'+esc(n.title)+'</strong><span>'+esc(n.body)+'</span><small>'+new Date(n.created_at).toLocaleString('en-PH')+'</small></a>').join(''):'<div class="player-notify-item"><span>No notifications yet.</span></div>';
+}
+async function loadPlayerNotifications(){
+  const {data,error}=await supabase.from('user_notifications').select('*').eq('recipient_user_id',user.id).eq('audience','player').order('created_at',{ascending:false}).limit(50);
+  if(error)throw error;playerNotifications=data||[];renderPlayerNotifications();
+}
+async function markPlayerNotificationsRead(){
+  const ids=playerNotifications.filter(n=>!n.read_at).map(n=>n.id);if(!ids.length)return;
+  playerNotifications.forEach(n=>{if(ids.includes(n.id))n.read_at=new Date().toISOString();});renderPlayerNotifications();
+  const {error}=await supabase.from('user_notifications').update({read_at:new Date().toISOString()}).in('id',ids);
+  if(error)console.warn('Could not mark player notifications read:',error.message);
+}
+function startPlayerRealtime(){
+  supabase.channel('courtly-player-live-'+user.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'user_notifications',filter:`recipient_user_id=eq.${user.id}`},async payload=>{
+      await loadPlayerNotifications();
+      const item=payload.new;if(item?.audience==='player')notify(item.title||'New Courtly notification');
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'bookings',filter:`player_id=eq.${user.id}`},async()=>{
+      await loadPlayerActivity();if(view==='bookings')renderBookings();
+    })
+    .subscribe();
+}
+
 function initials(name='Player') { return String(name).trim().split(/\s+/).map(part=>part[0]||'').join('').slice(0,2).toUpperCase() || 'P'; }
 function avatarMarkup(url,name='Player',klass='avatar') { return `<span class="${klass}">${url?`<img src="${esc(url)}" alt="${esc(name)} profile photo">`:esc(initials(name))}</span>`; }
 function formatDate(value) { if(!value)return 'Date to be confirmed'; return new Intl.DateTimeFormat('en-PH',{weekday:'short',month:'short',day:'numeric',year:'numeric',timeZone:'Asia/Manila'}).format(new Date(value)); }
@@ -590,7 +619,8 @@ async function init() {
   profile=await syncPlayerProfile(supabase,user);
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
-  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews()]);
+  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews(),loadPlayerNotifications()]);
+  startPlayerRealtime();
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
   const refreshSportsNews=async()=>{
@@ -613,6 +643,10 @@ async function init() {
   }
   if(!selectedSport&&view==='home')openSportModal();
 }
+const playerNotificationButton=$('playerNotificationButton'),playerNotificationMenu=$('playerNotificationMenu');
+playerNotificationButton?.addEventListener('click',async event=>{event.stopPropagation();const open=playerNotificationMenu.hidden;playerNotificationMenu.hidden=!open;if(open)await markPlayerNotificationsRead();});
+playerNotificationMenu?.addEventListener('click',event=>event.stopPropagation());
+document.addEventListener('click',()=>{if(playerNotificationMenu)playerNotificationMenu.hidden=true;});
 const mobileMenuButton = $('mobileMenuButton');
 const mobileSidebar = $('playerSidebar');
 const mobileNavBackdrop = $('mobileNavBackdrop');

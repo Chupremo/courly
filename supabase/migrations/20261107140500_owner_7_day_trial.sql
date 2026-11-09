@@ -1,0 +1,3 @@
+-- Historical production migration marker.
+-- This version was applied remotely during the owner trial rollout.
+-- The effective schema is represented by 202611070002_owner_7_day_trial.sql and later owner activation migrations.

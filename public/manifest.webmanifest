@@ -1,0 +1,40 @@
+{
+  "id": "/",
+  "name": "Courtly Philippines",
+  "short_name": "Courtly",
+  "description": "Find courts, connect with players, book games and manage sports venues with Courtly.",
+  "start_url": "/player-dashboard.html?view=home",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#ffffff",
+  "theme_color": "#001A47",
+  "orientation": "portrait-primary",
+  "categories": ["sports", "social", "lifestyle"],
+  "lang": "en-PH",
+  "icons": [
+    {
+      "src": "/courtly-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Discover courts",
+      "short_name": "Discover",
+      "url": "/player-dashboard.html?view=discover"
+    },
+    {
+      "name": "My bookings",
+      "short_name": "Bookings",
+      "url": "/player-dashboard.html?view=bookings"
+    },
+    {
+      "name": "Players",
+      "short_name": "Players",
+      "url": "/player-dashboard.html?view=players"
+    }
+  ]
+}

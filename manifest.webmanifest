@@ -6,15 +6,28 @@
   "start_url": "/player-dashboard.html?view=home",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
   "background_color": "#ffffff",
   "theme_color": "#001A47",
   "orientation": "portrait-primary",
-  "categories": ["sports", "social", "lifestyle"],
+  "categories": [
+    "sports",
+    "social",
+    "lifestyle"
+  ],
   "lang": "en-PH",
   "icons": [
     {
-      "src": "/courtly-app-icon.svg",
+      "src": "/courtly-app-icon-180.png?v=20261109",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/courtly-app-icon.svg?v=20261109",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

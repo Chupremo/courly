@@ -30,12 +30,7 @@
     <div class="brand-wrap"><a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a></div>
     <section class="intro"><h1>Join Courtly as a Player</h1><p>Discover courts, book your next game and connect with your local sports community.</p></section>
     <a class="login-cta" href="/player-login.html">Already have an account? Log in</a>
-    <p class="login-caption">Create your player account with Google, Facebook, or email.</p>
-    <div class="social-auth" aria-label="Social registration">
-      <button class="social-btn" id="googleSignup" type="button"><span class="social-icon">G</span> Continue with Google</button>
-      <button class="social-btn" id="facebookSignup" type="button"><span class="social-icon">f</span> Continue with Facebook</button>
-    </div>
-    <div class="or-divider">or register with email</div>
+    <p class="login-caption">Create your player account using your email address.</p>
     <form class="card" id="registerForm">
       <section class="avatar-area">
         <label class="avatar-label" for="avatarFile">Profile Picture <span style="color:#8994a8;font-weight:400">(Optional)</span></label>
@@ -83,20 +78,6 @@
       try { const url = new URL(value, location.origin); if (url.origin !== location.origin) return '/player-dashboard.html?welcome=1'; return url.pathname + url.search + url.hash; } catch { return '/player-dashboard.html?welcome=1'; }
     }
     const returnTo = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
-    async function socialSignup(provider){
-      if(!supabase){showMessage('Social registration is temporarily unavailable.');return;}
-      const socialButtons=[$('googleSignup'),$('facebookSignup')]; socialButtons.forEach(b=>b.disabled=true);
-      try{
-        const redirectTo=`${getCourtlyAppUrl()}/player-profile-setup.html?social=1&returnTo=${encodeURIComponent(returnTo)}`;
-        const {error}=await supabase.auth.signInWithOAuth({provider,options:{redirectTo}});
-        if(error) throw error;
-      }catch(error){
-        socialButtons.forEach(b=>b.disabled=false);
-        showMessage(error.message || 'Could not start social registration. Please try again.');
-      }
-    }
-    $('googleSignup').addEventListener('click',()=>socialSignup('google'));
-    $('facebookSignup').addEventListener('click',()=>socialSignup('facebook'));
     document.querySelector('.login-cta').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
     // Registered players return to their dashboard; owners can explicitly switch to a player account.
     supabase?.auth.getSession().then(async ({data,error})=>{

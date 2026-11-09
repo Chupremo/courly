@@ -88,7 +88,76 @@
     }, { passive: true });
   };
 
+  const setupPwa = () => {
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = '/manifest.webmanifest';
+      document.head.appendChild(manifest);
+    }
+    const ensureMeta = (name, content) => {
+      if (document.querySelector(`meta[name="${name}"]`)) return;
+      const meta = document.createElement('meta');
+      meta.name = name;
+      meta.content = content;
+      document.head.appendChild(meta);
+    };
+    ensureMeta('theme-color', '#001A47');
+    ensureMeta('apple-mobile-web-app-capable', 'yes');
+    ensureMeta('apple-mobile-web-app-status-bar-style', 'default');
+    ensureMeta('apple-mobile-web-app-title', 'Courtly');
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      const icon = document.createElement('link');
+      icon.rel = 'apple-touch-icon';
+      icon.href = '/courtly-logo.png';
+      document.head.appendChild(icon);
+    }
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('/service-worker.js').catch(error => console.warn('Courtly service worker unavailable:', error.message));
+    }
+
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (standalone || document.getElementById('courtlyInstallApp')) return;
+
+    let installEvent = null;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'courtlyInstallApp';
+    button.textContent = 'Install Courtly';
+    button.setAttribute('aria-label', 'Install Courtly on this device');
+    Object.assign(button.style, {
+      position: 'fixed', right: '16px', bottom: 'calc(16px + env(safe-area-inset-bottom))',
+      zIndex: '9999', border: '0', borderRadius: '999px', padding: '12px 18px',
+      background: '#001A47', color: '#fff', font: '700 13px Inter,system-ui,sans-serif',
+      boxShadow: '0 12px 30px rgba(0,26,71,.25)', display: 'none'
+    });
+    document.body.appendChild(button);
+
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      installEvent = event;
+      button.style.display = 'block';
+    });
+    window.addEventListener('appinstalled', () => { button.remove(); installEvent = null; });
+
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+    if (isIos && isSafari) button.style.display = 'block';
+
+    button.addEventListener('click', async () => {
+      if (installEvent) {
+        installEvent.prompt();
+        await installEvent.userChoice;
+        installEvent = null;
+        button.style.display = 'none';
+        return;
+      }
+      if (isIos) alert('To install Courtly on iPhone: tap the Share button in Safari, then choose “Add to Home Screen”.');
+    });
+  };
+
   const init = () => {
+    setupPwa();
     document.querySelectorAll('header.topbar').forEach(setupMarketingHeader);
 
     // Directory pages with a single navigation row.

@@ -1,0 +1,3 @@
+-- Historical production migration marker.
+-- This version was applied remotely during the owner trial rollout.
+-- No additional schema delta is required beyond the retained owner trial migration and later hardening.

@@ -611,6 +611,127 @@ body{background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",s
 }
 </style>
 
+
+<style id="courtly-owner-responsive-v6">
+/* Fluid owner portal: phone → tablet → laptop → desktop */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.app,.main,.content,.owner-overview{min-width:0}
+
+/* Large desktop */
+@media(min-width:1400px){
+  .app{grid-template-columns:238px minmax(0,1fr)!important}
+  .content{width:min(100%,1380px)!important;max-width:1380px!important;padding:30px 36px 64px!important}
+  .owner-overview{max-width:1240px!important}
+  .ov-kpis{grid-template-columns:repeat(4,minmax(210px,1fr))!important}
+}
+
+/* Standard desktop / laptop */
+@media(min-width:1200px) and (max-width:1399px){
+  .app{grid-template-columns:218px minmax(0,1fr)!important}
+  .side{padding-left:12px!important;padding-right:12px!important}
+  .content{width:100%!important;max-width:none!important;padding:26px 28px 58px!important}
+  .owner-overview{max-width:none!important;margin:0!important}
+  .ov-kpis{grid-template-columns:repeat(4,minmax(170px,1fr))!important}
+  .ov-kpi{padding:14px!important}
+  .ov-kpi strong{font-size:21px!important}
+  .booking-card-main{grid-template-columns:1fr 1.4fr .9fr auto!important}
+}
+
+/* Tablets and small laptops use app-bar + hamburger instead of squeezed sidebar */
+@media(min-width:681px) and (max-width:1199px){
+  .app{display:block!important}
+  .side{
+    position:sticky!important;top:0!important;z-index:40!important;
+    width:100%!important;height:auto!important;min-height:72px!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr) 46px!important;
+    grid-template-rows:auto auto!important;align-items:center!important;
+    padding:10px 18px!important;border:0!important;
+    background:var(--navy)!important;color:#fff!important;
+  }
+  .brand{grid-column:1!important;grid-row:1!important;padding:0!important;margin:0!important;justify-self:start!important}
+  .brand .owner-venue-brand-logo,.brand .courtly-brand-logo{
+    max-width:160px!important;max-height:40px!important;
+    margin:0!important;background:#fff!important;border-radius:6px!important;padding:4px 7px!important;
+    object-fit:contain!important;object-position:left center!important;
+  }
+  .brand-powered{
+    display:block!important;grid-column:1!important;grid-row:2!important;
+    padding:0!important;margin:3px 0 0!important;color:#fff!important;
+    font-size:7px!important;letter-spacing:.13em!important;text-transform:uppercase!important;
+  }
+  .mobile-menu-toggle{
+    display:flex!important;grid-column:2!important;grid-row:1/3!important;
+    justify-self:end!important;align-self:center!important;border-color:#ffffff55!important;color:#fff!important;
+  }
+  .side>small,.side-bottom{display:none!important}
+  .navlist{display:none!important;grid-column:1/-1!important;width:100%!important}
+  .side.menu-open .navlist{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:6px!important;margin-top:12px!important;padding:10px!important;
+    background:#fff!important;border-radius:13px!important;box-shadow:0 16px 38px rgba(0,0,0,.18)!important;
+  }
+  .side.menu-open .navbtn{
+    color:#52617a!important;background:#fff!important;border:0!important;
+    min-height:46px!important;padding:11px 12px!important;
+  }
+  .side.menu-open .navbtn.active{background:#eef9d7!important;color:var(--navy)!important}
+  .owner-nav-separator{grid-column:1/-1!important;margin:4px 0!important;background:var(--line)!important}
+  .owner-mobile-account{display:grid!important;grid-column:1/-1!important}
+  .topbar{display:none!important}
+  .content{
+    width:100%!important;max-width:none!important;margin:0!important;
+    padding:22px clamp(18px,3vw,30px) 54px!important;
+  }
+  .owner-overview{width:100%!important;max-width:none!important;margin:0!important}
+  .heading h1{font-size:clamp(28px,4vw,36px)!important}
+  .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  .ov-kpi{min-width:0!important;padding:16px!important}
+  .ov-kpi strong{font-size:24px!important}
+  .ov-booking-row{grid-template-columns:1fr 1fr auto!important}
+  .ov-reservation-row{grid-template-columns:1fr 1.15fr .9fr auto!important}
+  .booking-summary-v2{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .booking-card-main{grid-template-columns:1fr 1.25fr .9fr auto!important}
+  .settings-links-v2{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .formgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .panel{max-width:100%!important}
+  .calendar{max-width:100%!important;overflow-x:auto!important}
+}
+
+/* Portrait tablet */
+@media(min-width:681px) and (max-width:860px){
+  .side.menu-open .navlist{grid-template-columns:1fr!important}
+  .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .ov-reservation-row{grid-template-columns:1fr auto!important}
+  .ov-res-date,.ov-res-money{grid-column:1!important}
+  .ov-res-status{grid-column:2!important;grid-row:1/4!important;align-self:center!important}
+  .booking-card-main{grid-template-columns:1fr auto!important}
+  .booking-card-title,.booking-card-meta,.booking-card-money{grid-column:1!important}
+  .booking-card-status{grid-column:2!important;grid-row:1/4!important;align-self:center!important}
+  .settings-links-v2{grid-template-columns:1fr!important}
+  .formgrid{grid-template-columns:1fr!important}
+}
+
+/* Phones */
+@media(max-width:680px){
+  .content{width:100%!important;max-width:none!important;margin:0!important;padding:14px 8px 42px!important}
+  .owner-overview{width:100%!important;max-width:none!important;margin:0!important}
+  .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .panel,.ov-kpi,.booking-summary-v2>div{min-width:0!important}
+}
+
+/* Very small phones */
+@media(max-width:390px){
+  .ov-kpis{grid-template-columns:1fr!important}
+  .booking-summary-v2{grid-template-columns:1fr!important}
+  .content{padding-left:7px!important;padding-right:7px!important}
+}
+
+/* Never let dashboard values force a column wider than its container. */
+.ov-kpi strong,.booking-card-money strong,.stat strong{
+  overflow-wrap:anywhere!important;word-break:normal!important;min-width:0!important
+}
+</style>
+
 </head>
 <body>
 <div class="app">

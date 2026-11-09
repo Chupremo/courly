@@ -29,7 +29,7 @@ export async function syncPlayerProfile(supabase, user) {
     phone: existing?.phone || metadata.phone || null,
     skill_level: VALID_SKILL_LEVELS.has(skillCandidate) ? skillCandidate : 'Beginner',
     is_private: existing?.is_private ?? Boolean(metadata.is_private),
-    avatar_url: existing?.avatar_url || null,
+    avatar_url: existing?.avatar_url || metadata.avatar_url || metadata.picture || null,
     preferred_sport: existing?.preferred_sport || metadata.preferred_sport || null,
     updated_at: new Date().toISOString()
   };

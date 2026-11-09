@@ -67,6 +67,7 @@ export default defineConfig({
         myBookings: resolve(process.cwd(), 'my-bookings.html'),
         playerRegister: resolve(process.cwd(), 'player-register.html'),
         playerLogin: resolve(process.cwd(), 'player-login.html'),
+        playerProfileSetup: resolve(process.cwd(), 'player-profile-setup.html'),
         playerDashboard: resolve(process.cwd(), 'player-dashboard.html'),
         community: resolve(process.cwd(), 'community.html'),
         communityEvent: resolve(process.cwd(), 'community-event.html'),

@@ -22,10 +22,63 @@ let toastTimer;
 
 function notify(text) { const node=$('toast'); node.textContent=text; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),3400); }
 function playerUnreadNotifications(){return playerNotifications.filter(n=>!n.read_at).length;}
+const COURTLY_VAPID_PUBLIC_KEY='BHZUQmax-3Y5L8BNx0HS5KkN7NRo8BZtBCzAuDBmZVNbAMAaQMX06g3TEoTNSjZ_DH7eQ-x7dXLnRTBZxxsXMTM';
+function urlBase64ToUint8Array(value){
+  const padding='='.repeat((4-value.length%4)%4);
+  const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw=atob(base64);
+  return Uint8Array.from([...raw].map(ch=>ch.charCodeAt(0)));
+}
+async function syncInstalledAppBadge(){
+  const count=playerUnreadNotifications();
+  try{
+    if(count>0&&navigator.setAppBadge)await navigator.setAppBadge(count);
+    else if(count===0&&navigator.clearAppBadge)await navigator.clearAppBadge();
+  }catch{}
+}
+async function registerCourtlyServiceWorker(){
+  if(!('serviceWorker' in navigator))return null;
+  try{return await navigator.serviceWorker.register('/service-worker.js?v=push-badge-20261109',{scope:'/'});}
+  catch(error){console.warn('Courtly service worker registration failed:',error.message);return null;}
+}
+async function savePushSubscription(subscription){
+  const json=subscription?.toJSON?.();
+  const endpoint=json?.endpoint||subscription?.endpoint;
+  const keys=json?.keys||{};
+  if(!endpoint||!keys.p256dh||!keys.auth||!user?.id)return;
+  const {error}=await supabase.from('push_subscriptions').upsert({
+    user_id:user.id,
+    endpoint,
+    p256dh:keys.p256dh,
+    auth_secret:keys.auth,
+    user_agent:navigator.userAgent,
+    updated_at:new Date().toISOString()
+  },{onConflict:'endpoint'});
+  if(error)throw error;
+}
+async function ensureCourtlyPush({askPermission=false}={}){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))return false;
+  let permission=Notification.permission;
+  if(permission==='default'&&askPermission)permission=await Notification.requestPermission();
+  if(permission!=='granted')return false;
+  const registration=await registerCourtlyServiceWorker();
+  if(!registration)return false;
+  let subscription=await registration.pushManager.getSubscription();
+  if(!subscription){
+    subscription=await registration.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(COURTLY_VAPID_PUBLIC_KEY)
+    });
+  }
+  await savePushSubscription(subscription);
+  await syncInstalledAppBadge();
+  return true;
+}
+
 function renderPlayerNotifications(){
   const badge=$('playerNotificationBadge'),menu=$('playerNotificationMenu');
   const count=playerUnreadNotifications();
-  if(badge){badge.textContent=count>99?'99+':String(count);badge.classList.toggle('show',count>0);}
+  if(badge){badge.textContent=count>99?'99+':String(count);badge.classList.toggle('show',count>0);} void syncInstalledAppBadge();
   if(menu)menu.innerHTML=playerNotifications.length?playerNotifications.map(n=>'<a class="player-notify-item '+(n.read_at?'':'unread')+'" href="'+esc(n.href||'/player-dashboard.html?view=bookings')+'" data-notification-id="'+esc(n.id)+'"><strong>'+esc(n.title)+'</strong><span>'+esc(n.body)+'</span><small>'+new Date(n.created_at).toLocaleString('en-PH')+'</small></a>').join(''):'<div class="player-notify-item"><span>No notifications yet.</span></div>';
 }
 async function loadPlayerNotifications(){
@@ -621,6 +674,9 @@ async function init() {
   await resolvePlayerAvatar();
   await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews(),loadPlayerNotifications()]);
   startPlayerRealtime();
+  await registerCourtlyServiceWorker();
+  if('Notification' in window&&Notification.permission==='granted')void ensureCourtlyPush();
+  await syncInstalledAppBadge();
   await refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
   const refreshSportsNews=async()=>{
@@ -644,7 +700,7 @@ async function init() {
   if(!selectedSport&&view==='home')openSportModal();
 }
 const playerNotificationButton=$('playerNotificationButton'),playerNotificationMenu=$('playerNotificationMenu');
-playerNotificationButton?.addEventListener('click',async event=>{event.stopPropagation();const open=playerNotificationMenu.hidden;playerNotificationMenu.hidden=!open;if(open)await markPlayerNotificationsRead();});
+playerNotificationButton?.addEventListener('click',async event=>{event.stopPropagation();const open=playerNotificationMenu.hidden;playerNotificationMenu.hidden=!open;if(open){try{await ensureCourtlyPush({askPermission:true});}catch(error){console.warn('Courtly push setup failed:',error.message);}await markPlayerNotificationsRead();}});
 playerNotificationMenu?.addEventListener('click',event=>event.stopPropagation());
 document.addEventListener('click',()=>{if(playerNotificationMenu)playerNotificationMenu.hidden=true;});
 const mobileMenuButton = $('mobileMenuButton');

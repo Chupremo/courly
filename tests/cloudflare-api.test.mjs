@@ -206,3 +206,75 @@ test('activity lookup failures keep sensitive provider exception contents out of
   assert.ok(!(await response.text()).includes(env.SUPABASE_SERVICE_ROLE_KEY));
   assert.ok(!JSON.stringify(logs).includes(env.SUPABASE_SERVICE_ROLE_KEY));
 });
+
+
+test('account deletion requires explicit DELETE confirmation before backend work', async t => {
+  t.mock.method(console, 'error', () => {});
+  let authenticated = false;
+  const handlers = createApiHandlers(env, {
+    backend: {
+      authenticate: async () => { authenticated = true; return { id: actorId }; }
+    }
+  });
+  const response = await invokeNodeHandler(request('/api/account/delete', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer fictional-player-token', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ confirmation: 'NO' })
+  }), handlers['/api/account/delete']);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).code, 'CONFIRMATION_REQUIRED');
+  assert.equal(authenticated, false);
+});
+
+test('account deletion anonymises retained records, removes avatar, then deletes auth user', async () => {
+  const calls = [];
+  const handlers = createApiHandlers(env, {
+    backend: {
+      authenticate: async req => {
+        assert.equal(req.headers.authorization, 'Bearer fictional-player-token');
+        return { id: actorId };
+      },
+      rest: async path => {
+        assert.equal(path, `player_profiles?id=eq.${actorId}&select=id,avatar_url`);
+        return [{ id: actorId, avatar_url: actorId + '/avatar.webp' }];
+      },
+      rpc: async (name, args) => {
+        calls.push(['rpc', name, args]);
+        assert.equal(name, 'courtly_prepare_player_account_deletion');
+        assert.deepEqual(args, { p_user_id: actorId });
+        return true;
+      }
+    },
+    admin: {
+      storage: {
+        from: bucket => {
+          assert.equal(bucket, 'courtly-player-avatars');
+          return {
+            remove: async paths => {
+              calls.push(['remove', paths]);
+              assert.deepEqual(paths, [actorId + '/avatar.webp']);
+              return { error: null };
+            }
+          };
+        }
+      },
+      auth: {
+        admin: {
+          deleteUser: async idToDelete => {
+            calls.push(['deleteUser', idToDelete]);
+            assert.equal(idToDelete, actorId);
+            return { error: null };
+          }
+        }
+      }
+    }
+  });
+  const response = await invokeNodeHandler(request('/api/account/delete', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer fictional-player-token', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ confirmation: 'DELETE' })
+  }), handlers['/api/account/delete']);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { success: true });
+  assert.deepEqual(calls.map(row => row[0]), ['remove', 'rpc', 'deleteUser']);
+});

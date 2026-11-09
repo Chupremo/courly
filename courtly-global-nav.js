@@ -15,8 +15,8 @@ function headerMarkup(role, displayName) {
       links += '<a href="/player-dashboard.html?view=home">Player dashboard</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/player-dashboard.html?view=profile">My profile</a><a href="/player-dashboard.html?view=bookings">My bookings</a><a href="/player-dashboard.html?view=invites">Club invitations</a><a href="/player-messages.html">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'coach') {
-      links += '<a href="/coach-portal.html">Coach portal</a>';
-      links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/coach-portal.html?view=profile">Coach profile</a><a href="/coach-portal.html?view=sessions">Coaching sessions</a><a href="/coach-portal.html?view=availability">Availability & rates</a><a href="/coach-portal.html?view=messages">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
+      links += '<a href="/coach-portal.html">Coach Dashboard</a>';
+      links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/coach-portal.html">Coach Dashboard</a><a href="/coach-portal.html?view=profile">Coach profile</a><a href="/coach-portal.html?view=sessions">Coaching sessions</a><a href="/coach-portal.html?view=availability">Availability & rates</a><a href="/coach-portal.html?view=messages">Messages</a><button type="button" data-ct-logout>Log out</button></div></details>`;
     } else if (role === 'owner') {
       links += '<a href="/owner-portal.html">Owner portal</a>';
       links += `<details class="ct-dropdown"><summary>My account</summary><div class="ct-menu-panel"><a href="/owner-portal.html">Manage my venue</a><a href="/community.html">Community</a><button type="button" data-ct-logout>Log out</button></div></details>`;
@@ -41,6 +41,11 @@ async function resolveRole() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) return { role: 'guest', displayName: 'Guest' };
   const type = String(user.user_metadata?.account_type || '').toLowerCase();
+  const coachContext = /^\/(coach(?:-|\/)|coaches(?:\.|\/|$)|my-coaching-sessions(?:\.|\/|$))/.test(location.pathname);
+  if (coachContext) {
+    const { data: coach } = await supabase.from('coach_profiles').select('coach_name').eq('id', user.id).maybeSingle();
+    if (coach) return { role: 'coach', displayName: coach.coach_name || user.user_metadata?.coach_name || 'Coach' };
+  }
   if (type === 'courtly_admin') return { role: 'admin', displayName: user.user_metadata?.full_name || user.email };
   if (type === 'coach') {
     const { data: coach } = await supabase.from('coach_profiles').select('coach_name').eq('id', user.id).maybeSingle();

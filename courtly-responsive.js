@@ -109,7 +109,7 @@
     if (!document.querySelector('link[rel="apple-touch-icon"]')) {
       const icon = document.createElement('link');
       icon.rel = 'apple-touch-icon';
-      icon.href = '/courtly-logo.png';
+      icon.href = '/assets/courtly-logo.png';
       document.head.appendChild(icon);
     }
     if ('serviceWorker' in navigator && location.protocol === 'https:') {

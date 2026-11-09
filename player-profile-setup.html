@@ -51,22 +51,50 @@ function safeReturnTo(value){if(!value||!value.startsWith('/')||value.startsWith
 const returnTo=safeReturnTo(params.get('returnTo'));
 const show=(text,type='error')=>{const m=$('msg');m.textContent=text;m.className='msg show '+type};
 function metadataValue(meta,...keys){for(const key of keys){const value=String(meta?.[key]||'').trim();if(value)return value}return ''}
+async function waitForOAuthSession(){
+  const callbackError=params.get('error_description')||params.get('error');
+  if(callbackError)throw new Error(decodeURIComponent(callbackError.replace(/\+/g,' ')));
+  let subscription;
+  let resolveAuth;
+  const authReady=new Promise(resolve=>{resolveAuth=resolve});
+  const listener=supabase.auth.onAuthStateChange((event,session)=>{
+    if(session?.user&&['SIGNED_IN','INITIAL_SESSION','TOKEN_REFRESHED'].includes(event))resolveAuth(session);
+  });
+  subscription=listener.data?.subscription;
+  try{
+    for(let attempt=0;attempt<16;attempt++){
+      const {data,error}=await supabase.auth.getSession();
+      if(data?.session?.user)return data.session;
+      if(error&&attempt===15)throw error;
+      const eventSession=await Promise.race([authReady,new Promise(resolve=>setTimeout(()=>resolve(null),400))]);
+      if(eventSession?.user)return eventSession;
+    }
+  }finally{subscription?.unsubscribe()}
+  return null;
+}
 async function bootstrap(){
-  if(!supabase){show('Profile setup is temporarily unavailable.');return}
-  const {data,error}=await supabase.auth.getSession();
-  if(error||!data?.session?.user){location.replace('/player-login.html?returnTo='+encodeURIComponent(returnTo));return}
-  const user=data.session.user, meta=user.user_metadata||{};
+  if(!supabase){show('Profile setup is temporarily unavailable. Please try again later.');return}
+  let session;
+  try{session=await waitForOAuthSession()}catch(error){show('Google sign-in could not be completed: '+(error.message||'Authentication failed')+' Please try again.');return}
+  if(!session?.user){
+    show('Google returned you to Courtly, but Supabase did not provide an active sign-in session. Please try again. If this keeps happening, contact Courtly support. You have not been logged in.');
+    return;
+  }
+  const user=session.user, meta=user.user_metadata||{};
   const fullName=metadataValue(meta,'full_name','name')||user.email?.split('@')[0]||'';
   const playerName=metadataValue(meta,'player_name','preferred_username','name','full_name')||fullName;
   const avatarUrl=metadataValue(meta,'avatar_url','picture');
   $('fullName').value=fullName;$('playerName').value=playerName;$('socialName').textContent=playerName||fullName||'Courtly Player';$('socialEmail').textContent=user.email||'';
   if(avatarUrl)$('avatar').innerHTML='<img alt="Profile picture" src="'+avatarUrl.replace(/"/g,'&quot;')+'">';else $('avatar').textContent=(playerName||fullName||'C').slice(0,1).toUpperCase();
-  const {data:existing}=await supabase.from('player_profiles').select('*').eq('id',user.id).maybeSingle();
+  const {data:existing,error:profileError}=await supabase.from('player_profiles').select('*').eq('id',user.id).maybeSingle();
+  if(profileError){show('You are signed in, but Courtly could not load your player profile: '+profileError.message);return}
   if(existing){
     $('fullName').value=existing.full_name||fullName;$('playerName').value=existing.player_name||playerName;$('phone').value=existing.phone||'';$('skillLevel').value=existing.skill_level||'Intermediate';$('preferredSport').value=existing.preferred_sport||'';$('publicLocation').value=existing.public_location||'';$('isPrivate').checked=Boolean(existing.is_private);
     const complete=Boolean(existing.full_name&&existing.player_name&&existing.skill_level);
     if(params.get('mode')==='login'&&complete){location.replace(returnTo);return}
   }
+  // Remove OAuth callback parameters only after the session has been recovered.
+  history.replaceState({},document.title,location.pathname+'?social=1&mode='+encodeURIComponent(params.get('mode')||'')+'&returnTo='+encodeURIComponent(returnTo));
 }
 $('profileForm').addEventListener('submit',async e=>{
   e.preventDefault(); if(!supabase||!e.currentTarget.reportValidity())return;

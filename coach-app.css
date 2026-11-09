@@ -96,3 +96,53 @@
 .coach-slot.past{background:#f7f8fa;border-color:#e5e8ed;color:#98a2b3;opacity:1}
 .coach-slot.selected{background:#eff8de;border-color:var(--c-lime);box-shadow:0 0 0 2px #8ed50222}
 @media(max-width:640px){.coach-booking-calendar{padding:11px}.coach-calendar-weekdays,.coach-calendar-days{gap:3px}.coach-calendar-day{min-height:39px;font-size:12px}.coach-slot-heading{align-items:flex-start}.coach-slot-legend{width:100%}}
+
+
+/* Coach booking shareable profile hero */
+.coach-booking-hero{margin-top:22px;background:#fff;border:1px solid var(--c-line);border-radius:20px;box-shadow:var(--c-shadow);overflow:hidden}
+.coach-booking-hero-skeleton{padding:34px;color:var(--c-muted);text-align:center}
+.coach-booking-cover{height:280px;background:linear-gradient(125deg,#001a47,#234b88);overflow:hidden;position:relative}
+.coach-booking-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,26,71,.28))}
+.coach-booking-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.coach-booking-cover-fallback{width:100%;height:100%;background:radial-gradient(circle at 78% 25%,rgba(142,213,2,.28),transparent 28%),linear-gradient(125deg,#001a47,#173b70)}
+.coach-booking-profile{display:grid;grid-template-columns:150px minmax(0,1fr);gap:22px;padding:0 28px 28px;position:relative}
+.coach-booking-avatar-wrap{margin-top:-72px;position:relative;z-index:2}
+.coach-booking-avatar{width:142px;height:142px;border-radius:50%;object-fit:cover;border:6px solid #fff;background:#e9eff7;box-shadow:0 8px 24px rgba(0,26,71,.16)}
+.coach-booking-avatar-fallback{display:grid;place-items:center;font:700 44px Poppins;color:var(--c-navy)}
+.coach-booking-profile-copy{padding-top:18px;min-width:0}
+.coach-booking-name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.coach-booking-name-row h2{margin:0;font:700 28px/1.15 Poppins;color:var(--c-navy);letter-spacing:-.035em}
+.coach-booking-verified{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#eaf5ff;color:#155e9c;font-size:11px;font-weight:800}
+.coach-booking-meta{display:flex;gap:8px 14px;flex-wrap:wrap;color:var(--c-muted);font-size:12px;margin-top:8px}
+.coach-booking-meta span{display:inline-flex;align-items:center}
+.coach-booking-bio{max-width:760px;color:var(--c-muted);line-height:1.7;margin:14px 0 0}
+.coach-booking-facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px}
+.coach-booking-facts div{display:grid;gap:3px}
+.coach-booking-facts small{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-muted)}
+.coach-booking-facts strong{font-size:14px;color:var(--c-navy)}
+.coach-booking-section-head{margin-top:28px}
+.coach-booking-section-head .coach-title{font-size:clamp(28px,3.3vw,40px)}
+.coach-booking-layout{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr)}
+.coach-booking-calendar-title{display:grid;gap:3px}.coach-booking-calendar-title strong{font:700 16px Poppins;color:var(--c-navy)}.coach-booking-calendar-title span{font-size:11px;color:var(--c-muted)}
+@media(max-width:900px){
+ .coach-booking-cover{height:230px}
+ .coach-booking-profile{grid-template-columns:120px minmax(0,1fr);padding:0 22px 24px}
+ .coach-booking-avatar{width:112px;height:112px}
+ .coach-booking-avatar-wrap{margin-top:-56px}
+ .coach-booking-name-row h2{font-size:24px}
+ .coach-booking-layout{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+ .coach-booking-hero{border-radius:16px}
+ .coach-booking-cover{height:180px}
+ .coach-booking-profile{display:block;padding:0 16px 20px}
+ .coach-booking-avatar-wrap{margin-top:-46px}
+ .coach-booking-avatar{width:92px;height:92px;border-width:5px}
+ .coach-booking-profile-copy{padding-top:8px}
+ .coach-booking-name-row h2{font-size:22px}
+ .coach-booking-meta{gap:6px 10px}
+ .coach-booking-bio{font-size:12px;margin-top:11px}
+ .coach-booking-facts{gap:18px;margin-top:13px}
+ .coach-booking-section-head{margin-top:22px}
+}
+

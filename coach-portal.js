@@ -30,6 +30,27 @@ async function refreshCore() {
   $('sideName').textContent=profile.coach_name||'Coach'; $('coachTopName').textContent=profile.coach_name||'Coach'; $('sideStatus').textContent=profile.is_verified?'Verified coach':'Coach account';
   $('sideAvatar').src=avatar||'/assets/courtly-logo.png'; $('topAvatar').src=avatar||'/assets/courtly-logo.png';
 }
+function publicCoachUrl() {
+  return profile?.slug ? `https://www.courtlyph.com/coach-booking?coach=${encodeURIComponent(profile.slug)}` : '';
+}
+function publicLinkPanel() {
+  const url = publicCoachUrl();
+  if (!url) return '';
+  const status = profile.is_published
+    ? '<span class="coach-pill">Public</span>'
+    : '<span class="coach-pill muted">Draft</span>';
+  return panel('Your public coaching link',
+    `<div class="coach-note" style="margin-bottom:10px">Share this link with players so they can view your coaching profile, check availability and book a session.</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <input id="publicCoachUrl" value="${esc(url)}" readonly style="flex:1;min-width:240px;padding:12px;border:1px solid #d8dee8;border-radius:10px;background:#f8fafc">
+      <button class="coach-btn outline" type="button" data-copy-public-link>Copy link</button>
+      <button class="coach-btn lime" type="button" data-share-public-link>Share</button>
+      <a class="coach-btn outline" href="${esc(url)}" target="_blank" rel="noopener">View public page</a>
+    </div>
+    ${!profile.is_published?'<div class="coach-note" style="margin-top:10px">Your profile is currently in Draft. Publish it from Coach Profile before sharing publicly.</div>':''}`,
+    status
+  );
+}
 function kpi(label,value,sub='') { return `<div class="coach-kpi"><small>${label}</small><strong>${value}</strong>${sub?`<div class="coach-note">${sub}</div>`:''}</div>`; }
 function sessionTable(rows) {
   if(!rows.length) return '<div class="coach-empty">No coaching sessions yet.</div>';
@@ -92,7 +113,7 @@ function overview() {
   const earned=sessions.filter(s=>['confirmed','completed'].includes(s.payment_status)).reduce((n,s)=>n+Number(s.subtotal||0),0);
   const due=Number(billing.balance||0)+Number(billing.accrued_uninvoiced||0);
   const recent=[...sessions].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,6);
-  return `<div class="coach-kicker">COACH WORKSPACE</div><h1 class="coach-title">Welcome back, ${esc(profile.coach_name||'Coach')}.</h1><p class="coach-subtitle">Manage sessions, availability, clients and your coaching business from one place.</p><div class="coach-dash-grid" style="margin-top:22px">${kpi('Awaiting payment review',pending,'Payment references to verify')}${kpi('Upcoming sessions',upcoming,'Confirmed coaching sessions')}${kpi('Confirmed session value',money(earned),'Gross coaching revenue in recorded sessions')}${kpi('Convenience fees to remit',money(due),'Live balance including un-invoiced fees')}${kpi('Followers',Number(profile.follower_count||0),'Players following your profile')}${kpi('Profile status',profile.is_published?'Published':'Draft',profile.is_verified?'Verified coach':'Awaiting verification')}</div>${panel('Recent coaching sessions',sessionTable(recent),'<button class="coach-btn outline" data-go="sessions">View all</button>')} ${panel('Quick actions',`<div class="coach-actions"><button class="coach-btn lime" data-go="availability">Set availability</button><button class="coach-btn outline" data-go="profile">Edit coach profile</button><button class="coach-btn outline" data-go="payments">Update payment method</button><button class="coach-btn outline" data-go="billing">View Courtly balance</button></div>`)} `;
+  return `<div class="coach-kicker">COACH WORKSPACE</div><h1 class="coach-title">Welcome back, ${esc(profile.coach_name||'Coach')}.</h1><p class="coach-subtitle">Manage sessions, availability, clients and your coaching business from one place.</p><div class="coach-dash-grid" style="margin-top:22px">${kpi('Awaiting payment review',pending,'Payment references to verify')}${kpi('Upcoming sessions',upcoming,'Confirmed coaching sessions')}${kpi('Confirmed session value',money(earned),'Gross coaching revenue in recorded sessions')}${kpi('Convenience fees to remit',money(due),'Live balance including un-invoiced fees')}${kpi('Followers',Number(profile.follower_count||0),'Players following your profile')}${kpi('Profile status',profile.is_published?'Published':'Draft',profile.is_verified?'Verified coach':'Awaiting verification')}</div>${publicLinkPanel()}${panel('Recent coaching sessions',sessionTable(recent),'<button class="coach-btn outline" data-go="sessions">View all</button>')} ${panel('Quick actions',`<div class="coach-actions"><button class="coach-btn lime" data-go="availability">Set availability</button><button class="coach-btn outline" data-go="profile">Edit coach profile</button><button class="coach-btn outline" data-go="payments">Update payment method</button><button class="coach-btn outline" data-go="billing">View Courtly balance</button></div>`)} `;
 }
 function calendarView() {
   const rows=[...sessions].filter(s=>s.booking_status!=='cancelled').sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
@@ -134,6 +155,31 @@ function render() {
   $('coachView').innerHTML=(fns[activeView]||overview)();
   $('coachView').querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.go)));
   bindSessionActions();
+  $('coachView').querySelectorAll('[data-copy-public-link]').forEach(button=>button.addEventListener('click',async()=>{
+    const url=publicCoachUrl();
+    try{
+      await navigator.clipboard.writeText(url);
+      msg('Public coaching link copied.','success');
+    }catch{
+      const input=$('publicCoachUrl');
+      input?.select();
+      document.execCommand('copy');
+      msg('Public coaching link copied.','success');
+    }
+  }));
+  $('coachView').querySelectorAll('[data-share-public-link]').forEach(button=>button.addEventListener('click',async()=>{
+    const url=publicCoachUrl();
+    const shareData={title:`${profile.coach_name||'Coach'} on Courtly`,text:'Book a coaching session with me on Courtly.',url};
+    try{
+      if(navigator.share) await navigator.share(shareData);
+      else {
+        await navigator.clipboard.writeText(url);
+        msg('Sharing is not supported here, so the link was copied instead.','success');
+      }
+    }catch(error){
+      if(error?.name!=='AbortError') msg(error?.message||'Unable to share this link.');
+    }
+  }));
   if(activeView==='availability') bindAvailability();
   if(activeView==='profile') bindProfile();
   if(activeView==='payments') bindPaymentSettings();

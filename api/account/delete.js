@@ -1,3 +1,4 @@
+const { Buffer } = require('node:buffer');
 const { createClient } = require('@supabase/supabase-js');
 const { createBackend, ServiceError, json, fail } = require('../../server/courtly-backend.cjs');
 
@@ -10,7 +11,7 @@ function createHandler(dependencies = {}) {
     const env = dependencies.env || process.env;
     try {
       let body = {};
-      try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch {}
+      try { body = Buffer.isBuffer(req.body) || typeof req.body === 'string' ? JSON.parse(String(req.body)) : (req.body || {}); } catch {}
       if (body.confirmation !== 'DELETE') throw new ServiceError(400, 'CONFIRMATION_REQUIRED', 'Type DELETE to confirm permanent account deletion.');
       const backend = dependencies.backend || createBackend({ env, fetchImpl: dependencies.fetchImpl });
       const actor = await backend.authenticate(req);

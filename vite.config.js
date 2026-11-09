@@ -10,6 +10,14 @@ function courtlyProfessionalUi() {
         return {
           tags: [
             {
+              tag: 'script',
+              attrs: {
+                src: '/mobile-runtime.js',
+                defer: true
+              },
+              injectTo: 'head'
+            },
+            {
               tag: 'link',
               attrs: {
                 rel: 'stylesheet',

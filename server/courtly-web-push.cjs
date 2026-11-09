@@ -54,7 +54,7 @@ function encryptedBody(subscription, payload) {
 
   const prkKey = hmac(authSecret, sharedSecret);
   const ikmInfo = Buffer.concat([Buffer.from('WebPush: info\0'), userPublic, serverPublic]);
-  const ikm = hmac(prkKey, ikmInfo);
+  const ikm = hkdfExpand(prkKey, ikmInfo, 32);
   const salt = randomBytes(16);
   const prk = hmac(salt, ikm);
   const cek = hkdfExpand(prk, 'Content-Encoding: aes128gcm\0', 16);
@@ -72,6 +72,7 @@ async function sendSubscription(fetchImpl, subscription, payload, material) {
   const body = encryptedBody(subscription, payload);
   const response = await fetchImpl(subscription.endpoint, {
     method: 'POST',
+    signal: AbortSignal.timeout(5000),
     headers: {
       TTL: '86400',
       Urgency: 'high',
@@ -83,64 +84,49 @@ async function sendSubscription(fetchImpl, subscription, payload, material) {
   });
   return response;
 }
-async function pushConfirmedBooking({ backend, fetchImpl = globalThis.fetch, source, sourceRow }) {
-  if (!source || source.type !== 'court_booking' || sourceRow?.payment_status !== 'confirmed' || !sourceRow?.player_id) {
-    return { attempted: false, sent: 0 };
-  }
-  const notificationRows = await backend.rest(
+async function pushBookingNotifications({ backend, fetchImpl = globalThis.fetch, source, sourceRow }) {
+  if (source?.type !== 'court_booking' || !sourceRow) return { attempted: false, sent: 0 };
+  // The caller authenticates and authorizes the booking before entering here.
+  // Rows come from the database trigger, never from a client-supplied recipient.
+  const notifications = await backend.rest(
     'user_notifications?booking_id=eq.' + encodeURIComponent(source.id) +
-    '&recipient_user_id=eq.' + encodeURIComponent(sourceRow.player_id) +
-    '&audience=eq.player&type=eq.payment_confirmed&push_sent_at=is.null&select=id,title,body,href,recipient_user_id&order=created_at.desc&limit=1'
+    '&push_sent_at=is.null&read_at=is.null&select=id,title,body,href,recipient_user_id,audience,type&order=created_at.asc'
   );
-  const notification = notificationRows?.[0];
-  if (!notification) return { attempted: false, sent: 0 };
-
-  const subscriptions = await backend.rest(
-    'push_subscriptions?user_id=eq.' + encodeURIComponent(sourceRow.player_id) +
-    '&select=id,endpoint,p256dh,auth_secret'
-  );
-  const unreadRows = await backend.rest(
-    'user_notifications?recipient_user_id=eq.' + encodeURIComponent(sourceRow.player_id) +
-    '&read_at=is.null&select=id'
-  );
-  const badge = Math.max(1, (unreadRows || []).length);
-  const payload = {
-    title: notification.title || 'Booking confirmed',
-    body: notification.body || 'Your Courtly booking has been confirmed.',
-    url: notification.href || '/player-dashboard.html?view=bookings',
-    badge,
-    tag: 'courtly-booking-confirmed-' + source.id
-  };
-
-  if (!subscriptions?.length) {
-    await backend.rest('user_notifications?id=eq.' + encodeURIComponent(notification.id), {
-      method: 'PATCH',
-      body: JSON.stringify({ push_sent_at: new Date().toISOString() })
-    });
-    return { attempted: true, sent: 0 };
-  }
-
-  const material = await vapidMaterial(backend);
   let sent = 0;
-  for (const subscription of subscriptions) {
-    try {
-      const response = await sendSubscription(fetchImpl, subscription, payload, material);
-      if (response.ok) {
-        sent += 1;
-      } else if ([404, 410].includes(response.status)) {
-        await backend.rest('push_subscriptions?id=eq.' + encodeURIComponent(subscription.id), { method: 'DELETE' });
+  let material;
+  for (const notification of notifications || []) {
+    if (!notification.recipient_user_id) continue;
+    const userFilter = encodeURIComponent(notification.recipient_user_id);
+    const subscriptions = await backend.rest('push_subscriptions?user_id=eq.' + userFilter + '&select=id,endpoint,p256dh,auth_secret');
+    // An owner who has not enabled alerts must still be able to receive them
+    // after enrolling a device. Do not mark undelivered notifications as sent.
+    if (!subscriptions?.length) continue;
+    const unreadRows = await backend.rest('user_notifications?recipient_user_id=eq.' + userFilter + '&read_at=is.null&select=id');
+    material ||= await vapidMaterial(backend);
+    const payload = {
+      title: notification.title || 'Courtly booking update',
+      body: notification.body || 'You have a new booking update.',
+      url: notification.href || (notification.audience === 'owner' ? '/owner-portal.html?view=bookings' : '/player-dashboard.html?view=bookings'),
+      badge: Math.max(1, unreadRows?.length || 0),
+      tag: 'courtly-' + notification.id
+    };
+    let delivered = 0;
+    for (const subscription of subscriptions) {
+      try {
+        const response = await sendSubscription(fetchImpl, subscription, payload, material);
+        if (response.ok) { sent += 1; delivered += 1; }
+        else if ([404, 410].includes(response.status)) {
+          await backend.rest('push_subscriptions?id=eq.' + encodeURIComponent(subscription.id), { method: 'DELETE' });
+        }
+      } catch (error) {
+        console.warn('Courtly Web Push delivery failed:', error?.message || 'unknown error');
       }
-    } catch (error) {
-      console.warn('Courtly Web Push delivery failed:', error?.message || 'unknown error');
     }
-  }
-  if (sent > 0) {
-    await backend.rest('user_notifications?id=eq.' + encodeURIComponent(notification.id), {
-      method: 'PATCH',
-      body: JSON.stringify({ push_sent_at: new Date().toISOString() })
+    if (delivered) await backend.rest('user_notifications?id=eq.' + encodeURIComponent(notification.id), {
+      method: 'PATCH', body: JSON.stringify({ push_sent_at: new Date().toISOString() })
     });
   }
   return { attempted: true, sent };
 }
 
-module.exports = { vapidMaterial, pushConfirmedBooking };
+module.exports = { vapidMaterial, pushBookingNotifications, pushConfirmedBooking: pushBookingNotifications };

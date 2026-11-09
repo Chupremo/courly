@@ -114,7 +114,7 @@
       document.head.appendChild(icon);
     }
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
-      navigator.serviceWorker.register('/service-worker.js').catch(error => console.warn('Courtly service worker unavailable:', error.message));
+      navigator.serviceWorker.register('/service-worker.js', {updateViaCache:'none'}).catch(error => console.warn('Courtly service worker unavailable:', error.message));
     }
 
     // Installation is offered from Settings/Profile only.

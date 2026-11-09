@@ -1,3 +1,5 @@
+import { watchOwnerWorkspace } from './owner-live.js';
+import { configureOwnerPush, ownerPushCard, syncOwnerBadge } from './owner-push.js';
 import { supabase, supabaseConfigError } from './supabase-client.js';
 import { dispatchBookingNotifications } from './notification-client.js';
 
@@ -417,23 +419,17 @@ async function markOwnerNotificationsRead(ids=[]) {
   if (error) throw error;
   return true;
 }
+let stopOwnerRealtime;
 async function startOwnerRealtime(onUpdate) {
+  stopOwnerRealtime?.();
   const { user, venue } = await currentOwnerVenue();
-  const refresh = async (kind, payload) => {
-    try {
-      const workspace = await loadOwnerWorkspace();
-      onUpdate?.({ kind, payload, workspace });
-    } catch (error) {
-      console.warn('Courtly owner realtime refresh failed:', error);
-    }
-  };
-  const channel = supabase.channel('courtly-owner-live-'+venue.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'user_notifications',filter:`recipient_user_id=eq.${user.id}`},payload=>refresh('notification',payload))
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'user_notifications',filter:`recipient_user_id=eq.${user.id}`},payload=>refresh('notification',payload))
-    .on('postgres_changes',{event:'*',schema:'public',table:'bookings',filter:`venue_id=eq.${venue.id}`},payload=>refresh('booking',payload))
-    .subscribe();
-  return channel;
+  configureOwnerPush(user.id);
+  stopOwnerRealtime = watchOwnerWorkspace({ client: supabase, userId: user.id, venueId: venue.id,
+    load: loadOwnerWorkspace, onUpdate, document, window });
+  return stopOwnerRealtime;
 }
+window.courtlyOwnerPushCard = ownerPushCard;
+window.courtlySyncOwnerBadge = syncOwnerBadge;
 
 window.courtlyReviewCommunityActivityPayment = reviewCommunityActivityPayment;
 window.courtlyMarkOwnerNotificationsRead = markOwnerNotificationsRead;

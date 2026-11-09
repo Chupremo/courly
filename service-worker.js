@@ -1,5 +1,5 @@
-const CACHE='courtly-shell-v1';
-const SHELL=['/','/offline.html','/courtly-app-icon.svg'];
+const CACHE='courtly-shell-v2-owner-live';
+const SHELL=['/','/offline.html','/courtly-app-icon-192.png?v=20261109-repaired'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{
@@ -11,16 +11,21 @@ self.addEventListener('fetch',event=>{
     event.respondWith(fetch(request).catch(()=>caches.match('/offline.html')));
     return;
   }
-  if(['style','script','image','font'].includes(request.destination)){
-    event.respondWith(caches.match(request).then(cached=>cached||fetch(request).then(response=>{
-      if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(request,copy));}
+  if (['script','style'].includes(request.destination)) {
+    event.respondWith(fetch(request).then(response => {
+      if (response.ok) { const copy=response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy))); }
       return response;
-    }).catch(()=>cached)));
+    }).catch(() => caches.match(request)));
+  } else if (['image','font'].includes(request.destination)) {
+    event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+      if (response.ok) { const copy=response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy))); }
+      return response;
+    })));
   }
 });
 
 
-const COURTLY_PUSH_ICON='/courtly-app-icon.svg';
+const COURTLY_PUSH_ICON='/courtly-app-icon-192.png?v=20261109-repaired';
 
 self.addEventListener('push',event=>{
   let payload={};
@@ -36,12 +41,14 @@ self.addEventListener('push',event=>{
         else if(self.navigator.clearAppBadge)await self.navigator.clearAppBadge();
       }
     }catch{}
+    const clients = await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    clients.forEach(client => client.postMessage({type:'courtly-notification'}));
     await self.registration.showNotification(title,{
       body,
       icon:COURTLY_PUSH_ICON,
       badge:COURTLY_PUSH_ICON,
       tag:payload.tag||'courtly-notification',
-      renotify:true,
+      renotify:false,
       data:{url}
     });
   })());

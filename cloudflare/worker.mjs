@@ -122,9 +122,9 @@ function addShareMetadata(response, requestUrl) {
           '<meta name="twitter:title" content="' + escAttr(meta.title) + '">' +
           '<meta name="twitter:description" content="' + escAttr(meta.description) + '">' +
           '<meta name="twitter:image" content="' + escAttr(meta.image) + '">' +
-          '<link rel="icon" type="image/png" href="/apple-touch-icon.png?v=20261109b">' +
-          '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261109b">' +
-          '<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png?v=20261109b">' +
+          '<link rel="icon" type="image/png" href="/apple-touch-icon.png?v=20261109-repaired">' +
+          '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261109-repaired">' +
+          '<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png?v=20261109-repaired">' +
           '<link rel="canonical" href="' + escAttr(meta.url) + '">',
           { html: true }
         );

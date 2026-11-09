@@ -69,3 +69,30 @@
 .coach-hero .coach-stat small{color:#596982!important;font-size:14px;line-height:1.5}
 .coach-hero .coach-stat strong{color:#001a47!important}
 .coach-hero .coach-stat p{color:#52627a!important;font-size:14px;line-height:1.65;margin:8px 0 0;max-width:none}
+
+/* Coaching booking calendar */
+.coach-booking-calendar{border:1px solid var(--c-line);border-radius:14px;padding:14px;background:#fff}
+.coach-calendar-head{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;margin-bottom:14px}
+.coach-calendar-head button{height:42px;border:1px solid var(--c-line);border-radius:10px;background:#fff;color:var(--c-navy);font-size:22px}
+.coach-calendar-head strong{text-align:center;color:var(--c-navy);font:700 15px Poppins}
+.coach-calendar-weekdays,.coach-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.coach-calendar-weekdays{font-size:10px;color:var(--c-muted);margin-bottom:7px}
+.coach-calendar-day{min-height:42px;border:1px solid transparent;border-radius:9px;background:#fff;color:var(--c-ink);font-weight:600}
+.coach-calendar-day:hover:not(:disabled){background:#f4f8ee;border-color:#dce9c4}
+.coach-calendar-day.today:not(.selected){border-color:#bad77b}
+.coach-calendar-day.selected{background:var(--c-navy);color:#fff;border-color:var(--c-navy)}
+.coach-calendar-day:disabled{color:#c3cad5;cursor:not-allowed;background:#fafbfc}
+.coach-calendar-empty{min-height:42px}
+.coach-slot-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:22px 0 10px}
+.coach-slot-heading h3{font:700 15px Poppins;color:#001a47;margin:0}
+.coach-slot-legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--c-muted);font-size:10px}
+.coach-slot-legend span{display:flex;align-items:center;gap:5px}
+.coach-slot-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.coach-slot-dot.available{background:#fff;border:1px solid #b8c6d9}.coach-slot-dot.booked{background:#176b3a}.coach-slot-dot.selected{background:var(--c-lime)}
+.coach-slot{min-height:52px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px}
+.coach-slot .coach-slot-time{font-weight:700}
+.coach-slot .coach-slot-status{font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800}
+.coach-slot.booked{background:#f3faf5;border-color:#c9dfce;color:#184f2c;opacity:1}
+.coach-slot.booked .coach-slot-status{color:#176b3a}
+.coach-slot.past{background:#f7f8fa;border-color:#e5e8ed;color:#98a2b3;opacity:1}
+.coach-slot.selected{background:#eff8de;border-color:var(--c-lime);box-shadow:0 0 0 2px #8ed50222}
+@media(max-width:640px){.coach-booking-calendar{padding:11px}.coach-calendar-weekdays,.coach-calendar-days{gap:3px}.coach-calendar-day{min-height:39px;font-size:12px}.coach-slot-heading{align-items:flex-start}.coach-slot-legend{width:100%}}

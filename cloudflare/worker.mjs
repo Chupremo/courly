@@ -21,9 +21,9 @@ function shareMetadata(url) {
   ) ? 'coaches' : 'players';
 
   const images = {
-    players: 'https://www.courtlyph.com/share-players.png?v=share-20261109',
-    coaches: 'https://www.courtlyph.com/share-coaches.png?v=share-20261109',
-    owners: 'https://www.courtlyph.com/share-owners.png?v=share-20261109'
+    players: 'https://www.courtlyph.com/assets/courtly-logo.png',
+    coaches: 'https://www.courtlyph.com/assets/courtly-logo.png',
+    owners: 'https://www.courtlyph.com/assets/courtly-logo.png'
   };
 
   const defaults = {
@@ -115,8 +115,6 @@ function addShareMetadata(response, requestUrl) {
           '<meta property="og:image" content="' + escAttr(meta.image) + '">' +
           '<meta property="og:image:secure_url" content="' + escAttr(meta.image) + '">' +
           '<meta property="og:image:type" content="image/png">' +
-          '<meta property="og:image:width" content="1200">' +
-          '<meta property="og:image:height" content="630">' +
           '<meta property="og:image:alt" content="' + escAttr(meta.imageAlt) + '">' +
           '<meta name="twitter:card" content="summary_large_image">' +
           '<meta name="twitter:title" content="' + escAttr(meta.title) + '">' +

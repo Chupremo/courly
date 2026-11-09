@@ -1,6 +1,18 @@
 {
-  "updated_at": "2026-11-09T19:03:56Z",
+  "updated_at": "2026-11-09T20:04:25Z",
   "items": [
+    {
+      "id": "abs-cbn-20261108-ust-nuns-girls-volleyball",
+      "title": "UST girls reach UAAP semifinals as NUNS earns twice-to-beat edge",
+      "summary": "UST swept UPIS 25–14, 25–15, 25–14 to secure a UAAP Season 89 girls’ volleyball semifinal berth and improve to 9–2. NUNS defeated Ateneo in straight sets, extending its unbeaten record to 12 matches and claiming the first twice-to-beat advantage.",
+      "source": "ABS-CBN News",
+      "url": "https://www.abs-cbn.com/sports/volleyball/2026/11/8/uaap-ust-girls-secure-final-4-spot-nuns-assured-of-twice-to-beat-1947",
+      "published_at": "2026-11-08T19:47:49+08:00",
+      "added_at": "2026-11-09T20:04:25Z",
+      "image_url": "https://od2-image-api.abs-cbn.com/prod/20261108111144/842e41eb567a0186dd2675b3986231de2997de6e7752a75ce849da8ef973f48e.jpg?w=1200&h=800",
+      "image_alt": "UST team in the UAAP Season 89 girls’ volleyball tournament",
+      "image_credit": "UAAP Media / ABS-CBN News"
+    },
     {
       "id": "abs-cbn-20261108-ue-nuns-boys-final-four",
       "title": "UE and NUNS secure UAAP boys’ volleyball Final Four places",

@@ -77,6 +77,9 @@ function addShareMetadata(response, requestUrl) {
           '<meta name="twitter:title" content="' + meta.title.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
           '<meta name="twitter:description" content="' + meta.description.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
           '<meta name="twitter:image" content="' + meta.image + '">' +
+          '<link rel="icon" type="image/png" href="/apple-touch-icon.png?v=20261109b">' +
+          '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261109b">' +
+          '<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png?v=20261109b">' +
           '<link rel="canonical" href="' + meta.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">',
           { html: true }
         );

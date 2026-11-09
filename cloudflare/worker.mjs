@@ -53,7 +53,7 @@ function shareMetadata(url) {
   return {
     ...selected,
     url: canonical.toString(),
-    image: 'https://www.courtlyph.com/courtly-app-icon-180.png?v=20261109'
+    image: 'https://www.courtlyph.com/assets/courtly-logo.png?v=share-20261109'
   };
 }
 
@@ -71,8 +71,8 @@ function addShareMetadata(response, requestUrl) {
           '<meta property="og:description" content="' + meta.description.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
           '<meta property="og:url" content="' + meta.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
           '<meta property="og:image" content="' + meta.image + '">' +
-          '<meta property="og:image:width" content="180">' +
-          '<meta property="og:image:height" content="180">' +
+          '<meta property="og:image:secure_url" content="' + meta.image + '">' +
+          '<meta property="og:image:type" content="image/png">' +
           '<meta name="twitter:card" content="summary">' +
           '<meta name="twitter:title" content="' + meta.title.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
           '<meta name="twitter:description" content="' + meta.description.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +

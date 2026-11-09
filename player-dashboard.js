@@ -22,6 +22,17 @@ let toastTimer;
 
 function notify(text) { const node=$('toast'); node.textContent=text; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),3400); }
 function playerUnreadNotifications(){return playerNotifications.filter(n=>!n.read_at).length;}
+function courtlyInstalledMode(){
+  return window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function notificationPermissionCard(){
+  if(!courtlyInstalledMode()||!('Notification' in window)||Notification.permission==='granted')return '';
+  if(Notification.permission==='denied'){
+    return '<section class="panel" style="padding:14px 16px;margin:0 0 14px;border-color:#f0d3d6"><strong style="display:block;color:var(--navy);font-size:12px">Courtly notifications are turned off</strong><span style="display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:4px">Enable notifications for Courtly in your phone settings to receive booking confirmations and app-icon badges.</span></section>';
+  }
+  return '<section class="panel" id="courtlyNotificationSetup" style="padding:14px 16px;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div><strong style="display:block;color:var(--navy);font-size:12px">Get booking updates on your phone</strong><span style="display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:4px">Enable notifications for booking confirmations and the red Courtly app badge.</span></div><button type="button" class="btn" id="enableCourtlyNotifications">Enable</button></section>';
+}
+
 let courtlyVapidPublicKey='';
 function urlBase64ToUint8Array(value){
   const padding='='.repeat((4-value.length%4)%4);
@@ -249,6 +260,7 @@ function renderHome() {
   const actions=[['court','Book a court','Find your next venue','/player-dashboard.html?view=discover'],['play','Join Open Play','Find a game to join','/player-dashboard.html?view=discover&mode=openplay'],['people','Find players','Meet your next teammate','/player-dashboard.html?view=players'],['calendar','Activities','Explore community games','/community.html']];
   root.innerHTML=`
     <div class="v2-welcome"><div><span class="eyebrow">YOUR COURTLY</span><h1>Hi, ${esc(name)}.</h1><p>Make room for your next game.</p></div><a class="v2-message" href="/player-messages.html" aria-label="Open messages">${playerUiIcon('chat')}</a></div>
+    ${notificationPermissionCard()}
     <section class="v2-game-plan"><span class="v2-hero-kicker">LESS PLANNING. MORE PLAYING.</span><h2>Where will you<br>play next?</h2><form id="homeVenueSearch" role="search"><label class="v2-search">${playerUiIcon('search')}<input id="homeVenueQuery" type="search" placeholder="Search courts or a city" aria-label="Search courts or a city"><button type="submit" aria-label="Find courts">${playerUiIcon('arrow')}</button></label></form><div class="v2-hero-links"><button type="button" data-open-sports>${esc(current||'Choose your sport')}</button><a href="/browse-clubs.html">Find a club</a></div></section>
     <nav class="v2-quick-actions" aria-label="Find your next game">${actions.map(([icon,title,desc,href])=>`<a href="${esc(href)}"><span class="v2-action-icon">${playerUiIcon(icon)}</span><span><strong>${title}</strong><small>${desc}</small></span>${playerUiIcon('arrow')}</a>`).join('')}</nav>
     <section class="v2-next-game"><div class="v2-section-head"><h2>Your next game</h2><a href="/player-dashboard.html?view=bookings">My bookings</a></div>${next?bookingCard(next):'<div class="v2-empty">Your schedule is open. Pick a court or join a game to get started.</div>'}</section>
@@ -263,6 +275,15 @@ function renderHome() {
   $('homeVenueSearch')?.addEventListener('submit',event=>{event.preventDefault();discoverSearch=$('homeVenueQuery').value.trim();discoverSport=current;discoverMode='list';view='discover';history.pushState({},'', '/player-dashboard.html?view=discover');render();window.scrollTo({top:0,behavior:'smooth'});});
   root.querySelectorAll('[data-home-sport]').forEach(btn=>btn.addEventListener('click',()=>selectSport(btn.dataset.homeSport)));
   root.querySelectorAll('[data-open-sports]').forEach(btn=>btn.addEventListener('click',openSportModal));
+  $('enableCourtlyNotifications')?.addEventListener('click',async()=>{
+    const button=$('enableCourtlyNotifications');
+    if(button){button.disabled=true;button.textContent='Enabling…';}
+    try{
+      const enabled=await ensureCourtlyPush({askPermission:true});
+      if(enabled){notify('Courtly notifications are enabled.');renderHome();}
+      else if(Notification.permission==='denied'){notify('Notifications are blocked. Enable them for Courtly in your phone settings.');renderHome();}
+    }catch(error){notify(error.message||'Could not enable Courtly notifications.');if(button){button.disabled=false;button.textContent='Enable';}}
+  });
   $('playerHomePostForm')?.addEventListener('submit',submitPlayerHomePost);
   root.querySelectorAll('[data-delete-home-post]').forEach(button=>button.addEventListener('click',()=>deletePlayerHomePost(button.dataset.deleteHomePost)));
 }

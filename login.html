@@ -41,6 +41,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 <button id="submitButton" type="submit">Log in to owner portal →</button>
 <div id="msg" class="msg" role="alert" aria-live="polite"></div>
 </form>
+<button id="resendOwnerConfirmation" type="button" class="secondary hidden">Resend verification email</button>
 <div class="links"><span id="modePrompt">New to Courtly? </span><button id="toggleMode" type="button" class="mode-toggle">Create an owner account</button></div>
 <section class="demo-box" aria-label="Explore demo owner portals"><h2>Explore a demo owner portal</h2><p style="margin:4px 0 0;font-size:12px">No login required. Sample bookings and Open Play transactions are fictional and saved only in this browser.</p><div class="demo-grid"><a href="/owner-portal.html?demo=demo-batangas-racquet-club">Batangas Racquet Club</a><a href="/owner-portal.html?demo=demo-lipa-pickleball-hub">Lipa Pickleball Hub</a><a href="/owner-portal.html?demo=demo-santos-pickleball-club">Santos Pickleball Club</a><a href="/owner-portal.html?demo=demo-southside-sports-center">Southside Sports Center</a></div><p class="links"><a href="/demo.html">Explore Club, Coach & Player demo →</a></p></section>
 </main>
@@ -48,7 +49,7 @@ main.card>.brand,main.card>.courtly-brand-logo,main.card>.brand-logo,main.card>.
 import { supabase } from './supabase-client.js';
 import { safeReturnTo, setupRecoveryLink } from './account-recovery.js';
 setupRecoveryLink(document.getElementById('forgotPasswordLink'), 'owner');
-const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton');
+const form=document.getElementById('authForm'), msg=document.getElementById('msg'), button=document.getElementById('submitButton'), resendOwnerButton=document.getElementById('resendOwnerConfirmation');
 let signup=false;
 let authPending=false;
 const signupParams=new URLSearchParams(location.search);
@@ -63,7 +64,7 @@ function prefillSignup(){
  if(signupParams.get('courtCount')) document.getElementById('courtCount').value=signupParams.get('courtCount');
 }
 function message(text,type='error'){msg.textContent=text;msg.className=`msg show ${type}`;}
-function setMode(next){if(authPending)return;signup=next;document.getElementById('forgotPasswordLink').hidden=signup;const password=document.getElementById('password');password.minLength=signup?8:1;password.autocomplete=signup?'new-password':'current-password';password.placeholder=signup?'At least 8 characters':'Your password';document.getElementById('business').required=signup;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
+function setMode(next){if(authPending)return;signup=next;resendOwnerButton?.classList.add('hidden');document.getElementById('forgotPasswordLink').hidden=signup;const password=document.getElementById('password');password.minLength=signup?8:1;password.autocomplete=signup?'new-password':'current-password';password.placeholder=signup?'At least 8 characters':'Your password';document.getElementById('business').required=signup;document.getElementById('signupFields').classList.toggle('hidden',!signup);document.getElementById('heading').textContent=signup?'Create your owner account':'Welcome back';document.getElementById('intro').textContent=signup?'Register your venue to start managing bookings and Open Play.':'Sign in securely to manage your venue, bookings, Open Play registrations, and earnings.';button.textContent=signup?'Create owner account':'Log in to owner portal →';document.getElementById('modePrompt').textContent=signup?'Already have an account? ':'New to Courtly? ';document.getElementById('toggleMode').textContent=signup?'Log in':'Create an owner account';msg.className='msg';}
 document.getElementById('toggleMode').addEventListener('click',()=>setMode(!signup));
 if(signupParams.get('mode')==='signup'){setMode(true);prefillSignup();}
 function routeTo(fallback){location.replace(safeReturnTo(signupParams.get('returnTo'),fallback,location.origin));}
@@ -121,9 +122,26 @@ form.addEventListener('submit',async e=>{
  }catch(err){
    if(err.code==='SIGNUP_COOLDOWN'||err.code==='EMAIL_PROVIDER_RATE_LIMIT') message(err.message||'A verification email was already requested. Please wait a minute before trying again.');
    else if(err.code==='ACCOUNT_EXISTS') message('An account already exists for this email. Switch to Log in and use your existing password.');
-   else message(err.message||'Unable to continue. Please try again.');
+   else if(/email not confirmed/i.test(err.message||'')){
+     message('Your email is not confirmed yet. Use the button below to send a new verification email.');
+     resendOwnerButton?.classList.remove('hidden');
+   } else message(err.message||'Unable to continue. Please try again.');
  }
  finally{authPending=false;button.disabled=false;document.getElementById('toggleMode').disabled=false;button.textContent=signup?'Create owner account':'Log in to owner portal →';}
+});
+
+resendOwnerButton?.addEventListener('click',async()=>{
+  if(authPending)return;
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  if(!email){message('Enter your owner email address first.');document.getElementById('email').focus();return;}
+  authPending=true;resendOwnerButton.disabled=true;resendOwnerButton.textContent='Sending verification email...';
+  try{
+    const response=await fetch('/api/auth/owner-resend-confirmation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||'Could not send the verification email.');
+    message('If this is an unconfirmed Courtly owner account, a new verification email has been sent. Check your inbox and spam folder.','success');
+  }catch(error){message(error.message||'Could not send the verification email.');}
+  finally{authPending=false;resendOwnerButton.disabled=false;resendOwnerButton.textContent='Resend verification email';}
 });
 </script>
 

@@ -41,6 +41,20 @@
     }
   </style>
 <link rel="stylesheet" href="/courtly-player-v2.css?v=20261109">
+
+<style id="courtly-player-topbar-logo-v2">
+.player-topbar-logo{display:inline-flex;align-items:center;justify-content:flex-start;min-width:0}
+.player-topbar-logo img{display:block;width:auto;height:30px;max-width:160px;object-fit:contain}
+@media(max-width:760px){
+  body:has(#viewRoot) .topbar{gap:10px!important}
+  body:has(#viewRoot) .player-topbar-logo{flex:1 1 auto!important}
+  body:has(#viewRoot) .player-topbar-logo img{height:29px!important;max-width:145px!important}
+}
+@media(max-width:420px){
+  body:has(#viewRoot) .player-topbar-logo img{height:27px!important;max-width:132px!important}
+}
+</style>
+
 </head>
 <body class="courtly-player-v2">
   <div class="shell">
@@ -67,7 +81,7 @@
       <div class="side-bottom"><button id="logoutButton" type="button"> &nbsp; <span>Log out</span></button></div>
     </aside>
     <main class="main">
-      <header class="topbar"><button class="mobile-menu-toggle" id="mobileMenuButton" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="playerSidebar"><span></span><span></span><span></span></button><div class="crumb">COURTLY / <b id="crumbText">Player dashboard</b></div><div class="top-actions"><a class="top-btn" href="/players.html">Browse venues & coaches </a><div class="player-notify"><button class="player-notify-btn" id="playerNotificationButton" type="button" aria-label="Notifications">🔔</button><span class="player-notify-badge" id="playerNotificationBadge">0</span><div class="player-notify-menu" id="playerNotificationMenu" hidden></div></div><div class="top-profile-menu"><button class="top-profile" id="topProfileButton" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="topProfileMenu"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></button><div class="profile-dropdown" id="topProfileMenu" role="menu" hidden><a href="/player-dashboard.html?view=profile" role="menuitem">Profile</a><button id="topLogoutButton" type="button" role="menuitem">Log out</button></div></div></div></header>
+      <header class="topbar"><button class="mobile-menu-toggle" id="mobileMenuButton" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="playerSidebar"><span></span><span></span><span></span></button><a class="player-topbar-logo" href="/player-dashboard.html?view=home" aria-label="Courtly home"><img src="/assets/courtly-logo.png" alt="Courtly"></a><div class="top-actions"><a class="top-btn" href="/players.html">Browse venues & coaches </a><div class="player-notify"><button class="player-notify-btn" id="playerNotificationButton" type="button" aria-label="Notifications">🔔</button><span class="player-notify-badge" id="playerNotificationBadge">0</span><div class="player-notify-menu" id="playerNotificationMenu" hidden></div></div><div class="top-profile-menu"><button class="top-profile" id="topProfileButton" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="topProfileMenu"><div class="avatar" id="topAvatar">C</div><span id="topName">Player</span></button><div class="profile-dropdown" id="topProfileMenu" role="menu" hidden><a href="/player-dashboard.html?view=profile" role="menuitem">Profile</a><button id="topLogoutButton" type="button" role="menuitem">Log out</button></div></div></div></header>
       <section class="content"><div id="viewRoot"><div class="loading">Loading your Courtly player space…</div></div></section>
     </main>
   </div>

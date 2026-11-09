@@ -226,4 +226,10 @@ BEGIN
 END;
 $function$;
 
+revoke execute on function public.get_coach_sessions() from public, anon;
+grant execute on function public.get_coach_sessions() to authenticated;
+
+revoke execute on function public.get_my_coaching_sessions() from public, anon;
+grant execute on function public.get_my_coaching_sessions() to authenticated;
+
 commit;

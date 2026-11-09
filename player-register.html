@@ -19,7 +19,7 @@
     .terms{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:15px;color:#39465e;font-size:12px;line-height:1.6}.terms input{margin-top:2px;accent-color:var(--blue)}.terms a{color:var(--red);text-decoration:underline}.submit{width:100%;height:47px;border:0;border-radius:10px;background:var(--red);color:white;font:700 13px Inter;cursor:pointer;margin-top:17px;transition:.2s}.submit:hover{background:#c93540;transform:translateY(-1px)}.submit:disabled{opacity:.55;cursor:wait;transform:none}.message{display:none;padding:12px 14px;border-radius:10px;font-size:12px;line-height:1.55;margin-top:14px}.message.show{display:block}.message.error{background:#fff0f0;color:#a32730;border:1px solid #ffd5d8}.message.success{background:#eaf8f0;color:#176b44;border:1px solid #c9eed8}.bottom{text-align:center;color:#8893a6;font-size:11px;margin-top:20px;line-height:1.7}
     .modal{position:fixed;inset:0;background:#0b1733a6;z-index:20;display:none;place-items:center;padding:20px}.modal.open{display:grid}.modal-card{width:min(560px,100%);max-height:80vh;overflow:auto;background:white;border-radius:16px;padding:24px}.modal-card h2{margin:0 0 12px;font:700 20px Poppins}.modal-card p,.modal-card li{font-size:12px;line-height:1.75;color:#596781}.modal-close{float:right;border:0;background:#f0f3f8;border-radius:8px;padding:7px 10px;cursor:pointer}
     @media(max-width:620px){.page{padding-top:24px}.card{padding:18px}.grid{grid-template-columns:1fr;gap:13px}.field.full{grid-column:auto}.privacy{align-items:flex-start}.intro h1{font-size:28px}}
-  </style>
+  .social-auth{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}.social-btn{min-height:48px;border:1px solid #d8e0ec;border-radius:10px;background:#fff;color:#17233e;font:700 13px Inter;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer}.social-btn:hover{border-color:#9fb0ca;background:#f9fbff}.social-btn:disabled{opacity:.55;cursor:wait}.social-icon{font:800 17px Arial}.or-divider{display:flex;align-items:center;gap:10px;color:#9aa4b5;font-size:11px;margin:12px 0 18px}.or-divider:before,.or-divider:after{content:"";height:1px;background:#e6ebf2;flex:1}@media(max-width:520px){.social-auth{grid-template-columns:1fr}}</style>
 <link rel="stylesheet" href="/courtly-brand.css">
 
 <link rel="stylesheet" href="/courtly-responsive.css">
@@ -30,7 +30,12 @@
     <div class="brand-wrap"><a class="brand" href="/"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></a></div>
     <section class="intro"><h1>Join Courtly as a Player</h1><p>Discover courts, book your next game and connect with your local sports community.</p></section>
     <a class="login-cta" href="/player-login.html">Already have an account? Log in</a>
-    <p class="login-caption">Or create your player account below</p>
+    <p class="login-caption">Create your player account with Google, Facebook, or email.</p>
+    <div class="social-auth" aria-label="Social registration">
+      <button class="social-btn" id="googleSignup" type="button"><span class="social-icon">G</span> Continue with Google</button>
+      <button class="social-btn" id="facebookSignup" type="button"><span class="social-icon">f</span> Continue with Facebook</button>
+    </div>
+    <div class="or-divider">or register with email</div>
     <form class="card" id="registerForm">
       <section class="avatar-area">
         <label class="avatar-label" for="avatarFile">Profile Picture <span style="color:#8994a8;font-weight:400">(Optional)</span></label>
@@ -78,6 +83,20 @@
       try { const url = new URL(value, location.origin); if (url.origin !== location.origin) return '/player-dashboard.html?welcome=1'; return url.pathname + url.search + url.hash; } catch { return '/player-dashboard.html?welcome=1'; }
     }
     const returnTo = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
+    async function socialSignup(provider){
+      if(!supabase){showMessage('Social registration is temporarily unavailable.');return;}
+      const socialButtons=[$('googleSignup'),$('facebookSignup')]; socialButtons.forEach(b=>b.disabled=true);
+      try{
+        const redirectTo=`${getCourtlyAppUrl()}/player-profile-setup.html?social=1&returnTo=${encodeURIComponent(returnTo)}`;
+        const {error}=await supabase.auth.signInWithOAuth({provider,options:{redirectTo}});
+        if(error) throw error;
+      }catch(error){
+        socialButtons.forEach(b=>b.disabled=false);
+        showMessage(error.message || 'Could not start social registration. Please try again.');
+      }
+    }
+    $('googleSignup').addEventListener('click',()=>socialSignup('google'));
+    $('facebookSignup').addEventListener('click',()=>socialSignup('facebook'));
     document.querySelector('.login-cta').href = `/player-login.html?returnTo=${encodeURIComponent(returnTo)}`;
     // Registered players return to their dashboard; owners can explicitly switch to a player account.
     supabase?.auth.getSession().then(async ({data,error})=>{

@@ -404,6 +404,74 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 }
 </style>
 
+
+<style id="courtly-owner-overview-redesign">
+.owner-nav-separator{height:1px;background:rgba(255,255,255,.1);margin:10px 12px}
+.owner-overview{max-width:1180px;margin:0 auto}
+.owner-overview .heading{margin-bottom:18px}
+.owner-overview .heading h1{font-family:Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.04em}
+.owner-overview>.panel[style*="background:#f7fce9"],.owner-overview>.panel[style*="background:#f5fbea"]{box-shadow:none;border-radius:15px;padding:20px 22px}
+.ov-primary-action{display:flex;justify-content:flex-end;margin:-4px 0 16px}
+.ov-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 18px}
+.ov-kpi{min-width:0;text-align:left;background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:var(--shadow);color:var(--navy);display:grid;grid-template-columns:36px 1fr;grid-template-rows:auto auto auto;column-gap:10px}
+.ov-kpi:hover{border-color:#d6dfc3;transform:translateY(-1px)}
+.ov-kpi-icon{grid-row:1/4;width:34px;height:34px;border-radius:9px;background:#f0fad9;color:#547800;display:grid;place-items:center;font-weight:800}
+.ov-kpi>span:not(.ov-kpi-icon){font-size:12px;font-weight:700;color:var(--ink)}
+.ov-kpi strong{font-size:24px;line-height:1.15;margin-top:5px;overflow-wrap:anywhere}
+.ov-kpi small{font-size:11px;color:var(--muted);margin-top:3px}
+.ov-section{padding:20px 22px;margin-bottom:16px}
+.ov-section .panelhead{margin-bottom:12px}
+.ov-section .panelhead h3{font-family:Inter,system-ui,sans-serif;font-size:17px;font-weight:800}
+.ov-section .panelhead p{margin:4px 0 0}
+.ov-booking-list,.ov-payment-list,.ov-reservation-list{display:grid}
+.ov-booking-row,.ov-payment-row,.ov-reservation-row{width:100%;border:0;border-top:1px solid #edf0f4;background:transparent;color:var(--ink);text-align:left}
+.ov-booking-row:first-child,.ov-payment-row:first-child,.ov-reservation-row:first-child{border-top:0}
+.ov-booking-row{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:center;padding:13px 8px}
+.ov-booking-row>div,.ov-payment-row>div,.ov-reservation-row>div{min-width:0}
+.ov-booking-row strong,.ov-payment-row strong,.ov-reservation-row strong{display:block;color:var(--navy);font-size:13px}
+.ov-booking-row span:not(.pill):not(.ov-chevron),.ov-payment-row span:not(.pill):not(.ov-chevron),.ov-reservation-row span:not(.pill):not(.ov-chevron){display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.ov-row-status{display:flex;align-items:center;gap:10px}
+.ov-chevron{font-size:22px;color:#758299!important}
+.ov-payment-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:13px 8px}
+.ov-empty{padding:24px 14px;text-align:center;color:var(--muted);font-size:12px}
+.ov-empty-clean{background:#f7f9fc;border-radius:12px;display:grid;gap:3px}
+.ov-empty-clean strong{color:var(--navy);font-size:14px}
+.ov-reservation-row{display:grid;grid-template-columns:1.1fr 1.3fr 1fr auto;gap:18px;align-items:center;padding:14px 8px}
+.ov-res-status{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.ov-mobile-action{display:none!important}
+@media(max-width:980px){
+ .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ov-reservation-row{grid-template-columns:1fr 1fr}
+ .ov-res-status{justify-content:flex-start}
+}
+@media(max-width:680px){
+ .owner-overview{width:100%}
+ .owner-overview .heading{margin-bottom:14px}
+ .owner-overview .heading h1{font-size:26px!important}
+ .owner-overview>.panel[style*="background:#f7fce9"],.owner-overview>.panel[style*="background:#f5fbea"]{padding:15px!important;margin-bottom:12px!important}
+ .ov-primary-action{margin:0 0 14px}
+ .ov-primary-action .btn{width:100%}
+ .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+ .ov-kpi{padding:13px;grid-template-columns:30px 1fr;column-gap:8px}
+ .ov-kpi-icon{width:29px;height:29px}
+ .ov-kpi strong{font-size:20px}
+ .ov-section{padding:14px!important;margin-bottom:12px!important}
+ .ov-desktop-action{display:none!important}
+ .ov-mobile-action{display:flex!important;width:100%;margin-top:10px}
+ .ov-booking-row{grid-template-columns:1fr auto;gap:10px;padding:12px 2px}
+ .ov-booking-row .ov-player{grid-column:1/2}
+ .ov-row-status{grid-column:2;grid-row:1/3;align-self:center}
+ .ov-payment-row{padding:12px 2px}
+ .ov-reservation-row{grid-template-columns:1fr auto;gap:8px 12px;padding:12px 2px}
+ .ov-res-date,.ov-res-money{grid-column:1}
+ .ov-res-status{grid-column:2;grid-row:1/4;align-self:center;justify-content:flex-end}
+ .ov-res-money span{display:none!important}
+}
+@media(max-width:380px){
+ .ov-kpis{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -412,16 +480,14 @@ input[type=file]::file-selector-button{background:var(--goldsoft);color:#7a5c27;
 <button class="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="ownerNavigation" onclick="toggleMobileMenu(this)"><span></span><span></span><span></span></button>
 <small>OWNER WORKSPACE</small>
 <nav class="navlist" id="ownerNavigation" aria-label="Owner workspace">
-<button class="navbtn active" data-view="overview" onclick="go('overview',this)">▦ &nbsp; Overview</button>
-<button class="navbtn" data-view="calendar" onclick="go('calendar',this)">▦ &nbsp; Booking calendar</button>
-<button class="navbtn" data-view="openplay" onclick="go('openplay',this)"> &nbsp; Open Play Events</button>
-<button class="navbtn" data-view="bookings" onclick="go('bookings',this)"> &nbsp; Reservations</button>
-<button class="navbtn" data-view="courts" onclick="go('courts',this)">⌂ &nbsp; Courts & rates</button>
+<button class="navbtn active" data-view="overview" onclick="go('overview',this)">⌂ &nbsp; Overview</button>
+<button class="navbtn" data-view="bookings" onclick="go('bookings',this)">▤ &nbsp; Bookings</button>
+<button class="navbtn" data-view="calendar" onclick="go('calendar',this)">▦ &nbsp; Calendar</button>
 <button class="navbtn" data-view="transactions" onclick="go('transactions',this)">₱ &nbsp; Earnings</button>
-<button class="navbtn" data-view="venue" onclick="go('venue',this)"> &nbsp; Venue profile</button>
-<button class="navbtn" data-view="payments" onclick="go('payments',this)">▤ &nbsp; Payment settings</button>
-<button class="navbtn" data-view="billing" onclick="go('billing',this)">₱ &nbsp; Convenience Fees &amp; Invoices</button>
-<button class="navbtn" data-view="notifications" onclick="go('notifications',this)">▤ &nbsp; Notifications <span class="notify-badge" id="ownerNotificationBadge">0</span></button><a class="navbtn" href="/community.html" style="display:block;text-decoration:none"> &nbsp; Community</a>
+<button class="navbtn" data-view="notifications" onclick="go('notifications',this)">◌ &nbsp; Notifications <span class="notify-badge" id="ownerNotificationBadge">0</span></button>
+<div class="owner-nav-separator"></div>
+<button class="navbtn" data-view="venue" onclick="go('venue',this)">⌂ &nbsp; Venue Profile</button>
+<button class="navbtn" data-view="payments" onclick="go('payments',this)">⚙ &nbsp; Settings</button>
 </nav>
 <div class="side-bottom">COURTLY OWNER PORTAL<br><span id="workspaceModeLabel">Connecting to your secure workspace…</span></div>
 </aside>
@@ -554,7 +620,7 @@ function render(){const titles={overview:'Overview',calendar:'Booking calendar',
        });
      });
    });
- }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner)c.insertAdjacentHTML('afterbegin',banner)}
+ }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner&&view!=='overview')c.insertAdjacentHTML('afterbegin',banner)}
 function heading(title,desc,action=''){return `<div class="heading"><div><div class="eyebrow">YOUR COURT BUSINESS</div><h1>${title}</h1><p>${desc}</p></div>${action}</div>`}
 function stats(){const rows=confirmed();const courtGross=gross();const transactionFee=fees();return `<div class="stats"><div class="stat"><div class="stat-top">Court Rental Bookings <span class="stat-icon"></span></div><strong id="overviewCourtBookings">${rows.length}</strong><small>Confirmed and completed · ${earningsRange==='7d'?'Last 7 days':earningsRange==='30d'?'Last 30 days':'Last year'}</small></div><div class="stat"><div class="stat-top">Open Play Bookings <span class="stat-icon"></span></div><strong id="overviewOpenPlayBookings">—</strong><small>Confirmed registrations</small></div><div class="stat"><div class="stat-top">Court & Open Play Gross <span class="stat-icon">₱</span></div><strong id="overviewCombinedGross">${money(courtGross)}</strong><small>Court rental + confirmed Open Play registration amounts</small></div><div class="stat"><div class="stat-top">Convenience Fees to Remit <span class="stat-icon">−₱</span></div><strong id="overviewTransactionFee">${money(transactionFee)}</strong><small>Court rental fees you owe + player-paid Convenience Fees collected for Courtly</small></div><div class="stat"><div class="stat-top">Owner Net Earnings <span class="stat-icon"></span></div><strong id="overviewTotalGross">${money(courtGross-transactionFee)}</strong><small>Venue revenue after owner-paid fees; player fees are excluded from revenue</small></div></div>`}
 function table(items,actions=false){if(!items.length)return '<div class="empty">No reservations yet. Share your booking page to start receiving bookings.</div>';return `<div class="tablewrap"><table class="table"><thead><tr><th>Booking / Player</th><th>Date & time</th><th>Court</th><th>Court rental</th><th>Convenience Fee (owner)</th><th>Your net</th><th>Status / receipt</th>${actions?'<th>Actions</th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td><strong>${esc(b.reference||b.id)}</strong><br>${esc(b.player)}<br><span class="muted">${esc(b.email)}</span></td><td>${esc(b.date)}<br>${esc(b.time)}</td><td class="nowrap">${esc(b.court)}</td><td class="num">${money(b.price)}</td><td class="num">${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?bookingFee(b):0)}</td><td class="num"><strong>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</strong></td><td class="nowrap">${statusPill(displayBookingStatus(b))}${b.paymentScreenshotUrl?`<br><a href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer" class="muted small">View receipt </a>`:''}</td>${actions?`<td class="nowrap"><div class="actions">${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${b.id}')">Confirm paid</button>`:''}${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${b.id}')">Cancel</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
@@ -568,14 +634,55 @@ function todayConfirmedBookings(){
 }
 function openTodayCalendar(){if(ownerBusy)return;calendarDate=new Date(venueToday()+'T12:00:00');calendarMode='day';go('calendar');}
 function overview(){
-const arg=value=>esc(JSON.stringify(String(value)));
-const pending=db.bookings.filter(b=>b.status==='Pending').slice().sort((a,b)=>new Date(a.createdAt||a.date)-new Date(b.createdAt||b.date));
-const paymentReview=`<section class="panel" id="ownerPaymentReview"><div class="panelhead"><h3>Payment confirmation needed</h3><span class="pill pending">${pending.length} pending</span></div><p class="muted small">Review pending court reservations and match payment receipts against funds received before confirming.</p>${pending.length?table(pending,true):'<div class="empty">You are all caught up. No pending court bookings.</div>'}</section>`;
-const todaysBookings=todayConfirmedBookings();
-const todayOverview=`<section class="panel" id="ownerTodayBookings"><div class="panelhead"><h3>Today’s confirmed court bookings</h3><span class="pill">${todaysBookings.length} today</span></div><p class="muted small">${esc(venueToday())} · ${esc(db.venue.timezone||'Asia/Manila')} · Includes completed sessions</p>${todaysBookings.length?`<ul class="owner-today-list">${todaysBookings.slice(0,5).map(booking=>`<li><div><strong>${esc(booking.time)}</strong><span>${esc(booking.court)}</span></div><div><strong>${esc(booking.player)}</strong><span>${esc(booking.reference||booking.id)}</span></div><div class="owner-today-actions">${statusPill(displayBookingStatus(booking))}<button class="btn sm" onclick="showBooking(${arg(booking.id)})">Details</button></div></li>`).join('')}</ul>${todaysBookings.length>5?`<p class="muted small">Showing 5 of ${todaysBookings.length} confirmed bookings. Open today’s calendar to see them all.</p>`:''}`:'<div class="empty">No confirmed court bookings for today.</div>'}<div class="formactions"><button class="btn" onclick="openTodayCalendar()">View today’s calendar</button></div></section>`;
-const openPlayOverview=`<section class="panel"><div class="panelhead"><h3>Open Play earnings</h3><span class="pill">Separate registration income</span></div><div class="stats" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"><div class="stat"><div class="stat-top">Registered players</div><strong id="opEarnRegistrations">—</strong><small>All active registrations</small></div><div class="stat"><div class="stat-top">Confirmed registrations</div><strong id="opEarnPaidCount">—</strong><small>Paid and free registrations</small></div><div class="stat"><div class="stat-top">Awaiting verification</div><strong id="opEarnPendingCount">—</strong><small>Receipts to review</small></div><div class="stat"><div class="stat-top">Registration revenue</div><strong id="opEarnRevenue">—</strong><small>Venue event price only</small></div><div class="stat"><div class="stat-top">Player Convenience Fees</div><strong id="opEarnFees">—</strong><small>Collected via venue QR for Courtly</small></div><div class="stat"><div class="stat-top">Historical owner-paid Convenience Fees</div><strong id="opEarnLegacyFees">—</strong><small>Pre-policy registrations only</small></div><div class="stat"><div class="stat-top">Open Play venue net</div><strong id="opEarnNet">—</strong><small>Registration revenue less legacy owner fees</small></div><div class="stat"><div class="stat-top">Open Play amount to remit</div><strong id="opEarnRemittance">—</strong><small>Player fees held for Courtly + historical balances</small></div></div><p class="muted small" id="opEarnNote">Paid Open Play checkout adds ₱10 to the player total. The venue collects the payment through its QR and remits the player-paid fee to Courtly through the agreed remittance process. Free events have no Convenience Fee.</p></section><section class="panel" id="opRecentTransactions"><div class="panelhead"><h3>Recent Open Play transactions</h3><span class="pill">Payment review</span></div><div id="opTxnBody" class="muted small">Loading registrations…</div></section>`;
-const courtOverview=`${stats()}<section class="panel" id="opRecentTransactions"><div class="panelhead"><h3>Recent Open Play transactions</h3><span class="pill">Payment review</span></div><div id="opTxnBody" class="muted small">Loading Open Play transactions…</div></section><div class="twocol"><section class="panel"><div class="panelhead"><h3>Recent reservations</h3><button class="btn sm" onclick="go('bookings')">View all →</button></div>${table(sortedBookings().slice(0,5),true)}</section></div><section class="panel" style="margin-top:20px"><div class="panelhead"><h3>Your booking page</h3><span class="pill">Active</span></div><div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><div class="photo-preview" style="flex:1;min-width:220px;max-width:360px">${db.venue.coverData?`<img src="${db.venue.coverData}">`:'  COURTLY'}</div><div style="flex:2;min-width:240px"><h3 style="margin:0 0 6px;font-family:var(--serif)">${esc(db.venue.name)}</h3><p class="muted small">${esc(publicVenueUrl())}</p><div class="notice">Share your venue link so players can view availability and request a booking.</div><div class="owner-booking-actions"><button type="button" class="btn primary" onclick="previewBooking()">Preview booking page </button><button type="button" class="btn" onclick="downloadVenueQr()">Download QR code</button><button type="button" class="btn" onclick="copyVenueLink()">Copy booking link</button><button type="button" class="btn" onclick="go('venue')">Edit venue profile</button></div></div></div></section>${ACTIVE_DEMO?'<p class="footer-note">Demo workspace — sample bookings and changes stay in this browser.</p>':''}`;
-return `${heading('Good morning, '+esc(db.venue.owner.split(' ')[0]||'Owner'),'Here is what is happening at '+esc(db.venue.name)+'.',`<button class="btn primary" onclick="go('calendar')">＋ Manage calendar</button>`)}${paymentReview}${todayOverview}${earningsTabs()}${earningsSection==='openplay'?openPlayOverview:courtOverview}`;
+ const firstName=esc((db.venue.owner||'Owner').split(' ')[0]||'Owner');
+ const todays=todayConfirmedBookings();
+ const pending=db.bookings.filter(b=>b.status==='Pending').slice().sort((a,b)=>new Date(a.createdAt||a.date)-new Date(b.createdAt||b.date));
+ const recent=sortedBookings().slice(0,5);
+ const unread=unreadOwnerNotifications();
+ const periodRows=confirmed();
+ const periodNet=periodRows.reduce((sum,b)=>sum+Math.max(0,Number(b.price||0)-bookingFee(b)),0);
+ const bookingRows=todays.length?todays.slice(0,5).map(b=>`
+   <button type="button" class="ov-booking-row" onclick="showBooking('${esc(b.id)}')">
+     <div><strong>${esc(b.time)}</strong><span>${esc(b.court)}</span></div>
+     <div class="ov-player"><strong>${esc(b.player)}</strong><span>${esc(b.reference||b.id)}</span></div>
+     <div class="ov-row-status">${statusPill(displayBookingStatus(b))}<span class="ov-chevron">›</span></div>
+   </button>`).join(''):'<div class="ov-empty">No confirmed bookings today.</div>';
+ const paymentBody=pending.length?pending.slice(0,3).map(b=>`
+   <button type="button" class="ov-payment-row" onclick="showBooking('${esc(b.id)}')">
+    <div><strong>${esc(b.player)}</strong><span>${esc(b.reference||b.id)} · ${esc(b.court)}</span></div>
+    <div>${money(b.price)} <span class="ov-chevron">›</span></div>
+   </button>`).join(''):'<div class="ov-empty ov-empty-clean"><strong>You’re all caught up!</strong><span>No pending court bookings to confirm.</span></div>';
+ const recentRows=recent.length?recent.map(b=>`
+   <button type="button" class="ov-reservation-row" onclick="showBooking('${esc(b.id)}')">
+    <div class="ov-res-main"><strong>${esc(b.reference||b.id)}</strong><span>${esc(b.player)}</span></div>
+    <div class="ov-res-date"><strong>${esc(b.date)}</strong><span>${esc(b.time)} · ${esc(b.court)}</span></div>
+    <div class="ov-res-money"><strong>${money(b.price)}</strong><span>Your net ${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</span></div>
+    <div class="ov-res-status">${statusPill(displayBookingStatus(b))}<span class="ov-chevron">›</span></div>
+   </button>`).join(''):'<div class="ov-empty">No reservations yet.</div>';
+ return `<div class="owner-overview">
+   ${heading('Good morning, '+firstName,'Here’s what’s happening at '+esc(db.venue.name)+'.')}
+   ${activationBanner()}
+   <div class="ov-primary-action"><button class="btn primary" onclick="go('calendar')">＋ Manage calendar</button></div>
+   <section class="ov-kpis" aria-label="Owner dashboard summary">
+    <button class="ov-kpi" onclick="go('calendar')"><span class="ov-kpi-icon">▦</span><span>Today’s bookings</span><strong>${todays.length}</strong><small>Confirmed</small></button>
+    <button class="ov-kpi" onclick="go('bookings')"><span class="ov-kpi-icon">₱</span><span>Pending payments</span><strong>${pending.length}</strong><small>Need confirmation</small></button>
+    <button class="ov-kpi" onclick="go('transactions')"><span class="ov-kpi-icon">↗</span><span>Net earnings</span><strong>${money(periodNet)}</strong><small>This period</small></button>
+    <button class="ov-kpi" onclick="go('notifications')"><span class="ov-kpi-icon">◌</span><span>Notifications</span><strong>${unread}</strong><small>${unread?'New updates':'No new updates'}</small></button>
+   </section>
+   <section class="panel ov-section">
+    <div class="panelhead"><div><h3>Today’s bookings</h3><p class="muted small">${esc(venueToday())} · ${esc(db.venue.timezone||'Asia/Manila')}</p></div><button class="btn sm ov-desktop-action" onclick="openTodayCalendar()">View calendar</button></div>
+    <div class="ov-booking-list">${bookingRows}</div>
+    <button class="btn ov-mobile-action" onclick="openTodayCalendar()">View today’s calendar</button>
+   </section>
+   <section class="panel ov-section">
+    <div class="panelhead"><div><h3>Payment confirmation needed</h3><p class="muted small">Review payment proof before confirming a reservation.</p></div><span class="pill pending">${pending.length} pending</span></div>
+    <div class="ov-payment-list">${paymentBody}</div>
+   </section>
+   <section class="panel ov-section">
+    <div class="panelhead"><h3>Recent reservations</h3><button class="btn sm" onclick="go('bookings')">View all →</button></div>
+    <div class="ov-reservation-list">${recentRows}</div>
+   </section>
+ </div>`;
 }
 function openPlayPage(){db.openPlays=db.openPlays||[];const items=db.openPlays.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));return `${heading('Open play','Create public open-play sessions and promote them on your Courtly booking page.',`<span class="pill">${items.filter(x=>x.active!==false).length} published</span>`)}<section class="panel"><div class="panelhead"><h3>Create an open play banner</h3><span class="pill">Player announcement</span></div><form onsubmit="saveOpenPlay(event)"><div class="formgrid"><div class="field full"><label>Banner image</label><input id="opImage" type="file" accept="image/*" onchange="previewOpenPlayImage(this)"><div id="opImagePreview" class="photo-preview">Upload a landscape banner image</div><small class="muted">JPG, PNG or WebP · up to 100 MB. Recommended 16:9 landscape.</small></div><div class="field full"><label>Open play title *</label><input id="opTitle" required maxlength="100" placeholder="e.g. Saturday Social Pickleball"></div><div class="field full"><label>Details *</label><textarea id="opDetails" rows="3" required maxlength="500" placeholder="Tell players what to expect, skill level, format, and what to bring."></textarea></div><div class="field"><label>When — date *</label><input id="opDate" type="date" required min="${venueToday()}"></div><div class="field"><label>Start time *</label><input id="opTime" type="time" required></div><div class="field"><label>Where *</label><input id="opWhere" required maxlength="180" value="${esc(db.venue.location||'')}" placeholder="Venue / court location"></div><div class="field"><label>Registration amount per player (₱) *</label><input id="opFee" type="number" min="0" step="1" required placeholder="e.g. 150"><small class="muted">A ₱10 Convenience Fee is added to paid registrations at checkout. Free events (₱0) have no transaction fee.</small></div><div class="field"><label>Registration limit *</label><input id="opLimit" type="number" min="1" step="1" required value="20" placeholder="e.g. 20"></div></div><div class="formactions"><button class="btn primary">＋ Publish open play</button></div></form><div class="notice gold">Pricing: players pay your published registration amount plus a ₱10 Convenience Fee for paid Open Play registrations. The player-paid fee is collected through your venue QR for Courtly and tracked for remittance; it is not deducted from your event registration revenue. Free events have no Convenience Fee. Published announcements appear above the date selector on this venue's public booking page. The Register now button takes players to the booking calendar. Saved event details, images and registration limits appear on your public venue page.</div></section><section class="panel"><div class="panelhead"><h3>Your open play announcements</h3><span class="muted small">${items.length} total</span></div>${items.length?`<div class="court-cards">${items.map(x=>`<article class="court-card" style="cursor:default"><div style="height:150px;border-radius:10px;overflow:hidden;background:#eef1f5">${x.image?`<img src="${x.image}" style="width:100%;height:100%;object-fit:cover">`:'<div style="padding:55px 12px;text-align:center">COURTLY OPEN PLAY</div>'}</div><div style="padding:12px 4px"><div class="eyebrow">${x.active===false?'UNPUBLISHED':'PUBLISHED'} · ${esc(x.date)}</div><h3 style="margin:6px 0">${esc(x.title)}</h3><p class="muted small">${esc(x.details)}</p><p class="small">${esc(x.time)} · ${esc(x.where)} · ${money(x.fee)} / player</p><p class="small"><strong data-op-count="${esc(x.id)}">${Number(x.registeredCount||0)} / ${Number(x.limit||20)}</strong> registered · <span class="muted" data-op-spots="${esc(x.id)}">${Math.max(0,Number(x.limit||20)-Number(x.registeredCount||0))} spots available</span></p><div class="actions"><button class="btn sm" onclick="toggleOpenPlay('${x.id}')">${x.active===false?'Publish':'Unpublish'}</button><button class="btn danger sm" onclick="deleteOpenPlay('${x.id}')">Delete</button></div></div></article>`).join('')}</div>`:'<div class="empty">No open play announcements yet. Create your first banner above.</div>'}</section>`}
 let openPlayImage='';function previewOpenPlayImage(input){const f=input.files&&input.files[0];if(!f)return;if(!f.type.startsWith('image/')||f.size>100*1024*1024){toast('Choose an image up to 100 MB.');input.value='';return}compressImageFile(f,1600,.78).then(data=>{openPlayImage=data;$('opImagePreview').innerHTML=`<img src="${openPlayImage}" style="width:100%;height:100%;object-fit:cover">`}).catch(()=>toast('Could not process this image. Please try another file.'))}

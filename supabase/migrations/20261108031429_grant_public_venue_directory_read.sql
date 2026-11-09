@@ -1,0 +1,3 @@
+-- Historical production migration marker.
+-- Applied remotely to enable the public venue directory.
+-- Current public venue visibility is governed by the live RLS policies and subsequent launch hardening migrations.

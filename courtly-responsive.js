@@ -89,6 +89,7 @@
   };
 
   const setupPwa = () => {
+    if (window.Capacitor?.isNativePlatform?.() || window.COURTLY_NATIVE_APP) return;
     if (!document.querySelector('link[rel="manifest"]')) {
       const manifest = document.createElement('link');
       manifest.rel = 'manifest';

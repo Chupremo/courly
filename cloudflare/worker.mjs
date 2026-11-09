@@ -10,77 +10,122 @@ function shareMetadata(url) {
   const coachName = coachSlug
     ? coachSlug.split('-').filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
     : '';
+
+  const audience = (
+    /^\/business(?:\/|$)/.test(path) ||
+    /^\/owner(?:-|\/|$)/.test(path)
+  ) ? 'owners' : (
+    /^\/coaches?(?:-|\/|$)/.test(path) ||
+    /^\/coach-booking(?:\/|$)/.test(path) ||
+    /^\/my-coaching-sessions(?:\/|$)/.test(path)
+  ) ? 'coaches' : 'players';
+
+  const images = {
+    players: 'https://www.courtlyph.com/share-players.png?v=share-20261109',
+    coaches: 'https://www.courtlyph.com/share-coaches.png?v=share-20261109',
+    owners: 'https://www.courtlyph.com/share-owners.png?v=share-20261109'
+  };
+
   const defaults = {
     title: 'Courtly Philippines',
     description: 'Find courts, book games, join Open Play, discover coaches and play more with Courtly Philippines.'
   };
+
   const map = [
-    [/^\/coach-booking$/, {
+    [/^\/coach-booking(?:\/|$)/, {
       title: coachName ? 'Book ' + coachName + ' | Courtly' : 'Book a Coaching Session | Courtly',
       description: 'View coach availability, choose a session time and book coaching through Courtly Philippines.'
     }],
-    [/^\/coach(?:\/|$)/, {
-      title: coachName ? coachName + ' | Courtly' : 'Courtly Coaches',
-      description: 'Discover verified coaches, view coaching details and book sessions through Courtly.'
+    [/^\/coach-register(?:\/|$)/, {
+      title: 'Grow Your Coaching Bookings | Courtly',
+      description: 'Create your coaching profile, share your booking link and accept online session bookings.'
     }],
-    [/^\/coaches$/, {
-      title: 'Find a Coach | Courtly',
-      description: 'Browse coaches by sport, location and availability, then book your session online.'
+    [/^\/coaches?(?:\/|$)/, {
+      title: coachName ? coachName + ' | Courtly' : 'Find a Coach | Courtly',
+      description: 'Discover coaches, view coaching details and book sessions through Courtly Philippines.'
     }],
-    [/^\/players?$/, {
-      title: 'Courtly Players',
-      description: 'Discover nearby courts, players, games and Open Play sessions with Courtly Philippines.'
+    [/^\/business(?:\/|$)/, {
+      title: 'Manage Your Court Bookings Online | Courtly',
+      description: 'List your venue, manage calendars and confirm payments with Courtly Philippines.'
     }],
-    [/^\/business$/, {
-      title: 'List Your Court | Courtly',
-      description: 'Manage bookings, availability and payments with Courtly. Start your court owner trial.'
+    [/^\/owner(?:-|\/|$)/, {
+      title: 'Courtly for Court Owners',
+      description: 'Manage venue listings, bookings, calendars and payments with Courtly Philippines.'
     }],
     [/^\/v\//, {
       title: 'Book a Court | Courtly',
       description: 'View court availability and reserve your next game through Courtly Philippines.'
     }],
-    [/^\/community$/, {
+    [/^\/players?(?:\/|$)/, {
+      title: 'Find Courts. Book Games. Play More. | Courtly',
+      description: 'Discover nearby courts, coaches and open play with Courtly Philippines.'
+    }],
+    [/^\/community(?:\/|$)/, {
       title: 'Courtly Community',
       description: 'See local games, activities and community updates from Courtly players.'
     }],
-    [/^\/$/, defaults]
+    [/^\/$/, {
+      title: 'Find Courts. Book Games. Play More. | Courtly',
+      description: 'Discover nearby courts, coaches and open play with Courtly Philippines.'
+    }]
   ];
+
   const selected = map.find(([pattern]) => pattern.test(path))?.[1] || defaults;
   const canonical = new URL(url.toString());
   canonical.protocol = 'https:';
   canonical.hostname = 'www.courtlyph.com';
   canonical.hash = '';
+
   return {
     ...selected,
+    audience,
     url: canonical.toString(),
-    image: 'https://www.courtlyph.com/assets/courtly-logo.png?v=share-20261109'
+    image: images[audience],
+    imageAlt: audience === 'owners'
+      ? 'Courtly Philippines for court and venue owners'
+      : audience === 'coaches'
+        ? 'Courtly Philippines for coaches'
+        : 'Courtly Philippines for players'
   };
 }
 
 function addShareMetadata(response, requestUrl) {
   const type = response.headers.get('content-type') || '';
   if (!type.includes('text/html')) return response;
+
   const meta = shareMetadata(requestUrl);
+  const escAttr = value => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;');
+
   return new HTMLRewriter()
+    .on('meta[property^="og:"]', { element(element) { element.remove(); } })
+    .on('meta[name^="twitter:"]', { element(element) { element.remove(); } })
+    .on('link[rel="canonical"]', { element(element) { element.remove(); } })
     .on('head', {
       element(element) {
         element.append(
           '<meta property="og:site_name" content="Courtly Philippines">' +
+          '<meta property="og:locale" content="en_PH">' +
           '<meta property="og:type" content="website">' +
-          '<meta property="og:title" content="' + meta.title.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
-          '<meta property="og:description" content="' + meta.description.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
-          '<meta property="og:url" content="' + meta.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
-          '<meta property="og:image" content="' + meta.image + '">' +
-          '<meta property="og:image:secure_url" content="' + meta.image + '">' +
+          '<meta property="og:title" content="' + escAttr(meta.title) + '">' +
+          '<meta property="og:description" content="' + escAttr(meta.description) + '">' +
+          '<meta property="og:url" content="' + escAttr(meta.url) + '">' +
+          '<meta property="og:image" content="' + escAttr(meta.image) + '">' +
+          '<meta property="og:image:secure_url" content="' + escAttr(meta.image) + '">' +
           '<meta property="og:image:type" content="image/png">' +
-          '<meta name="twitter:card" content="summary">' +
-          '<meta name="twitter:title" content="' + meta.title.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
-          '<meta name="twitter:description" content="' + meta.description.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">' +
-          '<meta name="twitter:image" content="' + meta.image + '">' +
+          '<meta property="og:image:width" content="1200">' +
+          '<meta property="og:image:height" content="630">' +
+          '<meta property="og:image:alt" content="' + escAttr(meta.imageAlt) + '">' +
+          '<meta name="twitter:card" content="summary_large_image">' +
+          '<meta name="twitter:title" content="' + escAttr(meta.title) + '">' +
+          '<meta name="twitter:description" content="' + escAttr(meta.description) + '">' +
+          '<meta name="twitter:image" content="' + escAttr(meta.image) + '">' +
           '<link rel="icon" type="image/png" href="/apple-touch-icon.png?v=20261109b">' +
           '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261109b">' +
           '<link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png?v=20261109b">' +
-          '<link rel="canonical" href="' + meta.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '">',
+          '<link rel="canonical" href="' + escAttr(meta.url) + '">',
           { html: true }
         );
       }

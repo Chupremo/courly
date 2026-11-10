@@ -5,27 +5,28 @@ const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money = (v) => '₱' + Number(v || 0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
 const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-let user = null, profile = null, sessions = [], availability = [], billing = null, conversations = [], activeView = 'overview';
+let user = null, profile = null, sessions = [], availability = [], billing = null, conversations = [], programs = [], programEnrollments = [], activeView = 'overview';
 let messageTimer = null;
 let coreRefreshId = 0;
 const pendingSessionReviews = new Set();
 function msg(text='', type='') { const n=$('coachPortalMessage'); if(n){n.textContent=text;n.className=`coach-msg ${type}`.trim();} }
 function panel(title, body, extra='') { return `<section class="coach-panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px"><h2>${title}</h2>${extra}</div>${body}</section>`; }
 function badge(status) { const s=String(status||'').toLowerCase(); const cls=['confirmed','completed','paid','active','approved'].includes(s)?'':(['awaiting_verification','pending','submitted','partially_paid'].includes(s)?'pending':'muted'); return `<span class="coach-pill ${cls}">${esc(String(status||'—').replaceAll('_',' '))}</span>`; }
-function setView(view) { activeView=view; const titles={overview:'Overview',calendar:'Booking calendar',sessions:'Coaching sessions',clients:'Clients',availability:'Availability & rates',earnings:'Earnings & transactions',profile:'Coach profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',messages:'Messages',notifications:'Notifications'}; $('coachPageTitle').textContent=titles[view]||'Coach Portal'; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view)); const url=new URL(location.href);url.searchParams.set('view',view);history.replaceState({},'',url); try { render(); } catch (e) { msg(e.message||'Unable to load this section.'); } $('coachSidebar').classList.remove('open');$('coachBackdrop').classList.remove('show'); }
+function setView(view) { activeView=view; const titles={overview:'Overview',calendar:'Booking calendar',sessions:'Coaching sessions',programs:'Programs',clients:'Clients',availability:'Availability & rates',earnings:'Earnings & transactions',profile:'Coach profile',payments:'Payment settings',billing:'Convenience Fees & Invoices',messages:'Messages',notifications:'Notifications'}; $('coachPageTitle').textContent=titles[view]||'Coach Portal'; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view)); const url=new URL(location.href);url.searchParams.set('view',view);history.replaceState({},'',url); try { render(); } catch (e) { msg(e.message||'Unable to load this section.'); } $('coachSidebar').classList.remove('open');$('coachBackdrop').classList.remove('show'); }
 async function refreshCore() {
   const requestId = ++coreRefreshId;
-  const [p,s,a,b,c,f] = await Promise.all([
+  const [p,s,a,b,c,f,pg] = await Promise.all([
     supabase.from('coach_profiles').select('*').eq('id',user.id).single(),
     supabase.rpc('get_coach_sessions'),
     supabase.from('coach_availability').select('*').eq('coach_id',user.id).order('weekday').order('start_time'),
     supabase.rpc('get_coach_billing'),
     supabase.rpc('get_my_coach_conversations'),
-    supabase.from('coach_follows').select('player_id',{count:'exact',head:true}).eq('coach_id',user.id)
+    supabase.from('coach_follows').select('player_id',{count:'exact',head:true}).eq('coach_id',user.id),
+    supabase.rpc('get_coach_program_dashboard')
   ]);
   if (requestId !== coreRefreshId) return false;
-  if (p.error) throw p.error; if(s.error) throw s.error; if(a.error) throw a.error; if(b.error) throw b.error; if(c.error) throw c.error; if(f.error) throw f.error;
-  profile={...p.data,follower_count:f.count||0}; sessions=s.data||[]; availability=a.data||[]; billing=b.data||{}; conversations=c.data||[];
+  if (p.error) throw p.error; if(s.error) throw s.error; if(a.error) throw a.error; if(b.error) throw b.error; if(c.error) throw c.error; if(f.error) throw f.error; if(pg.error) throw pg.error;
+  profile={...p.data,follower_count:f.count||0}; sessions=s.data||[]; availability=a.data||[]; billing=b.data||{}; conversations=c.data||[]; programs=pg.data?.programs||[]; programEnrollments=pg.data?.enrollments||[];
   const avatar=coachMediaUrl(profile.profile_image_path);
   $('sideName').textContent=profile.coach_name||'Coach'; $('coachTopName').textContent=profile.coach_name||'Coach'; $('sideStatus').textContent=profile.is_verified?'Verified coach':'Coach account';
   $('sideAvatar').src=avatar||'/assets/courtly-logo.png'; $('topAvatar').src=avatar||'/assets/courtly-logo.png';
@@ -195,6 +196,21 @@ function calendarView() {
   return `<div class="coach-kicker">SCHEDULE</div><h1 class="coach-title">Booking calendar</h1><p class="coach-subtitle">Your confirmed and pending coaching sessions, ordered by date.</p>${panel('Session agenda',rows.length?`<div class="coach-table-wrap"><table class="coach-table"><thead><tr><th>Date</th><th>Time</th><th>Player</th><th>Duration</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${new Date(r.starts_at).toLocaleDateString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium'})}</td><td>${new Date(r.starts_at).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'})} – ${new Date(r.ends_at).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'})}</td><td>${esc(r.player_name)}</td><td>${r.duration_hours} hr</td><td>${badge(r.booking_status)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="coach-empty">No sessions on your calendar yet. Add your weekly availability to start receiving bookings.</div>')}`;
 }
 function sessionsView() { const pending=sessions.filter(s=>s.payment_status==='awaiting_verification'); return `<div class="coach-kicker">BOOKINGS</div><h1 class="coach-title">Coaching sessions</h1><p class="coach-subtitle">Review player payments, confirm sessions and manage completed coaching.</p>${panel(`Awaiting verification (${pending.length})`,sessionTable(pending))}${panel('All sessions',sessionTable(sessions))}`; }
+
+function programEnrollmentTable(rows){
+  if(!rows.length)return '<div class="coach-empty">No program enrollees yet.</div>';
+  return `<div class="coach-table-wrap"><table class="coach-table"><thead><tr><th>Player</th><th>Program</th><th>Price</th><th>Fee</th><th>Payment</th><th>Actions</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.player_name||'Player')}</strong><div class="coach-note">${esc(r.enrollment_reference)}</div></td><td><strong>${esc(r.program_title)}</strong><div class="coach-note">${Number(r.total_hours||0)} total hours</div></td><td>${money(r.price_per_enrollee)}</td><td>${money(r.booker_convenience_fee||25)}</td><td>${badge(r.payment_status)}</td><td><div class="coach-actions">${r.payment_status==='awaiting_verification'?`<button class="coach-btn lime" data-program-review="${r.id}" data-decision="confirmed">Confirm</button><button class="coach-btn outline" data-program-review="${r.id}" data-decision="rejected">Reject</button>`:''}${r.receipt_path?`<button class="coach-btn outline" data-program-receipt="${esc(r.receipt_path)}">View proof</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`;
+}
+function programsView(){
+  const pending=programEnrollments.filter(e=>e.payment_status==='awaiting_verification');
+  const cards=programs.length?`<div class="coach-program-grid">${programs.map(p=>`<article class="coach-program-card"><div class="coach-program-card-head"><div><span class="coach-pill ${p.is_published?'':'muted'}">${p.is_published?'Published':'Draft'}</span><h3>${esc(p.title)}</h3></div><strong>${money(p.price_per_enrollee)}</strong></div><p>${esc(p.description||'No description yet.')}</p><div class="coach-program-meta"><span><b>${Number(p.total_hours)}</b> total hours</span><span><b>${Number(p.confirmed_count||0)}</b>/${Number(p.capacity)} enrolled</span><span>${p.starts_at?new Date(p.starts_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'}):'Start date not set'}</span></div><div class="coach-note" style="margin-top:10px">${esc(p.schedule_text||'Schedule to be arranged')} · ${esc(p.location_text||profile.location_text||'Location to be confirmed')}</div><div class="coach-actions" style="margin-top:14px"><button class="coach-btn ${p.is_published?'outline':'lime'}" data-program-publish="${p.id}" data-next="${p.is_published?'false':'true'}">${p.is_published?'Unpublish':'Publish'}</button><button class="coach-btn outline" data-program-delete="${p.id}">Delete</button></div></article>`).join('')}</div>`:'<div class="coach-empty">No programs yet. Create your first coaching program below.</div>';
+  return `<div class="coach-kicker">GROUP COACHING</div><h1 class="coach-title">Programs</h1><p class="coach-subtitle">Offer multi-hour coaching programs that players can enroll in. Courtly adds a ₱25 Convenience Fee per successful enrollee.</p>
+  <div class="coach-dash-grid" style="margin-top:18px">${kpi('Programs',programs.length,'Draft and published programs')}${kpi('Confirmed enrollees',programEnrollments.filter(e=>['confirmed','completed'].includes(e.payment_status)).length,'Across all programs')}${kpi('Awaiting review',pending.length,'Program payments to verify')}</div>
+  ${panel('Your programs',cards)}
+  ${panel('Create a program',`<form id="programForm" class="coach-grid"><div class="coach-field"><label>Program name</label><input id="programTitle" maxlength="100" placeholder="e.g. Beginner Pickleball Fundamentals" required></div><div class="coach-field"><label>Total program hours</label><select id="programHours"><option value="2">2 hours</option><option value="4" selected>4 hours</option><option value="6">6 hours</option><option value="8">8 hours</option><option value="10">10 hours</option><option value="12">12 hours</option></select></div><div class="coach-field"><label>Price per enrollee (₱)</label><input id="programPrice" type="number" min="1" step="1" required></div><div class="coach-field"><label>Maximum enrollees</label><input id="programCapacity" type="number" min="1" max="200" value="10" required></div><div class="coach-field"><label>Start date & time</label><input id="programStart" type="datetime-local"></div><div class="coach-field"><label>Schedule</label><input id="programSchedule" maxlength="180" placeholder="e.g. Saturdays, 9:00–11:00 AM"></div><div class="coach-field coach-full"><label>Location</label><input id="programLocation" maxlength="180" value="${esc(profile.location_text||'')}"></div><div class="coach-field coach-full"><label>Description</label><textarea id="programDescription" maxlength="1200" placeholder="What will players learn? Who is this program for?"></textarea></div><div class="coach-full"><button class="coach-btn lime">Create program</button></div></form>`)}
+  ${panel(`Awaiting payment verification (${pending.length})`,programEnrollmentTable(pending))}
+  ${panel('All program enrollees',programEnrollmentTable(programEnrollments))}`;
+}
 function clientsView() {
   const map=new Map();sessions.forEach(s=>{let v=map.get(s.player_id);if(!v){v={id:s.player_id,name:s.player_name||'Player',skill:s.player_skill||'—',count:0,last:s.starts_at,total:0};map.set(s.player_id,v);}v.count++;v.total+=Number(s.subtotal||0);if(new Date(s.starts_at)>new Date(v.last))v.last=s.starts_at;});const rows=[...map.values()].sort((a,b)=>new Date(b.last)-new Date(a.last));
   return `<div class="coach-kicker">CLIENT RELATIONSHIPS</div><h1 class="coach-title">Clients</h1><p class="coach-subtitle">Players who have booked sessions with you.</p>${panel(`Your clients (${rows.length})`,rows.length?`<div class="coach-table-wrap"><table class="coach-table"><thead><tr><th>Player nickname</th><th>Skill level</th><th>Sessions</th><th>Session value</th><th>Last session</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.name)}</strong></td><td>${esc(r.skill)}</td><td>${r.count}</td><td>${money(r.total)}</td><td>${new Date(r.last).toLocaleDateString('en-PH',{timeZone:'Asia/Manila'})}</td></tr>`).join('')}</tbody></table></div>`:'<div class="coach-empty">Your client list will appear after players book sessions.</div>')}`;
@@ -226,7 +242,7 @@ function messagesView() {
 }
 function notificationsView() { const pending=sessions.filter(s=>s.payment_status==='awaiting_verification');return `<div class="coach-kicker">UPDATES</div><h1 class="coach-title">Notifications</h1><p class="coach-subtitle">Recent activity that may need your attention.</p>${panel('Needs your attention',pending.length?pending.map(s=>`<div class="coach-summary-row"><span>Payment from ${esc(s.player_name)} · ${esc(s.booking_reference)}</span><button class="coach-btn lime" data-go="sessions">Review</button></div>`).join(''):'<div class="coach-note">No pending payment reviews.</div>')}${panel('Billing reminders',`<p class="coach-note">Current Convenience Fee remittance balance: <strong>${money(Number(billing.balance||0)+Number(billing.accrued_uninvoiced||0))}</strong>. These are booker-paid fees collected through your booking payments. Weekly invoices are issued Friday and are due within 72 hours.</p><button class="coach-btn outline" data-go="billing">View billing</button>`)}`; }
 function render() {
-  const fns={overview,calendar:calendarView,sessions:sessionsView,clients:clientsView,availability:availabilityView,profile:profileView,payments:paymentsView,earnings:earningsView,billing:billingView,messages:messagesView,notifications:notificationsView};
+  const fns={overview,calendar:calendarView,sessions:sessionsView,programs:programsView,clients:clientsView,availability:availabilityView,profile:profileView,payments:paymentsView,earnings:earningsView,billing:billingView,messages:messagesView,notifications:notificationsView};
   $('coachView').innerHTML=(fns[activeView]||overview)();
   $('coachView').querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.go)));
   bindSessionActions();
@@ -256,11 +272,71 @@ function render() {
       if(error?.name!=='AbortError') msg(error?.message||'Unable to share this link.');
     }
   }));
+  if(activeView==='programs') bindProgramActions();
   if(activeView==='availability') bindAvailability();
   if(activeView==='profile') bindProfile();
   if(activeView==='payments') bindPaymentSettings();
   if(activeView==='billing') bindBilling();
   if(activeView==='overview') setTimeout(()=>{ void renderPublicCoachQr(); },0);
+}
+
+function bindProgramActions(){
+  $('programForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const button=e.currentTarget.querySelector('button');
+    button.disabled=true;
+    try{
+      const starts=$('programStart').value?new Date($('programStart').value):null;
+      const row={
+        coach_id:user.id,
+        title:$('programTitle').value.trim(),
+        description:$('programDescription').value.trim(),
+        total_hours:Number($('programHours').value),
+        price_per_enrollee:Number($('programPrice').value),
+        capacity:Number($('programCapacity').value),
+        starts_at:starts?starts.toISOString():null,
+        schedule_text:$('programSchedule').value.trim(),
+        location_text:$('programLocation').value.trim()
+      };
+      const {error}=await supabase.from('coach_programs').insert(row);
+      if(error)throw error;
+      await refreshCore();render();msg('Program created. Publish it when you are ready for enrollments.','success');
+    }catch(error){msg(error.message||'Could not create the program.');}
+    finally{button.disabled=false;}
+  });
+  $('coachView').querySelectorAll('[data-program-publish]').forEach(button=>button.addEventListener('click',async()=>{
+    try{
+      const {error}=await supabase.from('coach_programs').update({is_published:button.dataset.next==='true'}).eq('id',button.dataset.programPublish).eq('coach_id',user.id);
+      if(error)throw error;
+      await refreshCore();render();msg(button.dataset.next==='true'?'Program published.':'Program unpublished.','success');
+    }catch(error){msg(error.message);}
+  }));
+  $('coachView').querySelectorAll('[data-program-delete]').forEach(button=>button.addEventListener('click',async()=>{
+    if(!confirm('Delete this program? Programs with enrollment history cannot be deleted; unpublish them instead.'))return;
+    try{
+      const {error}=await supabase.from('coach_programs').delete().eq('id',button.dataset.programDelete).eq('coach_id',user.id);
+      if(error)throw error;
+      await refreshCore();render();msg('Program deleted.','success');
+    }catch(error){msg(error.message||'This program cannot be deleted because it has enrollment history.');}
+  }));
+  $('coachView').querySelectorAll('[data-program-review]').forEach(button=>button.addEventListener('click',async()=>{
+    const decision=button.dataset.decision;
+    const note=decision==='rejected'?(prompt('Optional reason for rejecting this payment:')||''):null;
+    try{
+      button.disabled=true;
+      const {data,error}=await supabase.rpc('review_coach_program_enrollment',{p_enrollment_id:button.dataset.programReview,p_decision:decision,p_note:note});
+      if(error)throw error;
+      if(data?.success!==true)throw new Error('Program enrollment review could not be verified.');
+      await refreshCore();render();msg(`Program payment ${decision}.`,'success');
+    }catch(error){button.disabled=false;msg(error.message);}
+  }));
+  $('coachView').querySelectorAll('[data-program-receipt]').forEach(button=>button.addEventListener('click',async()=>{
+    try{
+      const {data,error}=await supabase.storage.from('courtly-coach-payment-receipts').createSignedUrl(button.dataset.programReceipt,600);
+      if(error)throw error;
+      window.open(data.signedUrl,'_blank','noopener');
+    }catch(error){msg(error.message);}
+  }));
 }
 function bindAvailability(){
   $('rateForm')?.addEventListener('submit',async e=>{e.preventDefault();try{const rate=Number($('hourlyRate').value);if(rate<=0)throw new Error('Enter an hourly rate greater than zero.');const {error}=await supabase.from('coach_profiles').update({hourly_rate:rate,sport:$('coachSport').value.trim()}).eq('id',user.id);if(error)throw error;await refreshCore();render();msg('Rate and sport saved.','success');}catch(err){msg(err.message);}});
@@ -278,7 +354,7 @@ function bindPaymentSettings(){
 function bindBilling(){
   $('coachView').querySelectorAll('[data-remit-invoice]').forEach(b=>b.addEventListener('click',()=>{const amount=Number(b.dataset.balance);const form=`<div class="coach-panel"><h2>Submit remittance</h2><form id="remitForm" class="coach-grid"><div class="coach-field"><label>Amount</label><input id="remitAmount" type="number" min="0.01" max="${amount}" step="0.01" value="${amount.toFixed(2)}" required></div><div class="coach-field"><label>Payment method</label><select id="remitMethod"><option>GCash</option><option>Maya</option><option>Bank transfer</option></select></div><div class="coach-field coach-full"><label>Reference number</label><input id="remitReference" required></div><div class="coach-field coach-full"><label>Note (optional)</label><input id="remitNote"></div><div class="coach-full"><button class="coach-btn lime">Submit remittance for verification</button></div></form></div>`;b.insertAdjacentHTML('afterend',form);b.disabled=true;$('remitForm').addEventListener('submit',async e=>{e.preventDefault();try{const {error}=await supabase.rpc('submit_coach_remittance',{p_invoice_id:b.dataset.remitInvoice,p_amount:Number($('remitAmount').value),p_payment_method:$('remitMethod').value,p_payment_reference:$('remitReference').value.trim(),p_proof_path:null,p_coach_note:$('remitNote').value.trim()||null});if(error)throw error;await refreshCore();render();msg('Remittance submitted. Your balance will update after Courtly verifies it.','success');}catch(err){msg(err.message);} });}));
 }
-async function init(){if(!supabase)throw new Error(supabaseConfigError);const {data:{user:u},error}=await supabase.auth.getUser();if(error)throw error;if(!u){location.replace('/coach-login.html?next='+encodeURIComponent(location.pathname+location.search));return;}const {data:p,error:pe}=await supabase.from('coach_profiles').select('id').eq('id',u.id).maybeSingle();if(pe)throw pe;if(!p){await supabase.auth.signOut();location.replace('/coach-login.html');return;}user=u;const {error:termsError}=await supabase.rpc('accept_courtly_coach_terms');if(termsError)throw termsError;await refreshCore();const view=new URLSearchParams(location.search).get('view')||'overview';setView(view in {overview:1,calendar:1,sessions:1,clients:1,availability:1,profile:1,payments:1,earnings:1,billing:1,messages:1,notifications:1}?view:'overview');}
+async function init(){if(!supabase)throw new Error(supabaseConfigError);const {data:{user:u},error}=await supabase.auth.getUser();if(error)throw error;if(!u){location.replace('/coach-login.html?next='+encodeURIComponent(location.pathname+location.search));return;}const {data:p,error:pe}=await supabase.from('coach_profiles').select('id').eq('id',u.id).maybeSingle();if(pe)throw pe;if(!p){await supabase.auth.signOut();location.replace('/coach-login.html');return;}user=u;const {error:termsError}=await supabase.rpc('accept_courtly_coach_terms');if(termsError)throw termsError;await refreshCore();const view=new URLSearchParams(location.search).get('view')||'overview';setView(view in {overview:1,calendar:1,sessions:1,programs:1,clients:1,availability:1,profile:1,payments:1,earnings:1,billing:1,messages:1,notifications:1}?view:'overview');}
 $('coachNav').querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));$('coachLogout').addEventListener('click',async()=>{await supabase.auth.signOut();location.assign('/coaches.html');});$('coachMenu').addEventListener('click',()=>{$('coachSidebar').classList.add('open');$('coachBackdrop').classList.add('show');});$('coachBackdrop').addEventListener('click',()=>{$('coachSidebar').classList.remove('open');$('coachBackdrop').classList.remove('show');});
 init().catch(e=>{console.error(e);$('coachView').innerHTML=`<div class="coach-empty">${esc(e.message||'Unable to load your Coach Portal.')}</div>`;});
-setInterval(async()=>{if(user&&!pendingSessionReviews.size){try{await refreshCore();if(activeView==='overview'||activeView==='sessions'||activeView==='calendar'||activeView==='billing')await render();}catch(e){console.warn(e);}}},60000);
+setInterval(async()=>{if(user&&!pendingSessionReviews.size){try{await refreshCore();if(activeView==='overview'||activeView==='sessions'||activeView==='programs'||activeView==='calendar'||activeView==='billing')await render();}catch(e){console.warn(e);}}},60000);

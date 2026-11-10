@@ -12,6 +12,8 @@ const paymentSubmission = submissionGuard();
 const receiptTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const media=p=>p?(/^https?:/i.test(p)?p:supabase.storage.from('courtly-coach-media').getPublicUrl(p).data.publicUrl):'';
 let coach = null;
+let coachPrograms = [];
+let activeProgramEnrollment = null;
 let selected = null;
 let selectionKey = '';
 let booking = null;
@@ -93,6 +95,82 @@ function renderCoachBookingHero() {
         +'<div class="coach-booking-facts"><div><small>Experience</small><strong>'+Number(coach.experience_years||0)+' years</strong></div><div><small>Coaching rate</small><strong>'+money(coach.hourly_rate)+'/hr</strong></div></div>'
       +'</div>'
     +'</div>';
+}
+
+
+function renderCoachPrograms() {
+  const section=$('coachProgramsSection'),grid=$('coachProgramsGrid');
+  if(!section||!grid)return;
+  if(!coachPrograms.length){section.style.display='none';grid.innerHTML='';return;}
+  section.style.display='block';
+  grid.innerHTML=coachPrograms.map(program=>{
+    const full=Number(program.spots_remaining||0)<=0;
+    const start=program.starts_at?new Date(program.starts_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'}):'Start date to be confirmed';
+    return '<article class="coach-program-public-card">'
+      +'<div class="coach-program-public-top"><div><span class="coach-pill">Program</span><h3>'+esc(program.title)+'</h3></div><strong>'+money(program.price_per_enrollee)+'</strong></div>'
+      +(program.description?'<p>'+esc(program.description)+'</p>':'')
+      +'<div class="coach-program-public-meta"><span><b>'+Number(program.total_hours)+'</b> total hours</span><span><b>'+Number(program.confirmed_enrollees||0)+'</b>/'+Number(program.capacity)+' enrolled</span><span>'+esc(start)+'</span></div>'
+      +'<div class="coach-note" style="margin-top:10px">'+esc(program.schedule_text||'Schedule to be arranged')+' · '+esc(program.location_text||coach.location_text||'Location to be confirmed')+'</div>'
+      +'<div class="coach-summary" style="margin-top:14px">'+summaryRow('Program price',money(program.price_per_enrollee))+summaryRow(CONVENIENCE_FEE_LABEL,money(25))+'<div class="coach-summary-row total"><span>Total payable</span><strong>'+money(Number(program.price_per_enrollee)+25)+'</strong></div></div>'
+      +'<button type="button" class="coach-btn lime" data-enroll-program="'+esc(program.id)+'" style="width:100%;margin-top:14px" '+(full?'disabled':'')+'>'+(full?'Program full':'Enroll now')+'</button>'
+      +'</article>';
+  }).join('');
+  grid.querySelectorAll('[data-enroll-program]').forEach(button=>button.addEventListener('click',()=>beginProgramEnrollment(button.dataset.enrollProgram)));
+}
+async function beginProgramEnrollment(programId){
+  if(activeProgramEnrollment)return;
+  const program=coachPrograms.find(item=>item.id===programId);
+  if(!program)return;
+  try{
+    const user=await ensurePlayer();
+    if(!user)return;
+    const {data,error}=await supabase.rpc('create_coach_program_enrollment',{p_program_id:programId});
+    if(error)throw error;
+    if(!data?.enrollment_id)throw new Error('Courtly could not create the program enrollment.');
+    activeProgramEnrollment=data;
+    const qr=data.payment_qr_path?supabase.storage.from('courtly-coach-media').getPublicUrl(data.payment_qr_path).data.publicUrl:'';
+    $('programEnrollmentSummary').innerHTML='<h2 style="font:700 18px Poppins;color:#001a47;margin:0 0 12px">Complete your enrollment</h2>'
+      +'<div class="coach-summary">'+summaryRow('Program',data.program_title)+summaryRow('Total hours',data.total_hours+' hours')+summaryRow('Program price',money(data.price_per_enrollee))+summaryRow(CONVENIENCE_FEE_LABEL,money(data.booker_convenience_fee||25))+'<div class="coach-summary-row total"><span>Total payable</span><strong>'+money(data.player_total)+'</strong></div></div>'
+      +'<div class="coach-summary" style="margin-top:12px"><strong>'+esc(data.payment_provider||'Payment account')+'</strong><p class="coach-note">'+esc(data.payment_account_name||'')+'</p><strong>'+esc(data.payment_account_number||'')+'</strong>'
+      +(qr?'<img class="coach-upload-preview" style="max-width:220px;display:block;margin:12px auto" src="'+esc(qr)+'" alt="Coach payment QR">':'')
+      +'<p class="coach-note">'+esc(data.payment_instructions||'')+'</p></div>';
+    $('programEnrollmentPanel').style.display='block';
+    $('programEnrollmentPanel').scrollIntoView({behavior:'smooth',block:'start'});
+    showMessage('Your program spot is temporarily held while you submit payment details.',true);
+  }catch(error){showMessage(error.message||'Could not start program enrollment.');}
+}
+async function submitProgramEnrollment(event){
+  event.preventDefault();
+  const button=$('submitProgramEnrollment');
+  try{
+    if(!activeProgramEnrollment)throw new Error('Choose a coaching program first.');
+    const reference=$('programPaymentReference').value.trim();
+    if(!reference)throw new Error('Enter your payment reference number.');
+    const file=$('programReceipt').files?.[0];
+    if(file)validateReceipt(file,10,receiptTypes);
+    const user=await ensurePlayer();
+    if(!user)return;
+    button.disabled=true;button.textContent='Submitting…';
+    let receiptPath=null;
+    if(file){
+      const extension={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','application/pdf':'pdf'}[file.type];
+      receiptPath=user.id+'/program-'+activeProgramEnrollment.enrollment_id+'/'+Date.now()+'-'+crypto.randomUUID()+'.'+extension;
+      const {error}=await supabase.storage.from('courtly-coach-payment-receipts').upload(receiptPath,file,{contentType:file.type,upsert:false});
+      if(error)throw error;
+    }
+    const {data,error}=await supabase.rpc('submit_coach_program_enrollment_payment',{
+      p_enrollment_id:activeProgramEnrollment.enrollment_id,
+      p_payment_reference:reference,
+      p_receipt_path:receiptPath,
+      p_player_note:$('programPlayerNote').value.trim()||null
+    });
+    if(error)throw error;
+    if(data?.success!==true)throw new Error('Enrollment payment could not be confirmed.');
+    $('programEnrollmentPanel').innerHTML='<div style="text-align:center;padding:20px"><h2 style="font:700 20px Poppins;color:#001a47">Enrollment submitted</h2><p class="coach-note">The coach will verify your payment. Your program enrollment becomes confirmed once approved.</p><span class="coach-pill pending">Awaiting verification</span><p><strong>'+esc(data.enrollment_reference||activeProgramEnrollment.enrollment_reference)+'</strong></p></div>';
+    activeProgramEnrollment=null;
+    showMessage('Your program enrollment payment was submitted for coach verification.',true);
+  }catch(error){showMessage(error.message||'Could not submit the program enrollment payment.');}
+  finally{if(button&&button.isConnected){button.disabled=false;button.textContent='Submit enrollment payment';}}
 }
 
 function summaryRow(label, value) {
@@ -343,6 +421,7 @@ $('duration').addEventListener('change', () => { loadSlots(); });
 $('prevCoachMonth').addEventListener('click',()=>{calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()-1,1);renderCoachCalendar();});
 $('nextCoachMonth').addEventListener('click',()=>{calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()+1,1);renderCoachCalendar();});
 $('paymentForm').addEventListener('submit', submitPayment);
+$('programEnrollmentForm')?.addEventListener('submit', submitProgramEnrollment);
 $('paymentReference').addEventListener('input', () => { $('paymentReference').setCustomValidity(''); });
 
 async function init() {
@@ -356,6 +435,10 @@ async function init() {
   document.title = 'Book ' + coach.coach_name + ' | Courtly';
   $('backCoach').href = '/coach.html?slug=' + encodeURIComponent(slug);
   renderCoachBookingHero();
+  const {data:programRows,error:programError}=await supabase.rpc('get_public_coach_programs',{p_coach_id:coach.coach_id});
+  if(programError)console.warn('Could not load coach programs:',programError.message);
+  coachPrograms=programRows||[];
+  renderCoachPrograms();
   $('coachBookingIdentity').innerHTML = '<div class="coach-booking-calendar-title"><strong>Choose your session</strong><span>' + esc(coach.coach_name) + ' · ' + money(coach.hourly_rate) + '/hour</span></div>';
   const initialDate=todayManila(new Date(Date.now()+86400000));
   $('bookingDate').value=initialDate;

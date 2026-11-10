@@ -1,6 +1,18 @@
 {
-  "updated_at": "2026-11-10T16:02:56Z",
+  "updated_at": "2026-11-10T17:07:29Z",
   "items": [
+    {
+      "id": "tiebreakertimes-389311",
+      "title": "PBA calls Abueva to meeting over quarterfinal conduct",
+      "summary": "The PBA summoned Calvin Abueva to meet Commissioner Willie Marcial on November 11 over his off-court actions during Converge’s quarterfinal win against Rain or Shine. Abueva had been ejected after two technical fouls. The report said a sanction decision remained pending.",
+      "source": "Tiebreaker Times",
+      "url": "https://tiebreakertimes.com.ph/tbt/pba-summons-calvin-abueva-over-antics-in-converges-game-4-win/389311",
+      "published_at": "2026-11-10T19:40:05+08:00",
+      "added_at": "2026-11-10T17:07:29Z",
+      "image_url": "https://cdn.tiebreakertimes.com.ph/wp-content/uploads/2026/11/2026-PBA-Governors-Cup-QF-G4-Rain-or-Shine-vs-Converge-Calvin-Abueva.jpg",
+      "image_alt": "Converge’s Calvin Abueva during the PBA quarterfinal series against Rain or Shine",
+      "image_credit": "PBA Images / Tiebreaker Times"
+    },
     {
       "id": "tiebreakertimes-389324",
       "title": "ZUS Coffee rallies from two sets down for first PVL Siklab win",
@@ -552,18 +564,6 @@
       "image_url": "https://images.gmanews.tv/webpics/2026/11/pickleball_2026_11_08_14_52_19.jpg",
       "image_alt": "Pickleball courts at Quezon Memorial Circle",
       "image_credit": "Jonathan Andal / GMA News"
-    },
-    {
-      "id": "gma-1008736",
-      "title": "NU edges La Salle to strengthen UAAP Final Four bid",
-      "summary": "National University beat La Salle 84–80 in UAAP Season 89. Reinhard Jumamoy contributed 21 points, including 14 in the final quarter, as NU improved its record to eight wins and three losses.",
-      "source": "GMA News Online",
-      "url": "https://www.gmanetwork.com/news/sports/basketball/1008736/uaap-jumamoy-sparks-nu-s-fourth-quarter-surge-past-la-salle-to-boost-final-four-bid/story/",
-      "published_at": "2026-11-08T17:19:00+08:00",
-      "added_at": "2026-11-08T17:05:05.924Z",
-      "image_url": "https://images.gmanews.tv/webpics/2026/11/UAAP_S89_MBB_-_DLSU_vs_2026_11_08_17_17_26.jpg",
-      "image_alt": "NU Bulldogs and DLSU Green Archers in UAAP Season 89",
-      "image_credit": "UAAP / GMA News Online"
     }
   ]
 }

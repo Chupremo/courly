@@ -40,16 +40,44 @@ function publicLinkPanel() {
     ? '<span class="coach-pill">Public</span>'
     : '<span class="coach-pill muted">Draft</span>';
   return panel('Your public coaching link',
-    `<div class="coach-note" style="margin-bottom:10px">Share this link with players so they can view your coaching profile, check availability and book a session.</div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input id="publicCoachUrl" value="${esc(url)}" readonly style="flex:1;min-width:240px;padding:12px;border:1px solid #d8dee8;border-radius:10px;background:#f8fafc">
-      <button class="coach-btn outline" type="button" data-copy-public-link>Copy link</button>
-      <button class="coach-btn lime" type="button" data-share-public-link>Share</button>
-      <a class="coach-btn outline" href="${esc(url)}" target="_blank" rel="noopener">View public page</a>
-    </div>
-    ${!profile.is_published?'<div class="coach-note" style="margin-top:10px">Your profile is currently in Draft. Publish it from Coach Profile before sharing publicly.</div>':''}`,
+    `<div class="coach-note" style="margin-bottom:12px">Share this link with players so they can view your coaching profile, check availability and book a session. You can also download the QR code when a social platform blocks the website link.</div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center">
+      <div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input id="publicCoachUrl" value="${esc(url)}" readonly style="flex:1;min-width:240px;padding:12px;border:1px solid #d8dee8;border-radius:10px;background:#f8fafc">
+          <button class="coach-btn outline" type="button" data-copy-public-link>Copy link</button>
+          <button class="coach-btn lime" type="button" data-download-public-qr>Download QR code</button>
+          <button class="coach-btn outline" type="button" data-share-public-link>Share</button>
+          <a class="coach-btn outline" href="${esc(url)}" target="_blank" rel="noopener">View public page</a>
+        </div>
+        ${!profile.is_published?'<div class="coach-note" style="margin-top:10px">Your profile is currently in Draft. Publish it from Coach Profile before sharing publicly.</div>':''}
+      </div>
+      <div style="width:172px;max-width:34vw;aspect-ratio:1;background:#fff;border:1px solid #d8dee8;border-radius:14px;padding:10px;display:grid;place-items:center">
+        <canvas id="coachPublicQr" width="320" height="320" style="width:100%;height:auto;display:block" aria-label="Coach booking QR code"></canvas>
+      </div>
+    </div>`,
     status
   );
+}
+async function renderPublicCoachQr() {
+  const canvas=$('coachPublicQr');
+  const url=publicCoachUrl();
+  if(!canvas||!url||!window.QRCode?.toCanvas)return;
+  try{await window.QRCode.toCanvas(canvas,url,{width:320,margin:2,errorCorrectionLevel:'M'});}
+  catch(error){console.warn('Coach QR preview failed:',error);}
+}
+async function downloadPublicCoachQr() {
+  const url=publicCoachUrl();
+  if(!url){msg('Your public coaching link is not ready yet.');return;}
+  if(!window.QRCode?.toDataURL){msg('QR generator is still loading. Please try again.');return;}
+  try{
+    const dataUrl=await window.QRCode.toDataURL(url,{width:1024,margin:3,errorCorrectionLevel:'M'});
+    const link=document.createElement('a');
+    link.href=dataUrl;
+    link.download='courtly-'+String(profile.slug||'coach').replace(/[^a-z0-9-]+/gi,'-').toLowerCase()+'-coach-qr.png';
+    document.body.appendChild(link);link.click();link.remove();
+    msg('Coach booking QR code downloaded.','success');
+  }catch(error){console.warn('Coach QR generation failed:',error);msg('Could not create the coach QR code.');}
 }
 function kpi(label,value,sub='') { return `<div class="coach-kpi"><small>${label}</small><strong>${value}</strong>${sub?`<div class="coach-note">${sub}</div>`:''}</div>`; }
 function sessionTable(rows) {
@@ -167,7 +195,8 @@ function render() {
       msg('Public coaching link copied.','success');
     }
   }));
-  $('coachView').querySelectorAll('[data-share-public-link]').forEach(button=>button.addEventListener('click',async()=>{
+  $('coachView').querySelectorAll('[data-download-public-qr]').forEach(button=>button.addEventListener('click',downloadPublicCoachQr));
+    $('coachView').querySelectorAll('[data-share-public-link]').forEach(button=>button.addEventListener('click',async()=>{
     const url=publicCoachUrl();
     const shareData={title:`${profile.coach_name||'Coach'} on Courtly`,text:'Book a coaching session with me on Courtly.',url};
     try{
@@ -184,6 +213,7 @@ function render() {
   if(activeView==='profile') bindProfile();
   if(activeView==='payments') bindPaymentSettings();
   if(activeView==='billing') bindBilling();
+  if(activeView==='overview') setTimeout(()=>{ void renderPublicCoachQr(); },0);
 }
 function bindAvailability(){
   $('rateForm')?.addEventListener('submit',async e=>{e.preventDefault();try{const rate=Number($('hourlyRate').value);if(rate<=0)throw new Error('Enter an hourly rate greater than zero.');const {error}=await supabase.from('coach_profiles').update({hourly_rate:rate,sport:$('coachSport').value.trim()}).eq('id',user.id);if(error)throw error;await refreshCore();render();msg('Rate and sport saved.','success');}catch(err){msg(err.message);}});

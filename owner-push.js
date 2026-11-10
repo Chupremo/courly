@@ -1,3 +1,4 @@
+import { bindPushSubscription } from './push-subscription.js';
 import { supabase } from './supabase-client.js';
 let ownerId = null;
 let ready = false;
@@ -24,6 +25,7 @@ export function ownerPushCard() {
   return '<section class="panel" id="ownerPushSetup"><strong>Get new booking alerts</strong><p class="muted small">Receive reservations and payment updates even when Courtly is closed.</p><button class="btn primary" type="button" onclick="courtlyEnableOwnerNotifications(this)">Enable notifications</button><p class="muted small" id="ownerPushStatus" aria-live="polite"></p></section>';
 }
 export function configureOwnerPush(userId) {
+  if (ownerId !== userId) ready = false;
   ownerId = userId;
   void registerOwnerWorker().catch(error => console.warn('Courtly app update unavailable:', error.message));
   if ('Notification' in window && Notification.permission === 'granted') void enableOwnerPush().catch(error => console.warn('Courtly booking alerts unavailable:', error.message));
@@ -36,17 +38,15 @@ async function enableOwnerPush(permission) {
     if (granted !== 'granted') throw new Error('Allow notifications to receive booking alerts on this phone.');
     const registration = await registerOwnerWorker();
     if (!registration) throw new Error('Phone notifications are unavailable in this browser.');
-    let subscription = await registration.pushManager.getSubscription();
-    if (!subscription) {
-      const response = await fetch('/api/push/config', { cache: 'no-store' });
-      const config = await response.json();
-      if (!response.ok || !config.publicKey) throw new Error('Booking alerts could not connect. Please try again.');
-      const raw = atob(config.publicKey.replace(/-/g, '+').replace(/_/g, '/'));
-      subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: Uint8Array.from(raw, ch => ch.charCodeAt(0)) });
-    }
-    const json = subscription.toJSON();
-    const { error } = await supabase.from('push_subscriptions').upsert({ user_id: ownerId, endpoint: json.endpoint, p256dh: json.keys.p256dh, auth_secret: json.keys.auth, user_agent: navigator.userAgent, updated_at: new Date().toISOString() }, { onConflict: 'endpoint' });
-    if (error) throw error;
+    await bindPushSubscription({ client: supabase, registration, userId: ownerId, userAgent: navigator.userAgent,
+      subscribe: async () => {
+        const response = await fetch('/api/push/config', { cache: 'no-store' });
+        const config = await response.json();
+        if (!response.ok || !config.publicKey) throw new Error('Booking alerts could not connect. Please try again.');
+        const raw = atob(config.publicKey.replace(/-/g, '+').replace(/_/g, '/'));
+        return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: Uint8Array.from(raw, ch => ch.charCodeAt(0)) });
+      }
+    });
     ready = true;
     document.getElementById('ownerPushSetup')?.remove();
     return true;

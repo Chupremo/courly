@@ -1,3 +1,4 @@
+import { bindPushSubscription } from './push-subscription.js';
 import { supabase, supabaseConfigError } from './supabase-client.js';
 import { syncPlayerProfile, playerDisplayName } from './player-profile-sync.js';
 
@@ -52,21 +53,6 @@ async function registerCourtlyServiceWorker(){
   try{return await navigator.serviceWorker.register('/service-worker.js',{scope:'/',updateViaCache:'none'});}
   catch(error){console.warn('Courtly service worker registration failed:',error.message);return null;}
 }
-async function savePushSubscription(subscription){
-  const json=subscription?.toJSON?.();
-  const endpoint=json?.endpoint||subscription?.endpoint;
-  const keys=json?.keys||{};
-  if(!endpoint||!keys.p256dh||!keys.auth||!user?.id)return;
-  const {error}=await supabase.from('push_subscriptions').upsert({
-    user_id:user.id,
-    endpoint,
-    p256dh:keys.p256dh,
-    auth_secret:keys.auth,
-    user_agent:navigator.userAgent,
-    updated_at:new Date().toISOString()
-  },{onConflict:'endpoint'});
-  if(error)throw error;
-}
 async function ensureCourtlyPush({askPermission=false}={}){
   if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))return false;
   let permission=Notification.permission;
@@ -74,20 +60,15 @@ async function ensureCourtlyPush({askPermission=false}={}){
   if(permission!=='granted')return false;
   const registration=await registerCourtlyServiceWorker();
   if(!registration)return false;
-  let subscription=await registration.pushManager.getSubscription();
-  if(!subscription){
+  await bindPushSubscription({client:supabase,registration,userId:user.id,userAgent:navigator.userAgent,subscribe:async()=>{
     if(!courtlyVapidPublicKey){
       const response=await fetch('/api/push/config',{cache:'no-store'});
       const config=await response.json().catch(()=>({}));
       if(!response.ok||!config.publicKey)throw new Error(config.error||'Courtly push notifications are not configured.');
       courtlyVapidPublicKey=config.publicKey;
     }
-    subscription=await registration.pushManager.subscribe({
-      userVisibleOnly:true,
-      applicationServerKey:urlBase64ToUint8Array(courtlyVapidPublicKey)
-    });
-  }
-  await savePushSubscription(subscription);
+    return registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(courtlyVapidPublicKey)});
+  }});
   await syncInstalledAppBadge();
   return true;
 }

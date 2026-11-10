@@ -1,3 +1,4 @@
+import {bindPushSubscription} from '../push-subscription.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -9,7 +10,7 @@ test('owner notification permission is requested in the tap before registration/
  const registration={update:async()=>{},pushManager:{getSubscription:async()=>subscription}};
  const navigator={serviceWorker:{register:async()=>{order.push('worker');return registration;},ready:Promise.resolve(registration)},userAgent:'test'};
  const Notification={permission:'default',requestPermission:()=>{order.push('permission');Notification.permission='granted';return Promise.resolve('granted');}};
- const context={navigator,Notification,console,Uint8Array,document:{getElementById:()=>null},supabase:{from:table=>({upsert:async value=>{saved={table,value};return {};}})}};
+ const context={bindPushSubscription,navigator,Notification,console,Uint8Array,document:{getElementById:()=>null},supabase:{auth:{getUser:async()=>({data:{user:{id:'venue-owner'}}})},from:table=>({upsert:async value=>{saved={table,value};return {};}})}};
  context.window={Notification,PushManager:{},matchMedia:()=>({matches:true})};
  vm.runInNewContext(source+'\nownerId="venue-owner";',context);
  await context.window.courtlyEnableOwnerNotifications(button);

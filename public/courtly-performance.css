@@ -1,0 +1,20 @@
+/* Courtly cross-site rendering optimizations.
+   Keep off-screen cards cheap to paint while preserving their expected layout. */
+@supports (content-visibility:auto){
+  .venue-card,
+  .coach-list-card,
+  .coach-panel,
+  .coach-program-card,
+  .coach-program-public-card,
+  .booking-card,
+  .membership-card,
+  .court-card,
+  .panel:not(.modal-box){
+    content-visibility:auto;
+    contain-intrinsic-size:auto 360px;
+  }
+}
+img{max-width:100%}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+}

@@ -857,6 +857,24 @@ function prepareOwnerTables(){
 function sortedBookings(){return db.bookings.slice().sort((a,b)=>new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date));}
 function publicVenueUrl(){return ACTIVE_DEMO?new URL('/demo-booking.html?slug='+encodeURIComponent(db.venue.slug||''),location.origin).href:new URL('/v/'+encodeURIComponent(db.venue.slug||''),'https://www.courtlyph.com').href;}
 
+const COURTLY_QR_LOGO_SRC='/assets/courtly-logo.png';
+function loadVenueQrLogo(src=COURTLY_QR_LOGO_SRC){
+ return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;});
+}
+function venueQrRoundRect(ctx,x,y,w,h,r){
+ const radius=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+radius,y);ctx.lineTo(x+w-radius,y);ctx.quadraticCurveTo(x+w,y,x+w,y+radius);ctx.lineTo(x+w,y+h-radius);ctx.quadraticCurveTo(x+w,y+h,x+w-radius,y+h);ctx.lineTo(x+radius,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-radius);ctx.lineTo(x,y+radius);ctx.quadraticCurveTo(x,y,x+radius,y);ctx.closePath();
+}
+async function makeBrandedVenueQr(canvas,url,size=320){
+ if(!window.QRious)throw new Error('QR generator is not available.');
+ new window.QRious({element:canvas,value:url,size,level:'H',padding:16,background:'white',foreground:'black'});
+ const ctx=canvas.getContext('2d');const logo=await loadVenueQrLogo();
+ const badgeSize=Math.round(size*.24),logoSize=Math.round(size*.17);
+ const badgeX=Math.round((size-badgeSize)/2),badgeY=Math.round((size-badgeSize)/2);
+ const logoX=Math.round((size-logoSize)/2),logoY=Math.round((size-logoSize)/2);
+ ctx.save();venueQrRoundRect(ctx,badgeX,badgeY,badgeSize,badgeSize,Math.round(badgeSize*.18));ctx.fillStyle='#fff';ctx.fill();ctx.restore();
+ ctx.drawImage(logo,logoX,logoY,logoSize,logoSize);
+}
+
 function publicVenueLinkPanel(){
  const url=publicVenueUrl();
  if(!db.venue.slug)return '';

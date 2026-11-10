@@ -191,38 +191,6 @@ async function deletePlayerHomePost(id) {
   await loadPlayerHomePosts();renderHome();notify('Post deleted.');
 }
 
-let sportsNews = [], sportsNewsState = 'loading';
-function sportsNewsBanner(item) {
-  let imageUrl='';
-  try { const url=new URL(item.image_url);if(url.protocol==='https:')imageUrl=url.href; }catch{}
-  return `<div style="aspect-ratio:16/9;position:relative;display:grid;place-items:center;background:#f0f3f8;overflow:hidden;border-radius:12px 12px 0 0"><span aria-hidden="true" style="font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--navy)">PHILIPPINE SPORTS</span>${imageUrl?`<img src="${esc(imageUrl)}" alt="${esc(item.image_alt||item.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#f0f3f8" onerror="this.hidden=true;this.style.display='none'">`:''}</div>${imageUrl&&item.image_credit?`<small style="display:block;padding:6px 16px 0;color:var(--muted);font-size:10px">Photo: ${esc(item.image_credit)}</small>`:''}`;
-}
-
-function sportsNewsSection() {
-  const cards=sportsNews.map(item=>`<article class="panel" style="padding:0;min-width:0;overflow:hidden">${sportsNewsBanner(item)}<div style="padding:16px"><small style="color:var(--muted)">${esc(item.source)} · ${esc(formatDate(item.published_at))}</small><h3 style="font-size:16px;line-height:1.4;margin:10px 0">${esc(item.title)}</h3><p style="font-size:12px;line-height:1.6;color:var(--muted)">${esc(item.summary)}</p><a class="btn light" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read article</a></div></article>`).join('');
-  return `<section id="sportsNewsSection" class="section-block" aria-labelledby="sportsNewsTitle"><div class="section-title"><div><span class="player-home-kicker">PHILIPPINE SPORTS</span><h2 id="sportsNewsTitle">Philippine Sports News</h2><p>Hourly news checks. New stories include the publisher and original article link.</p></div></div><div class="venue-grid">${cards||`<div class="empty-state"><strong>${sportsNewsState==='loading'?'Loading sports news…':sportsNewsState==='error'?'Sports news is temporarily unavailable':'Sports news is coming soon'}</strong><span>${sportsNewsState==='error'?'Please refresh to try again.':'Fresh stories will appear here when available.'}</span></div>`}</div></section>`;
-}
-async function loadSportsNews() {
-  try {
-    const response=await fetch(`https://raw.githubusercontent.com/Chupremo/courly/main/public/sports-news.json?t=${Date.now()}`,{cache:'no-store'});
-    if(!response.ok)throw new Error('News unavailable');
-    const payload=await response.json();
-    if(!Array.isArray(payload.items))throw new Error('Invalid news feed');
-    const seen=new Set();
-    sportsNews=payload.items.filter(item=>{
-      if(!item||!item.title||!item.summary||!item.source||!Number.isFinite(Date.parse(item.published_at)))return false;
-      try {
-        const url=new URL(item.url);
-        if(url.protocol!=='https:'||seen.has(url.href))return false;
-        seen.add(url.href);return true;
-      }catch{return false;}
-    }).sort((a,b)=>Date.parse(b.published_at)-Date.parse(a.published_at)).slice(0,6);
-    sportsNewsState='ready';
-  }catch{
-    sportsNewsState='error';
-  }
-}
-
 function playerUiIcon(name) {
   const paths={court:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 12h18M12 3v18M7 3v18m10-18v18"/>',play:'<path d="m9 5 11 7-11 7V5Z"/>',people:'<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m1-16a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 11h18"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',chat:'<path d="M21 11a8 8 0 0 1-8 8H7l-4 3V11a9 9 0 0 1 18 0Z"/>',arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>'};
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]||paths.court}</svg>`;
@@ -259,7 +227,7 @@ function renderHome() {
       <form id="playerHomePostForm" class="panel" style="padding:15px;margin-bottom:14px"><div style="display:flex;gap:11px;align-items:flex-start">${avatarMarkup(profileAvatarUrl,playerDisplayName(profile,user),'avatar')}<div style="flex:1;min-width:0"><textarea id="playerHomePostBody" maxlength="500" rows="3" placeholder="What do you want to share? Looking for a game, a partner, or just saying hello?" style="width:100%;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:12px Inter;line-height:1.55;outline:none"></textarea><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px"><small style="color:var(--muted)">Up to 500 characters</small><button class="btn" id="playerHomePostSubmit" type="submit">Post</button></div></div></div></form>
       <div id="playerHomeFeed">${playerHomePosts.length?playerHomePosts.map(playerHomePostCard).join(''):'<div class="empty-state"><strong>No player posts yet</strong><span>Be the first registered player to post an update.</span></div>'}</div>
     </section>
-    ${sportsNewsSection()}`;
+    `;
   $('homeVenueSearch')?.addEventListener('submit',event=>{event.preventDefault();discoverSearch=$('homeVenueQuery').value.trim();discoverSport=current;discoverMode='list';view='discover';history.pushState({},'', '/player-dashboard.html?view=discover');render();window.scrollTo({top:0,behavior:'smooth'});});
   root.querySelectorAll('[data-home-sport]').forEach(btn=>btn.addEventListener('click',()=>selectSport(btn.dataset.homeSport)));
   root.querySelectorAll('[data-open-sports]').forEach(btn=>btn.addEventListener('click',openSportModal));
@@ -775,20 +743,10 @@ async function init() {
   await loadNearbyVenues();
   render();
   void loadPlayerNotifications().then(()=>{renderPlayerNotifications();startPlayerRealtime();}).catch(error=>console.warn('Notifications deferred:',error.message));
-  void loadSportsNews().then(()=>{if(view==='home'){const section=$('sportsNewsSection');if(section)section.outerHTML=sportsNewsSection();}}).catch(()=>{});
   void registerCourtlyServiceWorker().then(()=>{if('Notification' in window&&Notification.permission==='granted')return ensureCourtlyPush();}).catch(()=>{});
   void syncInstalledAppBadge();
   void refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
-  const refreshSportsNews=async()=>{
-    if(document.visibilityState==='hidden')return;
-    await loadSportsNews();
-    const section=$('sportsNewsSection');
-    if(view==='home'&&section)section.outerHTML=sportsNewsSection();
-  };
-  window.setInterval(refreshSportsNews,60*1000);
-  window.addEventListener('focus',refreshSportsNews);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshSportsNews();});
   window.addEventListener('focus',refreshCommunityActivityBadge);
   if(view==='players')await Promise.all([loadPlayerDirectory(directorySearch),loadPlayerFriendRequests()]);
   if(view==='discover'&&discoverMode==='coaches')await loadDiscoverCoaches();

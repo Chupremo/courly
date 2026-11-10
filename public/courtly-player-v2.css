@@ -106,7 +106,6 @@ body.courtly-player-v2 #viewRoot button:focus-visible,body.courtly-player-v2 #vi
  body.courtly-player-v2 #viewRoot .empty-state strong{font-size:16px!important}
  body.courtly-player-v2 #viewRoot .section-title h2{font-size:20px!important}
  body.courtly-player-v2 #viewRoot .section-title p{font-size:12px!important;line-height:1.6}
- body.courtly-player-v2 #viewRoot #sportsNewsSection{padding-top:24px;border-top:1px solid var(--v2-line);margin-top:32px}
 }
 @media(prefers-reduced-motion:reduce){body.courtly-player-v2 *{scroll-behavior:auto!important;transition:none!important}}
 

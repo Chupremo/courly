@@ -150,8 +150,8 @@ export async function loadOwnerWorkspace() {
     venue: {
       id: venue.id, name: venue.name, owner: venue.owner_name || user.user_metadata?.owner_name || user.email?.split('@')[0] || 'Owner',
       email: venue.admin_email || user.email || '', phone: venue.phone || '', location: venue.address || venue.city || '', city: venue.city || '',
-      latitude: Number.isFinite(Number(venue.latitude)) ? Number(venue.latitude) : null,
-      longitude: Number.isFinite(Number(venue.longitude)) ? Number(venue.longitude) : null,
+      latitude: venue.latitude != null && venue.latitude !== '' && Number.isFinite(Number(venue.latitude)) ? Number(venue.latitude) : null,
+      longitude: venue.longitude != null && venue.longitude !== '' && Number.isFinite(Number(venue.longitude)) ? Number(venue.longitude) : null,
       sport: venue.sport || courts[0]?.sport || 'Multi-sport', description: venue.description || '',
       slug: venue.slug, slugLocked: true, hoursOpen: String(venue.hours_open || '08:00').slice(0, 5),
       hoursClose: String(venue.hours_close || '22:00').slice(0, 5),
@@ -283,8 +283,8 @@ async function persistOwnerWorkspace(state, change = {}) {
     await updateVenueFields(v.id, {
       name: v.name, owner_name: v.owner, admin_email: v.email || null, phone: v.phone,
       address: v.location, city: v.city || null, sport: v.sport, description: v.description,
-      latitude: Number.isFinite(Number(v.latitude)) ? Number(v.latitude) : null,
-      longitude: Number.isFinite(Number(v.longitude)) ? Number(v.longitude) : null,
+      latitude: v.latitude != null && v.latitude !== '' && Number.isFinite(Number(v.latitude)) ? Number(v.latitude) : null,
+      longitude: v.longitude != null && v.longitude !== '' && Number.isFinite(Number(v.longitude)) ? Number(v.longitude) : null,
       amenities: Array.isArray(v.amenities) ? v.amenities : [], logo_url: v.logoData || null, cover_url: v.coverData || null
     });
   } else if (change.scope === 'publication') {

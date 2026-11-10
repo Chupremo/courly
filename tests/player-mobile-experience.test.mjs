@@ -7,15 +7,15 @@ const code=source.slice(source.indexOf('function playerUiIcon('),source.indexOf(
 function setup({rows=[],venues=[],sport='Pickleball',locals=[]}={}) {
  const nodes=new Map();const node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',handlers:{},addEventListener(event,fn){this.handlers[event]=fn;}});return nodes.get(id);};
  const root={innerHTML:'',querySelectorAll(){return [];}};const visits=[];
- const context=vm.createContext({Date,Set,URL,root,$:node,profile:{preferred_sport:sport},selectedSport:sport,user:{id:'player'},playerDisplayName:()=>'<Bonn>',esc:x=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),venues,nearbyCourts:locals,playerHomePosts:[],profileAvatarUrl:'',normalizeBookings:()=>rows,bookingCard:r=>`<article>BOOKING:${r.id}</article>`,venueCard:v=>`<article>VENUE:${v.id}</article>`,avatarMarkup:()=>'',playerHomePostCard:()=>'',sportsNewsSection:()=>'<section id="sportsNewsSection">News</section>',history:{pushState(...args){visits.push(args);}},window:{scrollTo(){}},render(){},submitPlayerHomePost(){},openSportModal(){},selectSport(){},deletePlayerHomePost(){}});
+ const context=vm.createContext({Date,Set,URL,root,$:node,profile:{preferred_sport:sport},selectedSport:sport,user:{id:'player'},playerDisplayName:()=>'<Bonn>',esc:x=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),venues,nearbyCourts:locals,nearbyVenueRows:[],nearbyVenueLocation:null,nearbyVenueCard:()=>'',playerHomePosts:[],profileAvatarUrl:'',normalizeBookings:()=>rows,bookingCard:r=>`<article>BOOKING:${r.id}</article>`,venueCard:v=>`<article>VENUE:${v.id}</article>`,avatarMarkup:()=>'',playerHomePostCard:()=>'',notificationPermissionCard:()=>'',renderPlayerNotifications(){},history:{pushState(...args){visits.push(args);}},window:{scrollTo(){}},render(){},submitPlayerHomePost(){},openSportModal(){},selectSport(){},deletePlayerHomePost(){}});
  vm.runInContext(code,context);return {context,node,root,visits,run:expression=>vm.runInContext(expression,context)};
 }
 test('next game uses real future bookings and excludes cancelled/rejected games',()=>{
  const now=Date.now(),app=setup({rows:[{id:'cancelled',starts_at:new Date(now+1000).toISOString(),status:'cancelled'},{id:'later',starts_at:new Date(now+7200000).toISOString()},{id:'next',starts_at:new Date(now+3600000).toISOString()},{id:'past',starts_at:new Date(now-3600000).toISOString()}]});
  app.run('renderHome()');assert.match(app.root.innerHTML,/BOOKING:next/);assert.doesNotMatch(app.root.innerHTML,/BOOKING:cancelled|BOOKING:later|BOOKING:past/);
 });
-test('news remains after posts and the player name is escaped',()=>{
- const app=setup();app.run('renderHome()');assert.ok(app.root.innerHTML.indexOf('sportsNewsSection')>app.root.innerHTML.indexOf('playerHomeFeed'));assert.match(app.root.innerHTML,/&lt;Bonn&gt;/);assert.doesNotMatch(app.root.innerHTML,/<Bonn>/);
+test('news is removed while posts and the escaped player name remain',()=>{
+ const app=setup();app.run('renderHome()');assert.doesNotMatch(app.root.innerHTML,/sportsNewsSection|Philippine Sports News/);assert.match(app.root.innerHTML,/playerHomeFeed/);assert.match(app.root.innerHTML,/&lt;Bonn&gt;/);assert.doesNotMatch(app.root.innerHTML,/<Bonn>/);
 });
 test('home search passes query and selected sport to Discover',()=>{
  const app=setup();app.run('renderHome()');app.node('homeVenueQuery').value='  Lipa  ';app.node('homeVenueSearch').handlers.submit({preventDefault(){}});assert.equal(app.run('discoverSearch'),'Lipa');assert.equal(app.run('discoverSport'),'Pickleball');assert.equal(app.run('view'),'discover');assert.equal(app.visits[0][2],'/player-dashboard.html?view=discover');

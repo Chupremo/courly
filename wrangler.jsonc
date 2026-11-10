@@ -25,7 +25,21 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none",
-    "run_worker_first": ["/api", "/api/*", "/player/*", "/coach/*", "/club/*", "/v/*"]
+    "run_worker_first": [
+      "/api", "/api/*", "/player/*", "/coach/*", "/club/*", "/v/*",
+      "/", "/index.html",
+      "/business", "/business/", "/business.html",
+      "/players", "/players/", "/players.html",
+      "/player-register", "/player-register/", "/player-register.html",
+      "/coaches", "/coaches/", "/coaches.html",
+      "/coach-register", "/coach-register/", "/coach-register.html",
+      "/coach", "/coach.html",
+      "/coach-booking", "/coach-booking/", "/coach-booking.html",
+      "/venue", "/venue/", "/venue.html",
+      "/clubs", "/clubs/", "/clubs.html",
+      "/community", "/community/", "/community.html",
+      "/community-event", "/community-event/", "/community-event.html"
+    ]
   },
   // Scheduled jobs stay disabled until the Vercel scheduler is deliberately retired.
   "triggers": { "crons": [] }

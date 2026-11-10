@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
-import { runScheduled } from '../cloudflare/worker.mjs';
+import { runScheduled, shareMetadata } from '../cloudflare/worker.mjs';
 import backend from '../server/courtly-backend.cjs';
 
 const NOW = Date.parse('2026-11-07T02:00:00Z');
@@ -101,4 +101,14 @@ test('unexpected handler errors fail the schedule without logging sensitive exce
   }), { message: 'Courtly scheduled delivery failed (500).' });
   assert.ok(!JSON.stringify(logs).includes(ENV.CRON_SECRET));
   assert.ok(!JSON.stringify(logs).includes('Provider exception'));
+});
+
+
+test('Facebook canonical URLs remove tracking but keep the selected coach or event', () => {
+  const coach = shareMetadata(new URL('https://www.courtlyph.com/coach-booking.html?coach=coach-jayar&fbclid=tracking&utm_source=facebook#booking'));
+  assert.equal(coach.url, 'https://www.courtlyph.com/coach-booking?coach=coach-jayar');
+  assert.equal(coach.title, 'Book Coach Jayar | Courtly');
+  const event = shareMetadata(new URL('https://www.courtlyph.com/community-event?id=event-123&utm_campaign=share'));
+  assert.equal(event.url, 'https://www.courtlyph.com/community-event?id=event-123');
+  assert.equal(shareMetadata(new URL('https://www.courtlyph.com/index.html')).url, 'https://www.courtlyph.com/');
 });

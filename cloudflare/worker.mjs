@@ -4,8 +4,8 @@ import { createApiHandlers } from './api-routes.mjs';
 import { resolvePageRoute, schedules } from './routes.mjs';
 
 
-function shareMetadata(url) {
-  const path = url.pathname.replace(/\/$/, '') || '/';
+export function shareMetadata(url) {
+  const path = url.pathname.replace(/\/$/, '').replace(/\.html$/, '') || '/';
   const coachSlug = url.searchParams.get('coach') || '';
   const coachName = coachSlug
     ? coachSlug.split('-').filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
@@ -56,6 +56,10 @@ function shareMetadata(url) {
       title: 'Book a Court | Courtly',
       description: 'View court availability and reserve your next game through Courtly Philippines.'
     }],
+    [/^\/player-register(?:\/|$)/, {
+      title: 'Join Courtly Philippines',
+      description: 'Create your player profile, discover nearby courts and book your next game.'
+    }],
     [/^\/players?(?:\/|$)/, {
       title: 'Find Courts. Book Games. Play More. | Courtly',
       description: 'Discover nearby courts, coaches and open play with Courtly Philippines.'
@@ -75,6 +79,12 @@ function shareMetadata(url) {
   canonical.protocol = 'https:';
   canonical.hostname = 'www.courtlyph.com';
   canonical.hash = '';
+  canonical.pathname = path === '/index' ? '/' : path;
+  // Tracking IDs must not create separate Facebook objects for the same page.
+  // Keep identity parameters such as coach, slug and id for public profiles.
+  for (const key of [...canonical.searchParams.keys()]) {
+    if (/^(utm_|fbclid$|gclid$|msclkid$)/i.test(key)) canonical.searchParams.delete(key);
+  }
 
   return {
     ...selected,

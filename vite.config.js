@@ -45,6 +45,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    target: 'es2020',
+    minify: 'esbuild',
+    cssMinify: true,
+    sourcemap: false,
+    modulePreload: { polyfill: false },
+    reportCompressedSize: false,
     rollupOptions: {
       input: {
         home: resolve(process.cwd(), 'index.html'),

@@ -30,7 +30,7 @@
 body.cx{margin:0;background:#fff;color:var(--ink);font:400 16px/1.6 var(--b);-webkit-font-smoothing:antialiased}
 :where(.cx) :where(h1,h2,h3){font-family:var(--d);margin:0;letter-spacing:-.03em;line-height:1.04;font-weight:800}
 :where(.cx) :where(p){margin:0}:where(.cx) :where(a){color:inherit;text-decoration:none}:where(.cx) :where(ul){margin:0;padding:0;list-style:none}
-.wrap{width:min(1200px,calc(100% - 40px));margin-inline:auto}
+.wrap{width:min(1200px,calc(100% - 40px));max-width:100%;min-width:0;margin-inline:auto}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;border-radius:999px;font:700 15px var(--b);border:1.5px solid transparent;cursor:pointer;transition:background .18s,color .18s,border-color .18s,transform .18s}
 .btn:active{transform:scale(.98)}
 .btn-lime{background:var(--lime);color:var(--navy)}.btn-lime:hover{background:var(--hi)}
@@ -47,13 +47,14 @@ body.cx{margin:0;background:#fff;color:var(--ink);font:400 16px/1.6 var(--b);-we
 .plan .f{fill:rgba(142,213,2,.06);stroke:none}
 .plan.draw .l{animation:draw 1s cubic-bezier(.6,0,.2,1) backwards;animation-delay:calc(var(--i)*60ms)}
 @keyframes draw{from{stroke-dashoffset:1;opacity:0}to{stroke-dashoffset:0;opacity:.55}}
+.hero-in>*{min-width:0;max-width:100%}
 .hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:center}
 .hero h1{font-size:clamp(46px,7vw,92px);line-height:.96}
 .hero h1 span{display:block;color:var(--lime)}
 .hero-copy p{max-width:30em;margin:26px 0 34px;font-size:clamp(17px,1.5vw,19px);color:#C9D5EC}
 .acts{display:flex;flex-wrap:wrap;gap:12px}
 
-.picker{background:rgba(255,255,255,.97);color:var(--ink);border-radius:26px;padding:22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.6)}
+.picker{min-width:0;max-width:100%;background:rgba(255,255,255,.97);color:var(--ink);border-radius:26px;padding:22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.6)}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;min-height:40px;padding:0 15px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 14px var(--b);color:var(--navy);cursor:pointer;transition:all .16s}
@@ -130,7 +131,8 @@ body.cx{margin:0;background:#fff;color:var(--ink);font:400 16px/1.6 var(--b);-we
 .fb{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:52px;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);font-size:13.5px}
 
 @media(max-width:960px){
- .hero-in,.roles,.own,.two{grid-template-columns:1fr}
+ .hero-in,.roles,.own,.two{grid-template-columns:minmax(0,1fr)}
+ .roles>*,.own>*,.two>*,.bento>*,.fg>*{min-width:0}
  .plan{right:50%;transform:translate(50%,-70%);width:150vw;top:30%;opacity:.5}
  .tabs{flex-direction:row;overflow-x:auto;border-top:0;gap:6px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
  .tab{flex:none;min-height:48px;padding:0 20px;border:1.5px solid var(--line);border-radius:999px;font-size:18px}
@@ -234,6 +236,54 @@ html body.scrolled .courtly-global-header{box-shadow:0 10px 30px -18px rgba(0,26
 .cx a.btn-line{color:#fff}.cx a.btn-line:hover{color:#001A47}
 .cx a.btn-ink{color:#001A47}.cx a.btn-ink:hover{color:#fff}
 .pane .acts{margin-top:8px}
+
+/* Homepage mobile layout lives with the page so it is available on first paint. */
+@media(max-width:600px){
+ html{width:100%;max-width:100%;-webkit-text-size-adjust:100%}
+ body.cx{width:100%;max-width:100%}
+ body.cx #main{width:100%;min-width:0}
+ body.cx .wrap{width:calc(100% - 32px);max-width:1200px;min-width:0}
+ body.cx .hero{padding:28px 0 36px}
+ body.cx .hero-in{grid-template-columns:minmax(0,1fr);gap:24px}
+ body.cx .hero-copy{width:100%;min-width:0}
+ body.cx .hero h1{font-size:clamp(30px,8.7vw,42px);line-height:1.08;letter-spacing:-.04em;overflow-wrap:anywhere}
+ body.cx .hero-copy p{max-width:100%;font-size:16px;line-height:1.6;margin:16px 0 22px}
+ body.cx .acts{gap:10px}
+ body.cx .acts .btn{flex:0 1 auto;width:100%;min-width:0;min-height:48px;padding:12px 16px;font-size:14px;line-height:1.4;white-space:normal;text-align:center}
+ body.cx .picker{width:100%;min-width:0;max-width:100%;margin:0;padding:14px;border-radius:20px;box-shadow:0 18px 40px -24px #0009}
+ body.cx .chips{width:100%;min-width:0;max-width:100%;margin:0;padding:0 0 8px;mask:none;-webkit-mask:none}
+ body.cx .chip{min-height:40px;padding:0 12px;font-size:12px}
+ body.cx .ph{gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+ body.cx .ph b{font-size:16px}
+ body.cx .ph>span{font-size:11px}
+ body.cx .picker .grid{width:100%;min-width:0;grid-template-columns:42px repeat(5,minmax(0,1fr));gap:4px}
+ body.cx .picker .grid>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ body.cx .picker .grid .h,body.cx .picker .grid .c{font-size:10px}
+ body.cx .picker .s{min-height:42px;padding:3px 1px;font-size:10px;line-height:1.2;border-radius:8px}
+ body.cx .key{gap:10px;margin:12px 0 0;font-size:11px}
+ body.cx .key i{width:9px;height:9px;margin-right:4px}
+ body.cx .sum{gap:12px;margin-top:14px;padding-top:14px}
+ body.cx .sum span{font-size:14px}
+ body.cx .sum .btn{width:100%;min-height:46px;font-size:14px;white-space:normal}
+ body.cx .sec{padding:44px 0}
+ body.cx .head{margin-bottom:24px}
+ body.cx .head h2{font-size:clamp(27px,7.5vw,36px);line-height:1.12}
+ body.cx .head p{font-size:16px}
+ body.cx .roles,body.cx .own,body.cx .two,body.cx .bento{grid-template-columns:minmax(0,1fr)}
+ body.cx .tabs{min-width:0;max-width:100%}
+ body.cx .tab{font-size:16px;padding-inline:16px}
+ body.cx .pane{padding:24px 18px}
+ body.cx .pane h3{font-size:28px}
+ body.cx .board{width:100%;min-width:0;padding:14px}
+ body.cx .bs{min-width:0;max-width:100%;margin-inline:0;padding-inline:0;overflow-x:auto}
+ body.cx .bh{gap:8px;flex-wrap:wrap}
+ body.cx .rc div{min-width:0;flex:1 1 160px}
+ body.cx .st li{grid-template-columns:36px minmax(0,1fr);gap:12px}
+ body.cx .st li::before{width:36px;height:36px}
+ body.cx .fg{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}
+ body.cx .dock{width:100%;max-width:100%;gap:8px}
+ body.cx .dock .btn{min-width:0;min-height:46px;padding:10px 8px;font-size:13px;white-space:normal}
+}
 </style>
 </head>
 <body class="cx">

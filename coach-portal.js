@@ -33,6 +33,48 @@ async function refreshCore() {
 function publicCoachUrl() {
   return profile?.slug ? `https://www.courtlyph.com/coach-booking?coach=${encodeURIComponent(profile.slug)}` : '';
 }
+
+const COURTLY_QR_LOGO_SRC='/assets/courtly-logo.png';
+function loadQrLogo(src=COURTLY_QR_LOGO_SRC){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=src;
+  });
+}
+function qrRoundRect(ctx,x,y,w,h,r){
+  const radius=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+radius,y);
+  ctx.lineTo(x+w-radius,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+radius);
+  ctx.lineTo(x+w,y+h-radius);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-radius,y+h);
+  ctx.lineTo(x+radius,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-radius);
+  ctx.lineTo(x,y+radius);
+  ctx.quadraticCurveTo(x,y,x+radius,y);
+  ctx.closePath();
+}
+async function makeBrandedCoachQr(canvas,url,size=320){
+  if(!window.QRious)throw new Error('QR generator is not available.');
+  new window.QRious({element:canvas,value:url,size,level:'H',padding:16,background:'white',foreground:'black'});
+  const ctx=canvas.getContext('2d');
+  const logo=await loadQrLogo();
+  const badgeSize=Math.round(size*.24);
+  const logoSize=Math.round(size*.17);
+  const badgeX=Math.round((size-badgeSize)/2);
+  const badgeY=Math.round((size-badgeSize)/2);
+  const logoX=Math.round((size-logoSize)/2);
+  const logoY=Math.round((size-logoSize)/2);
+  ctx.save();
+  qrRoundRect(ctx,badgeX,badgeY,badgeSize,badgeSize,Math.round(badgeSize*.18));
+  ctx.fillStyle='#fff';
+  ctx.fill();
+  ctx.restore();
+  ctx.drawImage(logo,logoX,logoY,logoSize,logoSize);
+}
 function publicLinkPanel() {
   const url = publicCoachUrl();
   if (!url) return '';
@@ -59,15 +101,11 @@ function publicLinkPanel() {
     status
   );
 }
-function makeCoachQr(canvas,url,size=320) {
-  if(!window.QRious) throw new Error('QR generator is not available.');
-  return new window.QRious({element:canvas,value:url,size,level:'M',padding:16,background:'white',foreground:'black'});
-}
 async function renderPublicCoachQr() {
   const canvas=$('coachPublicQr');
   const url=publicCoachUrl();
   if(!canvas||!url)return;
-  try{makeCoachQr(canvas,url,320);}
+  try{await makeBrandedCoachQr(canvas,url,320);}
   catch(error){console.warn('Coach QR preview failed:',error);msg('Could not load the QR generator. Refresh the page and try again.');}
 }
 async function downloadPublicCoachQr() {
@@ -75,7 +113,7 @@ async function downloadPublicCoachQr() {
   if(!url){msg('Your public coaching link is not ready yet.');return;}
   try{
     const canvas=document.createElement('canvas');
-    makeCoachQr(canvas,url,1024);
+    await makeBrandedCoachQr(canvas,url,1024);
     const dataUrl=canvas.toDataURL('image/png');
     const link=document.createElement('a');
     link.href=dataUrl;

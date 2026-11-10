@@ -6,7 +6,7 @@ const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 
 function headerMarkup(role, displayName) {
   const guest = role === 'guest';
-  let links = '<a href="/" data-ct-home>Home</a><a href="/players.html">Venues</a><a href="/coaches.html">Coaches</a><a href="/browse-clubs.html">Clubs</a>';
+  let links = '<a href="/" data-ct-home>Home</a><a href="/players.html">Venues</a><details class="ct-dropdown ct-coaches"><summary>Coaches</summary><div class="ct-menu-panel"><a href="/coaches.html">Browse Coaches</a><a href="/programs.html">Coaching Programs</a></div></details><a href="/browse-clubs.html">Clubs</a>';
   if (guest) {
     links += `<details class="ct-dropdown"><summary>Login</summary><div class="ct-menu-panel"><a href="/player-login.html">Player login</a><a href="/coach-login.html">Coach login</a><a href="/club-login.html">Club login</a><a href="/login.html">Venue owner login</a></div></details>`;
     links += `<details class="ct-dropdown ct-register"><summary>Register</summary><div class="ct-menu-panel"><a href="/player-register.html">Register as a player</a><a href="/coach-register.html">Register as a coach</a><a href="/login.html?mode=signup">Register as a venue owner</a><a href="/club-register.html">Register a club</a></div></details>`;
@@ -99,6 +99,12 @@ function markCurrentPage(header) {
   header.querySelectorAll('.ct-nav > a').forEach(link => {
     if (normalize(new URL(link.href, location.href).pathname) === current) {
       link.setAttribute('aria-current', 'page');
+    }
+  });
+  header.querySelectorAll('.ct-dropdown .ct-menu-panel a').forEach(link => {
+    if (normalize(new URL(link.href, location.href).pathname) === current) {
+      link.setAttribute('aria-current','page');
+      link.closest('.ct-dropdown')?.querySelector('summary')?.setAttribute('aria-current','page');
     }
   });
 }

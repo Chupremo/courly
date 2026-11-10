@@ -725,12 +725,13 @@ async function init() {
   profile=await syncPlayerProfile(supabase,user);
   selectedSport=profile.preferred_sport||'';
   await resolvePlayerAvatar();
-  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts(),loadSportsNews(),loadPlayerNotifications()]);
-  startPlayerRealtime();
-  await registerCourtlyServiceWorker();
-  if('Notification' in window&&Notification.permission==='granted')void ensureCourtlyPush();
-  await syncInstalledAppBadge();
-  await refreshCommunityActivityBadge();
+  await Promise.all([loadVenues(),loadOpenPlayEvents(),loadPlayerActivity(),loadPlayerHomePosts()]);
+  render();
+  void loadPlayerNotifications().then(()=>{renderPlayerNotifications();startPlayerRealtime();}).catch(error=>console.warn('Notifications deferred:',error.message));
+  void loadSportsNews().then(()=>{if(view==='home'){const section=$('sportsNewsSection');if(section)section.outerHTML=sportsNewsSection();}}).catch(()=>{});
+  void registerCourtlyServiceWorker().then(()=>{if('Notification' in window&&Notification.permission==='granted')return ensureCourtlyPush();}).catch(()=>{});
+  void syncInstalledAppBadge();
+  void refreshCommunityActivityBadge();
   window.setInterval(refreshCommunityActivityBadge,30000);
   const refreshSportsNews=async()=>{
     if(document.visibilityState==='hidden')return;
@@ -746,7 +747,6 @@ async function init() {
   if(view==='discover'&&discoverMode==='coaches')await loadDiscoverCoaches();
   if(view==='discover'&&discoverMode==='programs')await loadDiscoverPrograms();
   if(view==='invites')await loadPlayerClubInvites();
-  render();
   const params = new URLSearchParams(location.search);
   if (params.get('welcome') === '1') {
     notify(`Welcome to Courtly, ${playerDisplayName(profile,user)}! Your player profile is synced.`);

@@ -1,0 +1,111 @@
+/* Courtly premium layer — loaded on every page after the legacy styles.
+   Upgrades the shared shell (header, menus, focus) without touching page layouts. */
+:root{
+  --cx-navy:#001A47;--cx-deep:#000F2B;--cx-lime:#8ED502;--cx-lime-hi:#B4F03C;
+  --cx-paper:#F2F5FA;--cx-line:#DCE3EE;--cx-ink:#0D1B3A;--cx-muted:#5B6985;
+  --cx-display:'Bricolage Grotesque','Poppins',Inter,Arial,sans-serif;
+  --cx-body:'Figtree',Inter,Arial,sans-serif;
+}
+html body ::selection{background:var(--cx-lime);color:var(--cx-navy)}
+
+/* Header */
+html body .courtly-global-header{
+  background:rgba(255,255,255,.86);
+  -webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
+  border-bottom:1px solid rgba(0,26,71,.08);box-shadow:none;
+}
+html body .courtly-global-header .ct-nav-wrap{min-height:72px}
+html body .courtly-global-header .ct-nav>a,
+html body .courtly-global-header .ct-nav summary{
+  font:600 13.5px/1 var(--cx-body);letter-spacing:.005em;border-radius:999px;
+  padding:0 15px;color:var(--cx-navy);transition:background .18s,color .18s;
+}
+html body .courtly-global-header .ct-nav>a:hover,
+html body .courtly-global-header .ct-nav summary:hover,
+html body .courtly-global-header .ct-dropdown[open]>summary{background:rgba(0,26,71,.06)}
+html body .courtly-global-header .ct-nav>a[aria-current="page"],
+html body .courtly-global-header .ct-nav summary[aria-current="page"]{
+  background:transparent;box-shadow:none;position:relative;font-weight:700;
+}
+html body .courtly-global-header .ct-nav>a[aria-current="page"]::after{
+  content:"";position:absolute;left:15px;right:15px;bottom:6px;height:3px;border-radius:3px;background:var(--cx-lime);
+}
+html body .courtly-global-header .ct-nav .ct-register summary{
+  background:var(--cx-navy);color:#fff;font-weight:700;padding:0 18px;
+}
+html body .courtly-global-header .ct-nav .ct-register summary:hover,
+html body .courtly-global-header .ct-nav .ct-register[open]>summary{background:var(--cx-lime);color:var(--cx-navy)}
+html body .courtly-global-header .ct-nav .ct-register summary::after{border-color:currentColor}
+html body .courtly-global-header .ct-menu-panel{
+  border:1px solid rgba(0,26,71,.08);border-radius:18px;padding:8px;
+  box-shadow:0 30px 70px -20px rgba(0,26,71,.28),0 2px 6px rgba(0,26,71,.05);
+}
+html body .courtly-global-header .ct-menu-panel a,
+html body .courtly-global-header .ct-menu-panel button{
+  font:600 13.5px/1.3 var(--cx-body);border-radius:11px;color:var(--cx-navy);
+}
+html body .courtly-global-header .ct-menu-panel a:hover,
+html body .courtly-global-header .ct-menu-panel button:hover{background:#EEF9D6}
+html body .courtly-global-header .ct-brand img{height:44px}
+
+@media(max-width:1024px){
+  html body .courtly-global-header .ct-nav{
+    border-top:1px solid var(--cx-line);box-shadow:0 30px 60px -24px rgba(0,26,71,.3);border-radius:0 0 22px 22px;
+  }
+  html body .courtly-global-header .ct-nav>a,
+  html body .courtly-global-header .ct-nav summary{border-radius:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  html body .courtly-global-header *{transition:none!important}
+}
+
+/* ===== v3: site-wide buttons (all pages) ===== */
+html body :is(button,.btn,a[class*="btn"],input[type="submit"],input[type="button"],[role="button"]){
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:background-color .18s,color .18s,border-color .18s,box-shadow .18s,transform .18s;
+}
+html body :is(button,.btn,a[class*="btn"],input[type="submit"],[role="button"]):not(:disabled):active{transform:scale(.97)}
+
+/* Blue / navy buttons: always white text, including inner spans and icons */
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,
+  .pricing-action .feature-primary,.settings-save,.court-card-bottom button,.empty a,
+  .toolbar button:not(.secondary),.nav button,.ct-primary,.btn-navy,
+  .btn:not(.light):not(.secondary):not(.ghost):not(.outline):not(.danger):not(.red):not(.btn-lime):not(.btn-line):not(.btn-ink)),
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save,.btn-navy,.ct-primary) :is(span,svg,i,b,strong){
+  color:#fff !important;-webkit-text-fill-color:#fff;
+}
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save,.court-card-bottom button,.toolbar button:not(.secondary)):not(:disabled):hover{
+  box-shadow:0 12px 26px -12px rgba(0,26,71,.65);transform:translateY(-1px);
+}
+/* On hover these turn lime, so the text goes navy for contrast */
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save,.court-card-bottom button,.toolbar button:not(.secondary)):not(:disabled):hover,
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save) :is(span,svg,i,b,strong){
+  --cx-hover:1;
+}
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save,.court-card-bottom button,.toolbar button:not(.secondary)):not(:disabled):hover{
+  color:#001A47 !important;
+}
+html body :is(.btn-primary,.btn.primary,.primary,.bluebtn,.book,.submit,.feature-primary,.settings-save):not(:disabled):hover :is(span,svg,i,b,strong){
+  color:#001A47 !important;-webkit-text-fill-color:#001A47;
+}
+
+/* Lime buttons: navy text. Secondary/outline buttons: clearly visible border */
+html body :is(.btn-lime,.ct-register summary:hover){color:#001A47 !important}
+html body :is(.btn.light,.btn-light,.btn-ghost,.secondary,.outline,.top-btn){
+  border:2px solid #9FB0CC !important;color:#001A47 !important;background:#fff !important;font-weight:700;
+}
+html body :is(.btn.light,.btn-light,.btn-ghost,.secondary,.outline,.top-btn):hover{border-color:#001A47 !important;background:#F2F5FA !important}
+
+/* Disabled buttons stay legible but clearly inactive */
+html body :is(button,.btn,input[type="submit"]):disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+
+/* Mobile: comfortable tap targets everywhere */
+@media(max-width:760px){
+  html body :is(button,.btn,a[class*="btn"],input[type="submit"],input[type="button"],select,summary):not(.ct-mobile-toggle):not(.menu-toggle):not(.chip):not(.s){
+    min-height:44px;
+  }
+  html body :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){font-size:16px}
+}
+@media(hover:none){
+  html body :is(button,.btn,a[class*="btn"]):hover{transform:none}
+}

@@ -141,6 +141,22 @@ function addShareMetadata(response, requestUrl) {
     .transform(response);
 }
 
+function withPerformanceHeaders(response, requestUrl) {
+  const url = requestUrl instanceof URL ? requestUrl : new URL(requestUrl);
+  const headers = new Headers(response.headers);
+  const type = headers.get('content-type') || '';
+  const path = url.pathname;
+  if (type.includes('text/html')) {
+    headers.set('Cache-Control','no-cache');
+  } else if (/\.(?:png|jpe?g|webp|avif|svg|ico|woff2?|ttf|otf)$/i.test(path)) {
+    headers.set('Cache-Control','public, max-age=604800, stale-while-revalidate=2592000');
+  } else if (/\.(?:css|js|mjs)$/i.test(path)) {
+    headers.set('Cache-Control','public, max-age=3600, stale-while-revalidate=86400');
+  }
+  headers.set('X-Content-Type-Options','nosniff');
+  return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
+}
+
 function jsonError(status, message) {
   return Response.json({ success: false, error: message }, {
     status,
@@ -180,11 +196,11 @@ export async function handleRequest(request, env) {
     }
     if (route) {
       const response = await env.ASSETS.fetch(new Request(route.url, request));
-      return addShareMetadata(response, url);
+      return withPerformanceHeaders(addShareMetadata(response, url), url);
     }
   }
   const response = await env.ASSETS.fetch(request);
-  return addShareMetadata(response, url);
+  return withPerformanceHeaders(addShareMetadata(response, url), url);
 }
 
 export async function runScheduled(event, env, dependencies = {}) {

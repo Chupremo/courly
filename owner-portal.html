@@ -857,6 +857,32 @@ function prepareOwnerTables(){
 function sortedBookings(){return db.bookings.slice().sort((a,b)=>new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date));}
 function publicVenueUrl(){return ACTIVE_DEMO?new URL('/demo-booking.html?slug='+encodeURIComponent(db.venue.slug||''),location.origin).href:new URL('/v/'+encodeURIComponent(db.venue.slug||''),'https://www.courtlyph.com').href;}
 
+function publicVenueLinkPanel(){
+ const url=publicVenueUrl();
+ if(!db.venue.slug)return '';
+ return `<section class="panel"><div class="panelhead"><h3>Your public booking QR code</h3><span class="pill">Ready to share</span></div>
+ <p class="muted small">Players can scan this QR code to open your Courtly venue page directly. This is useful when a social platform blocks the website link.</p>
+ <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center">
+  <div>
+   <div class="field"><label>Public booking link</label><input value="${esc(url)}" readonly onclick="this.select()"></div>
+   <div class="formactions">
+    <button type="button" class="btn" onclick="copyVenueLink()">Copy link</button>
+    <button type="button" class="btn primary" onclick="downloadVenueQr()">Download QR code</button>
+    <button type="button" class="btn" onclick="previewBooking()">Open public page</button>
+   </div>
+  </div>
+  <div style="width:172px;max-width:34vw;aspect-ratio:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;place-items:center">
+   <canvas id="venuePublicQr" width="320" height="320" style="width:100%;height:auto;display:block" aria-label="Venue booking QR code"></canvas>
+  </div>
+ </div></section>`;
+}
+async function renderVenueQr(){
+ const canvas=$('venuePublicQr');
+ if(!canvas||!db.venue.slug||!window.QRCode?.toCanvas)return;
+ try{await window.QRCode.toCanvas(canvas,publicVenueUrl(),{width:320,margin:2,errorCorrectionLevel:'M'});}
+ catch(error){console.warn('Venue QR preview failed:',error);}
+}
+
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -930,7 +956,7 @@ function render(){const titles={overview:'Overview',calendar:'Booking calendar',
        });
      });
    });
- }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner&&view!=='overview')c.insertAdjacentHTML('afterbegin',banner)}
+ }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(view==='overview')setTimeout(renderVenueQr,0);if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner&&view!=='overview')c.insertAdjacentHTML('afterbegin',banner)}
 function heading(title,desc,action=''){return `<div class="heading"><div><div class="eyebrow">YOUR COURT BUSINESS</div><h1>${title}</h1><p>${desc}</p></div>${action}</div>`}
 function stats(){const rows=confirmed();const courtGross=gross();const transactionFee=fees();return `<div class="stats"><div class="stat"><div class="stat-top">Court Rental Bookings <span class="stat-icon"></span></div><strong id="overviewCourtBookings">${rows.length}</strong><small>Confirmed and completed · ${earningsRange==='7d'?'Last 7 days':earningsRange==='30d'?'Last 30 days':'Last year'}</small></div><div class="stat"><div class="stat-top">Open Play Bookings <span class="stat-icon"></span></div><strong id="overviewOpenPlayBookings">—</strong><small>Confirmed registrations</small></div><div class="stat"><div class="stat-top">Court & Open Play Gross <span class="stat-icon">₱</span></div><strong id="overviewCombinedGross">${money(courtGross)}</strong><small>Court rental + confirmed Open Play registration amounts</small></div><div class="stat"><div class="stat-top">Convenience Fees to Remit <span class="stat-icon">−₱</span></div><strong id="overviewTransactionFee">${money(transactionFee)}</strong><small>Court rental fees you owe + player-paid Convenience Fees collected for Courtly</small></div><div class="stat"><div class="stat-top">Owner Net Earnings <span class="stat-icon"></span></div><strong id="overviewTotalGross">${money(courtGross-transactionFee)}</strong><small>Venue revenue after owner-paid fees; player fees are excluded from revenue</small></div></div>`}
 function table(items,actions=false){if(!items.length)return '<div class="empty">No reservations yet. Share your booking page to start receiving bookings.</div>';return `<div class="tablewrap"><table class="table"><thead><tr><th>Booking / Player</th><th>Date & time</th><th>Court</th><th>Court rental</th><th>Convenience Fee (owner)</th><th>Your net</th><th>Status / receipt</th>${actions?'<th>Actions</th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td><strong>${esc(b.reference||b.id)}</strong><br>${esc(b.player)}<br><span class="muted">${esc(b.email)}</span></td><td>${esc(b.date)}<br>${esc(b.time)}</td><td class="nowrap">${esc(b.court)}</td><td class="num">${money(b.price)}</td><td class="num">${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?bookingFee(b):0)}</td><td class="num"><strong>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</strong></td><td class="nowrap">${statusPill(displayBookingStatus(b))}${b.paymentScreenshotUrl?`<br><a href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer" class="muted small">View receipt </a>`:''}</td>${actions?`<td class="nowrap"><div class="actions">${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${b.id}')">Confirm paid</button>`:''}${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${b.id}')">Cancel</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
@@ -972,6 +998,7 @@ function overview(){
  return `<div class="owner-overview">
    ${heading('Good morning, '+firstName,'Here’s what’s happening at '+esc(db.venue.name)+'.')}
    ${activationBanner()}
+   ${publicVenueLinkPanel()}
    <div class="ov-primary-action"><button class="btn primary" onclick="go('calendar')">＋ Manage calendar</button></div>
    <section class="ov-kpis" aria-label="Owner dashboard summary">
     <button class="ov-kpi" onclick="go('calendar')"><span class="ov-kpi-icon">▦</span><span>Today’s bookings</span><strong>${todays.length}</strong><small>Confirmed</small></button>

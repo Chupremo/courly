@@ -2,6 +2,20 @@ import { supabase } from './supabase-client.js';
 import './courtly-global-nav.css';
 
 const LOGO = '/assets/courtly-logo.png';
+const NAV_PROFILE_CACHE_PREFIX='courtly-nav-profile:';
+const NAV_PROFILE_CACHE_TTL=60*1000;
+function readNavProfileCache(userId){
+  try{
+    const raw=sessionStorage.getItem(NAV_PROFILE_CACHE_PREFIX+userId);
+    if(!raw)return null;
+    const parsed=JSON.parse(raw);
+    if(!parsed||Date.now()-Number(parsed.at||0)>NAV_PROFILE_CACHE_TTL)return null;
+    return parsed.value||null;
+  }catch{return null;}
+}
+function writeNavProfileCache(userId,value){
+  try{sessionStorage.setItem(NAV_PROFILE_CACHE_PREFIX+userId,JSON.stringify({at:Date.now(),value}));}catch{}
+}
 const safeText = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function headerMarkup(role, displayName) {
@@ -38,38 +52,41 @@ function headerMarkup(role, displayName) {
 
 async function resolveRole() {
   if (!supabase) return { role: 'guest', displayName: 'Guest' };
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  const user=session?.user||null;
   if (error || !user) return { role: 'guest', displayName: 'Guest' };
+  const cached=readNavProfileCache(user.id);
+  if(cached)return cached;
   const type = String(user.user_metadata?.account_type || '').toLowerCase();
   const coachContext = /^\/(coach(?:-|\/)|coaches(?:\.|\/|$)|my-coaching-sessions(?:\.|\/|$))/.test(location.pathname);
   if (coachContext) {
     const { data: coach } = await supabase.from('coach_profiles').select('coach_name').eq('id', user.id).maybeSingle();
-    if (coach) return { role: 'coach', displayName: coach.coach_name || user.user_metadata?.coach_name || 'Coach' };
+    if (coach) { const value={ role: 'coach', displayName: coach.coach_name || user.user_metadata?.coach_name || 'Coach' }; writeNavProfileCache(user.id,value); return value; }
   }
-  if (type === 'courtly_admin') return { role: 'admin', displayName: user.user_metadata?.full_name || user.email };
+  if (type === 'courtly_admin') { const value={ role: 'admin', displayName: user.user_metadata?.full_name || user.email }; writeNavProfileCache(user.id,value); return value; }
   if (type === 'coach') {
     const { data: coach } = await supabase.from('coach_profiles').select('coach_name').eq('id', user.id).maybeSingle();
-    return { role: 'coach', displayName: coach?.coach_name || user.user_metadata?.coach_name || 'Coach' };
+    const value={ role: 'coach', displayName: coach?.coach_name || user.user_metadata?.coach_name || 'Coach' }; writeNavProfileCache(user.id,value); return value;
   }
   if (type === 'player') {
     const { data: profile } = await supabase.from('player_profiles').select('player_name,full_name').eq('id', user.id).maybeSingle();
-    return { role: 'player', displayName: profile?.player_name || profile?.full_name || user.user_metadata?.player_name || user.email?.split('@')[0] || 'Player' };
+    const value={ role: 'player', displayName: profile?.player_name || profile?.full_name || user.user_metadata?.player_name || user.email?.split('@')[0] || 'Player' }; writeNavProfileCache(user.id,value); return value;
   }
   if (type === 'club' || type === 'sports_club') {
     const { data: club } = await supabase.from('club_profiles').select('club_name').eq('id', user.id).maybeSingle();
-    return { role: 'club', displayName: club?.club_name || user.user_metadata?.club_name || 'Club' };
+    const value={ role: 'club', displayName: club?.club_name || user.user_metadata?.club_name || 'Club' }; writeNavProfileCache(user.id,value); return value;
   }
   if (type === 'venue_owner' || type === 'owner' || type === 'business_owner') {
     const { data: venue } = await supabase.from('venues').select('name,owner_name').eq('owner_id', user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
-    return { role: 'owner', displayName: venue?.owner_name || venue?.name || user.user_metadata?.owner_name || 'Venue owner' };
+    const value={ role: 'owner', displayName: venue?.owner_name || venue?.name || user.user_metadata?.owner_name || 'Venue owner' }; writeNavProfileCache(user.id,value); return value;
   }
   // Older player accounts may have a profile row but incomplete auth metadata.
   const { data: coach } = await supabase.from('coach_profiles').select('coach_name').eq('id', user.id).maybeSingle();
-  if (coach) return { role: 'coach', displayName: coach.coach_name || user.email?.split('@')[0] || 'Coach' };
+  if (coach) { const value={ role: 'coach', displayName: coach.coach_name || user.email?.split('@')[0] || 'Coach' }; writeNavProfileCache(user.id,value); return value; }
   const { data: profile } = await supabase.from('player_profiles').select('player_name,full_name').eq('id', user.id).maybeSingle();
-  if (profile) return { role: 'player', displayName: profile.player_name || profile.full_name || user.email?.split('@')[0] || 'Player' };
+  if (profile) { const value={ role: 'player', displayName: profile.player_name || profile.full_name || user.email?.split('@')[0] || 'Player' }; writeNavProfileCache(user.id,value); return value; }
   const { data: venue } = await supabase.from('venues').select('name,owner_name').eq('owner_id', user.id).order('created_at',{ascending:true}).limit(1).maybeSingle();
-  if (venue) return { role: 'owner', displayName: venue.owner_name || venue.name || 'Venue owner' };
+  if (venue) { const value={ role: 'owner', displayName: venue.owner_name || venue.name || 'Venue owner' }; writeNavProfileCache(user.id,value); return value; }
   return { role: 'guest', displayName: 'Guest' };
 }
 

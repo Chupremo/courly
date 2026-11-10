@@ -26,6 +26,14 @@ function courtlyProfessionalUi() {
               injectTo: 'head'
             },
             {
+              tag: 'link',
+              attrs: {
+                rel: 'stylesheet',
+                href: '/courtly-performance.css'
+              },
+              injectTo: 'head'
+            },
+            {
               tag: 'script',
               attrs: {
                 src: '/courtly-professional-ui.js',

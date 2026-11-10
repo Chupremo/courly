@@ -88,6 +88,7 @@ export default defineConfig({
         adminBilling: resolve(process.cwd(), 'admin-billing.html'),
         venueOwnerTerms: resolve(process.cwd(), 'venue-owner-terms.html'),
         coaches: resolve(process.cwd(), 'coaches.html'),
+        programs: resolve(process.cwd(), 'programs.html'),
         coachProfile: resolve(process.cwd(), 'coach.html'),
         coachRegister: resolve(process.cwd(), 'coach-register.html'),
         coachLogin: resolve(process.cwd(), 'coach-login.html'),

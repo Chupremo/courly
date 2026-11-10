@@ -1,6 +1,18 @@
 {
-  "updated_at": "2026-11-10T18:12:11Z",
+  "updated_at": "2026-11-10T19:11:31Z",
   "items": [
+    {
+      "id": "tiebreakertimes-389284",
+      "title": "UST boys and NAS girls secure UAAP table tennis semifinal berths",
+      "summary": "UST’s boys and the National Academy of Sports girls became the first teams to reach the UAAP Season 89 high school table tennis Final Four. UST swept La Salle Zobel and Adamson 3–0, while NAS beat UPIS and UE by the same score.",
+      "source": "Tiebreaker Times",
+      "url": "https://tiebreakertimes.com.ph/tbt/ust-boys-nas-girls-first-to-clinch-uaap-hs-table-tennis-final-four-spots/389284",
+      "published_at": "2026-11-10T12:54:17+08:00",
+      "added_at": "2026-11-10T19:11:31Z",
+      "image_url": "https://cdn.tiebreakertimes.com.ph/wp-content/uploads/2026/11/UAAP-89-TABLE-TENNIS-UPIS-VS.-UST-FRANZ-JACO-Q.-ACASIO.jpg",
+      "image_alt": "UST’s Franz Acasio competing in UAAP Season 89 high school table tennis",
+      "image_credit": "UAAP Season 89 Media Team / Tiebreaker Times"
+    },
     {
       "id": "philstar-2569007",
       "title": "Lagat and Ojo earn UAAP weekly basketball honours",
@@ -549,18 +561,6 @@
       "image_url": "https://od2-image-api.abs-cbn.com/prod/20261108071124/3f687553f095a3fceb65a5eea5b2fee3f8cabde3260aeb64ac10f0feeb363876.jpg?w=1200&h=800",
       "image_alt": "Erika Deloria of Galeries Tower in the PVL All-Filipino Conference",
       "image_credit": "PVL Media / ABS-CBN News"
-    },
-    {
-      "id": "gma-1008742",
-      "title": "Eala closes milestone season with Hong Kong runner-up finish",
-      "summary": "Alex Eala finished her 2026 season as Hong Kong Open runner-up. Her year included a maiden WTA singles title in Washington, a Birmingham WTA 125 crown, and appearances in Wimbledon’s last 16 and the US Open’s last 32.",
-      "source": "GMA News Online",
-      "url": "https://www.gmanetwork.com/news/sports/othersports/1008742/alex-eala-2026-season-recap-first-wta-title-grand-slam-runs-and-historic-milestones/story/",
-      "published_at": "2026-11-08T18:52:39+08:00",
-      "added_at": "2026-11-08T19:05:45.385Z",
-      "image_url": "https://images.gmanews.tv/webpics/2026/08/Alex_Eala_week_by_week_before_US_Open_2026_08_24_16_57_58.jpg",
-      "image_alt": "Alex Eala featured in GMA News’ 2026 season recap",
-      "image_credit": "LTA/Instagram; Mubadala DC Open/Facebook; Matthew Stockman/Getty Images North America/Getty Images via AFP / GMA News Online"
     }
   ]
 }

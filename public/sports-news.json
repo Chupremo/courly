@@ -1,6 +1,15 @@
 {
-  "updated_at": "2026-11-10T17:07:29Z",
+  "updated_at": "2026-11-10T18:12:11Z",
   "items": [
+    {
+      "id": "philstar-2569007",
+      "title": "Lagat and Ojo earn UAAP weekly basketball honours",
+      "summary": "UE’s Toper Lagat and La Salle’s Bukky Ojo received the Collegiate Press Corps UAAP Player of the Week awards for November 4–8. Lagat won the men’s citation ahead of four other nominees, while Ojo topped the women’s voting after her 24-point, 24-rebound performance.",
+      "source": "Philstar.com",
+      "url": "https://www.philstar.com/sports/2026/11/09/2569007/uaap-players-week-lagat-ojo-star-ue-la-salle",
+      "published_at": "2026-11-09T16:45:00+08:00",
+      "added_at": "2026-11-10T18:12:11Z"
+    },
     {
       "id": "tiebreakertimes-389311",
       "title": "PBA calls Abueva to meeting over quarterfinal conduct",
@@ -552,18 +561,6 @@
       "image_url": "https://images.gmanews.tv/webpics/2026/08/Alex_Eala_week_by_week_before_US_Open_2026_08_24_16_57_58.jpg",
       "image_alt": "Alex Eala featured in GMA News’ 2026 season recap",
       "image_credit": "LTA/Instagram; Mubadala DC Open/Facebook; Matthew Stockman/Getty Images North America/Getty Images via AFP / GMA News Online"
-    },
-    {
-      "id": "gma-1008722",
-      "title": "Quezon Memorial Circle opens free pickleball courts",
-      "summary": "Two pickleball courts have opened at Quezon Memorial Circle, offering free play for Quezon City residents, with non-residents also welcome. Players can request a slot by email and should bring their own paddle, ball and reusable water bottle.",
-      "source": "GMA News Online",
-      "url": "https://www.gmanetwork.com/news/lifestyle/hobbiesandactivities/1008722/free-pickleball-courts-open-at-quezon-memorial-circle/story/",
-      "published_at": "2026-11-08T14:55:02+08:00",
-      "added_at": "2026-11-08T18:11:26.896Z",
-      "image_url": "https://images.gmanews.tv/webpics/2026/11/pickleball_2026_11_08_14_52_19.jpg",
-      "image_alt": "Pickleball courts at Quezon Memorial Circle",
-      "image_credit": "Jonathan Andal / GMA News"
     }
   ]
 }

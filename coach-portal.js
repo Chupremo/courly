@@ -62,18 +62,22 @@ async function makeBrandedCoachQr(canvas,url,size=320){
   new window.QRious({element:canvas,value:url,size,level:'H',padding:16,background:'white',foreground:'black'});
   const ctx=canvas.getContext('2d');
   const logo=await loadQrLogo();
-  const badgeSize=Math.round(size*.24);
-  const logoSize=Math.round(size*.17);
-  const badgeX=Math.round((size-badgeSize)/2);
-  const badgeY=Math.round((size-badgeSize)/2);
-  const logoX=Math.round((size-logoSize)/2);
-  const logoY=Math.round((size-logoSize)/2);
+  const maxLogoW=Math.round(size*.20);
+  const maxLogoH=Math.round(size*.085);
+  const ratio=(logo.naturalWidth||logo.width)/(logo.naturalHeight||logo.height||1);
+  let logoW=maxLogoW;
+  let logoH=Math.round(logoW/ratio);
+  if(logoH>maxLogoH){logoH=maxLogoH;logoW=Math.round(logoH*ratio);}
+  const padX=Math.round(size*.022),padY=Math.round(size*.018);
+  const badgeW=logoW+padX*2,badgeH=logoH+padY*2;
+  const badgeX=Math.round((size-badgeW)/2),badgeY=Math.round((size-badgeH)/2);
+  const logoX=Math.round((size-logoW)/2),logoY=Math.round((size-logoH)/2);
   ctx.save();
-  qrRoundRect(ctx,badgeX,badgeY,badgeSize,badgeSize,Math.round(badgeSize*.18));
+  qrRoundRect(ctx,badgeX,badgeY,badgeW,badgeH,Math.round(Math.min(badgeW,badgeH)*.20));
   ctx.fillStyle='#fff';
   ctx.fill();
   ctx.restore();
-  ctx.drawImage(logo,logoX,logoY,logoSize,logoSize);
+  ctx.drawImage(logo,logoX,logoY,logoW,logoH);
 }
 function publicLinkPanel() {
   const url = publicCoachUrl();

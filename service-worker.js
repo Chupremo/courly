@@ -1,4 +1,4 @@
-const CACHE='courtly-shell-v2-owner-live';
+const CACHE='courtly-shell-v3-performance';
 const SHELL=['/','/offline.html','/courtly-app-icon-192.png?v=20261109-repaired'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
@@ -12,10 +12,13 @@ self.addEventListener('fetch',event=>{
     return;
   }
   if (['script','style'].includes(request.destination)) {
-    event.respondWith(fetch(request).then(response => {
-      if (response.ok) { const copy=response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy))); }
-      return response;
-    }).catch(() => caches.match(request)));
+    event.respondWith(caches.match(request).then(cached => {
+      const refresh=fetch(request).then(response => {
+        if (response.ok) { const copy=response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy))); }
+        return response;
+      }).catch(() => cached);
+      return cached || refresh;
+    }));
   } else if (['image','font'].includes(request.destination)) {
     event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
       if (response.ok) { const copy=response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy))); }

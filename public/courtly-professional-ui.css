@@ -347,21 +347,6 @@ body .toast {
     max-height:calc(100dvh - 64px - env(safe-area-inset-top));
   }
 
-  /* Homepage grid children must shrink along with the viewport. */
-  body.cx :is(.hero-in,.roles,.own,.two,.bento,.fg) > * { min-width:0; }
-  body.cx .hero-in { grid-template-columns:minmax(0,1fr); gap:28px; }
-  body.cx .hero { padding:32px 0 42px; }
-  body.cx .hero h1 { font-size:clamp(38px,11vw,58px); }
-  body.cx .hero-copy p { font-size:16px; line-height:1.6; }
-  body.cx .picker { width:100%; min-width:0; }
-  body.cx .chips, body.cx .tabs { min-width:0; max-width:100%; }
-  body.cx .bs { max-width:100%; overflow-x:auto; }
-  body.cx .pane { padding:24px 20px; }
-  body.cx .cta { padding:32px 22px; }
-  body.cx .cta h2 { font-size:clamp(30px,8.5vw,44px); }
-  body.cx .cta p { font-size:16px; }
-  body.cx .dock .btn { min-width:0; white-space:normal; line-height:1.3; }
-
   /* Player canvas uses one gutter and reserves room for the fixed tab bar. */
   body.courtly-player-v2:has(#viewRoot) .main > .content {
     width:100%!important; max-width:100%!important; margin:0!important;
@@ -407,10 +392,6 @@ body .toast {
   }
 }
 @media (max-width: 380px) {
-  body.cx .wrap { width:calc(100% - 24px); }
-  body.cx .picker { padding:12px; }
-  body.cx .grid { grid-template-columns:40px repeat(5,minmax(0,1fr)); gap:3px; }
-  body.cx .grid .h, body.cx .grid .c, body.cx .s { font-size:10px; }
   body.courtly-player-v2 #viewRoot .v2-game-plan { padding:20px 16px; }
   body.courtly-player-v2 #viewRoot .v2-game-plan h2 { font-size:29px; }
   body.courtly-player-v2 #viewRoot .toolbar > select {

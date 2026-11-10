@@ -12,6 +12,10 @@
   },
   "rewrites": [
     {
+      "source": "/court-owner",
+      "destination": "/business.html"
+    },
+    {
       "source": "/help",
       "destination": "/help.html"
     },

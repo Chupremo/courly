@@ -59,25 +59,30 @@ function publicLinkPanel() {
     status
   );
 }
+function makeCoachQr(canvas,url,size=320) {
+  if(!window.QRious) throw new Error('QR generator is not available.');
+  return new window.QRious({element:canvas,value:url,size,level:'M',padding:16,background:'white',foreground:'black'});
+}
 async function renderPublicCoachQr() {
   const canvas=$('coachPublicQr');
   const url=publicCoachUrl();
-  if(!canvas||!url||!window.QRCode?.toCanvas)return;
-  try{await window.QRCode.toCanvas(canvas,url,{width:320,margin:2,errorCorrectionLevel:'M'});}
-  catch(error){console.warn('Coach QR preview failed:',error);}
+  if(!canvas||!url)return;
+  try{makeCoachQr(canvas,url,320);}
+  catch(error){console.warn('Coach QR preview failed:',error);msg('Could not load the QR generator. Refresh the page and try again.');}
 }
 async function downloadPublicCoachQr() {
   const url=publicCoachUrl();
   if(!url){msg('Your public coaching link is not ready yet.');return;}
-  if(!window.QRCode?.toDataURL){msg('QR generator is still loading. Please try again.');return;}
   try{
-    const dataUrl=await window.QRCode.toDataURL(url,{width:1024,margin:3,errorCorrectionLevel:'M'});
+    const canvas=document.createElement('canvas');
+    makeCoachQr(canvas,url,1024);
+    const dataUrl=canvas.toDataURL('image/png');
     const link=document.createElement('a');
     link.href=dataUrl;
     link.download='courtly-'+String(profile.slug||'coach').replace(/[^a-z0-9-]+/gi,'-').toLowerCase()+'-coach-qr.png';
     document.body.appendChild(link);link.click();link.remove();
     msg('Coach booking QR code downloaded.','success');
-  }catch(error){console.warn('Coach QR generation failed:',error);msg('Could not create the coach QR code.');}
+  }catch(error){console.warn('Coach QR generation failed:',error);msg('Could not create the coach QR code. Refresh the page and try again.');}
 }
 function kpi(label,value,sub='') { return `<div class="coach-kpi"><small>${label}</small><strong>${value}</strong>${sub?`<div class="coach-note">${sub}</div>`:''}</div>`; }
 function sessionTable(rows) {

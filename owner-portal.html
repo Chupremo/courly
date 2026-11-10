@@ -807,7 +807,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 </div>
 <button class="owner-menu-backdrop" type="button" aria-label="Close owner navigation menu" onclick="closeOwnerMobileMenu()"></button>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js" defer></script>
 <script type="module" src="/owner-portal-bridge.js"></script>
 <script>
 const DEMO_SLUGS=['demo-batangas-racquet-club','demo-lipa-pickleball-hub','demo-santos-pickleball-club','demo-southside-sports-center'];const DEMO_REQUEST=new URLSearchParams(location.search).get('demo');const ACTIVE_DEMO=DEMO_SLUGS.includes(DEMO_REQUEST)?DEMO_REQUEST:'';const KEY=ACTIVE_DEMO?`courtlyOwnerPortalDemoV1:${ACTIVE_DEMO}`:'courtlyOwnerPortalV1',COURT_BOOKING_FEE=10;function bookingFee(b){const stored=Number(b?.platformFee??b?.platform_fee);return Number.isFinite(stored)&&stored>=0&&(b?.platformFee!=null||b?.platform_fee!=null)?stored:COURT_BOOKING_FEE}
@@ -876,11 +876,15 @@ function publicVenueLinkPanel(){
   </div>
  </div></section>`;
 }
+function makeVenueQr(canvas,url,size=320){
+ if(!window.QRious)throw new Error('QR generator is not available.');
+ return new window.QRious({element:canvas,value:url,size,level:'M',padding:16,background:'white',foreground:'black'});
+}
 async function renderVenueQr(){
  const canvas=$('venuePublicQr');
- if(!canvas||!db.venue.slug||!window.QRCode?.toCanvas)return;
- try{await window.QRCode.toCanvas(canvas,publicVenueUrl(),{width:320,margin:2,errorCorrectionLevel:'M'});}
- catch(error){console.warn('Venue QR preview failed:',error);}
+ if(!canvas||!db.venue.slug)return;
+ try{makeVenueQr(canvas,publicVenueUrl(),320);}
+ catch(error){console.warn('Venue QR preview failed:',error);toast('Could not load the QR generator. Refresh the page and try again.');}
 }
 
 function $(id){return document.getElementById(id)}
@@ -1353,16 +1357,16 @@ function previewBooking(){
 }
 async function downloadVenueQr(){
  if(!workspaceReady||!db.venue.slug){toast('Wait for your venue to finish loading.');return;}
- if(!window.QRCode?.toDataURL){toast('QR generator is still loading. Please try again.');return;}
  try{
-  const url=publicVenueUrl();
-  const dataUrl=await window.QRCode.toDataURL(url,{width:1024,margin:3,errorCorrectionLevel:'M'});
+  const canvas=document.createElement('canvas');
+  makeVenueQr(canvas,publicVenueUrl(),1024);
+  const dataUrl=canvas.toDataURL('image/png');
   const link=document.createElement('a');
   link.href=dataUrl;
   link.download='courtly-'+String(db.venue.slug).replace(/[^a-z0-9-]+/gi,'-').toLowerCase()+'-booking-qr.png';
   document.body.appendChild(link);link.click();link.remove();
   toast('Venue booking QR code downloaded.');
- }catch(error){console.warn('Venue QR generation failed:',error);toast('Could not create the venue QR code. Please try again.');}
+ }catch(error){console.warn('Venue QR generation failed:',error);toast('Could not create the venue QR code. Refresh the page and try again.');}
 }
 async function copyVenueLink(){
  if(!workspaceReady||!db.venue.slug){toast('Wait for your venue to finish loading.');return;}

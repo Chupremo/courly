@@ -278,7 +278,7 @@ html body.scrolled .courtly-global-header{box-shadow:0 10px 30px -18px rgba(0,26
         <li><div><b>Review reservations and receipts</b><span>Check incoming requests and verify submitted payment receipts.</span></div></li>
         <li><div><b>Keep venue activity together</b><span>Court details, Open Play activity and your earnings records.</span></div></li>
       </ul>
-      <a class="btn btn-lime" href="/business.html">Grow your venue</a>
+      <a class="btn btn-lime" href="/court-owner">Grow your venue</a>
     </div>
     <div class="board" aria-label="Illustrative venue schedule">
       <div class="bh"><b>Court schedule</b><span>Sample data</span></div>
@@ -333,7 +333,7 @@ html body.scrolled .courtly-global-header{box-shadow:0 10px 30px -18px rgba(0,26
   <section class="cta">
     <h2>Your game. Your venue. Your Courtly.</h2>
     <p>Discover a better way to book and manage sports courts. Start with the experience that fits you.</p>
-    <div class="acts"><a class="btn btn-lime" href="/player-register.html">Create player account</a><a class="btn btn-line" href="/login.html?mode=signup">Register as a venue owner</a></div>
+    <div class="acts"><a class="btn btn-lime" href="/player-register.html">Create player account</a><a class="btn btn-line" href="/court-owner">Register as a venue owner</a></div>
   </section>
 </div>
 </main>
@@ -345,7 +345,7 @@ html body.scrolled .courtly-global-header{box-shadow:0 10px 30px -18px rgba(0,26
       <div><a href="/" aria-label="Courtly home"><img src="/assets/courtly-logo-light.png" alt="Courtly"></a><p>Connecting players and sports venues through a simpler court booking and management experience.</p></div>
       <div><h4>For players</h4><a href="/players.html">Browse venues</a><a href="/player-register.html">Create player account</a><a href="/player-login.html">Player login</a><a href="/player-dashboard.html">Player dashboard</a></div>
       <div><h4>Coaches &amp; clubs</h4><a href="/coaches.html">Browse coaches</a><a href="/coach-register.html">Coach registration</a><a href="/browse-clubs.html">Browse clubs</a><a href="/club-register.html">Club registration</a></div>
-      <div><h4>For venues</h4><a href="/business.html">Grow your venue</a><a href="/login.html">Owner login</a><a href="/owner-portal.html">Owner portal</a><a href="#venue-onboarding">Getting started</a></div>
+      <div><h4>For venues</h4><a href="/court-owner">Grow your venue</a><a href="/login.html">Owner login</a><a href="/owner-portal.html">Owner portal</a><a href="#venue-onboarding">Getting started</a></div>
       <div><h4>Platform</h4><a href="/help.html">Help &amp; support</a><a href="/terms.html">Booking terms</a><a href="/privacy.html">Privacy notice</a></div>
     </div>
     <div class="fb"><span>© 2026 Courtly. Book. Play. Grow.</span><span>Pickleball · Badminton · Basketball · Tennis · Volleyball</span></div>
@@ -390,7 +390,7 @@ const roles=[
  {id:'players',n:'Players',h:'Find your next game and your people.',p:'Discover venues, compare courts, join club sessions, follow players and book coaching from one player workspace.',l:['Discover venues and compare courts','Join club sessions and follow players','Book coaching from the same workspace'],a:['/players.html','Browse venues'],b:['/player-register.html','Create player account']},
  {id:'coaches',n:'Coaches',h:'Grow your coaching practice.',p:'Create a public coach profile, set availability and rates, receive session requests, and manage your clients.',l:['A public coach profile','Availability and rates you control','Session requests and client management'],a:['/coach-register.html','Join as a coach'],b:['/coaches.html','Browse coaches']},
  {id:'clubs',n:'Clubs',h:'Bring your sports community together.',p:'Publish your club, grow your member list, book sessions at different venues, and manage player registrations.',l:['A published club page','Member list and registrations','Sessions booked at different venues'],a:['/club-register.html','Register a club'],b:['/browse-clubs.html','Browse clubs']},
- {id:'venues',n:'Venues',h:'Your courts. Under control.',p:'Showcase your facility, manage schedules and reservations, run Open Play, and track your venue earnings.',l:['A showcase page for your facility','Schedules, reservations and Open Play','Earnings tracked in your owner portal'],a:['/business.html','Grow your venue'],b:['/login.html','Owner login']}
+ {id:'venues',n:'Venues',h:'Your courts. Under control.',p:'Showcase your facility, manage schedules and reservations, run Open Play, and track your venue earnings.',l:['A showcase page for your facility','Schedules, reservations and Open Play','Earnings tracked in your owner portal'],a:['/court-owner','Grow your venue'],b:['/login.html','Owner login']}
 ];
 $('#tabs').innerHTML=roles.map(r=>`<button class="tab" role="tab" id="t-${r.id}" aria-controls="${r.id}" data-id="${r.id}">${r.n}</button>`).join('');
 $('#panes').innerHTML=roles.map(r=>`<div class="pane" role="tabpanel" id="${r.id}" aria-labelledby="t-${r.id}" hidden><h3>${r.h}</h3><p>${r.p}</p><ul class="pts">${r.l.map(x=>`<li>${x}</li>`).join('')}</ul><div class="acts"><a class="btn btn-navy" href="${r.a[0]}">${r.a[1]}</a><a class="btn btn-ink" href="${r.b[0]}">${r.b[1]}</a></div></div>`).join('');

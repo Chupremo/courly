@@ -13,6 +13,7 @@ export function shareMetadata(url) {
 
   const audience = (
     /^\/business(?:\/|$)/.test(path) ||
+    /^\/court-owner(?:\/|$)/.test(path) ||
     /^\/owner(?:-|\/|$)/.test(path)
   ) ? 'owners' : (
     /^\/coaches?(?:-|\/|$)/.test(path) ||
@@ -43,6 +44,10 @@ export function shareMetadata(url) {
     [/^\/coaches?(?:\/|$)/, {
       title: coachName ? coachName + ' | Courtly' : 'Find a Coach | Courtly',
       description: 'Discover coaches, view coaching details and book sessions through Courtly Philippines.'
+    }],
+    [/^\/court-owner(?:\/|$)/, {
+      title: 'Register Your Court | Courtly Philippines',
+      description: 'List your venue, manage availability and accept court bookings with Courtly Philippines.'
     }],
     [/^\/business(?:\/|$)/, {
       title: 'Manage Your Court Bookings Online | Courtly',

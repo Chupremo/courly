@@ -1,6 +1,18 @@
 {
-  "updated_at": "2026-11-09T23:11:07Z",
+  "updated_at": "2026-11-10T00:06:55Z",
   "items": [
+    {
+      "id": "tribune-20261110-ginebra-smb-game5",
+      "title": "Ginebra and San Miguel contest final PBA semifinal berth",
+      "summary": "Barangay Ginebra and San Miguel meet in a deciding Game 5 at 7:30 pm on November 10 at Ynares Center in Antipolo. San Miguel recovered from 0–2 down to level the quarterfinal series. The winner advances to face defending champion TNT.",
+      "source": "Daily Tribune",
+      "url": "https://tribune.net.ph/2026/11/09/dogfight-looms-as-kings-beermen-dispute-semis-spot",
+      "published_at": "2026-11-10T03:10:12.696+08:00",
+      "added_at": "2026-11-10T00:06:55Z",
+      "image_url": "https://images.assettype.com/tribune/2026-11-09/yrjkht1v/KingGeorge110626jm14-1.jpg?w=1200&auto=format&q=70&rect=0%2C252%2C2850%2C1603&h=675&fit=crop",
+      "image_alt": "San Miguel’s George King and Ginebra’s Jordan Murphy in PBA action",
+      "image_credit": "Joey sanchez Medoza / Daily Tribune"
+    },
     {
       "id": "tribune-20261110-pldt-farm-fresh-preview",
       "title": "PLDT and Farm Fresh face off for PVL semifinal boost",

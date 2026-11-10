@@ -326,3 +326,94 @@ body .toast {
     scroll-behavior: auto !important;
   }
 }
+
+/* Mobile browser layout: shared bounds and route-specific sizing. */
+@media (max-width: 760px) {
+  html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  body, body *, body *::before, body *::after { box-sizing:border-box; }
+  body { margin:0; }
+  body :is(.filters,.filter-field,.search-field,.toolbar,.segmented,.card-body,.venue-body) { min-width:0; }
+  body :is(.filter-field,.search-field) > :is(input,select) { width:100%; }
+  body :is(.card-body,.venue-body) :is(h3,p,a),
+  body :is(.coach-card-body,.coach-program-public-card) { overflow-wrap:anywhere; }
+
+  /* Global header already renders its own hamburger glyph. */
+  html body .courtly-global-header .ct-mobile-toggle::before,
+  html body .courtly-global-header .ct-mobile-toggle::after { content:none; display:none; }
+  html body .courtly-global-header .ct-nav-wrap { min-height:64px; }
+  html body .courtly-global-header .ct-brand { min-width:0; flex:0 1 auto; }
+  html body .courtly-global-header .ct-brand img { max-width:100%; height:38px; }
+  html body .courtly-global-header .ct-nav {
+    max-height:calc(100dvh - 64px - env(safe-area-inset-top));
+  }
+
+  /* Homepage grid children must shrink along with the viewport. */
+  body.cx :is(.hero-in,.roles,.own,.two,.bento,.fg) > * { min-width:0; }
+  body.cx .hero-in { grid-template-columns:minmax(0,1fr); gap:28px; }
+  body.cx .hero { padding:32px 0 42px; }
+  body.cx .hero h1 { font-size:clamp(38px,11vw,58px); }
+  body.cx .hero-copy p { font-size:16px; line-height:1.6; }
+  body.cx .picker { width:100%; min-width:0; }
+  body.cx .chips, body.cx .tabs { min-width:0; max-width:100%; }
+  body.cx .bs { max-width:100%; overflow-x:auto; }
+  body.cx .pane { padding:24px 20px; }
+  body.cx .cta { padding:32px 22px; }
+  body.cx .cta h2 { font-size:clamp(30px,8.5vw,44px); }
+  body.cx .cta p { font-size:16px; }
+  body.cx .dock .btn { min-width:0; white-space:normal; line-height:1.3; }
+
+  /* Player canvas uses one gutter and reserves room for the fixed tab bar. */
+  body.courtly-player-v2:has(#viewRoot) .main > .content {
+    width:100%!important; max-width:100%!important; margin:0!important;
+    padding:20px max(16px,env(safe-area-inset-right))
+      calc(96px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))!important;
+  }
+  body.courtly-player-v2 #viewRoot .v2-welcome { gap:12px; align-items:flex-start; }
+  body.courtly-player-v2 #viewRoot .v2-welcome > div { min-width:0; }
+  body.courtly-player-v2 #viewRoot .v2-welcome h1 { font-size:27px; overflow-wrap:anywhere; }
+  body.courtly-player-v2 #viewRoot .v2-message { flex:0 0 46px; }
+  body.courtly-player-v2 #viewRoot .v2-search { min-width:0; gap:8px; padding-left:10px; }
+  body.courtly-player-v2 #viewRoot .v2-search input { flex:1 1 0; width:0; }
+  body.courtly-player-v2 #viewRoot .v2-search button { flex:0 0 44px; width:44px; height:44px; }
+  body.courtly-player-v2 #viewRoot .v2-quick-actions > a { min-width:0; padding:14px 12px; }
+  body.courtly-player-v2 #viewRoot .v2-quick-actions > a > span { min-width:0; max-width:100%; }
+  body.courtly-player-v2 #viewRoot .v2-quick-actions strong { overflow-wrap:anywhere; }
+  body.courtly-player-v2 #viewRoot .v2-quick-actions small { font-size:12px; line-height:1.5; }
+  body.courtly-player-v2 #viewRoot .v2-section-head { flex-wrap:wrap; align-items:center; }
+  body.courtly-player-v2 #viewRoot .v2-section-head > div { min-width:0; }
+  body.courtly-player-v2 #viewRoot .v2-court-rail {
+    min-width:0; max-width:100%; grid-template-columns:none;
+    grid-auto-columns:88%; scroll-padding-inline:0;
+  }
+  body.courtly-player-v2 #viewRoot .v2-coaching-link { flex-wrap:wrap; }
+  body.courtly-player-v2 #viewRoot .v2-coaching-link > div { flex:1 1 180px; min-width:0; }
+
+  /* Four Discover destinations stay inside the toolbar on small phones. */
+  body.courtly-player-v2 #viewRoot .toolbar .segmented {
+    display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    min-width:0!important; max-width:100%!important;
+  }
+  body.courtly-player-v2 #viewRoot .toolbar .segmented button {
+    min-width:0!important; width:100%!important; padding:10px 3px!important;
+    font-size:12px!important; line-height:1.3!important; white-space:normal!important;
+  }
+  body.courtly-player-v2 #viewRoot .date-filter { max-width:100%; }
+  body.courtly-player-v2 #viewRoot .date-filter input {
+    width:100%!important; min-width:0!important; max-width:100%!important;
+  }
+  body.courtly-player-v2:has(#viewRoot) nav.courtly-mobile-tabs {
+    padding-left:max(8px,env(safe-area-inset-left))!important;
+    padding-right:max(8px,env(safe-area-inset-right))!important;
+  }
+}
+@media (max-width: 380px) {
+  body.cx .wrap { width:calc(100% - 24px); }
+  body.cx .picker { padding:12px; }
+  body.cx .grid { grid-template-columns:40px repeat(5,minmax(0,1fr)); gap:3px; }
+  body.cx .grid .h, body.cx .grid .c, body.cx .s { font-size:10px; }
+  body.courtly-player-v2 #viewRoot .v2-game-plan { padding:20px 16px; }
+  body.courtly-player-v2 #viewRoot .v2-game-plan h2 { font-size:29px; }
+  body.courtly-player-v2 #viewRoot .toolbar > select {
+    flex-basis:100%!important; width:100%!important; max-width:100%!important;
+  }
+}

@@ -1050,7 +1050,7 @@ async function loadVenue() {
   const amenity = document.querySelector('.amenities .amenity strong');
   if (amenity) amenity.textContent = `${courts.length} ${courts.length === 1 ? 'Court' : 'Courts'}`;
   const hint = document.querySelector('.range-hint');
-  if (hint) { const peakWindow = venue.peak_hours_start && venue.peak_hours_end ? ` Peak pricing applies from ${formatHour(timeValue(venue.peak_hours_start).hour)} to ${formatHour(timeValue(venue.peak_hours_end).hour)}; the final price is calculated hour by hour.` : ''; hint.textContent = `Choose your start and end times independently. Bookings are 1–8 hours. After a venue is fully activated, the venue owner pays ₱10 per booked court-hour. Trial bookings have no Courtly owner fee, and the owner fee is never added to your checkout total.${peakWindow}`; }
+  if (hint) hint.remove();
   if (!courts.length) setText('selectedDateLabel', 'This venue has no active courts yet.');
   await loadVenueEvents().catch((error) => { console.warn('Open Play sessions could not load:', error); });
   refreshTimeSelects();

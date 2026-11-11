@@ -856,7 +856,7 @@ function prepareOwnerTables(){
  document.querySelectorAll('#content .toggleline').forEach((line,index)=>{const title=line.querySelector('strong'),control=line.querySelector('input');if(title&&control){title.id='owner-toggle-label-'+index;control.setAttribute('aria-labelledby',title.id);}});
 }
 function sortedBookings(){return db.bookings.slice().sort((a,b)=>new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date));}
-function publicVenueUrl(){return ACTIVE_DEMO?new URL('/demo-booking.html?slug='+encodeURIComponent(db.venue.slug||''),location.origin).href:new URL('/v/'+encodeURIComponent(db.venue.slug||''),'https://www.courtlyph.com').href;}
+function publicVenueUrl(){return ACTIVE_DEMO?new URL('/demo-booking.html?slug='+encodeURIComponent(db.venue.slug||''),location.origin).href:new URL('/book/'+encodeURIComponent(db.venue.slug||''),'https://www.courtlyph.com').href;}
 
 const COURTLY_QR_LOGO_SRC='/assets/courtly-logo.png';
 function loadVenueQrLogo(src=COURTLY_QR_LOGO_SRC){

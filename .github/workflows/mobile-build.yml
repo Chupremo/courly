@@ -67,6 +67,8 @@ jobs:
           java-version: '21'
       - name: Install dependencies
         run: npm install --ignore-scripts
+      - name: Check pages, links, IDs and inline JavaScript
+        run: npm run check
       - name: Build Courtly web bundle
         run: npm run build
       - name: Create Android project

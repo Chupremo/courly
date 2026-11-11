@@ -7,6 +7,9 @@ import { resolvePageRoute, schedules } from './routes.mjs';
 export function shareMetadata(url) {
   const path = url.pathname.replace(/\/$/, '').replace(/\.html$/, '') || '/';
   const coachSlug = url.searchParams.get('coach') || '';
+  const bookSlugMatch = path.match(/^\/book\/([^/]+)$/);
+  const bookSlug = bookSlugMatch ? decodeURIComponent(bookSlugMatch[1]) : '';
+  const bookName = bookSlug ? bookSlug.split('-').filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : '';
   const coachName = coachSlug
     ? coachSlug.split('-').filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
     : '';
@@ -56,6 +59,10 @@ export function shareMetadata(url) {
     [/^\/owner(?:-|\/|$)/, {
       title: 'Courtly for Court Owners',
       description: 'Manage venue listings, bookings, calendars and payments with Courtly Philippines.'
+    }],
+    [/^\/book\//, {
+      title: bookName ? 'Book ' + bookName + ' | Courtly' : 'Book a Court | Courtly',
+      description: bookName ? 'Check availability and book a court at ' + bookName + ' through Courtly Philippines.' : 'View court availability and reserve your next game through Courtly Philippines.'
     }],
     [/^\/v\//, {
       title: 'Book a Court | Courtly',
@@ -131,6 +138,8 @@ function addShareMetadata(response, requestUrl) {
           '<meta property="og:image:secure_url" content="' + escAttr(meta.image) + '">' +
           '<meta property="og:image:type" content="image/png">' +
           '<meta property="og:image:alt" content="' + escAttr(meta.imageAlt) + '">' +
+          '<meta property="og:image:width" content="1200">' +
+          '<meta property="og:image:height" content="630">' +
           '<meta name="twitter:card" content="summary_large_image">' +
           '<meta name="twitter:title" content="' + escAttr(meta.title) + '">' +
           '<meta name="twitter:description" content="' + escAttr(meta.description) + '">' +

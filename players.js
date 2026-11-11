@@ -149,7 +149,7 @@ async function load() {
       .from('venues')
       .select('id,slug,name,address,city,sport,logo_url,cover_url,is_published,activation_status,courts(id,name,sport,hourly_rate,off_peak_rate,is_active,image_url)')
       .eq('is_published', true)
-      .eq('activation_status', 'active')
+      .in('activation_status', ['trial', 'active'])
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -158,7 +158,7 @@ async function load() {
     venues = (data || []).map(v => ({
       ...v,
       courts: (v.courts || []).filter(c => c.is_active !== false)
-    }));
+    })).filter(v => v.courts.length > 0);
 
     loadState = 'ready';
     setCities();

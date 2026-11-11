@@ -395,6 +395,7 @@ function waitForBookingTourSubmission(){
 function handleBookingTourPageClick(event){
  if(!bookingTourActive||event.target.closest('#bookingTourModal'))return;
  const clicked=event.target.closest('button,select,a,input');
+ if(bookingTourKey==='account'&&(event.target.matches('#authRequiredModal')||clicked?.matches('#closeAuthRequired'))){showBookingTourStep(3);return;}
  if(!clicked)return;
  if(bookingTourKey==='date'&&clicked.matches('#daysGrid .day:not(:disabled)'))window.setTimeout(()=>showBookingTourStep(1),180);
  else if(bookingTourKey==='time'&&(clicked.matches('#slots .slot:not(:disabled)')||clicked.matches('#startTime')||clicked.matches('#endTime')))window.setTimeout(()=>{if(selectedStart!==null&&selectedEnd!==null)showBookingTourStep(2);else bookingTourPosition();},180);
@@ -403,6 +404,7 @@ function handleBookingTourPageClick(event){
  else if(bookingTourKey==='account'&&clicked.matches('#authPlayerLogin, #authPlayerRegister')){try{sessionStorage.setItem(BOOKING_TOUR_RESUME_KEY,'1');}catch{}closeBookingTour();}
  else if(bookingTourKey==='hold'&&clicked.matches('#paymentSubmitButton'))waitForBookingTourHold();
  else if(bookingTourKey==='receipt'&&clicked.matches('#paymentSubmitButton'))waitForBookingTourSubmission();
+ else if(bookingTourKey==='submitted'&&clicked.matches('#confirmationClose'))closeBookingTour();
  else if(clicked.matches('#closeGcash'))closeBookingTour();
 }
 function handleBookingTourChange(event){

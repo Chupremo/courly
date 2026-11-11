@@ -30,7 +30,8 @@ function setup({ profileFailure = false, signupPromise = null, valid = true } = 
     location: { search: '?returnTo=%2Fvenue.html%3Fslug%3Dsample', origin: 'https://courtly.test', hostname: 'courtly.test', replace() {} },
     window: { dispatchEvent() {} }, URL, URLSearchParams, Event,
     env: {}, console: { error() {}, warn() {} }, setTimeout() {},
-    supabaseConfigError: 'not configured',
+    supabaseConfigError: '',
+    fetch: async () => { signups++; if(signupPromise) await signupPromise; return {ok:true,json:async()=>({success:true})}; },
     supabase: {
       rpc: async () => ({ data: 0, error: null }),
       auth: {
@@ -45,14 +46,14 @@ function setup({ profileFailure = false, signupPromise = null, valid = true } = 
   return { node, submit, signups: () => signups, result };
 }
 
-test('a profile save failure after successful sign-up does not invite duplicate account creation', async () => {
+test('a successful server sign-up prevents duplicate account creation', async () => {
   const app = setup({ profileFailure: true });
   await app.submit();
   assert.equal(app.signups(), 1);
   assert.equal(app.node('submitButton').disabled, true);
   assert.equal(app.node('registrationNext').hidden, false);
-  assert.equal(app.node('registrationNextLink').href, '/venue.html?slug=sample');
-  assert.match(app.node('message').textContent, /account was created/i);
+  assert.equal(app.node('registrationNextLink').href, '/player-login.html?returnTo=%2Fvenue.html%3Fslug%3Dsample');
+  assert.match(app.node('message').textContent, /account .*has been created/i);
   await app.submit();
   assert.equal(app.signups(), 1);
 });

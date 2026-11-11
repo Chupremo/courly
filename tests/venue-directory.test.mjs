@@ -22,7 +22,7 @@ function setup(result) {
     document: { getElementById: node }, URL, URLSearchParams,
     location: { search: '', href: 'https://courtly.test/players.html' },
     history: { replaceState() {} }, console: { error() {} },
-    supabase: { from() { return { select() { return { eq() { return { order: async () => currentResult }; } }; } }; } }
+    supabase: { from() { return { select() { return { eq() { return { in() { return { order: async () => currentResult }; } }; } }; } }; } }
   };
   vm.runInNewContext(source, context);
   return { node, setResult(next) { currentResult = next; } };
@@ -60,7 +60,7 @@ test('retry recovers listings after a network error without losing a search', as
   const app = setup({ error: new Error('Offline') });
   await flush();
   app.node('search').value = 'Test';
-  app.setResult({ data: [{ name: 'Test venue', slug: 'sample', courts: [] }], error: null });
+  app.setResult({ data: [{ name: 'Test venue', slug: 'sample', courts: [{name:'Court 1',is_active:true}] }], error: null });
   app.node('listings').listeners.click({ target: { closest: () => ({ dataset: { action: 'retry' } }) } });
   await flush();
   assert.equal(app.node('search').value, 'Test');

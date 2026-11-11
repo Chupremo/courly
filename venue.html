@@ -336,8 +336,8 @@ $('bookingTourCount').textContent=`STEP ${visibleIndex} OF ${visibleTotal}`;
  $('bookingTourInstruction').textContent=step.instruction;
 $('bookingTourProgress').style.width=`${(visibleIndex/visibleTotal)*100}%`;
  const cont=$('bookingTourContinue');
- cont.hidden=step.action!=='continue'&&step.action!=='finish';
- cont.textContent=step.continueLabel||'Continue';
+ cont.hidden=false;
+ cont.textContent=step.action==='finish'?'Finish tour':step.action==='pay'?'Next step':step.action==='account'?'Continue':step.action==='submit'?'Submit receipt':'Next step';
  $('bookingTourModal').hidden=false;$('bookingTourModal').setAttribute('aria-hidden','false');
  $('bookingTourDialog').classList.remove('is-visible');
  const target=bookingTourFindTarget(step);
@@ -1323,8 +1323,33 @@ $('openBookingTour')?.addEventListener('click',()=>startBookingTour(0));
 $('closeBookingTour')?.addEventListener('click',closeBookingTour);
 $('skipBookingTour')?.addEventListener('click',closeBookingTour);
 $('bookingTourContinue')?.addEventListener('click',()=>{
- if(bookingTourKey==='pay')showBookingTourStep(7);
- else if(bookingTourKey==='submitted')closeBookingTour();
+ if(!bookingTourActive)return;
+ if(bookingTourKey==='date'){showBookingTourStep(1);return;}
+ if(bookingTourKey==='time'){showBookingTourStep(2);return;}
+ if(bookingTourKey==='court'){showBookingTourStep(3);return;}
+ if(bookingTourKey==='review'){
+  const next=$('nextChoose');
+  if(next&&!next.disabled){next.click();waitForBookingTourCheckout();}
+  else $('bookingTourInstruction').textContent='Choose an available time and court first. The booking button will become available when your selection is valid.';
+  return;
+ }
+ if(bookingTourKey==='account'){
+  $('bookingTourInstruction').textContent='Sign in or create a player account to continue. Courtly will return you to this booking and resume the tour after login.';
+  return;
+ }
+ if(bookingTourKey==='hold'){
+  const submit=$('paymentSubmitButton');
+  if(submit&&!submit.disabled){submit.click();waitForBookingTourHold();}
+  return;
+ }
+ if(bookingTourKey==='pay'){showBookingTourStep(7);return;}
+ if(bookingTourKey==='receipt'){showBookingTourStep(8);return;}
+ if(bookingTourKey==='submit'){
+  const submit=$('paymentSubmitButton');
+  if(submit&&!submit.disabled){submit.click();waitForBookingTourSubmission();}
+  return;
+ }
+ if(bookingTourKey==='submitted')closeBookingTour();
 });
 document.addEventListener('click',handleBookingTourPageClick);
 document.addEventListener('change',handleBookingTourChange);

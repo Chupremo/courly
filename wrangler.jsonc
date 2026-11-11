@@ -26,7 +26,7 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none",
     "run_worker_first": [
-      "/api", "/api/*", "/player/*", "/coach/*", "/club/*", "/v/*",
+      "/api", "/api/*", "/player/*", "/coach/*", "/club/*", "/v/*", "/book/*",
       "/", "/index.html",
       "/court-owner", "/court-owner/",
       "/business", "/business/", "/business.html",

@@ -297,6 +297,7 @@ const bookingTourSteps = [
 ];
 let bookingTourIndex=0;
 let bookingTourActive=false;
+let bookingTourAccountSkipped=false;
 let bookingTourPoll=null;
 let bookingTourKey='';
 const BOOKING_TOUR_RESUME_KEY='courtly.bookingTour.resumeAfterAuth';
@@ -326,12 +327,14 @@ function bookingTourPosition(){
 function renderBookingTourStep(){
  if(!bookingTourActive)return;
  const step=bookingTourSteps[bookingTourIndex];if(!step)return;
- $('bookingTourCount').textContent=`STEP ${bookingTourIndex+1} OF ${bookingTourSteps.length}`;
+const visibleTotal=bookingTourSteps.length-(bookingTourAccountSkipped?1:0);
+const visibleIndex=bookingTourIndex+1-(bookingTourAccountSkipped&&bookingTourIndex>4?1:0);
+$('bookingTourCount').textContent=`STEP ${visibleIndex} OF ${visibleTotal}`;
  $('bookingTourPhase').textContent=step.phase;
  $('bookingTourTitle').textContent=step.title;
  $('bookingTourBody').textContent=step.body;
  $('bookingTourInstruction').textContent=step.instruction;
- $('bookingTourProgress').style.width=`${((bookingTourIndex+1)/bookingTourSteps.length)*100}%`;
+$('bookingTourProgress').style.width=`${(visibleIndex/visibleTotal)*100}%`;
  const cont=$('bookingTourContinue');
  cont.hidden=step.action!=='continue'&&step.action!=='finish';
  cont.textContent=step.continueLabel||'Continue';
@@ -344,12 +347,13 @@ function renderBookingTourStep(){
 function showBookingTourStep(index){
  if(!bookingTourActive)return;
  bookingTourIndex=Math.max(0,Math.min(bookingTourSteps.length-1,index));
+ if(bookingTourIndex>4&&$('authRequiredModal')?.hidden!==false)bookingTourAccountSkipped=true;
  bookingTourKey=bookingTourSteps[bookingTourIndex].key;
  renderBookingTourStep();
 }
 function startBookingTour(index=0){
  if(bookingTourPoll){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
- bookingTourActive=true;document.body.classList.add('booking-tour-running');
+ bookingTourActive=true;bookingTourAccountSkipped=index>4;document.body.classList.add('booking-tour-running');
  showBookingTourStep(index);
  window.addEventListener('resize',bookingTourPosition);
  window.addEventListener('scroll',bookingTourPosition,true);

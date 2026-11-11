@@ -130,9 +130,9 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 <div class="payment-field"><label for="playerEmail">Your email *</label><input id="playerEmail" required type="email" maxlength="200" autocomplete="email"></div>
 <div class="payment-field"><label for="playerPhone">Contact number</label><input id="playerPhone" type="tel" maxlength="40" autocomplete="tel"></div>
 <div class="payment-field" id="receiptField" hidden>
-<label for="paymentScreenshot">Payment receipt (max 100 MB)</label>
-<input id="paymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif">
-<small id="receiptHelp">Upload an image of the payment receipt before your hold expires.</small>
+<label for="paymentScreenshot">Receipt image (demo only, up to 1 MB)</label>
+<input id="paymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp">
+<small id="receiptHelp">Upload a receipt screenshot or use the sample demo receipt.</small>
 <div id="paymentImagePreview"></div>
 <button class="qr-download" id="useSampleReceipt" type="button">Use sample demo receipt</button>
 </div>
@@ -368,7 +368,7 @@ function sampleReceipt(){
 }
 function readDemoReceipt(file){
   if(!file)return;
-  if(file.size>5*1024*1024){setText('checkoutError','For this demo, choose a receipt image smaller than 5 MB or use the sample demo receipt.');$('checkoutError').hidden=false;return;}
+  if(file.size>1*1024*1024){setText('checkoutError','For this demo, choose a receipt image smaller than 1 MB or use the sample demo receipt.');$('checkoutError').hidden=false;return;}
   const reader=new FileReader();
   reader.onload=()=>{
     demoReceiptData=String(reader.result||'');demoReceiptName=file.name||'demo-receipt';

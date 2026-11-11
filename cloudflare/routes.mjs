@@ -10,7 +10,19 @@ const routes = vercel.rewrites.map(({ source, destination }) => {
     }
     return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }).join('/');
-  return { expression: new RegExp(`^${pattern}/?$`), names, destination };
+  return { expression: new RegExp(`^${pattern}/?import vercel from '../vercel.json' with { type: 'json' };
+
+// Keep the existing route list as the single source of truth for both hosts.
+const routes = vercel.rewrites.map(({ source, destination }) => {
+  const names = [];
+  const pattern = source.split('/').map(segment => {
+    if (segment.startsWith(':')) {
+      names.push(segment.slice(1));
+      return '([^/]+)';
+    }
+    return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }).join('/');
+  ), names, destination, keepCleanUrl: source === '/book/:slug' };
 });
 
 export function resolvePageRoute(input) {
@@ -34,7 +46,7 @@ export function resolvePageRoute(input) {
     // ASSETS uses extensionless canonical URLs. Fetching a .html alias would
     // otherwise emit another redirect instead of serving the requested page.
     target.pathname = target.pathname.replace(/\.html$/, '');
-    return { url: target, redirect: destinationQuery.size > 0 };
+    return { url: target, redirect: destinationQuery.size > 0 && !route.keepCleanUrl };
   }
   return null;
 }

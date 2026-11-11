@@ -105,12 +105,14 @@ import { supabase, supabaseConfigError } from './supabase-client.js';
 import { CONVENIENCE_FEE_LABEL, MAX_COURT_BOOKING_HOURS, selectedHour, validCourtRange, courtSubtotal, openPlayAmounts, requestSequence, submissionGuard, validateReceipt, saveBookingToken, requireBookingReadiness, checkoutRequestKey, normalizeCheckoutHold, holdRemainingMs } from './booking-utils.mjs';
 
 const params = new URLSearchParams(location.search);
+const cleanBookMatch = location.pathname.match(/^\/book\/([^/]+)\/?$/);
+if (!params.get('slug') && cleanBookMatch?.[1]) params.set('slug', decodeURIComponent(cleanBookMatch[1]));
 const slug = (params.get('slug') || location.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
 const $ = (id) => document.getElementById(id);
 const PENDING_BOOKING_INTENT_KEY = 'courtly.pendingPublicBooking.v1';
 function currentVenueReturnTo(){
   const holdId = new URLSearchParams(location.search).get('checkout');
-  return `/venue.html?slug=${encodeURIComponent(slug)}${holdId ? '&checkout=' + encodeURIComponent(holdId) : ''}#booking-calendar`;
+  return `/book/${encodeURIComponent(slug)}${holdId ? '?checkout=' + encodeURIComponent(holdId) : ''}#booking-calendar`;
 }
 function setAuthReturnLinks(switchAccount=false){
   const returnTo=currentVenueReturnTo();

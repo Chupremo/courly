@@ -796,8 +796,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 .owner-tour-instruction{margin:15px 0 16px;padding:10px 12px;border-left:3px solid #8ed502;border-radius:7px;background:#f2f7e9;color:#34496a;font-size:11px;line-height:1.5}
 .owner-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .owner-tour-step-actions{display:flex;gap:8px}
-.owner-tour-end,.owner-tour-back,.owner-tour-next{min-height:38px;padding:9px 13px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}
-.owner-tour-end,.owner-tour-back{border:1px solid #d5dfed;background:#fff;color:#51617c}
+.owner-tour-back,.owner-tour-next{min-height:38px;padding:9px 13px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}
+.owner-tour-back{border:1px solid #d5dfed;background:#fff;color:#51617c}
 .owner-tour-back:disabled{opacity:.35;cursor:not-allowed}
 .owner-tour-next{border:1px solid #0754c8;background:#0754c8;color:#fff}
 @media(max-width:680px){.owner-tour-launch{min-height:33px;padding:7px 9px;font-size:10px}.owner-tour-dialog{padding:18px;width:min(360px,calc(100vw - 24px));max-height:45vh}.owner-tour-dialog h2{font-size:20px}.owner-tour-body{font-size:11px}.owner-tour-end,.owner-tour-back,.owner-tour-next{padding:8px 11px}}
@@ -849,10 +849,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     <p class="owner-tour-body" id="ownerTourBody"></p>
     <div class="owner-tour-instruction" id="ownerTourInstruction"></div>
     <div class="owner-tour-actions">
-      <button class="owner-tour-end" id="ownerTourEnd" type="button">End tour</button>
+      
       <div class="owner-tour-step-actions">
-        <button class="owner-tour-back" id="ownerTourPrevious" type="button">Back</button>
-        <button class="owner-tour-next" id="ownerTourNext" type="button">Next step</button>
+        <button class="owner-tour-back" id="ownerTourPrevious" type="button">Previous</button>
+        <button class="owner-tour-next" id="ownerTourNext" type="button">Next</button>
       </div>
     </div>
   </section>
@@ -871,7 +871,7 @@ let workspaceReady=Boolean(ACTIVE_DEMO),ownerBusy=false,bookingFilterValue='All 
 
 if(ACTIVE_DEMO){const demoVenues={
 'demo-batangas-racquet-club':{name:'DEMO · Batangas Racquet Club',location:'Marawoy, Lipa City, Batangas',sport:'Badminton',baseRate:250,courtCount:2},
-'demo-lipa-pickleball-hub':{name:'DEMO · Lipa Pickleball Hub',location:'Lipa City proper, Batangas',sport:'Pickleball',baseRate:350,courtCount:2},
+'demo-lipa-pickleball-hub':{name:'DEMO · Lipa Pickleball Hub',location:'Lipa City proper, Batangas',sport:'Pickleball',baseRate:350,courtCount:4},
 'demo-santos-pickleball-club':{name:'DEMO · Santos Pickleball Club',location:'Marawoy, Lipa City, Batangas',sport:'Pickleball',baseRate:400,courtCount:3},
 'demo-southside-sports-center':{name:'DEMO · Southside Sports Center',location:'Sabang, Lipa City, Batangas',sport:'Multi-sport',baseRate:500,courtCount:2}
 };const selected=demoVenues[ACTIVE_DEMO],savedDemo=db.venue.id===ACTIVE_DEMO?db.venue:{};db.venue={...seed.venue,...selected,owner:'Demo Manager',email:'demo@courtly.ph',description:'Explore the Courtly owner portal using fictional sample data. Changes stay in this browser.',paymentName:'GCash QR',paymentAccount:'Courtly Demo',...savedDemo,id:ACTIVE_DEMO,slug:ACTIVE_DEMO,slugLocked:true,timezone:'Asia/Manila'};if(!Array.isArray(db.bookings)||db.bookings.length===0){const today=venueToday(),tomorrow=dateStr(plusDays(new Date(today+'T12:00:00'),1));db.bookings=[{id:'CT-DEMO-001',player:'Jordan Reyes',email:'jordan@example.com',date:today,time:'9:00 AM – 11:00 AM',duration:2,court:'Court 1',price:Number(selected.baseRate||350)*2,status:'Confirmed',paymentStatus:'Paid',createdAt:new Date().toISOString()},{id:'CT-DEMO-002',player:'Casey Santos',email:'casey@example.com',date:tomorrow,time:'4:00 PM – 5:00 PM',duration:1,court:'Court 2',price:Number(selected.baseRate||350),status:'Pending',paymentStatus:'Pending',createdAt:new Date().toISOString()}];}try{persist();}catch(error){console.warn('Demo changes cannot be saved in this browser:',error);}}
@@ -1515,7 +1515,7 @@ function applyOwnerLiveWorkspace(){
  if(incoming.length)toast(incoming[0].title||'New booking update received.');
 }
 async function initializeOwnerPortal(){
- if(ACTIVE_DEMO){workspaceReady=true;calendarDate=new Date(venueToday()+'T12:00:00');render();return;}
+ if(ACTIVE_DEMO){workspaceReady=true;calendarDate=new Date(venueToday()+'T12:00:00');render();if(new URLSearchParams(location.search).get('tour')==='1')setTimeout(startOwnerTour,700);return;}
  workspaceReady=false;
  try{
   if(!window.courtlyBridgeReady)await new Promise((resolve,reject)=>{
@@ -1585,7 +1585,7 @@ function renderOwnerTourStep(){
  $('ownerTourInstruction').textContent=step.instruction;
  $('ownerTourProgress').style.width=((ownerTourIndex+1)/ownerTourSteps.length*100)+'%';
  $('ownerTourPrevious').disabled=ownerTourIndex===0;
- $('ownerTourNext').textContent=ownerTourIndex===ownerTourSteps.length-1?'Finish tour':'Next step';
+ $('ownerTourNext').textContent=ownerTourIndex===ownerTourSteps.length-1?'Finish':'Next';
  $('ownerTourModal').hidden=false;$('ownerTourModal').setAttribute('aria-hidden','false');
  $('ownerTourDialog').classList.remove('is-visible');
  const target=ownerTourTarget(step);
@@ -1618,11 +1618,21 @@ function closeOwnerTour(){
 }
 $('ownerTourLaunch')?.addEventListener('click',startOwnerTour);
 $('ownerTourClose')?.addEventListener('click',closeOwnerTour);
-$('ownerTourEnd')?.addEventListener('click',closeOwnerTour);
 $('ownerTourPrevious')?.addEventListener('click',()=>{if(ownerTourIndex>0)showOwnerTourStep(ownerTourIndex-1);});
 $('ownerTourNext')?.addEventListener('click',()=>{if(ownerTourIndex===ownerTourSteps.length-1){closeOwnerTour();return;}showOwnerTourStep(ownerTourIndex+1);});
 $('ownerTourModal')?.addEventListener('click',event=>{if(event.target===$('ownerTourModal'))closeOwnerTour();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&ownerTourActive)closeOwnerTour();});
+
+window.addEventListener('storage',event=>{
+ if(!ACTIVE_DEMO||event.key!==KEY||!event.newValue)return;
+ try{
+  const saved=JSON.parse(event.newValue);
+  if(!saved?.venue||!Array.isArray(saved.bookings))return;
+  db={...db,...saved,venue:{...db.venue,...saved.venue}};
+  window.courtlyOwnerState=db;
+  if(workspaceReady){render();if(ownerTourActive)setTimeout(ownerTourPosition,100);}
+ }catch(error){console.warn('Demo owner workspace could not refresh:',error);}
+});
 
 initializeOwnerPortal();
 </script>

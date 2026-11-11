@@ -504,6 +504,8 @@ body{background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",s
 .pill{background:#eff9d9;color:#426c08}.pill.pending{background:#fff5dd;color:#8b6517}.pill.confirmed,.pill.completed{background:#eff9d9;color:#376b06}
 
 /* Booking cards */
+.bookings-kpis{margin:2px 0 18px}
+@media(max-width:680px){.bookings-kpis{margin:0 0 12px}}
 .booking-summary-v2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
 .booking-summary-v2>div{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow)}
 .booking-summary-v2 span{display:block;color:var(--muted);font-size:11px}.booking-summary-v2 strong{display:block;color:var(--navy);font-size:24px;margin-top:4px}
@@ -1078,12 +1080,7 @@ function overview(){
    ${activationBanner()}
    ${publicVenueLinkPanel()}
    <div class="ov-primary-action"><button class="btn primary" onclick="go('calendar')">＋ Manage calendar</button></div>
-   <section class="ov-kpis" aria-label="Owner dashboard summary">
-    <button class="ov-kpi" onclick="go('calendar')"><span class="ov-kpi-icon">▦</span><span>Today’s bookings</span><strong>${todays.length}</strong><small>Confirmed</small></button>
-    <button class="ov-kpi" onclick="go('bookings')"><span class="ov-kpi-icon">₱</span><span>Pending payments</span><strong>${pending.length}</strong><small>Need confirmation</small></button>
-    <button class="ov-kpi" onclick="go('transactions')"><span class="ov-kpi-icon">↗</span><span>Net earnings</span><strong>${money(periodNet)}</strong><small>This period</small></button>
-    <button class="ov-kpi" onclick="go('notifications')"><span class="ov-kpi-icon">◌</span><span>Notifications</span><strong>${unread}</strong><small>${unread?'New updates':'No new updates'}</small></button>
-   </section>
+   ${ownerKpiCards('overview')}
    <section class="panel ov-section">
     <div class="panelhead"><div><h3>Today’s bookings</h3><p class="muted small">${esc(venueToday())} · ${esc(db.venue.timezone||'Asia/Manila')}</p></div><button class="btn sm ov-desktop-action" onclick="openTodayCalendar()">View calendar</button></div>
     <div class="ov-booking-list">${bookingRows}</div>
@@ -1122,6 +1119,18 @@ async function deleteOpenPlay(id){
  return ownerAction(async()=>{await persist({scope:'openPlay',id,remove:true});db.openPlays=db.openPlays.filter(event=>event.id!==id);if(ACTIVE_DEMO)await persist();render();toast('Open Play announcement deleted.');});
 }
 
+function ownerKpiCards(context='dashboard'){
+ const todays=todayConfirmedBookings();
+ const pending=db.bookings.filter(b=>b.status==='Pending');
+ const periodNet=confirmed().reduce((sum,b)=>sum+Math.max(0,Number(b.price||0)-bookingFee(b)),0);
+ const unread=unreadOwnerNotifications();
+ return `<section class="ov-kpis ${context==='bookings'?'bookings-kpis':''}" aria-label="Owner dashboard summary">
+  <button class="ov-kpi" onclick="go('calendar')"><span class="ov-kpi-icon">▦</span><span>Today’s bookings</span><strong>${todays.length}</strong><small>Confirmed</small></button>
+  <button class="ov-kpi" onclick="setBookingFilter('Pending')"><span class="ov-kpi-icon">₱</span><span>Pending payments</span><strong>${pending.length}</strong><small>Need confirmation</small></button>
+  <button class="ov-kpi" onclick="go('transactions')"><span class="ov-kpi-icon">↗</span><span>Net earnings</span><strong>${money(periodNet)}</strong><small>This period</small></button>
+  <button class="ov-kpi" onclick="go('notifications')"><span class="ov-kpi-icon">◌</span><span>Notifications</span><strong>${unread}</strong><small>${unread?'New updates':'No new updates'}</small></button>
+ </section>`;
+}
 function bookingsPage(){
  const rows=sortedBookings();
  const counts={
@@ -1144,6 +1153,7 @@ function bookingsPage(){
    </div>
   </article>`).join('')||'<div class="ov-empty">No bookings yet.</div>';
  return `${heading('Bookings','Review court reservations, payment status and booking details.',`<button class="btn" onclick="exportCsv()">Export bookings</button>`)}
+  ${ownerKpiCards('bookings')}
   <div class="booking-summary-v2">
    <div><span>All bookings</span><strong>${counts.all}</strong></div>
    <div><span>Need attention</span><strong>${counts.pending}</strong></div>
@@ -1156,6 +1166,13 @@ function bookingsPage(){
    <div id="unifiedReservationRows" class="booking-list-v2">${cards}<div id="unifiedOpenPlayLoading" class="muted small booking-openplay-loading">Loading Open Play reservations…</div></div>
   </section>
   ${renderCommunityActivityPaymentQueue()}`;
+}
+function setBookingFilter(status){
+ const select=$('bookingFilter');
+ if(!select)return;
+ select.value=status;
+ filterBookings();
+ $('bookingFilter')?.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function filterBookings(){
  const select=$('bookingFilter');if(!select)return;

@@ -315,7 +315,7 @@ function renderTimes(){
   slots.querySelectorAll('[data-hour]').forEach(b=>b.onclick=()=>{startHour=Number(b.dataset.hour);endHour=startHour+1;renderTimes();renderCourts();updateSummary();});
 }
 function renderCourts(){
-  const host=$('courtsGrid');host.innerHTML=courts.map(c=>'<button type="button" class="court-card '+(selectedCourt?.id===c.id?'selected':'')+'" data-court="'+c.id+'"><div class="court-photo" style="height:120px;background:linear-gradient(135deg,#102a57,#2c75e8);color:white;display:grid;place-items:center;font-weight:800">'+esc(c.sport.toUpperCase())+'</div><div class="court-meta"><div class="court-name-line"><span class="court-name">'+esc(c.name)+'</span><span class="radio"></span></div><div class="available"><i></i>Available for demo</div><div class="price">'+money(c.rate)+'/hr</div></div></button>').join('');
+  const host=$('courtsGrid');host.innerHTML=courts.map(c=>'<button type="button" class="court-card '+(selectedCourt?.id===c.id?'selected':'')+'" data-court="'+c.id+'"><div class="court-photo" style="height:120px"><img src="'+esc(c.image)+'" alt="'+esc(c.name)+' photo"></div><div class="court-meta"><div class="court-name-line"><span class="court-name">'+esc(c.name)+'</span><span class="radio"></span></div><div class="available"><i></i>Available for demo</div><div class="price">'+money(c.rate)+'/hr</div></div></button>').join('');
   host.querySelectorAll('[data-court]').forEach(b=>b.onclick=()=>{selectedCourt=courts.find(c=>c.id===Number(b.dataset.court));renderCourts();updateSummary();});
 }
 function updateSummary(){
@@ -400,7 +400,7 @@ function ensureDemoOwnerWorkspace(booking){
 }
 function confirmDemo(e){
   e.preventDefault();
-  if(demoCheckoutStage==='payment'){showReceiptStage();return;}
+  if(demoCheckoutStage==='payment'){showReceiptStage();if(customerTourActive)showCustomerTourStep(5);return;}
   if(!demoReceiptData){
     $('checkoutError').hidden=false;setText('checkoutError','Attach a receipt image or click “Use sample demo receipt” before submitting.');
     return;
@@ -452,11 +452,15 @@ $('endTime').addEventListener('change',e=>{endHour=e.target.value===''?null:Numb
 $('prevMonth').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1,12);renderCalendar();};
 $('nextMonth').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1,12);renderCalendar();};
 $('nextChoose').onclick=openCheckout;$('closeGcash').onclick=()=>{$('gcashModal').hidden=true};$('gcashForm').addEventListener('submit',confirmDemo);
+$('useSampleReceipt').addEventListener('click',sampleReceipt);
+$('paymentScreenshot').addEventListener('change',e=>readDemoReceipt(e.target.files?.[0]));
+$('startCustomerTour').addEventListener('click',startCustomerTour);
 $('confirmationClose').onclick=()=>{$('confirmationModal').hidden=true};
 $('venueBackButton').onclick=()=>{location.href='/players'};
 document.querySelector('.venue-details-tabs')?.addEventListener('click',e=>{const b=e.target.closest('[data-venue-tab]');if(!b)return;document.querySelectorAll('[data-venue-tab]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-selected',String(x===b));});document.querySelectorAll('[data-venue-panel]').forEach(p=>p.hidden=p.dataset.venuePanel!==b.dataset.venueTab);});
-const demoBanner=document.createElement('div');demoBanner.className='reservation-note';demoBanner.style.cssText='max-width:1140px;width:94%;margin:14px auto 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap';demoBanner.innerHTML='<span><strong>Client demo:</strong> this page uses the exact Courtly booking layout with sample availability. No real payment or reservation is created.</span><a class="qr-download" style="margin:0" href="/owner-portal.html?demo='+encodeURIComponent(demoSlug)+'">View venue owner demo ↗</a>';document.querySelector('main').prepend(demoBanner);
+const demoBanner=document.createElement('div');demoBanner.className='demo-flow-note';demoBanner.innerHTML='<strong>COURTLY DEMO MODE:</strong> Sample dates, courts and payment details. No login or real payment is required. <button type="button" class="qr-download" id="startCustomerTour" style="margin:7px 8px 0 0">Start customer tour</button><a href="/courtly-demo.html">All demo views</a> · <a href="/owner-portal.html?demo='+encodeURIComponent(demoSlug)+'&tour=1" target="_blank" rel="noopener">Open Owner POV ↗</a><div id="demoBookingStatus" class="reservation-note" hidden></div>';document.querySelector('main').prepend(demoBanner);
 renderBrand();renderCalendar();renderTimes();renderCourts();updateSummary();
+if(params.get('tour')==='1')window.setTimeout(startCustomerTour,650);
 </script>
 <script type="module" src="/courtly-responsive.js"></script>
   <script type="module" src="/courtly-global-nav.js?v=player-home-20261106"></script>

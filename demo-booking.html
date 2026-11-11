@@ -229,27 +229,126 @@ function updateSummary(){
   $('nextChoose').disabled=!(selectedCourt&&startHour!==null&&endHour!==null);
 }
 function openCheckout(){
+  if(!selectedCourt||startHour===null||endHour===null)return;
   const subtotal=selectedCourt.rate*(endHour-startHour);
-  setText('gcashTitle','Your court reservation');setText('gcashHelp','Demo checkout — review the same booking summary a player sees on Courtly.');
-  setText('checkoutDetails',selectedCourt.name+'\n'+labelDate(selectedDate)+'\n'+hourLabel(startHour)+' – '+hourLabel(endHour));
+  demoCheckoutStage='payment';demoReceiptData='';demoReceiptName='';
+  setText('gcashTitle','Your court reservation');
+  setText('gcashHelp','Demo checkout — this is a safe preview. No real payment is required.');
+  setText('checkoutDetails',selectedCourt.name+'\\n'+labelDate(selectedDate)+'\\n'+hourLabel(startHour)+' – '+hourLabel(endHour));
   setText('gcashSubtotal',money(subtotal));setText('gcashPlatformFee',money(10));setText('gcashAmount',money(subtotal));
   $('gcashPlatformFeeRow').hidden=false;setText('gcashFeeLabel','Convenience Fee (venue owner)');
-  setText('paymentReservationNote','The venue owner pays a flat ₱10 Convenience Fee per court booking separately. It is not added to the player total.');
-  $('paymentDetails').hidden=false;setText('gcashRecipient','GCash · Courtly Demo Venue');setText('gcashInstructions','Demo only — no real payment is required.');
-  $('receiptField').hidden=true;$('gcashModal').hidden=false;
-  $('paymentSubmitButton').textContent='Confirm demo booking';
+  setText('paymentReservationNote','This is a simulated checkout. The sample GCash recipient and QR are not real. No transfer will be made.');
+  $('paymentDetails').hidden=false;
+  setText('gcashRecipient','SAMPLE · GCash · Courtly Demo Venue');
+  setText('gcashInstructions','SAMPLE PAYMENT ONLY — do not send money. In the live Courtly flow, this section displays the venue owner’s saved QR code and payment instructions.');
+  $('gcashQrWrap').innerHTML='<div class="demo-qr-card"><div class="demo-qr-pattern" aria-hidden="true"></div><strong>DEMO QR</strong><small>NOT SCANNABLE · NO PAYMENT</small></div>';
+  $('receiptField').hidden=true;$('paymentImagePreview').innerHTML='';$('paymentScreenshot').value='';
+  $('useSampleReceipt').hidden=true;
+  $('paymentSubmitButton').textContent='I’ve made the demo payment';
+  $('gcashModal').hidden=false;
+}
+function sampleReceipt(){
+  const amount=money(selectedCourt.rate*(endHour-startHour));
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="720" height="900" viewBox="0 0 720 900"><rect width="720" height="900" fill="#f4f7fc"/><rect x="42" y="42" width="636" height="816" rx="28" fill="#fff" stroke="#dce5f2" stroke-width="4"/><text x="84" y="125" fill="#0754c8" font-family="Arial" font-size="28" font-weight="700">GCash · DEMO RECEIPT</text><text x="84" y="215" fill="#168344" font-family="Arial" font-size="42" font-weight="700">Payment successful</text><text x="84" y="292" fill="#102047" font-family="Arial" font-size="26">Courtly Demo Venue</text><text x="84" y="352" fill="#64748b" font-family="Arial" font-size="22">Sample transaction · not a real transfer</text><path d="M84 405H636" stroke="#dfe7f2" stroke-width="3" stroke-dasharray="8 10"/><text x="84" y="485" fill="#64748b" font-family="Arial" font-size="22">Amount</text><text x="84" y="545" fill="#102047" font-family="Arial" font-size="46" font-weight="700">'+amount+'</text><text x="84" y="640" fill="#64748b" font-family="Arial" font-size="20">Reference: COURTLY-DEMO-0001</text><text x="84" y="730" fill="#e92940" font-family="Arial" font-size="22" font-weight="700">FOR PRESENTATION ONLY</text><text x="84" y="780" fill="#64748b" font-family="Arial" font-size="18">No money was sent or received.</text></svg>';
+  demoReceiptData='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+  demoReceiptName='sample-demo-gcash-receipt.svg';
+  $('paymentImagePreview').innerHTML='<img src="'+demoReceiptData+'" alt="Sample demo receipt preview">';
+  $('receiptHelp').textContent='Sample receipt attached. This is fictional and no money was transferred.';
+  $('useSampleReceipt').textContent='Sample demo receipt attached';
+  if(customerTourActive&&customerTourIndex===5)showCustomerTourStep(6);
+}
+function readDemoReceipt(file){
+  if(!file)return;
+  if(file.size>5*1024*1024){setText('checkoutError','For this demo, choose a receipt image smaller than 5 MB or use the sample demo receipt.');$('checkoutError').hidden=false;return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    demoReceiptData=String(reader.result||'');demoReceiptName=file.name||'demo-receipt';
+    $('paymentImagePreview').innerHTML='<img src="'+demoReceiptData+'" alt="Uploaded demo receipt preview">';
+    $('receiptHelp').textContent='Receipt attached for demo review only.';
+    if(customerTourActive&&customerTourIndex===5)showCustomerTourStep(6);
+  };
+  reader.onerror=()=>{setText('checkoutError','The receipt preview could not be read. Please try another image.');$('checkoutError').hidden=false;};
+  reader.readAsDataURL(file);
+}
+function showReceiptStage(){
+  demoCheckoutStage='receipt';
+  $('receiptField').hidden=false;$('useSampleReceipt').hidden=false;
+  $('paymentSubmitButton').textContent='Submit demo receipt';
+  setText('gcashTitle','Upload your payment receipt');
+  setText('gcashHelp','Attach a screenshot or use the clearly labelled sample receipt to see the venue review process.');
+  setText('paymentReservationNote','Demo only: submitting this receipt creates a sample Pending booking in the owner workspace. No real payment is made.');
+  if(customerTourActive)showCustomerTourStep(5);
+}
+function ensureDemoOwnerWorkspace(booking){
+  let stored=null;
+  try{stored=JSON.parse(localStorage.getItem(ownerStorageKey)||'null');}catch{}
+  const baseVenue={
+    id:demoSlug,slug:demoSlug,name:venue.name,owner:'Demo Manager',email:'demo@courtly.ph',
+    phone:'0917 000 0000',location:venue.address,sport:venue.sport,description:venue.description,
+    hoursOpen:'08:00',hoursClose:'22:00',baseRate:venue.rate,peakRate:venue.rate,courtCount:venue.courts,
+    courtImages:[],logoData:'',coverData:'',paymentName:'GCash QR',paymentAccount:'Courtly Demo Venue',
+    paymentInstructions:'Fictional demo payment details. No real transfer is required.',qrData:'',
+    timezone:'Asia/Manila',isPublished:true,activationStatus:'active'
+  };
+  const bookings=Array.isArray(stored?.bookings)?stored.bookings.slice():[];
+  if(!bookings.length){
+    bookings.push({id:'CT-DEMO-001',reference:'CT-DEMO-001',player:'Jordan Reyes',email:'jordan@example.com',date:dateKey(new Date(Date.now()-86400000)),time:'9:00 AM – 11:00 AM',duration:2,court:'Court 1',price:Number(venue.rate||350)*2,status:'Confirmed',paymentStatus:'Paid',createdAt:new Date(Date.now()-3600000).toISOString()});
+  }
+  const index=bookings.findIndex(item=>String(item.id)===String(booking.id));
+  if(index>=0)bookings[index]=booking;else bookings.unshift(booking);
+  const workspace={...stored,venue:{...baseVenue,...(stored?.venue||{}),id:demoSlug,slug:demoSlug,courtCount:venue.courts},bookings};
+  localStorage.setItem(ownerStorageKey,JSON.stringify(workspace));
+  localStorage.setItem('courtlyDemoLatestBooking:'+demoSlug,JSON.stringify(booking));
 }
 function confirmDemo(e){
   e.preventDefault();
-  const name=$('playerName').value.trim()||'Demo Player',email=$('playerEmail').value.trim()||'demo@courtlyph.com';
-  const ref='CT-DEMO-'+Math.random().toString(36).slice(2,8).toUpperCase();
-  $('gcashModal').hidden=true;setText('confirmationTitle','Demo booking received!');setText('confirmationMessage','This simulates the successful player booking experience. No payment was collected.');
-  setText('confirmationReference','Reference: '+ref);setText('confirmationDetails',selectedCourt.name+'\n'+labelDate(selectedDate)+' · '+hourLabel(startHour)+' – '+hourLabel(endHour)+'\nTotal: '+money(selectedCourt.rate*(endHour-startHour)));
+  if(demoCheckoutStage==='payment'){showReceiptStage();return;}
+  if(!demoReceiptData){
+    $('checkoutError').hidden=false;setText('checkoutError','Attach a receipt image or click “Use sample demo receipt” before submitting.');
+    return;
+  }
+  const name=$('playerName').value.trim()||'Demo Customer';
+  const email=$('playerEmail').value.trim()||'demo.customer@courtlyph.com';
+  const ref='CT-DEMO-'+Date.now().toString(36).slice(-5).toUpperCase();
+  demoPendingReference=ref;
+  const amount=selectedCourt.rate*(endHour-startHour);
+  const booking={
+    id:ref,reference:ref,slug:demoSlug,date:dateKey(selectedDate),
+    time:hourLabel(startHour)+' – '+hourLabel(endHour),duration:endHour-startHour,
+    court:selectedCourt.name,price:amount,status:'Pending',paymentStatus:'Awaiting verification',
+    paymentMethod:'GCash (demo)',player:name,email,createdAt:new Date().toISOString(),
+    paymentScreenshotUrl:demoReceiptData,receiptName:demoReceiptName
+  };
+  try{ensureDemoOwnerWorkspace(booking);}
+  catch(error){console.warn('Could not save the local demo booking:',error);setText('checkoutError','This browser could not save the demo booking. Please allow local site storage and try again.');$('checkoutError').hidden=false;return;}
+  $('gcashModal').hidden=true;
+  setText('confirmationTitle','Reservation submitted');
+  setText('confirmationMessage','Your sample receipt has been sent to the venue owner for review. No real payment was made.');
+  setText('confirmationReference','Reference: '+ref);
+  $('confirmationDetails').innerHTML=esc(selectedCourt.name)+'<br>'+esc(labelDate(selectedDate)+' · '+hourLabel(startHour)+' – '+hourLabel(endHour))+'<br>Total: '+money(amount)+'<br><a href="/owner-portal.html?demo='+encodeURIComponent(demoSlug)+'&view=bookings" target="_blank" rel="noopener">Open owner POV to review this demo booking ↗</a>';
   $('confirmationModal').hidden=false;
-  const payload={type:'courtly-demo-booking-created',booking:{id:ref,slug:demoSlug,date:dateKey(selectedDate),time:hourLabel(startHour)+' – '+hourLabel(endHour),duration:endHour-startHour,court:selectedCourt.id,price:selectedCourt.rate*(endHour-startHour),method:'Demo',player:name,email,createdAt:new Date().toISOString()}};
-  try{window.opener?.postMessage(payload,location.origin)}catch{}
-  try{localStorage.setItem('courtlyDemoLatestBooking:'+demoSlug,JSON.stringify(payload.booking))}catch{}
+  updateDemoBookingStatus('Pending');
+  if(customerTourActive)showCustomerTourStep(7);
 }
+function updateDemoBookingStatus(status){
+  const node=$('demoBookingStatus');if(!node)return;
+  node.hidden=false;
+  node.textContent=status==='Confirmed'?'DEMO BOOKING CONFIRMED · The venue owner verified the sample payment.':'DEMO RESERVATION SUBMITTED · Waiting for venue owner payment verification.';
+  node.classList.toggle('is-confirmed',status==='Confirmed');
+}
+function handleOwnerDemoStorage(event){
+  if(event.key!==ownerStorageKey||!event.newValue||!demoPendingReference)return;
+  try{
+    const saved=JSON.parse(event.newValue);
+    const booking=(saved.bookings||[]).find(item=>String(item.id)===String(demoPendingReference));
+    if(booking?.status==='Confirmed'){
+      updateDemoBookingStatus('Confirmed');
+      setText('confirmationTitle','Demo booking confirmed!');
+      setText('confirmationMessage','The venue owner reviewed the sample receipt and marked this reservation as paid.');
+    }
+  }catch(error){console.warn('Demo booking status could not be refreshed:',error);}
+}
+window.addEventListener('storage',handleOwnerDemoStorage);
 $('startTime').addEventListener('change',e=>{startHour=e.target.value===''?null:Number(e.target.value);endHour=startHour===null?null:startHour+1;renderTimes();renderCourts();updateSummary();});
 $('endTime').addEventListener('change',e=>{endHour=e.target.value===''?null:Number(e.target.value);renderTimes();updateSummary();});
 $('prevMonth').onclick=()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1,12);renderCalendar();};

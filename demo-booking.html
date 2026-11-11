@@ -183,6 +183,104 @@ const ownerStorageKey='courtlyOwnerPortalDemoV1:'+demoSlug;
 let demoReceiptData='',demoReceiptName='',demoPendingReference='',demoCheckoutStage='payment';
 let customerTourActive=false,customerTourIndex=0;
 
+const customerTourSteps=[
+ {key:'date',phase:'CUSTOMER POV',title:'1. Choose a booking date',body:'The customer starts with the venue calendar and chooses the date they want to play.',instruction:'Click any available date in the highlighted calendar. You can also press Next to continue.',target:()=>document.querySelector('.date-panel .calendar')},
+ {key:'time',phase:'CUSTOMER POV',title:'2. Select a time',body:'Available slots update for the selected day. The customer chooses a start time and end time that suit their schedule.',instruction:'Choose a start and end time, or press Next to see the court selection.',target:()=>document.querySelector('.date-panel .time-selectors')||$('slots')},
+ {key:'court',phase:'CUSTOMER POV',title:'3. Pick a court',body:'The customer compares the four sample courts, views their photos, and selects the court they want to reserve.',instruction:'Tap one of the sample courts. This selection is only stored in the demo.',target:()=>$('courtsGrid')},
+ {key:'summary',phase:'CUSTOMER POV',title:'4. Review the booking',body:'Courtly summarises the date, time, court, and court rental total before the customer proceeds to checkout.',instruction:'Select a time and court, then click Review booking & payment. Next can also open the sample checkout.',target:()=>document.querySelector('.summary-panel')},
+ {key:'payment',phase:'CUSTOMER POV',title:'5. View payment instructions',body:'The live Courtly flow displays the venue owner’s saved payment method and QR code. This preview uses a visibly labelled sample QR that cannot be scanned for payment.',instruction:'Review the amount and sample QR. Click “I’ve made the demo payment” or press Next to open the receipt step.',target:()=>$('paymentDetails')},
+ {key:'receipt',phase:'CUSTOMER POV',title:'6. Attach payment proof',body:'Customers upload their transfer screenshot so the venue owner can review the payment. The demo also provides a fictional sample receipt.',instruction:'Choose a screenshot or use the sample receipt. Nothing is sent to GCash or a bank.',target:()=>$('receiptField')},
+ {key:'submit',phase:'CUSTOMER POV',title:'7. Submit the reservation request',body:'The receipt and booking details are saved to the local demo workspace. The reservation appears as Pending in the owner dashboard until the owner confirms it.',instruction:'Click Submit demo receipt, or press Next to submit the sample request.',target:()=>$('paymentSubmitButton')},
+ {key:'confirmation',phase:'CUSTOMER POV',title:'8. Reservation submitted',body:'The customer sees a reference and a pending status. Open the Owner POV in another tab, review the sample receipt, and select Confirm paid. This page updates when the owner confirms it.',instruction:'This is a local demonstration only. Finish the tour here, then explore the Owner POV to complete the other half of the journey.',target:()=>document.querySelector('#confirmationModal .confirmation-dialog')}
+];
+function customerTourTarget(){try{return customerTourSteps[customerTourIndex].target()||null;}catch{return null;}}
+function customerTourPosition(){
+ if(!customerTourActive)return;
+ const target=customerTourTarget();if(!target||!target.isConnected||!target.getClientRects().length)return;
+ const spot=$('customerTourSpotlight'),dialog=$('customerTourDialog'),r=target.getBoundingClientRect(),pad=7;
+ const left=Math.max(5,r.left-pad),top=Math.max(5,r.top-pad);
+ spot.style.left=left+'px';spot.style.top=top+'px';
+ spot.style.width=Math.max(12,Math.min(innerWidth-left-5,r.width+pad*2))+'px';
+ spot.style.height=Math.max(12,Math.min(innerHeight-top-5,r.height+pad*2))+'px';
+ const w=dialog.getBoundingClientRect().width||Math.min(390,innerWidth-28),h=dialog.getBoundingClientRect().height||220;
+ const below=innerHeight-r.bottom-14>=h+14||innerHeight-r.bottom>=r.top;
+ let y=below?r.bottom+15:r.top-h-15;y=Math.max(8,Math.min(innerHeight-h-8,y));
+ let x=r.left+r.width/2-w/2;x=Math.max(10,Math.min(innerWidth-w-10,x));
+ dialog.style.top=y+'px';dialog.style.left=x+'px';dialog.dataset.placement=below?'bottom':'top';
+ dialog.style.setProperty('--customer-arrow-left',Math.max(18,Math.min(w-18,r.left+r.width/2-x))+'px');
+}
+function ensureDemoSelection(){
+ if(startHour===null||endHour===null){startHour=9;endHour=10;}
+ if(!selectedCourt)selectedCourt=courts[0];
+ renderCalendar();renderTimes();renderCourts();updateSummary();
+}
+function showCustomerTourStep(index){
+ customerTourIndex=Math.max(0,Math.min(customerTourSteps.length-1,index));
+ if(customerTourIndex>=4){
+  ensureDemoSelection();
+  if($('gcashModal').hidden)openCheckout();
+  if(customerTourIndex>=5){demoCheckoutStage='receipt';$('receiptField').hidden=false;$('useSampleReceipt').hidden=false;$('paymentSubmitButton').textContent='Submit demo receipt';}
+ }
+ if(customerTourIndex<4)$('gcashModal').hidden=true;
+ if(customerTourIndex<7)$('confirmationModal').hidden=true;
+ const step=customerTourSteps[customerTourIndex];
+ $('customerTourCount').textContent='STEP '+(customerTourIndex+1)+' OF '+customerTourSteps.length;
+ $('customerTourPhase').textContent=step.phase;$('customerTourTitle').textContent=step.title;
+ $('customerTourBody').textContent=step.body;$('customerTourInstruction').textContent=step.instruction;
+ $('customerTourProgress').style.width=((customerTourIndex+1)/customerTourSteps.length*100)+'%';
+ $('customerTourPrevious').disabled=customerTourIndex===0;
+ $('customerTourNext').textContent=customerTourIndex===customerTourSteps.length-1?'Finish':'Next';
+ $('customerTourModal').hidden=false;$('customerTourModal').setAttribute('aria-hidden','false');
+ $('customerTourDialog').classList.remove('is-visible');
+ const target=customerTourTarget();if(target)target.scrollIntoView({behavior:'smooth',block:'center',inline:'nearest'});
+ setTimeout(()=>{customerTourPosition();$('customerTourDialog').classList.add('is-visible');},220);
+}
+function startCustomerTour(){
+ if(!$('playerName').value)$('playerName').value='Demo Customer';
+ if(!$('playerEmail').value)$('playerEmail').value='demo.customer@courtlyph.com';
+ customerTourActive=true;showCustomerTourStep(0);
+ addEventListener('resize',customerTourPosition);addEventListener('scroll',customerTourPosition,true);
+}
+function closeCustomerTour(){
+ customerTourActive=false;removeEventListener('resize',customerTourPosition);removeEventListener('scroll',customerTourPosition,true);
+ $('customerTourModal').hidden=true;$('customerTourModal').setAttribute('aria-hidden','true');
+ $('customerTourDialog').classList.remove('is-visible');
+}
+function customerTourNext(){
+ const key=customerTourSteps[customerTourIndex].key;
+ if(key==='summary'){ensureDemoSelection();openCheckout();showCustomerTourStep(4);return;}
+ if(key==='payment'){showReceiptStage();showCustomerTourStep(5);return;}
+ if(key==='receipt'){if(!demoReceiptData)sampleReceipt();showCustomerTourStep(6);return;}
+ if(key==='submit'){if(!demoReceiptData)sampleReceipt();$('gcashForm').requestSubmit();return;}
+ if(customerTourIndex===customerTourSteps.length-1){closeCustomerTour();return;}
+ if(customerTourIndex===1)ensureDemoSelection();
+ showCustomerTourStep(customerTourIndex+1);
+}
+function customerTourPrevious(){
+ if(customerTourIndex===0)return;
+ const prev=customerTourIndex-1;
+ if(prev<4){$('gcashModal').hidden=true;}
+ if(prev===4){if($('gcashModal').hidden)openCheckout();demoCheckoutStage='payment';$('receiptField').hidden=true;$('useSampleReceipt').hidden=true;$('paymentSubmitButton').textContent='I’ve made the demo payment';}
+ showCustomerTourStep(prev);
+}
+function handleCustomerTourClick(event){
+ if(!customerTourActive||event.target.closest('#customerTourModal'))return;
+ const node=event.target.closest('button,select,input');if(!node)return;
+ if(customerTourIndex===0&&node.matches('#daysGrid .day:not(:disabled)'))showCustomerTourStep(1);
+ else if(customerTourIndex===1&&(node.matches('#slots [data-hour]:not(:disabled)')||node.matches('#startTime')||node.matches('#endTime')))showCustomerTourStep(2);
+ else if(customerTourIndex===2&&node.matches('#courtsGrid [data-court]'))showCustomerTourStep(3);
+ else if(customerTourIndex===3&&node.matches('#nextChoose'))showCustomerTourStep(4);
+}
+function handleCustomerTourChange(event){
+ if(!customerTourActive)return;
+ if(customerTourIndex===1&&(event.target.matches('#startTime')||event.target.matches('#endTime')))showCustomerTourStep(2);
+ if(customerTourIndex===5&&event.target.matches('#paymentScreenshot'))readDemoReceipt(event.target.files?.[0]);
+}
+$('customerTourPrevious').addEventListener('click',customerTourPrevious);
+$('customerTourNext').addEventListener('click',customerTourNext);
+$('customerTourClose').addEventListener('click',closeCustomerTour);
+document.addEventListener('click',handleCustomerTourClick);
+document.addEventListener('change',handleCustomerTourChange);
 function hourLabel(h){const suffix=h>=12?'PM':'AM';const display=h%12||12;return display+':00 '+suffix}
 function setText(id,v){const n=$(id);if(n)n.textContent=v}
 function renderBrand(){

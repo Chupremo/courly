@@ -1534,6 +1534,7 @@ async function initializeOwnerPortal(){
 
 let ownerTourActive=false;
 let ownerTourIndex=0;
+let ownerTourInitialView='overview';
 const ownerTourSteps=[
  {view:'overview',phase:'OWNER OVERVIEW',title:'1. Your venue at a glance',body:'The Overview brings the most important activity into one place: today’s confirmed bookings, payments that need attention, earnings, and notifications.',instruction:'Use these figures to understand what is happening at your venue before opening each section.',target:()=>$('#content .ov-kpis')||$('#content .owner-overview')},
  {view:'bookings',phase:'BOOKING MANAGEMENT',title:'2. Review reservations',body:'The Bookings area lists player reservations and their current status. You can filter the list, open a booking, check its reference, date, time, selected court, and amount.',instruction:'This is where the owner reviews the reservation details and sees which requests still need attention.',target:()=>$('#content .booking-summary-v2')||$('#content .booking-panel-v2')},
@@ -1600,7 +1601,7 @@ function showOwnerTourStep(index){
 }
 function startOwnerTour(){
  if(!workspaceReady){toast('Your owner workspace is still loading. Please try again in a moment.');return;}
- ownerTourActive=true;ownerTourIndex=0;document.body.classList.add('owner-tour-running');
+ ownerTourInitialView=view;ownerTourActive=true;ownerTourIndex=0;document.body.classList.add('owner-tour-running');
  showOwnerTourStep(0);
  window.addEventListener('resize',ownerTourPosition);
  window.addEventListener('scroll',ownerTourPosition,true);
@@ -1609,6 +1610,11 @@ function closeOwnerTour(){
  ownerTourActive=false;window.removeEventListener('resize',ownerTourPosition);window.removeEventListener('scroll',ownerTourPosition,true);
  $('ownerTourModal').hidden=true;$('ownerTourModal').setAttribute('aria-hidden','true');
  $('ownerTourDialog').classList.remove('is-visible');document.body.classList.remove('owner-tour-running');
+ if(workspaceReady&&view!==ownerTourInitialView){
+  view=ownerTourInitialView;
+  const url=new URL(location.href);url.searchParams.set('view',view);history.replaceState({ownerView:view},'',url);
+  render();window.scrollTo({top:0,behavior:'smooth'});
+ }
 }
 $('ownerTourLaunch')?.addEventListener('click',startOwnerTour);
 $('ownerTourClose')?.addEventListener('click',closeOwnerTour);

@@ -8,6 +8,9 @@
     },
     "api/notifications/process.js": {
       "maxDuration": 60
+    },
+    "api/booking-page.js": {
+      "includeFiles": "dist/venue.html"
     }
   },
   "rewrites": [
@@ -157,7 +160,7 @@
     },
     {
       "source": "/book/:slug",
-      "destination": "/venue.html?slug=:slug"
+      "destination": "/api/booking-page?slug=:slug"
     },
     {
       "source": "/v/:slug",
@@ -184,6 +187,17 @@
     {
       "path": "/api/notifications/process",
       "schedule": "0 3 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
     }
   ]
 }

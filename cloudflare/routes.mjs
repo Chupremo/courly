@@ -13,7 +13,7 @@ const routes = vercel.rewrites.map(({ source, destination }) => {
   return {
     expression: new RegExp(`^${pattern}/?$`),
     names,
-    destination,
+    destination: source === '/book/:slug' ? '/venue.html?slug=:slug' : destination,
     keepCleanUrl: source === '/book/:slug'
   };
 });

@@ -49,7 +49,7 @@ test('expired trials become on hold and cannot create new bookings', () => {
 
 test('trial bookings bypass paid billing terms but active bookings retain them', () => {
   assert.match(proposed, /Trial is intentionally fee-free and does not require the paid billing terms/);
-  assert.match(proposed, /IF v_activation_status='trial' THEN\s+RETURN NEW;/);
+  assert.match(proposed, /IF v_activation_status='trial' THEN[\s\S]*?v_trial_ends_at<=clock_timestamp\(\)[\s\S]*?RETURN NEW;/);
   assert.match(proposed, /courtly_venue_terms_acceptance/);
 });
 

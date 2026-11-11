@@ -167,11 +167,10 @@ async function load() {
     if (version !== requestVersion) return;
     console.error('Courtly venue listings could not be loaded:', error);
     venues = [];
-    loadState = 'ready';
+    loadState = 'error';
     setCities();
-    render();
-    count.textContent = 'Venue listings unavailable';
-    list.innerHTML = '<div class="error" role="status"><b>Venue listings could not be loaded.</b><p>Please try again.</p><button class="results-action" type="button" data-action="retry">Retry</button></div>';
+    count.textContent = 'Venues unavailable';
+    list.innerHTML = '<div class="error" role="status"><b>We couldn’t load venue listings.</b><p>Please try again.</p><button class="results-action" type="button" data-action="retry">Retry</button></div>';
   } finally {
     if (version === requestVersion) list.setAttribute('aria-busy', 'false');
   }

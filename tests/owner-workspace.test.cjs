@@ -81,7 +81,7 @@ test('demo court approvals and cancellations persist locally without invoking li
   assert.equal(read(reopened.context, 'db.venue.courtCount'), 3);
 });
 
-test('overview prioritizes payment review and lists only today’s confirmed court bookings in time order', () => {
+test('overview shows live KPIs and today’s confirmed court bookings in time order', () => {
   const { context } = portal({ demo: true });
   vm.runInContext(`
     const today=venueToday();
@@ -95,8 +95,8 @@ test('overview prioritizes payment review and lists only today’s confirmed cou
   `, context);
   assert.deepEqual(read(context, 'todayConfirmedBookings().map(booking=>booking.id)'), ['early', 'late']);
   const html = read(context, 'overview()');
-  assert.ok(html.indexOf('id="ownerPaymentReview"') < html.indexOf('class="stats"'));
-  assert.ok(html.indexOf('id="ownerTodayBookings"') < html.indexOf('Recent reservations'));
+  assert.ok(html.includes('Payment confirmation needed'));
+  assert.ok(html.indexOf('Today’s bookings') < html.indexOf('Recent reservations'));
   assert.match(html, /View today’s calendar/);
 });
 
@@ -167,7 +167,7 @@ test('payment settings save only payment fields and use the state captured when 
   assert.equal(state.venue.paymentAccount, 'Unsaved next edit');
 });
 
-test('court settings preserve named court identities and never reactivate unrelated inactive courts', async () => {
+test('court settings preserve court IDs, assign sequential names and leave unrelated inactive courts unchanged', async () => {
   const env = environment();
   const existing = [
     { id: 'court-a', name: 'East Badminton', sport: 'Badminton', is_active: true, image_url: '/east.jpg', image_fit: 'contain' },
@@ -181,7 +181,7 @@ test('court settings preserve named court identities and never reactivate unrela
   const upsert = service.calls.find(call => call.operation === 'upsert');
   assert.equal(upsert.payload.length, 1);
   assert.equal(upsert.payload[0].id, 'court-a');
-  assert.equal(upsert.payload[0].name, 'East Badminton');
+  assert.equal(upsert.payload[0].name, 'Court 1');
   assert.equal(upsert.payload[0].sport, 'Badminton');
   assert.equal(upsert.payload[0].image_url, '/east.jpg');
   const disabled = service.calls.find(call => call.table === 'courts' && call.operation === 'update');

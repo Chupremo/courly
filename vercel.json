@@ -156,6 +156,10 @@
       "destination": "/login.html"
     },
     {
+      "source": "/book/:slug",
+      "destination": "/venue.html?slug=:slug"
+    },
+    {
       "source": "/v/:slug",
       "destination": "/venue.html?slug=:slug"
     },

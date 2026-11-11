@@ -773,6 +773,35 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 }
 </style>
 
+<style id="owner-dashboard-tour-styles">
+.owner-tour-launch{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 13px;border:1px solid #c7d8ef;border-radius:9px;background:#fff;color:#12325f;font:800 11px/1 Inter,Arial,sans-serif;white-space:nowrap;cursor:pointer;transition:background .18s ease,border-color .18s ease}
+.owner-tour-launch:hover{background:#eef5ff;border-color:#8db2e6}
+.owner-tour-overlay{position:fixed;inset:0;z-index:1500;pointer-events:none}
+.owner-tour-overlay[hidden]{display:none!important}
+.owner-tour-spotlight{position:fixed;z-index:1;pointer-events:none;border-radius:12px;outline:3px solid #8ed502;outline-offset:4px;box-shadow:0 0 0 9999px rgba(3,13,32,.76),0 0 0 8px rgba(142,213,2,.16);transition:top .22s ease,left .22s ease,width .22s ease,height .22s ease;will-change:top,left,width,height}
+.owner-tour-dialog{position:fixed;z-index:2;pointer-events:auto;width:min(400px,calc(100vw - 30px));max-height:min(390px,calc(100vh - 30px));overflow:auto;padding:20px 21px;border:1px solid #dfe8f7;border-radius:17px;background:#fff;color:#102047;box-shadow:0 18px 55px rgba(0,14,40,.28);opacity:0;transform:translateY(5px);transition:opacity .18s ease,transform .18s ease}
+.owner-tour-dialog.is-visible{opacity:1;transform:translateY(0)}
+.owner-tour-dialog[data-placement="top"]::after,.owner-tour-dialog[data-placement="bottom"]::after{content:"";position:absolute;left:var(--owner-tour-arrow-left,50%);width:12px;height:12px;background:#fff;transform:translateX(-50%) rotate(45deg)}
+.owner-tour-dialog[data-placement="top"]::after{bottom:-6px;border-right:1px solid #dfe8f7;border-bottom:1px solid #dfe8f7}
+.owner-tour-dialog[data-placement="bottom"]::after{top:-6px;border-left:1px solid #dfe8f7;border-top:1px solid #dfe8f7}
+.owner-tour-header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.owner-tour-kicker{display:block;color:#0754c8;font-size:9px;font-weight:900;letter-spacing:.13em}
+.owner-tour-count{display:block;margin-top:5px;color:#7a89a5;font-size:10px;font-weight:800}
+.owner-tour-x{width:31px;height:31px;flex-shrink:0;border:0;border-radius:50%;background:#eef3fa;color:#102047;font-size:22px;line-height:1;cursor:pointer}
+.owner-tour-track{height:5px;margin:14px 0 19px;border-radius:99px;background:#e8edf5;overflow:hidden}
+.owner-tour-track span{display:block;width:9%;height:100%;border-radius:99px;background:linear-gradient(90deg,#0754c8,#8ed502);transition:width .2s ease}
+.owner-tour-phase{margin:0 0 7px;color:#e22b40;font-size:9px;font-weight:900;letter-spacing:.13em}
+.owner-tour-dialog h2{margin:0 0 9px;color:#102047;font-size:22px;line-height:1.16;letter-spacing:-.55px}
+.owner-tour-body{margin:0;color:#566783;font-size:12px;line-height:1.65}
+.owner-tour-instruction{margin:15px 0 16px;padding:10px 12px;border-left:3px solid #8ed502;border-radius:7px;background:#f2f7e9;color:#34496a;font-size:11px;line-height:1.5}
+.owner-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.owner-tour-step-actions{display:flex;gap:8px}
+.owner-tour-end,.owner-tour-back,.owner-tour-next{min-height:38px;padding:9px 13px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}
+.owner-tour-end,.owner-tour-back{border:1px solid #d5dfed;background:#fff;color:#51617c}
+.owner-tour-back:disabled{opacity:.35;cursor:not-allowed}
+.owner-tour-next{border:1px solid #0754c8;background:#0754c8;color:#fff}
+@media(max-width:680px){.owner-tour-launch{min-height:33px;padding:7px 9px;font-size:10px}.owner-tour-dialog{padding:18px;width:min(360px,calc(100vw - 24px));max-height:45vh}.owner-tour-dialog h2{font-size:20px}.owner-tour-body{font-size:11px}.owner-tour-end,.owner-tour-back,.owner-tour-next{padding:8px 11px}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -802,11 +831,32 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 <div class="side-bottom">COURTLY OWNER PORTAL<br><span id="workspaceModeLabel">Connecting to your secure workspace…</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div><div class="crumb">COURTLY / OWNER PORTAL</div><h2 id="pageTitle">Overview</h2></div><div class="topright"><span class="owner-email muted small" id="headerVenue">Loading your venue…</span><a href="/login.html" onclick="event.preventDefault();ownerLogout()" style="font-size:12px;font-weight:800;color:#b7c7e7;text-decoration:none">Log out</a><div class="avatar" id="avatar">—</div></div></header>
+<header class="topbar"><div><div class="crumb">COURTLY / OWNER PORTAL</div><h2 id="pageTitle">Overview</h2></div><div class="topright"><button type="button" class="owner-tour-launch" id="ownerTourLaunch">Guided dashboard tour</button><span class="owner-email muted small" id="headerVenue">Loading your venue…</span><a href="/login.html" onclick="event.preventDefault();ownerLogout()" style="font-size:12px;font-weight:800;color:#b7c7e7;text-decoration:none">Log out</a><div class="avatar" id="avatar">—</div></div></header>
 <div class="content" id="content"><section class="panel" role="status"><h2>Loading your workspace…</h2><p class="muted">Getting your venue, calendar and reservations ready.</p></section></div>
 </main>
 </div>
 <button class="owner-menu-backdrop" type="button" aria-label="Close owner navigation menu" onclick="closeOwnerMobileMenu()"></button>
+<div class="owner-tour-overlay" id="ownerTourModal" hidden aria-hidden="true">
+  <div class="owner-tour-spotlight" id="ownerTourSpotlight" aria-hidden="true"></div>
+  <section class="owner-tour-dialog" id="ownerTourDialog" role="dialog" aria-modal="false" aria-labelledby="ownerTourTitle">
+    <div class="owner-tour-header">
+      <div><span class="owner-tour-kicker">COURTLY OWNER WALKTHROUGH</span><span class="owner-tour-count" id="ownerTourCount">STEP 1 OF 11</span></div>
+      <button class="owner-tour-x" id="ownerTourClose" type="button" aria-label="Close tour">×</button>
+    </div>
+    <div class="owner-tour-track"><span id="ownerTourProgress"></span></div>
+    <p class="owner-tour-phase" id="ownerTourPhase">OWNER WORKSPACE</p>
+    <h2 id="ownerTourTitle">Your venue overview</h2>
+    <p class="owner-tour-body" id="ownerTourBody"></p>
+    <div class="owner-tour-instruction" id="ownerTourInstruction"></div>
+    <div class="owner-tour-actions">
+      <button class="owner-tour-end" id="ownerTourEnd" type="button">End tour</button>
+      <div class="owner-tour-step-actions">
+        <button class="owner-tour-back" id="ownerTourPrevious" type="button">Back</button>
+        <button class="owner-tour-next" id="ownerTourNext" type="button">Next step</button>
+      </div>
+    </div>
+  </section>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js" defer></script>
 <script type="module" src="/owner-portal-bridge.js"></script>
@@ -984,7 +1034,7 @@ function render(){const titles={overview:'Overview',calendar:'Booking calendar',
        });
      });
    });
- }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(view==='overview')setTimeout(renderVenueQr,0);if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner&&view!=='overview')c.insertAdjacentHTML('afterbegin',banner)}
+ }if(window.loadOpenPlayTransactions)setTimeout(()=>{if(view==='overview'||view==='bookings'||view==='transactions')window.loadOpenPlayTransactions()},0);if((view==='openplay'||view==='transactions'||(view==='overview'&&earningsSection==='openplay'))&&window.refreshOpenPlayRegistrationCounts)setTimeout(()=>window.refreshOpenPlayRegistrationCounts(),0);setTimeout(updateOverviewGrossStats,0);if(view==='billing')setTimeout(()=>window.loadCourtlyOwnerBilling?.(),0);document.querySelectorAll('.navbtn[data-view]').forEach(button=>{const active=button.dataset.view===view;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});updateOwnerNotificationBadge();prepareOwnerTables();if(view==='bookings')filterBookings();if(view==='overview')setTimeout(renderVenueQr,0);if(ownerBusy)setOwnerBusy(true);const banner=activationBanner();if(banner&&view!=='overview')c.insertAdjacentHTML('afterbegin',banner);if(ownerTourActive)setTimeout(ownerTourPosition,80)}
 function heading(title,desc,action=''){return `<div class="heading"><div><div class="eyebrow">YOUR COURT BUSINESS</div><h1>${title}</h1><p>${desc}</p></div>${action}</div>`}
 function stats(){const rows=confirmed();const courtGross=gross();const transactionFee=fees();return `<div class="stats"><div class="stat"><div class="stat-top">Court Rental Bookings <span class="stat-icon"></span></div><strong id="overviewCourtBookings">${rows.length}</strong><small>Confirmed and completed · ${earningsRange==='7d'?'Last 7 days':earningsRange==='30d'?'Last 30 days':'Last year'}</small></div><div class="stat"><div class="stat-top">Open Play Bookings <span class="stat-icon"></span></div><strong id="overviewOpenPlayBookings">—</strong><small>Confirmed registrations</small></div><div class="stat"><div class="stat-top">Court & Open Play Gross <span class="stat-icon">₱</span></div><strong id="overviewCombinedGross">${money(courtGross)}</strong><small>Court rental + confirmed Open Play registration amounts</small></div><div class="stat"><div class="stat-top">Convenience Fees to Remit <span class="stat-icon">−₱</span></div><strong id="overviewTransactionFee">${money(transactionFee)}</strong><small>Court rental fees you owe + player-paid Convenience Fees collected for Courtly</small></div><div class="stat"><div class="stat-top">Owner Net Earnings <span class="stat-icon"></span></div><strong id="overviewTotalGross">${money(courtGross-transactionFee)}</strong><small>Venue revenue after owner-paid fees; player fees are excluded from revenue</small></div></div>`}
 function table(items,actions=false){if(!items.length)return '<div class="empty">No reservations yet. Share your booking page to start receiving bookings.</div>';return `<div class="tablewrap"><table class="table"><thead><tr><th>Booking / Player</th><th>Date & time</th><th>Court</th><th>Court rental</th><th>Convenience Fee (owner)</th><th>Your net</th><th>Status / receipt</th>${actions?'<th>Actions</th>':''}</tr></thead><tbody>${items.map(b=>`<tr><td><strong>${esc(b.reference||b.id)}</strong><br>${esc(b.player)}<br><span class="muted">${esc(b.email)}</span></td><td>${esc(b.date)}<br>${esc(b.time)}</td><td class="nowrap">${esc(b.court)}</td><td class="num">${money(b.price)}</td><td class="num">${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?bookingFee(b):0)}</td><td class="num"><strong>${money(['Confirmed','Completed'].includes(displayBookingStatus(b))?Number(b.price||0)-bookingFee(b):0)}</strong></td><td class="nowrap">${statusPill(displayBookingStatus(b))}${b.paymentScreenshotUrl?`<br><a href="${esc(b.paymentScreenshotUrl)}" target="_blank" rel="noopener noreferrer" class="muted small">View receipt </a>`:''}</td>${actions?`<td class="nowrap"><div class="actions">${b.status==='Pending'?`<button class="btn primary sm" onclick="confirmPay('${b.id}')">Confirm paid</button>`:''}${!['Cancelled','Rejected','Expired'].includes(b.status)?`<button class="btn danger sm" onclick="cancel('${b.id}')">Cancel</button>`:''}</div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
@@ -1480,6 +1530,93 @@ async function initializeOwnerPortal(){
   $('content').innerHTML=`<section class="panel" role="alert"><h2>Unable to load your venue</h2><p>${esc(error.message||'Check your connection and try again.')}</p><div class="actions"><button class="btn primary" onclick="initializeOwnerPortal()">Try again</button><a class="btn" href="/login.html">Owner login</a></div></section>`;
  }
 }
+
+
+let ownerTourActive=false;
+let ownerTourIndex=0;
+const ownerTourSteps=[
+ {view:'overview',phase:'OWNER OVERVIEW',title:'1. Your venue at a glance',body:'The Overview brings the most important activity into one place: today’s confirmed bookings, payments that need attention, earnings, and notifications.',instruction:'Use these figures to understand what is happening at your venue before opening each section.',target:()=>$('#content .ov-kpis')||$('#content .owner-overview')},
+ {view:'bookings',phase:'BOOKING MANAGEMENT',title:'2. Review reservations',body:'The Bookings area lists player reservations and their current status. You can filter the list, open a booking, check its reference, date, time, selected court, and amount.',instruction:'This is where the owner reviews the reservation details and sees which requests still need attention.',target:()=>$('#content .booking-summary-v2')||$('#content .booking-panel-v2')},
+ {view:'bookings',phase:'PAYMENT VERIFICATION',title:'3. Review the receipt and confirm payment',body:'For a booking awaiting payment verification, open the uploaded receipt and compare it with the payment received by the venue. When the payment is correct, use “Confirm paid”. Courtly then updates the reservation to Confirmed.',instruction:'Look for “View receipt” and “Confirm paid” on a pending reservation. This tour will not approve or change any booking.',target:()=>$('#content .booking-card-actions button[onclick^="confirmPay"]')||$('#content .booking-panel-v2')},
+ {view:'calendar',phase:'SCHEDULE MANAGEMENT',title:'4. Manage your court calendar',body:'The calendar gives the owner a day or week view of court activity. You can move between dates, filter by court, review reservations, and block a time when a court should not be bookable.',instruction:'Use the Day/Week controls, date picker, and court filter to review your venue schedule.',target:()=>$('#content .owner-calendar-toolbar')||$('#content .owner-calendar-heading')},
+ {view:'courts',phase:'COURT SETUP',title:'5. Manage courts, rates, and photos',body:'Set the number of courts, opening and closing hours, off-peak and peak prices, and upload individual photos. These details are reflected on the public venue booking page.',instruction:'Review the court settings and the photo section. Save only when you are ready to change your live venue information.',target:()=>$('#content form[onsubmit="saveCourts(event)"]')||$('#content .panel')},
+ {view:'venue',phase:'PUBLIC LISTING',title:'6. Maintain your venue profile',body:'Your Venue Profile controls what players see before booking: venue name, contact details, description, location, amenities, logo, and cover image. You can publish the listing and preview its public booking page.',instruction:'Check the Public listing panel and the Venue information form. The owner tour does not edit or publish anything.',target:()=>$('#content form[onsubmit="saveVenue(event)"]')||$('#content .panel')},
+ {view:'payments',phase:'PAYMENT SETTINGS',title:'7. Set how players pay your venue',body:'Payment Settings stores the payment method, recipient or account name, QR image, and payment instructions displayed to players at checkout. Players send payment directly to the venue.',instruction:'Review the saved recipient and QR code. Keeping these details accurate helps players pay the correct account.',target:()=>$('#content .settings-payment-v2')||$('#content .settings-links-v2')},
+ {view:'openplay',phase:'PLAYER ENGAGEMENT',title:'8. Publish Open Play sessions',body:'Open Play lets you announce upcoming sessions with a banner, date, time, venue location, description, and registration price. Published events can be discovered by players.',instruction:'This section is where you create and manage the Open Play announcements shown on the public venue page.',target:()=>$('#content #opTitle')?.closest('form')||$('#content .panel')},
+ {view:'transactions',phase:'REVENUE TRACKING',title:'9. Track earnings and transactions',body:'Earnings separates court-booking income from Open Play registration income. Review confirmed transactions, convenience fees, owner net earnings, and the transaction ledger.',instruction:'Use the range filters and ledger to review your venue’s recorded revenue. Pending and cancelled reservations are not confirmed earnings.',target:()=>$('#content #courtEarningsView .stats')||$('#content #courtEarningsView')||$('#content .stats')},
+ {view:'billing',phase:'COURTLY BILLING',title:'10. Review fees and invoices',body:'The billing area shows Courtly convenience fees, weekly invoices, and remittance information applicable to your venue account.',instruction:'Review the billing summary and any invoice actions here. The tour will not submit a payment or remittance.',target:()=>$('#content #ownerBillingApp')||$('#content .panel')},
+ {view:'notifications',phase:'OWNER UPDATES',title:'11. Stay on top of venue activity',body:'Notifications keeps important booking and account updates in one place. Use this area to catch new requests and changes that may need your attention.',instruction:'Finish here, then use the Owner Workspace navigation to return to any section. You can reopen this tour from the top of the dashboard.',target:()=>$('#content .panel')||$('#content')}
+];
+function ownerTourTarget(step){try{return step?.target?.()||null;}catch{return null;}}
+function ownerTourPosition(){
+ if(!ownerTourActive)return;
+ const step=ownerTourSteps[ownerTourIndex],target=ownerTourTarget(step);
+ if(!target||!target.isConnected||target.getClientRects().length===0)return;
+ const spotlight=$('ownerTourSpotlight'),dialog=$('ownerTourDialog'),rect=target.getBoundingClientRect(),pad=7;
+ const left=Math.max(5,rect.left-pad),top=Math.max(5,rect.top-pad);
+ spotlight.style.left=left+'px';spotlight.style.top=top+'px';
+ spotlight.style.width=Math.max(12,Math.min(window.innerWidth-left-5,rect.width+pad*2))+'px';
+ spotlight.style.height=Math.max(12,Math.min(window.innerHeight-top-5,rect.height+pad*2))+'px';
+ const dw=dialog.getBoundingClientRect().width||Math.min(400,window.innerWidth-30),dh=dialog.getBoundingClientRect().height||230;
+ const below=window.innerHeight-rect.bottom-14>=dh+16||window.innerHeight-rect.bottom>=rect.top;
+ let y=below?rect.bottom+16:rect.top-dh-16;
+ y=Math.max(8,Math.min(window.innerHeight-dh-8,y));
+ let x=rect.left+rect.width/2-dw/2;
+ x=Math.max(12,Math.min(window.innerWidth-dw-12,x));
+ dialog.style.top=y+'px';dialog.style.left=x+'px';dialog.dataset.placement=below?'bottom':'top';
+ dialog.style.setProperty('--owner-tour-arrow-left',Math.max(18,Math.min(dw-18,rect.left+rect.width/2-x))+'px');
+}
+function ownerTourNavigate(viewName){
+ if(view===viewName)return;
+ view=viewName;
+ const url=new URL(location.href);url.searchParams.set('view',viewName);
+ history.replaceState({ownerView:viewName},'',url);
+ if(viewName==='transactions')earningsSection='court';
+ render();
+}
+function renderOwnerTourStep(){
+ if(!ownerTourActive)return;
+ const step=ownerTourSteps[ownerTourIndex];if(!step)return;
+ $('ownerTourCount').textContent='STEP '+(ownerTourIndex+1)+' OF '+ownerTourSteps.length;
+ $('ownerTourPhase').textContent=step.phase;
+ $('ownerTourTitle').textContent=step.title;
+ $('ownerTourBody').textContent=step.body;
+ $('ownerTourInstruction').textContent=step.instruction;
+ $('ownerTourProgress').style.width=((ownerTourIndex+1)/ownerTourSteps.length*100)+'%';
+ $('ownerTourPrevious').disabled=ownerTourIndex===0;
+ $('ownerTourNext').textContent=ownerTourIndex===ownerTourSteps.length-1?'Finish tour':'Next step';
+ $('ownerTourModal').hidden=false;$('ownerTourModal').setAttribute('aria-hidden','false');
+ $('ownerTourDialog').classList.remove('is-visible');
+ const target=ownerTourTarget(step);
+ if(target)target.scrollIntoView({behavior:'smooth',block:'center',inline:'nearest'});
+ window.setTimeout(()=>{ownerTourPosition();$('ownerTourDialog').classList.add('is-visible');},240);
+}
+function showOwnerTourStep(index){
+ if(!ownerTourActive)return;
+ ownerTourIndex=Math.max(0,Math.min(ownerTourSteps.length-1,index));
+ const step=ownerTourSteps[ownerTourIndex];
+ ownerTourNavigate(step.view);
+ renderOwnerTourStep();
+}
+function startOwnerTour(){
+ if(!workspaceReady){toast('Your owner workspace is still loading. Please try again in a moment.');return;}
+ ownerTourActive=true;ownerTourIndex=0;document.body.classList.add('owner-tour-running');
+ showOwnerTourStep(0);
+ window.addEventListener('resize',ownerTourPosition);
+ window.addEventListener('scroll',ownerTourPosition,true);
+}
+function closeOwnerTour(){
+ ownerTourActive=false;window.removeEventListener('resize',ownerTourPosition);window.removeEventListener('scroll',ownerTourPosition,true);
+ $('ownerTourModal').hidden=true;$('ownerTourModal').setAttribute('aria-hidden','true');
+ $('ownerTourDialog').classList.remove('is-visible');document.body.classList.remove('owner-tour-running');
+}
+$('ownerTourLaunch')?.addEventListener('click',startOwnerTour);
+$('ownerTourClose')?.addEventListener('click',closeOwnerTour);
+$('ownerTourEnd')?.addEventListener('click',closeOwnerTour);
+$('ownerTourPrevious')?.addEventListener('click',()=>{if(ownerTourIndex>0)showOwnerTourStep(ownerTourIndex-1);});
+$('ownerTourNext')?.addEventListener('click',()=>{if(ownerTourIndex===ownerTourSteps.length-1){closeOwnerTour();return;}showOwnerTourStep(ownerTourIndex+1);});
+$('ownerTourModal')?.addEventListener('click',event=>{if(event.target===$('ownerTourModal'))closeOwnerTour();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&ownerTourActive)closeOwnerTour();});
 
 initializeOwnerPortal();
 </script>

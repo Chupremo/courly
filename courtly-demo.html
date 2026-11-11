@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081a37">
+<title>Courtly | Interactive Product Demo</title>
+<meta name="description" content="Explore Courtly from the player's point of view and the court owner's point of view. No sign-in or real payment required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#081a37;--blue:#0754c8;--red:#e92940;--green:#8ed502;--ink:#102047;--muted:#697895;--line:#e2e9f3;--bg:#f4f7fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.topbar{height:72px;background:var(--navy);color:#fff;display:flex;align-items:center}
+.nav{width:min(1160px,92%);margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:25px;font-weight:900;letter-spacing:1.5px}.logo span{color:var(--green)}
+.nav a:last-child{font-size:12px;font-weight:700;color:#dbe7fb}
+.hero{background:linear-gradient(110deg,#081a37 0%,#0d2b58 65%,#123e77 100%);color:#fff;padding:74px 0 82px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:480px;height:480px;right:-120px;top:-230px;border:1px solid #ffffff1e;border-radius:50%;box-shadow:0 0 0 45px #ffffff08,0 0 0 95px #ffffff06}
+.hero-inner{position:relative;z-index:1;width:min(1160px,92%);margin:auto}
+.eyebrow{font-size:10px;letter-spacing:.2em;font-weight:900;color:#bde77b}
+h1{margin:15px 0 15px;font-size:clamp(34px,6vw,58px);line-height:1.04;letter-spacing:-2px;max-width:750px}
+.hero p{margin:0;max-width:670px;color:#d4e1f5;font-size:16px;line-height:1.75}
+.notice{display:inline-flex;align-items:center;gap:9px;margin-top:25px;padding:10px 14px;border:1px solid #ffffff30;border-radius:999px;background:#ffffff12;color:#eff6ff;font-size:11px;font-weight:700}
+.notice:before{content:"";width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 4px #8ed50220}
+main{width:min(1160px,92%);margin:-38px auto 70px;position:relative;z-index:2}
+.intro{margin:0 0 18px;font-size:13px;color:var(--muted);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.card{overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 15px 38px #0b25420e}
+.card-image{height:230px;position:relative;overflow:hidden;background:#0c2347}
+.card-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.card:hover .card-image img{transform:scale(1.035)}
+.card-image:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#081a37c9)}
+.pov{position:absolute;z-index:1;left:22px;bottom:18px;padding:7px 10px;border-radius:7px;background:#e92940;color:#fff;font-size:10px;font-weight:900;letter-spacing:.12em}
+.card-copy{padding:25px 26px 26px}
+.card-copy .number{color:#0754c8;font-size:10px;font-weight:900;letter-spacing:.15em}
+.card-copy h2{margin:8px 0 9px;font-size:25px;letter-spacing:-.6px}
+.card-copy p{margin:0;color:#64748e;font-size:13px;line-height:1.7;min-height:68px}
+.features{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0 22px}
+.features span{padding:7px 9px;border:1px solid #e5ebf4;border-radius:7px;background:#f7f9fc;color:#475976;font-size:10px;font-weight:700}
+.cta{display:flex;align-items:center;justify-content:center;min-height:48px;padding:13px 18px;border-radius:10px;background:var(--blue);color:#fff;font-size:13px;font-weight:800;transition:filter .2s}
+.card:nth-child(2) .cta{background:var(--navy)}
+.cta:hover{filter:brightness(1.12)}
+.footnote{margin:22px 0 0;padding:18px 20px;border:1px solid #dfe8f5;border-radius:12px;background:#fff;color:#677895;font-size:11px;line-height:1.7}
+.footnote strong{color:#17345d}
+@media(max-width:760px){.hero{padding:54px 0 68px}.cards{grid-template-columns:1fr}.card-image{height:190px}.card-copy p{min-height:0}main{margin-top:-28px}.card-copy{padding:21px}.hero p{font-size:14px}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="nav"><a class="logo" href="/">COURTLY<span>.</span></a><a href="/">Back to Courtly website</a></nav></header>
+<section class="hero">
+ <div class="hero-inner">
+  <div class="eyebrow">INTERACTIVE PRODUCT WALKTHROUGH</div>
+  <h1>See how Courtly works — from both sides of the court.</h1>
+  <p>Explore the real customer booking journey and the court owner's workspace using sample information. Follow the guided steps, try the controls, and see how a booking moves from selection to payment review and confirmation.</p>
+  <div class="notice">No account required · No real payment · Demo data only</div>
+ </div>
+</section>
+<main>
+ <p class="intro">Choose the experience you want to explore.</p>
+ <div class="cards">
+  <article class="card">
+   <div class="card-image"><img src="https://images.pexels.com/photos/37618103/pexels-photo-37618103/free-photo-of-indoor-tennis-court-with-pickleball-branding.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Indoor pickleball court"><span class="pov">CUSTOMER POV</span></div>
+   <div class="card-copy">
+    <div class="number">01 / PLAYER EXPERIENCE</div>
+    <h2>Book a court</h2>
+    <p>Choose a date, select an available time and court, review the total, see the sample payment instructions, upload a demo receipt, and submit a reservation.</p>
+    <div class="features"><span>Date & time selection</span><span>Court availability</span><span>Demo payment</span><span>Receipt upload</span></div>
+    <a class="cta" href="/demo-booking.html?slug=demo-lipa-pickleball-hub&amp;tour=1">Explore customer POV</a>
+   </div>
+  </article>
+  <article class="card">
+   <div class="card-image"><img src="https://images.pexels.com/photos/15390858/pexels-photo-15390858/free-photo-of-a-pickleball-court.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Pickleball courts ready for play"><span class="pov">COURT OWNER POV</span></div>
+   <div class="card-copy">
+    <div class="number">02 / OWNER EXPERIENCE</div>
+    <h2>Manage your venue</h2>
+    <p>Explore the owner overview, view the sample reservation and uploaded receipt, confirm a demo payment, manage the calendar and courts, and review earnings.</p>
+    <div class="features"><span>Booking management</span><span>Confirm payments</span><span>Calendar & courts</span><span>Earnings overview</span></div>
+    <a class="cta" href="/owner-portal.html?demo=demo-lipa-pickleball-hub&amp;tour=1">Explore owner POV</a>
+   </div>
+  </article>
+ </div>
+ <div class="footnote"><strong>About this demo:</strong> All venues, players, payments, receipts, and reservation references shown here are fictional. Demo changes are stored only in this browser and are not sent to Courtly's live booking database. No real GCash transfer or card payment is made.</div>
+</main>
+</body>
+</html>

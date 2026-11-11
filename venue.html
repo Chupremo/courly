@@ -51,26 +51,31 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 .booking-tour-subtitle{margin:8px 0 0;color:#d8e5f6;font-size:11px;line-height:1.4}
 .venue-image-note{margin:8px 0 0;color:#e0e9f7;font-size:10px;line-height:1.4}
 .venue-image-note[hidden]{display:none!important}
-.booking-tour-overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,14,34,.78);backdrop-filter:blur(5px)}
+.booking-tour-overlay{position:fixed;inset:0;z-index:1300;pointer-events:none}
 .booking-tour-overlay[hidden]{display:none!important}
-.booking-tour-dialog{width:min(560px,100%);max-height:92vh;overflow:auto;padding:26px;border:1px solid #dfe8f7;border-radius:20px;background:#fff;color:#102047;box-shadow:0 24px 80px #0005}
+.booking-tour-spotlight{position:fixed;z-index:1;pointer-events:none;border-radius:12px;outline:3px solid #8ed502;outline-offset:4px;box-shadow:0 0 0 9999px rgba(3,13,32,.76),0 0 0 8px rgba(142,213,2,.16);transition:top .22s ease,left .22s ease,width .22s ease,height .22s ease;will-change:top,left,width,height}
+.booking-tour-dialog{position:fixed;z-index:2;pointer-events:auto;width:min(390px,calc(100vw - 32px));max-height:min(360px,calc(100vh - 32px));overflow:auto;padding:20px 21px;border:1px solid #dfe8f7;border-radius:17px;background:#fff;color:#102047;box-shadow:0 18px 55px rgba(0,14,40,.28);opacity:0;transform:translateY(5px);transition:opacity .18s ease,transform .18s ease}
+.booking-tour-dialog.is-visible{opacity:1;transform:translateY(0)}
+.booking-tour-dialog[data-placement="top"]::after,.booking-tour-dialog[data-placement="bottom"]::after{content:"";position:absolute;left:var(--tour-arrow-left,50%);width:12px;height:12px;background:#fff;transform:translateX(-50%) rotate(45deg)}
+.booking-tour-dialog[data-placement="top"]::after{bottom:-6px;border-right:1px solid #dfe8f7;border-bottom:1px solid #dfe8f7}
+.booking-tour-dialog[data-placement="bottom"]::after{top:-6px;border-left:1px solid #dfe8f7;border-top:1px solid #dfe8f7}
 .booking-tour-header{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.booking-tour-kicker{display:block;color:#0754c8;font-size:10px;font-weight:900;letter-spacing:.13em}
-.booking-tour-count{display:block;margin-top:6px;color:#7a89a5;font-size:10px;font-weight:800}
-.booking-tour-x{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fa;color:#102047;font-size:23px;line-height:1;cursor:pointer}
-.booking-tour-track{height:5px;margin:18px 0 23px;border-radius:99px;background:#e8edf5;overflow:hidden}
-.booking-tour-track span{display:block;width:12.5%;height:100%;border-radius:99px;background:linear-gradient(90deg,#0754c8,#8ed502);transition:width .2s ease}
-.booking-tour-phase{margin:0 0 8px;color:#e22b40;font-size:10px;font-weight:900;letter-spacing:.13em}
-.booking-tour-dialog h2{margin:0 0 12px;color:#102047;font-size:clamp(24px,4vw,31px);line-height:1.12;letter-spacing:-.8px}
-.booking-tour-body{margin:0;color:#566783;font-size:14px;line-height:1.75}
-.booking-tour-tip{display:grid;gap:5px;margin:20px 0 24px;padding:14px 15px;border-left:3px solid #8ed502;border-radius:8px;background:#f3f7fc;color:#4f607b;font-size:12px;line-height:1.6}
-.booking-tour-tip strong{color:#12254a}
-.booking-tour-actions{display:flex;justify-content:space-between;gap:10px}
-.booking-tour-back,.booking-tour-next{min-height:44px;padding:11px 17px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer}
-.booking-tour-back{border:1px solid #d5dfed;background:#fff;color:#24385d}
-.booking-tour-back:disabled{opacity:.35;cursor:not-allowed}
+.booking-tour-kicker{display:block;color:#0754c8;font-size:9px;font-weight:900;letter-spacing:.13em}
+.booking-tour-count{display:block;margin-top:5px;color:#7a89a5;font-size:10px;font-weight:800}
+.booking-tour-x{width:31px;height:31px;flex-shrink:0;border:0;border-radius:50%;background:#eef3fa;color:#102047;font-size:22px;line-height:1;cursor:pointer}
+.booking-tour-track{height:5px;margin:14px 0 19px;border-radius:99px;background:#e8edf5;overflow:hidden}
+.booking-tour-track span{display:block;width:10%;height:100%;border-radius:99px;background:linear-gradient(90deg,#0754c8,#8ed502);transition:width .2s ease}
+.booking-tour-phase{margin:0 0 7px;color:#e22b40;font-size:9px;font-weight:900;letter-spacing:.13em}
+.booking-tour-dialog h2{margin:0 0 9px;color:#102047;font-size:22px;line-height:1.16;letter-spacing:-.55px}
+.booking-tour-body{margin:0;color:#566783;font-size:12px;line-height:1.65}
+.booking-tour-instruction{margin:15px 0 16px;padding:10px 12px;border-left:3px solid #8ed502;border-radius:7px;background:#f2f7e9;color:#34496a;font-size:11px;line-height:1.5}
+.booking-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.booking-tour-skip,.booking-tour-next{min-height:38px;padding:9px 14px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}
+.booking-tour-skip{border:1px solid #d5dfed;background:#fff;color:#51617c}
 .booking-tour-next{border:1px solid #0754c8;background:#0754c8;color:#fff}
-@media(max-width:650px){.pickle-bonn-page .venue-owner-logo{width:66px;height:66px;max-width:66px;max-height:66px}.booking-tour-dialog{padding:21px;border-radius:17px}.booking-tour-body{font-size:13px}.booking-tour-actions button{flex:1}}
+.booking-tour-next[hidden]{display:none!important}
+body.booking-tour-running{scroll-behavior:smooth}
+@media(max-width:650px){.pickle-bonn-page .venue-owner-logo{width:66px;height:66px;max-width:66px;max-height:66px}.booking-tour-dialog{padding:18px;width:min(360px,calc(100vw - 24px));max-height:42vh}.booking-tour-dialog h2{font-size:20px}.booking-tour-body{font-size:11px}}
 </style>
 </head>
 <body>
@@ -127,23 +132,21 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 <p class="payment-note">Pay only once for your reservation reference. Receipt submission is followed by the venue's payment verification.</p>
 </section>
 </div>
-<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check"></div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="booking-tour-overlay" id="bookingTourModal" hidden>
-  <section class="booking-tour-dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTourTitle">
+<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check"></div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="booking-tour-overlay" id="bookingTourModal" hidden aria-hidden="true">
+  <div class="booking-tour-spotlight" id="bookingTourSpotlight" aria-hidden="true"></div>
+  <section class="booking-tour-dialog" id="bookingTourDialog" role="dialog" aria-modal="false" aria-labelledby="bookingTourTitle">
     <div class="booking-tour-header">
-      <div>
-        <span class="booking-tour-kicker">COURTLY BOOKING WALKTHROUGH</span>
-        <span class="booking-tour-count" id="bookingTourCount">STEP 1 OF 8</span>
-      </div>
+      <div><span class="booking-tour-kicker">COURTLY CUSTOMER WALKTHROUGH</span><span class="booking-tour-count" id="bookingTourCount">STEP 1 OF 10</span></div>
       <button class="booking-tour-x" id="closeBookingTour" type="button" aria-label="Close tour">×</button>
     </div>
     <div class="booking-tour-track"><span id="bookingTourProgress"></span></div>
     <p class="booking-tour-phase" id="bookingTourPhase">PLAYER EXPERIENCE</p>
-    <h2 id="bookingTourTitle">Explore the venue</h2>
+    <h2 id="bookingTourTitle">Choose a booking date</h2>
     <p class="booking-tour-body" id="bookingTourBody"></p>
-    <div class="booking-tour-tip"><strong>What to show:</strong><span id="bookingTourTip"></span></div>
+    <div class="booking-tour-instruction" id="bookingTourInstruction">Click the highlighted control on the page to continue.</div>
     <div class="booking-tour-actions">
-      <button class="booking-tour-back" id="bookingTourPrevious" type="button">Back</button>
-      <button class="booking-tour-next" id="bookingTourNext" type="button">Next step</button>
+      <button class="booking-tour-skip" id="skipBookingTour" type="button">End tour</button>
+      <button class="booking-tour-next" id="bookingTourContinue" type="button" hidden>Continue</button>
     </div>
   </section>
 </div>
@@ -281,71 +284,131 @@ const paymentSubmission = submissionGuard();
 const checkoutOpening = submissionGuard();
 const receiptTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 const bookingTourSteps = [
-  {
-    phase: 'PLAYER EXPERIENCE',
-    title: 'Start on the public venue page',
-    body: 'Players land on the venue page and can review its profile, location, photos, opening details, amenities, and active courts before they book.',
-    tip: 'Show the venue banner, profile image, Overview, Amenities, and Location tabs. The example photos are illustrative until you upload the venue’s own photos.'
-  },
-  {
-    phase: 'PLAYER EXPERIENCE',
-    title: 'Choose a booking date',
-    body: 'The player selects a future date from the calendar. The page uses the venue’s local time zone and refreshes the available schedule for that day.',
-    tip: 'Pick a date in the calendar. Past dates are disabled, so players cannot select a date that has already passed.'
-  },
-  {
-    phase: 'PLAYER EXPERIENCE',
-    title: 'Select an available time',
-    body: 'Players choose a start time and end time. Courtly checks live availability; past or already-booked times are not selectable.',
-    tip: 'Choose a start and end time, then point out the Available, Booked, and Selected indicators.'
-  },
-  {
-    phase: 'PLAYER EXPERIENCE',
-    title: 'Choose the court',
-    body: 'Only the venue’s active courts are listed. Each card shows its court name, availability for the selected time, and hourly price.',
-    tip: 'Select one of the real active courts. Courtly checks for booking conflicts before allowing the player to continue.'
-  },
-  {
-    phase: 'PLAYER EXPERIENCE',
-    title: 'Review the booking and sign in',
-    body: 'The player reviews the date, time, court, and total. A free player account is required to continue; new players can register or existing players can log in.',
-    tip: 'Tap “Review booking & payment.” The account prompt appears only when the player is not signed in with a player account.'
-  },
-  {
-    phase: 'PAYMENT',
-    title: 'Reserve the selected time',
-    body: 'The player confirms their details. Courtly asks the server to validate the selection and price, then creates a temporary hold so another player cannot take that time during checkout.',
-    tip: 'The checkout shows a reference and countdown. The payment recipient, instructions, and QR code come from the venue’s saved payment settings.'
-  },
-  {
-    phase: 'PAYMENT',
-    title: 'Pay the venue and submit the receipt',
-    body: 'The player sends the exact amount to the venue’s configured payment account, such as its GCash account, then uploads the payment screenshot and submits it before the hold expires. The payment goes to the venue’s account, not to Courtly.',
-    tip: 'Show the payment QR and instructions, the receipt upload field, and the reservation reference. The player should pay only once and keep the reference.'
-  },
-  {
-    phase: 'VENUE OWNER',
-    title: 'Verify payment and confirm the booking',
-    body: 'The request is saved as submitted while the venue owner checks the uploaded receipt in the owner portal. Once the owner verifies and confirms the payment, the booking status changes to Confirmed and the player can see the confirmed booking and its reference in their account.',
-    tip: 'Open Owner Portal → Bookings, review the uploaded receipt, and select “Confirm paid”. Then show the player’s booking status change to Confirmed.'
-  }
+ {key:'date',phase:'PLAYER EXPERIENCE',title:'1. Choose a booking date',body:'This is the real venue calendar. Players choose the day they want to play; dates in the past are disabled.',instruction:'Tap an available date in the highlighted calendar. Courtly will refresh the live availability for that day.',target:()=>document.querySelector('#daysGrid .day[aria-pressed="true"]:not(:disabled)')||document.querySelector('#daysGrid .day:not(:disabled)'),action:'click'},
+ {key:'time',phase:'PLAYER EXPERIENCE',title:'2. Choose a start and end time',body:'Available time slots update for the selected date. Players can use the start/end selectors or tap an available slot below.',instruction:'Choose a start time and end time. Past and booked times cannot be selected.',target:()=>document.querySelector('#booking-calendar .time-selectors')||document.querySelector('#slots'),action:'time'},
+ {key:'court',phase:'PLAYER EXPERIENCE',title:'3. Select an available court',body:'Only the venue’s real active courts appear here. Each card shows its name, hourly rate, and availability for the chosen time.',instruction:'Tap a court card. Your selection will appear in the booking summary.',target:()=>document.querySelector('#courtsGrid .court-card.selected')||document.querySelector('#courtsGrid .court-card:not(:disabled)')||$('courtSection'),action:'court'},
+ {key:'review',phase:'PLAYER EXPERIENCE',title:'4. Review the booking',body:'Courtly totals the selected court and hours. The player can review the date, time, court, and total before continuing.',instruction:'When the summary is correct, click “Review booking & payment” in the highlighted area.',target:()=>$('nextChoose'),action:'checkout'},
+ {key:'account',phase:'PLAYER ACCOUNT',title:'5. Sign in or create a free player account',body:'A player account is required to place a reservation. Courtly keeps the selected date, time, and court while the player signs in or registers.',instruction:'Choose Log in or Create player account. After authentication, Courtly returns to this checkout.',target:()=>document.querySelector('#authRequiredModal .auth-required-dialog')||$('authRequiredModal'),action:'account'},
+ {key:'hold',phase:'SECURE CHECKOUT',title:'6. Confirm details and reserve the time',body:'The player checks their contact details. Courtly validates the price on the server and temporarily holds the selected court time before showing payment instructions.',instruction:'Complete the required player details, then click “Reserve court & show payment details”.',target:()=>$('paymentSubmitButton')||$('gcashModal'),action:'hold'},
+ {key:'pay',phase:'PAYMENT',title:'7. Pay the venue directly',body:'After the hold is confirmed, the venue’s saved payment account, instructions, exact amount, and QR code appear. Payment goes to the venue, not to Courtly.',instruction:'Scan the venue QR or follow its payment instructions. When payment is complete, continue to upload the receipt.',target:()=>$('paymentDetails')||document.querySelector('#gcashModal .gcash-recipient'),action:'continue',continueLabel:'I’ve paid — continue'},
+ {key:'receipt',phase:'PAYMENT',title:'8. Upload the payment receipt',body:'The player attaches a screenshot of the completed transfer. The receipt is linked to the temporary reservation hold.',instruction:'Choose the payment screenshot in the highlighted upload field. The next step appears after a file is selected.',target:()=>$('receiptField')||$('paymentScreenshot'),action:'receipt'},
+ {key:'submit',phase:'PAYMENT',title:'9. Submit the reservation',body:'Courtly sends the receipt with the reservation reference. The player should submit only once and keep the reference for follow-up.',instruction:'Click the highlighted submit button to send the receipt and booking request to the venue.',target:()=>$('paymentSubmitButton')||$('gcashModal'),action:'submit'},
+ {key:'submitted',phase:'VENUE OWNER',title:'10. The venue verifies and confirms',body:'The player sees a reservation-submitted message and reference. The venue owner then opens Owner Portal → Bookings, reviews the receipt, and clicks “Confirm paid”. The player’s booking status changes to Confirmed after the owner approves it.',instruction:'This is the real confirmation screen. No fake booking or payment is generated by the tour.',target:()=>document.querySelector('#confirmationModal .confirmation-dialog')||$('confirmationModal'),action:'finish',continueLabel:'Finish tour'}
 ];
-let bookingTourIndex = 0;
-function renderBookingTourStep() {
-  const step = bookingTourSteps[bookingTourIndex];
-  if (!step) return;
-  $('bookingTourCount').textContent = `STEP ${bookingTourIndex + 1} OF ${bookingTourSteps.length}`;
-  $('bookingTourPhase').textContent = step.phase;
-  $('bookingTourTitle').textContent = step.title;
-  $('bookingTourBody').textContent = step.body;
-  $('bookingTourTip').textContent = step.tip;
-  $('bookingTourProgress').style.width = `${((bookingTourIndex + 1) / bookingTourSteps.length) * 100}%`;
-  $('bookingTourPrevious').disabled = bookingTourIndex === 0;
-  $('bookingTourNext').textContent = bookingTourIndex === bookingTourSteps.length - 1 ? 'Go to booking' : 'Next step';
+let bookingTourIndex=0;
+let bookingTourActive=false;
+let bookingTourPoll=null;
+let bookingTourKey='';
+const BOOKING_TOUR_RESUME_KEY='courtly.bookingTour.resumeAfterAuth';
+function bookingTourFindTarget(step){try{return step?.target?.()||null;}catch{return null;}}
+function bookingTourPosition(){
+ if(!bookingTourActive)return;
+ const target=bookingTourFindTarget(bookingTourSteps[bookingTourIndex]);
+ if(!target||!target.isConnected||target.getClientRects().length===0)return;
+ const spotlight=$('bookingTourSpotlight');
+ const dialog=$('bookingTourDialog');
+ const rect=target.getBoundingClientRect();
+ const pad=7,left=Math.max(5,rect.left-pad),top=Math.max(5,rect.top-pad);
+ spotlight.style.left=left+'px';spotlight.style.top=top+'px';
+ spotlight.style.width=Math.max(12,Math.min(window.innerWidth-left-5,rect.width+pad*2))+'px';
+ spotlight.style.height=Math.max(12,Math.min(window.innerHeight-top-5,rect.height+pad*2))+'px';
+ const dw=dialog.getBoundingClientRect().width||Math.min(390,window.innerWidth-32);
+ const dh=dialog.getBoundingClientRect().height||220;
+ const gap=16,spaceBelow=window.innerHeight-rect.bottom-12,spaceAbove=rect.top-12;
+ const below=spaceBelow>=dh+gap||spaceBelow>=spaceAbove;
+ let y=below?rect.bottom+gap:rect.top-dh-gap;
+ y=Math.max(8,Math.min(window.innerHeight-dh-8,y));
+ let x=rect.left+rect.width/2-dw/2;
+ x=Math.max(12,Math.min(window.innerWidth-dw-12,x));
+ dialog.style.top=y+'px';dialog.style.left=x+'px';dialog.dataset.placement=below?'bottom':'top';
+ dialog.style.setProperty('--tour-arrow-left',Math.max(18,Math.min(dw-18,rect.left+rect.width/2-x))+'px');
 }
-function closeBookingTour() {
-  const modal = $('bookingTourModal');
-  if (modal) modal.hidden = true;
+function renderBookingTourStep(){
+ if(!bookingTourActive)return;
+ const step=bookingTourSteps[bookingTourIndex];if(!step)return;
+ $('bookingTourCount').textContent=`STEP ${bookingTourIndex+1} OF ${bookingTourSteps.length}`;
+ $('bookingTourPhase').textContent=step.phase;
+ $('bookingTourTitle').textContent=step.title;
+ $('bookingTourBody').textContent=step.body;
+ $('bookingTourInstruction').textContent=step.instruction;
+ $('bookingTourProgress').style.width=`${((bookingTourIndex+1)/bookingTourSteps.length)*100}%`;
+ const cont=$('bookingTourContinue');
+ cont.hidden=step.action!=='continue'&&step.action!=='finish';
+ cont.textContent=step.continueLabel||'Continue';
+ $('bookingTourModal').hidden=false;$('bookingTourModal').setAttribute('aria-hidden','false');
+ $('bookingTourDialog').classList.remove('is-visible');
+ const target=bookingTourFindTarget(step);
+ if(target)target.scrollIntoView({behavior:'smooth',block:'center',inline:'nearest'});
+ window.setTimeout(()=>{bookingTourPosition();$('bookingTourDialog').classList.add('is-visible');},220);
+}
+function showBookingTourStep(index){
+ if(!bookingTourActive)return;
+ bookingTourIndex=Math.max(0,Math.min(bookingTourSteps.length-1,index));
+ bookingTourKey=bookingTourSteps[bookingTourIndex].key;
+ renderBookingTourStep();
+}
+function startBookingTour(index=0){
+ if(bookingTourPoll){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
+ bookingTourActive=true;document.body.classList.add('booking-tour-running');
+ showBookingTourStep(index);
+ window.addEventListener('resize',bookingTourPosition);
+ window.addEventListener('scroll',bookingTourPosition,true);
+}
+function closeBookingTour(){
+ bookingTourActive=false;bookingTourKey='';
+ if(bookingTourPoll){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
+ window.removeEventListener('resize',bookingTourPosition);
+ window.removeEventListener('scroll',bookingTourPosition,true);
+ $('bookingTourModal').hidden=true;$('bookingTourModal').setAttribute('aria-hidden','true');
+ $('bookingTourDialog').classList.remove('is-visible');
+ document.body.classList.remove('booking-tour-running');
+}
+function waitForBookingTourCheckout(){
+ if(bookingTourPoll)window.clearInterval(bookingTourPoll);
+ let attempts=0;
+ bookingTourPoll=window.setInterval(()=>{
+  if(!bookingTourActive){window.clearInterval(bookingTourPoll);bookingTourPoll=null;return;}
+  if(!$('authRequiredModal').hidden){window.clearInterval(bookingTourPoll);bookingTourPoll=null;showBookingTourStep(4);return;}
+  if(!$('gcashModal').hidden){window.clearInterval(bookingTourPoll);bookingTourPoll=null;showBookingTourStep(5);return;}
+  if(++attempts>100){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
+ },180);
+}
+function waitForBookingTourHold(){
+ if(bookingTourPoll)window.clearInterval(bookingTourPoll);
+ let attempts=0;
+ bookingTourPoll=window.setInterval(()=>{
+  if(!bookingTourActive){window.clearInterval(bookingTourPoll);bookingTourPoll=null;return;}
+  if(!$('confirmationModal').hidden){window.clearInterval(bookingTourPoll);bookingTourPoll=null;showBookingTourStep(9);return;}
+  if(checkout?.hold?.status==='held'&&$('paymentDetails')&&!$('paymentDetails').hidden){window.clearInterval(bookingTourPoll);bookingTourPoll=null;showBookingTourStep(6);return;}
+  if(++attempts>120){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
+ },220);
+}
+function waitForBookingTourSubmission(){
+ if(bookingTourPoll)window.clearInterval(bookingTourPoll);
+ let attempts=0;
+ bookingTourPoll=window.setInterval(()=>{
+  if(!bookingTourActive){window.clearInterval(bookingTourPoll);bookingTourPoll=null;return;}
+  if(!$('confirmationModal').hidden){window.clearInterval(bookingTourPoll);bookingTourPoll=null;showBookingTourStep(9);return;}
+  if(++attempts>150){window.clearInterval(bookingTourPoll);bookingTourPoll=null;}
+ },220);
+}
+function handleBookingTourPageClick(event){
+ if(!bookingTourActive||event.target.closest('#bookingTourModal'))return;
+ const clicked=event.target.closest('button,select,a,input');
+ if(!clicked)return;
+ if(bookingTourKey==='date'&&clicked.matches('#daysGrid .day:not(:disabled)'))window.setTimeout(()=>showBookingTourStep(1),180);
+ else if(bookingTourKey==='time'&&(clicked.matches('#slots .slot:not(:disabled)')||clicked.matches('#startTime')||clicked.matches('#endTime')))window.setTimeout(()=>{if(selectedStart!==null&&selectedEnd!==null)showBookingTourStep(2);else bookingTourPosition();},180);
+ else if(bookingTourKey==='court'&&clicked.matches('#courtsGrid .court-card:not(:disabled)'))window.setTimeout(()=>{if(selectedCourt())showBookingTourStep(3);else bookingTourPosition();},150);
+ else if(bookingTourKey==='review'&&clicked.matches('#nextChoose'))waitForBookingTourCheckout();
+ else if(bookingTourKey==='account'&&clicked.matches('#authPlayerLogin, #authPlayerRegister')){try{sessionStorage.setItem(BOOKING_TOUR_RESUME_KEY,'1');}catch{}closeBookingTour();}
+ else if(bookingTourKey==='hold'&&clicked.matches('#paymentSubmitButton'))waitForBookingTourHold();
+ else if(bookingTourKey==='receipt'&&clicked.matches('#paymentSubmitButton'))waitForBookingTourSubmission();
+ else if(clicked.matches('#closeGcash'))closeBookingTour();
+}
+function handleBookingTourChange(event){
+ if(!bookingTourActive||event.target.closest('#bookingTourModal'))return;
+ if(bookingTourKey==='time'&&(event.target.matches('#startTime')||event.target.matches('#endTime')))window.setTimeout(()=>{if(selectedStart!==null&&selectedEnd!==null)showBookingTourStep(2);},160);
+ else if(bookingTourKey==='receipt'&&event.target.matches('#paymentScreenshot')&&event.target.files?.length)showBookingTourStep(8);
 }
 
 function availabilityReady() {
@@ -842,6 +905,12 @@ async function openPayment(event = null) {
     renderCheckout();
     setPaymentBusy(false);
     $('gcashModal').hidden = false;
+    try {
+      if (sessionStorage.getItem(BOOKING_TOUR_RESUME_KEY) === '1') {
+        sessionStorage.removeItem(BOOKING_TOUR_RESUME_KEY);
+        window.setTimeout(() => startBookingTour(5),350);
+      }
+    } catch { /* Storage may be unavailable. */ }
   } catch (error) {
     showToast(error.message || 'Checkout could not be opened. Please try again.');
   } finally {
@@ -1244,30 +1313,16 @@ $('restartCheckout')?.addEventListener('click', async () => {
   }
   await openPayment(previous.kind === 'openplay' ? previous.event : null);
 });
-$('openBookingTour')?.addEventListener('click', () => {
-  bookingTourIndex = 0;
-  renderBookingTourStep();
-  $('bookingTourModal').hidden = false;
+$('openBookingTour')?.addEventListener('click',()=>startBookingTour(0));
+$('closeBookingTour')?.addEventListener('click',closeBookingTour);
+$('skipBookingTour')?.addEventListener('click',closeBookingTour);
+$('bookingTourContinue')?.addEventListener('click',()=>{
+ if(bookingTourKey==='pay')showBookingTourStep(7);
+ else if(bookingTourKey==='submitted')closeBookingTour();
 });
-$('closeBookingTour')?.addEventListener('click', closeBookingTour);
-$('bookingTourPrevious')?.addEventListener('click', () => {
-  if (bookingTourIndex > 0) { bookingTourIndex -= 1; renderBookingTourStep(); }
-});
-$('bookingTourNext')?.addEventListener('click', () => {
-  if (bookingTourIndex < bookingTourSteps.length - 1) {
-    bookingTourIndex += 1;
-    renderBookingTourStep();
-    return;
-  }
-  closeBookingTour();
-  $('booking-calendar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-$('bookingTourModal')?.addEventListener('click', (event) => {
-  if (event.target === $('bookingTourModal')) closeBookingTour();
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && !$('bookingTourModal')?.hidden) closeBookingTour();
-});
+document.addEventListener('click',handleBookingTourPageClick);
+document.addEventListener('change',handleBookingTourChange);
+
 
 setInterval(updateHoldPresentation, 1000);
 setInterval(refreshCheckoutHold, 15000);

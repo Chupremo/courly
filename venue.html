@@ -25,29 +25,6 @@ main{max-width:1140px;width:94%;margin:auto}.steps{display:flex;align-items:cent
 .auth-required-dialog{max-width:480px}.auth-required-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.auth-required-actions a{display:grid;place-items:center;text-align:center;text-decoration:none;min-height:48px}.auth-required-actions .auth-register{background:#8ED502;color:#132500}.auth-required-actions .auth-register:hover{background:#a3e52a}@media(max-width:540px){.auth-required-actions{grid-template-columns:1fr}}
 .payment-error{padding:12px;border:1px solid #f3c5c1;border-radius:10px;background:#fff4f2;color:#982b23;font-size:14px;line-height:1.55}.payment-error[hidden]{display:none}.payment-close:disabled{opacity:.5;cursor:wait}#checkoutDetails{white-space:pre-line;margin:0 0 14px}#confirmationDetails{white-space:pre-line;overflow-wrap:anywhere}.availability-retry{min-height:44px;border:1px solid currentColor;border-radius:8px;background:white;color:#1747ad;padding:8px 14px;margin-top:10px}
 .venue-hero .location,.venue-hero #venueAddress{color:#edf3ff}.venue-photo-fallback{height:100%;min-height:150px;display:grid;place-items:center;text-align:center;padding:24px;color:#edf3ff;background:#14345c;font-size:14px;line-height:1.5}.venue-photo-fallback[hidden]{display:none}.gallery-main.is-empty{height:160px}.court-photo-fallback{height:120px;border-radius:7px;background:#eef3f9;color:#53627f;display:grid;place-items:center;padding:14px;font-size:12px}.thumb:disabled{display:none}.gallery-main img[hidden],.court-card img[hidden]{display:none!important}
-
-/* Pickle Bonn public demo presentation */
-.public-demo-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 13px;padding:7px 11px;border:1px solid #9ab8e8;border-radius:999px;background:#ffffff12;color:#f3f7ff;font-size:10px;font-weight:900;letter-spacing:.09em}
-.public-demo-badge:before{content:"";width:7px;height:7px;border-radius:50%;background:#a9e34b;box-shadow:0 0 0 3px #a9e34b25}
-.public-demo-badge[hidden]{display:none!important}
-body.is-public-demo .gallery-main{height:270px}
-body.is-public-demo .venue-owner-logo{width:78px;height:78px;max-width:78px;max-height:78px;object-fit:cover;object-position:center;border-radius:50%!important;border:2px solid #e9f2ff!important;background:#fff!important;padding:5px!important;filter:drop-shadow(0 5px 12px #0003)}
-body.is-public-demo .venue-brand-lockup{min-height:84px;gap:14px}
-body.is-public-demo .court-panel:before{content:"PUBLIC DEMO · SAMPLE COURTS";display:inline-block;margin:0 0 9px 45px;color:#667995;font-size:9px;font-weight:900;letter-spacing:.12em}
-.demo-booking-overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(4,15,36,.76);backdrop-filter:blur(5px)}
-.demo-booking-overlay[hidden]{display:none!important}
-.demo-booking-dialog{position:relative;width:min(480px,100%);padding:28px;border-radius:20px;background:#fff;color:#102047;box-shadow:0 25px 80px #0005}
-.demo-booking-kicker{display:inline-flex;padding:6px 10px;border-radius:20px;background:#eff6ff;color:#0754c8;font-size:9px;font-weight:900;letter-spacing:.12em}
-.demo-booking-dialog h2{margin:15px 0 8px;font-size:27px;line-height:1.1;letter-spacing:-1px}
-.demo-booking-dialog>p{margin:0;color:#687895;font-size:13px;line-height:1.65}
-.demo-booking-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;padding:15px;border:1px solid #e4eaf3;border-radius:12px;background:#f7f9fc}
-.demo-booking-summary div{min-width:0}
-.demo-booking-summary small{display:block;margin-bottom:4px;color:#8190a8;font-size:9px;font-weight:800;letter-spacing:.08em}
-.demo-booking-summary strong{display:block;overflow-wrap:anywhere;color:#15264a;font-size:12px}
-.demo-booking-summary .demo-total{grid-column:1/-1;padding-top:11px;border-top:1px solid #e1e8f2}
-.demo-booking-summary .demo-total strong{color:#0754c8;font-size:20px}
-.demo-booking-close{width:100%;margin-top:19px;padding:13px 16px;border:0;border-radius:10px;background:#0754c8;color:#fff;font-weight:800}
-@media(max-width:650px){body.is-public-demo .gallery-main{height:205px}body.is-public-demo .venue-owner-logo{width:64px;height:64px;max-width:64px;max-height:64px}.demo-booking-dialog{padding:23px}.demo-booking-dialog h2{font-size:24px}}
 </style>
 <style id="courtly-regular-type">body *{font-weight:400!important}h1,h2,h3,h4,h5,h6{font-weight:700!important}</style>
 
@@ -67,10 +44,38 @@ body.is-public-demo .court-panel:before{content:"PUBLIC DEMO · SAMPLE COURTS";d
   <link rel="stylesheet" href="/courtly-global-nav.css?v=20261105-3">
 <link rel="stylesheet" href="/courtly-mobile-experience.css?v=venue-tabs-20261106">
   <link rel="stylesheet" href="/courtly-platform-experience.css?v=phase1-20261106">
+<style id="pickle-bonn-photos-and-booking-tour">
+.pickle-bonn-page .venue-owner-logo{width:82px;height:82px;max-width:82px;max-height:82px;object-fit:cover;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 18px #001a4733}
+.booking-tour-trigger{display:inline-flex;align-items:center;justify-content:center;min-height:43px;margin:0;padding:11px 18px;border:1px solid #b8dd70;border-radius:999px;background:#8ed502;color:#102047;font:800 12px/1 Inter,Arial,sans-serif;cursor:pointer;box-shadow:0 7px 18px #0002;transition:transform .18s ease,filter .18s ease}
+.booking-tour-trigger:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.booking-tour-subtitle{margin:8px 0 0;color:#d8e5f6;font-size:11px;line-height:1.4}
+.venue-image-note{margin:8px 0 0;color:#e0e9f7;font-size:10px;line-height:1.4}
+.venue-image-note[hidden]{display:none!important}
+.booking-tour-overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,14,34,.78);backdrop-filter:blur(5px)}
+.booking-tour-overlay[hidden]{display:none!important}
+.booking-tour-dialog{width:min(560px,100%);max-height:92vh;overflow:auto;padding:26px;border:1px solid #dfe8f7;border-radius:20px;background:#fff;color:#102047;box-shadow:0 24px 80px #0005}
+.booking-tour-header{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.booking-tour-kicker{display:block;color:#0754c8;font-size:10px;font-weight:900;letter-spacing:.13em}
+.booking-tour-count{display:block;margin-top:6px;color:#7a89a5;font-size:10px;font-weight:800}
+.booking-tour-x{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fa;color:#102047;font-size:23px;line-height:1;cursor:pointer}
+.booking-tour-track{height:5px;margin:18px 0 23px;border-radius:99px;background:#e8edf5;overflow:hidden}
+.booking-tour-track span{display:block;width:12.5%;height:100%;border-radius:99px;background:linear-gradient(90deg,#0754c8,#8ed502);transition:width .2s ease}
+.booking-tour-phase{margin:0 0 8px;color:#e22b40;font-size:10px;font-weight:900;letter-spacing:.13em}
+.booking-tour-dialog h2{margin:0 0 12px;color:#102047;font-size:clamp(24px,4vw,31px);line-height:1.12;letter-spacing:-.8px}
+.booking-tour-body{margin:0;color:#566783;font-size:14px;line-height:1.75}
+.booking-tour-tip{display:grid;gap:5px;margin:20px 0 24px;padding:14px 15px;border-left:3px solid #8ed502;border-radius:8px;background:#f3f7fc;color:#4f607b;font-size:12px;line-height:1.6}
+.booking-tour-tip strong{color:#12254a}
+.booking-tour-actions{display:flex;justify-content:space-between;gap:10px}
+.booking-tour-back,.booking-tour-next{min-height:44px;padding:11px 17px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer}
+.booking-tour-back{border:1px solid #d5dfed;background:#fff;color:#24385d}
+.booking-tour-back:disabled{opacity:.35;cursor:not-allowed}
+.booking-tour-next{border:1px solid #0754c8;background:#0754c8;color:#fff}
+@media(max-width:650px){.pickle-bonn-page .venue-owner-logo{width:66px;height:66px;max-width:66px;max-height:66px}.booking-tour-dialog{padding:21px;border-radius:17px}.booking-tour-body{font-size:13px}.booking-tour-actions button{flex:1}}
+</style>
 </head>
 <body>
 <header class="topbar"><div class="nav" style="justify-content:center"><div class="logo" aria-label="Courtly"><img class="courtly-brand-logo" src="/assets/courtly-logo.png" alt="Courtly" loading="eager"></div></div></header>
-<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><button class="venue-back-button" id="venueBackButton" type="button" aria-label="Go back to previous page"><span aria-hidden="true">←</span><span>Back to venues</span></button><div class="public-demo-badge" id="publicDemoBadge" hidden>PUBLIC DEMO · SAMPLE VENUE</div><div class="venue-brand-lockup" id="venueBrandLockup"><img id="venueLogo" class="venue-owner-logo" alt="" hidden><h1 id="venueName">Loading venue…</h1></div><p class="location"> <span id="venueAddress">Loading location…</span></p><p class="desc" id="venueDescription">Loading venue details and court availability…</p></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" alt="" hidden><div id="venuePhotoFallback" class="venue-photo-fallback" role="status">Loading venue photos…</div></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div></div></div></section>
+<section class="venue-hero"><div class="hero-inner"><div class="hero-copy"><button class="venue-back-button" id="venueBackButton" type="button" aria-label="Go back to previous page"><span aria-hidden="true">←</span><span>Back to venues</span></button><div class="venue-brand-lockup" id="venueBrandLockup"><img id="venueLogo" class="venue-owner-logo" alt="" hidden><h1 id="venueName">Loading venue…</h1></div><p class="location"> <span id="venueAddress">Loading location…</span></p><p class="desc" id="venueDescription">Loading venue details and court availability…</p><button class="booking-tour-trigger" id="openBookingTour" type="button">Take a guided booking tour</button><p class="booking-tour-subtitle">See how players book, pay, and receive confirmation.</p></div><div class="gallery"><div class="gallery-main"><img id="mainPhoto" alt="" hidden><div id="venuePhotoFallback" class="venue-photo-fallback" role="status">Loading venue photos…</div></div><div class="thumbs" id="venueGalleryThumbs" aria-label="Venue and court photos"></div><p class="venue-image-note" id="venueImageNote" hidden>Illustrative pickleball photos. Replace these with your actual venue photos whenever they are ready.</p></div></div></section>
 <main><div class="venue-details-tabs" role="tablist" aria-label="Venue information">
 <button class="venue-info-tab active" type="button" role="tab" aria-selected="true" data-venue-tab="overview">Overview</button>
 <button class="venue-info-tab" type="button" role="tab" aria-selected="false" data-venue-tab="amenities">Amenities</button>
@@ -122,20 +127,24 @@ body.is-public-demo .court-panel:before{content:"PUBLIC DEMO · SAMPLE COURTS";d
 <p class="payment-note">Pay only once for your reservation reference. Receipt submission is followed by the venue's payment verification.</p>
 </section>
 </div>
-<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check"></div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="demo-booking-overlay" id="demoPreviewModal" hidden>
-  <section class="demo-booking-dialog" role="dialog" aria-modal="true" aria-labelledby="demoPreviewTitle">
-    <span class="demo-booking-kicker">COURTLY PUBLIC DEMO</span>
-    <h2 id="demoPreviewTitle">Your booking preview</h2>
-    <p>This is a sample booking flow for Pickle Bonn. Explore the experience without creating a reservation or sending payment.</p>
-    <div class="demo-booking-summary">
-      <div><small>VENUE</small><strong>Pickle Bonn</strong></div>
-      <div><small>COURT</small><strong id="demoPreviewCourt">—</strong></div>
-      <div><small>DATE</small><strong id="demoPreviewDate">—</strong></div>
-      <div><small>TIME</small><strong id="demoPreviewTime">—</strong></div>
-      <div class="demo-total"><small>SAMPLE COURT RENTAL</small><strong id="demoPreviewTotal">₱0.00</strong></div>
+<div class="confirmation-overlay" id="confirmationModal" hidden><section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle"><div class="confirmation-check"></div><h2 id="confirmationTitle">Booking request received!</h2><p id="confirmationMessage">Your booking details have been saved.</p><div class="confirmation-ref" id="confirmationReference"></div><p id="confirmationDetails"></p><button class="confirmation-close" id="confirmationClose" type="button">Done</button></section></div><div class="booking-tour-overlay" id="bookingTourModal" hidden>
+  <section class="booking-tour-dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTourTitle">
+    <div class="booking-tour-header">
+      <div>
+        <span class="booking-tour-kicker">COURTLY BOOKING WALKTHROUGH</span>
+        <span class="booking-tour-count" id="bookingTourCount">STEP 1 OF 8</span>
+      </div>
+      <button class="booking-tour-x" id="closeBookingTour" type="button" aria-label="Close tour">×</button>
     </div>
-    <p>Demo only. No booking is saved and no payment is collected.</p>
-    <button class="demo-booking-close" id="closeDemoPreview" type="button">Continue exploring</button>
+    <div class="booking-tour-track"><span id="bookingTourProgress"></span></div>
+    <p class="booking-tour-phase" id="bookingTourPhase">PLAYER EXPERIENCE</p>
+    <h2 id="bookingTourTitle">Explore the venue</h2>
+    <p class="booking-tour-body" id="bookingTourBody"></p>
+    <div class="booking-tour-tip"><strong>What to show:</strong><span id="bookingTourTip"></span></div>
+    <div class="booking-tour-actions">
+      <button class="booking-tour-back" id="bookingTourPrevious" type="button">Back</button>
+      <button class="booking-tour-next" id="bookingTourNext" type="button">Next step</button>
+    </div>
   </section>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -147,16 +156,11 @@ const params = new URLSearchParams(location.search);
 const cleanBookMatch = location.pathname.match(/^\/book\/([^/]+)\/?$/);
 if (!params.get('slug') && cleanBookMatch?.[1]) params.set('slug', decodeURIComponent(cleanBookMatch[1]));
 const slug = (params.get('slug') || location.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
-const isPublicDemoVenue = slug === 'pickle-bonn';
-const DEMO_BANNER_IMAGE = 'https://images.unsplash.com/photo-1761644310400-fe763d140148?auto=format&fit=crop&w=1800&q=82';
-const DEMO_COURT_IMAGES = [
-  'https://images.unsplash.com/photo-1761644707612-adf8354c7576?auto=format&fit=crop&w=900&q=82',
-  'https://images.unsplash.com/photo-1761644563005-87071f6485a6?auto=format&fit=crop&w=900&q=82',
-  'https://images.unsplash.com/photo-1786626900713-b1b2121cbd64?auto=format&fit=crop&w=900&q=82',
-  'https://images.unsplash.com/photo-1777382141913-f0a410f5db86?auto=format&fit=crop&w=900&q=82'
-];
-const DEMO_PROFILE_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" rx="120" fill="#0a1d40"/><circle cx="120" cy="120" r="76" fill="#f2f8e8"/><circle cx="120" cy="120" r="57" fill="#a8df42"/><g fill="#0a1d40"><circle cx="101" cy="99" r="5"/><circle cx="139" cy="99" r="5"/><circle cx="101" cy="141" r="5"/><circle cx="139" cy="141" r="5"/><circle cx="120" cy="120" r="5"/></g><path d="M78 174h84" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>'
+const isPickleBonnVenue = slug === 'pickle-bonn';
+const PICKLE_BONN_COVER_PHOTO = 'https://images.pexels.com/photos/37618103/pexels-photo-37618103/free-photo-of-indoor-tennis-court-with-pickleball-branding.jpeg?auto=compress&dpr=1&h=750&w=1260';
+const PICKLE_BONN_COURT_PHOTO = 'https://images.pexels.com/photos/15390858/pexels-photo-15390858/free-photo-of-a-pickleball-court.jpeg?auto=compress&dpr=1&h=750&w=1260';
+const PICKLE_BONN_PROFILE_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" rx="120" fill="#0a1d40"/><circle cx="120" cy="120" r="78" fill="#f1f7e8"/><circle cx="120" cy="120" r="60" fill="#8ed502"/><path d="M82 74l74 92M158 74L82 166" stroke="#0a1d40" stroke-width="10" stroke-linecap="round"/><circle cx="120" cy="120" r="17" fill="#0a1d40"/><circle cx="120" cy="120" r="6" fill="#fff"/></svg>'
 );
 const $ = (id) => document.getElementById(id);
 const PENDING_BOOKING_INTENT_KEY = 'courtly.pendingPublicBooking.v1';
@@ -276,52 +280,72 @@ const availabilityRequests = requestSequence();
 const paymentSubmission = submissionGuard();
 const checkoutOpening = submissionGuard();
 const receiptTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
-
-function applyPublicDemoPresentation(sourceCourts = []) {
-  if (!isPublicDemoVenue || !venue) return;
-  const source = sourceCourts[0] || {};
-  const candidateRate = Number(source.off_peak_rate ?? source.hourly_rate ?? 350);
-  const sampleRate = Number.isFinite(candidateRate) && candidateRate > 0 ? candidateRate : 350;
-  venue = {
-    ...venue,
-    name: 'Pickle Bonn',
-    sport: 'Pickleball',
-    description: "Welcome to Pickle Bonn, a sample pickleball venue created to showcase Courtly's venue discovery, court selection, and booking experience. Explore four sample courts and preview the booking flow.",
-    logo_url: DEMO_PROFILE_IMAGE,
-    cover_url: DEMO_BANNER_IMAGE,
-    hours_open: venue.hours_open || '08:00:00',
-    hours_close: venue.hours_close || '22:00:00',
-    timezone: venue.timezone || 'Asia/Manila'
-  };
-  courts = DEMO_COURT_IMAGES.map((image, index) => ({
-    id: index === 0 && source.id ? source.id : `00000000-0000-4000-8000-00000000000${index + 1}`,
-    name: `Court ${index + 1}`,
-    sport: 'Pickleball',
-    hourly_rate: sampleRate,
-    off_peak_rate: sampleRate,
-    peak_rate: sampleRate,
-    is_active: true,
-    image_url: image,
-    image_fit: 'cover',
-    display_order: index + 1
-  }));
+const bookingTourSteps = [
+  {
+    phase: 'PLAYER EXPERIENCE',
+    title: 'Start on the public venue page',
+    body: 'Players land on the venue page and can review its profile, location, photos, opening details, amenities, and active courts before they book.',
+    tip: 'Show the venue banner, profile image, Overview, Amenities, and Location tabs. The example photos are illustrative until you upload the venue’s own photos.'
+  },
+  {
+    phase: 'PLAYER EXPERIENCE',
+    title: 'Choose a booking date',
+    body: 'The player selects a future date from the calendar. The page uses the venue’s local time zone and refreshes the available schedule for that day.',
+    tip: 'Pick a date in the calendar. Past dates are disabled, so players cannot select a date that has already passed.'
+  },
+  {
+    phase: 'PLAYER EXPERIENCE',
+    title: 'Select an available time',
+    body: 'Players choose a start time and end time. Courtly checks live availability; past or already-booked times are not selectable.',
+    tip: 'Choose a start and end time, then point out the Available, Booked, and Selected indicators.'
+  },
+  {
+    phase: 'PLAYER EXPERIENCE',
+    title: 'Choose the court',
+    body: 'Only the venue’s active courts are listed. Each card shows its court name, availability for the selected time, and hourly price.',
+    tip: 'Select one of the real active courts. Courtly checks for booking conflicts before allowing the player to continue.'
+  },
+  {
+    phase: 'PLAYER EXPERIENCE',
+    title: 'Review the booking and sign in',
+    body: 'The player reviews the date, time, court, and total. A free player account is required to continue; new players can register or existing players can log in.',
+    tip: 'Tap “Review booking & payment.” The account prompt appears only when the player is not signed in with a player account.'
+  },
+  {
+    phase: 'PAYMENT',
+    title: 'Reserve the selected time',
+    body: 'The player confirms their details. Courtly asks the server to validate the selection and price, then creates a temporary hold so another player cannot take that time during checkout.',
+    tip: 'The checkout shows a reference and countdown. The payment recipient, instructions, and QR code come from the venue’s saved payment settings.'
+  },
+  {
+    phase: 'PAYMENT',
+    title: 'Pay the venue and submit the receipt',
+    body: 'The player sends the exact amount to the venue’s configured payment account, such as its GCash account, then uploads the payment screenshot and submits it before the hold expires. The payment goes to the venue’s account, not to Courtly.',
+    tip: 'Show the payment QR and instructions, the receipt upload field, and the reservation reference. The player should pay only once and keep the reference.'
+  },
+  {
+    phase: 'VENUE OWNER',
+    title: 'Verify payment and confirm the booking',
+    body: 'The request is saved as submitted while the venue owner checks the uploaded receipt in the owner portal. Once the owner verifies and confirms the payment, the booking status changes to Confirmed and the player can see the confirmed booking and its reference in their account.',
+    tip: 'Switch to the owner portal to show the pending request and receipt review, then show the player booking status after the owner confirms it.'
+  }
+];
+let bookingTourIndex = 0;
+function renderBookingTourStep() {
+  const step = bookingTourSteps[bookingTourIndex];
+  if (!step) return;
+  $('bookingTourCount').textContent = `STEP ${bookingTourIndex + 1} OF ${bookingTourSteps.length}`;
+  $('bookingTourPhase').textContent = step.phase;
+  $('bookingTourTitle').textContent = step.title;
+  $('bookingTourBody').textContent = step.body;
+  $('bookingTourTip').textContent = step.tip;
+  $('bookingTourProgress').style.width = `${((bookingTourIndex + 1) / bookingTourSteps.length) * 100}%`;
+  $('bookingTourPrevious').disabled = bookingTourIndex === 0;
+  $('bookingTourNext').textContent = bookingTourIndex === bookingTourSteps.length - 1 ? 'Go to booking' : 'Next step';
 }
-
-function showDemoBookingPreview(event = null) {
-  const court = selectedCourt();
-  const timeZone = venue?.timezone || 'Asia/Manila';
-  const dateText = event
-    ? new Intl.DateTimeFormat('en-PH', { timeZone, month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(event.starts_at))
-    : dateLabel(localDateForSelection(selectedDate), { month: 'long', day: 'numeric', year: 'numeric' });
-  const timeText = event
-    ? new Intl.DateTimeFormat('en-PH', { timeZone, hour: 'numeric', minute: '2-digit' }).format(new Date(event.starts_at))
-    : (selectedStart === null || selectedEnd === null ? 'Select a time' : `${formatHour(selectedStart)} – ${formatHour(selectedEnd)}`);
-  setText('demoPreviewCourt', event?.title || court?.name || '—');
-  setText('demoPreviewDate', dateText);
-  setText('demoPreviewTime', timeText);
-  setText('demoPreviewTotal', money(event ? openPlayAmounts(event.fee).total : bookingTotal()));
-  const modal = $('demoPreviewModal');
-  if (modal) modal.hidden = false;
+function closeBookingTour() {
+  const modal = $('bookingTourModal');
+  if (modal) modal.hidden = true;
 }
 
 function availabilityReady() {
@@ -765,7 +789,7 @@ function renderCourts() {
     card.className = 'court-card' + (court.id === selectedCourtId ? ' selected' : '') + (unavailable ? ' unavailable' : '');
     card.disabled = unavailable || listedRate === null || !range || !availabilityReady();
     card.setAttribute('aria-pressed', String(court.id === selectedCourtId));
-    const image = court.image_url || venue.cover_url || '';
+    const image = court.image_url || venue.cover_url || (isPickleBonnVenue ? PICKLE_BONN_COURT_PHOTO : '');
     card.innerHTML = `${image ? `<img src="${esc(image)}" alt="${esc(court.name)}" style="object-fit:${court.image_fit === 'contain' ? 'contain' : 'cover'}">` : '<div style="height:110px;border-radius:8px;background:linear-gradient(135deg,#102449,#2c75e8);display:grid;place-items:center;color:white;font-size:24px"></div>'}<div class="court-meta"><div class="court-name-line"><span class="court-name">${esc(court.name)}</span><span class="radio"></span></div><div class="available" style="${unavailable ? 'color:#b42318' : ''}"><i style="${unavailable ? 'background:#b42318' : ''}"></i>${unavailable ? 'Unavailable for selected time' : (!availabilityReady() ? (availabilityError ? 'Availability unavailable' : 'Checking availability') : range ? 'Available' : 'Select a time first')}</div><div class="price">From ${money(court.off_peak_rate ?? court.hourly_rate)} / hour${Number(court.peak_rate ?? court.off_peak_rate ?? court.hourly_rate) !== Number(court.off_peak_rate ?? court.hourly_rate) ? ` · Peak ${money(court.peak_rate)}/hr` : ''}</div></div>`;
     const price = card.querySelector('.price');
     const peakRate = String(court.peak_rate ?? '').trim() === '' ? listedRate : Number(court.peak_rate);
@@ -789,7 +813,6 @@ function updateSummary() {
   if (button) button.disabled = !court || !range || !availabilityReady() || checkoutOpening.busy || paymentSubmission.busy || hasConflict(court.id, range.start, range.end);
 }
 async function openPayment(event = null) {
-  if (isPublicDemoVenue) { showDemoBookingPreview(event); return; }
   if (paymentSubmission.busy || !checkoutOpening.start()) return;
   updateSummary();
   try {
@@ -1039,11 +1062,12 @@ function renderVenueBrand(){
       : `View court availability and book a session at ${venueName} on Courtly.`;
   }
   heading.textContent = venueName;
-  if (venue?.logo_url) {
-    logo.alt = `${venueName} logo`;
+  const logoUrl = venue?.logo_url || (isPickleBonnVenue ? PICKLE_BONN_PROFILE_IMAGE : '');
+  if (logoUrl) {
+    logo.alt = `${venueName} profile image`;
     logo.onload = () => { logo.hidden = false; heading.hidden = true; };
     logo.onerror = () => { logo.hidden = true; heading.hidden = false; };
-    logo.src = venue.logo_url;
+    logo.src = logoUrl;
     // Cached images may already be complete before the handlers above run.
     if (logo.complete && logo.naturalWidth > 0) {
       logo.hidden = false;
@@ -1061,15 +1085,20 @@ function renderVenueBrand(){
 
 function venueGalleryImages(){
   const items=[];
-  if(venue?.cover_url)items.push({url:venue.cover_url,alt:`${venue.name} venue cover`,fit:'cover'});
+  const coverUrl=venue?.cover_url||(isPickleBonnVenue?PICKLE_BONN_COVER_PHOTO:'');
+  if(coverUrl)items.push({url:coverUrl,alt:`${venue.name} cover photo`,fit:'cover',illustrative:!venue?.cover_url&&isPickleBonnVenue});
   for(const court of courts||[]){
-    if(court.image_url&&!items.some(item=>item.url===court.image_url))items.push({url:court.image_url,alt:`${court.name} photo`,fit:court.image_fit||'cover'});
+    const imageUrl=court.image_url||(isPickleBonnVenue?PICKLE_BONN_COURT_PHOTO:'');
+    if(imageUrl&&!items.some(item=>item.url===imageUrl))items.push({url:imageUrl,alt:`${court.name} photo`,fit:court.image_fit||'cover',illustrative:!court.image_url&&isPickleBonnVenue});
   }
-  if(!items.length&&venue?.logo_url)items.push({url:venue.logo_url,alt:`${venue.name} logo`,fit:'contain'});
+  const logoUrl=venue?.logo_url||(isPickleBonnVenue?PICKLE_BONN_PROFILE_IMAGE:'');
+  if(!items.length&&logoUrl)items.push({url:logoUrl,alt:`${venue.name} profile image`,fit:'contain',illustrative:!venue?.logo_url&&isPickleBonnVenue});
   return items;
 }
 function renderVenueGallery(){
   const items=venueGalleryImages();
+  const note=$('venueImageNote');
+  if(note)note.hidden=!items.some(item=>item.illustrative);
   const main=items[0];
   if(main)setImage('mainPhoto',main.url,main.alt);
   else setImage('mainPhoto','',`${venue?.name||'Venue'} photo`);
@@ -1097,7 +1126,6 @@ async function refreshPublicVenueMedia({strict=false}={}){
     if(!venueRow)throw new Error('This venue is not currently accepting bookings.');
     venue={...venue,...venueRow};
     courts=courtRows||[];
-    if(isPublicDemoVenue)applyPublicDemoPresentation(courts);
     refreshVenueHours();
     refreshTimeSelects();
     renderVenueBrand();
@@ -1127,6 +1155,7 @@ async function loadVenue() {
   if (error) throw error;
   if (!record) throw new Error('This venue could not be found or is not currently published.');
   venue = record;
+  if (isPickleBonnVenue) document.body.classList.add('pickle-bonn-page');
   selectedDate = new Date(dateInVenueZone() + 'T12:00:00');
   viewYear = selectedDate.getFullYear(); viewMonth = selectedDate.getMonth();
   const { data: amenityRow, error: amenityError } = await supabase.from('venues').select('amenities').eq('id', record.id).maybeSingle();
@@ -1137,19 +1166,13 @@ async function loadVenue() {
     .eq('venue_id', venue.id).eq('is_active', true).order('display_order', { ascending: true });
   if (courtsError) throw courtsError;
   courts = courtRows || [];
-  if (isPublicDemoVenue) applyPublicDemoPresentation(courts);
   refreshVenueHours();
   renderVenueBrand();
   setText('venueAddress', venue.address || venue.city || 'Location to be added');
   setText('venueDescription', venue.description || '');
   const overview=$('venueOverviewText'); if(overview)overview.textContent=venue.description||'Explore the venue, check available courts and choose a time that works for you.';
   const locationText=$('venueLocationText'); if(locationText)locationText.textContent=[venue.address,venue.city].filter(Boolean).join(', ')||'Location details will be provided by the venue.';
-  const courtCount=$('venueCourtCount'); if(courtCount)courtCount.textContent=isPublicDemoVenue ? `${courts.length} sample courts in this public demo.` : `${courts.length} active ${courts.length===1?'court':'courts'} available for booking.`;
-  if (isPublicDemoVenue) {
-    document.body.classList.add('is-public-demo');
-    const badge = $('publicDemoBadge'); if (badge) badge.hidden = false;
-    const nextButton = $('nextChoose'); if (nextButton) nextButton.textContent = 'Preview booking';
-  }
+  const courtCount=$('venueCourtCount'); if(courtCount)courtCount.textContent=`${courts.length} active ${courts.length===1?'court':'courts'} available for booking.`;
   renderVenueAmenities();
   renderVenueGallery();
   const amenity = document.querySelector('.amenities .amenity strong');
@@ -1192,8 +1215,6 @@ $('nextChoose')?.addEventListener('click', () => {
   openPayment();
 });
 $('closeGcash')?.addEventListener('click', () => { if (paymentSubmission.busy) return; $('gcashModal').hidden = true; selectedOpenPlay = null; checkout = null; renderCheckoutRecovery(); });
-$('closeDemoPreview')?.addEventListener('click', () => { $('demoPreviewModal').hidden = true; });
-$('demoPreviewModal')?.addEventListener('click', (event) => { if (event.target === $('demoPreviewModal')) $('demoPreviewModal').hidden = true; });
 $('closeAuthRequired')?.addEventListener('click', () => { $('authRequiredModal').hidden = true; });
 $('authRequiredModal')?.addEventListener('click', e => { if(e.target === $('authRequiredModal')) $('authRequiredModal').hidden = true; });
 $('gcashForm')?.addEventListener('submit', submitPayment);
@@ -1223,6 +1244,31 @@ $('restartCheckout')?.addEventListener('click', async () => {
   }
   await openPayment(previous.kind === 'openplay' ? previous.event : null);
 });
+$('openBookingTour')?.addEventListener('click', () => {
+  bookingTourIndex = 0;
+  renderBookingTourStep();
+  $('bookingTourModal').hidden = false;
+});
+$('closeBookingTour')?.addEventListener('click', closeBookingTour);
+$('bookingTourPrevious')?.addEventListener('click', () => {
+  if (bookingTourIndex > 0) { bookingTourIndex -= 1; renderBookingTourStep(); }
+});
+$('bookingTourNext')?.addEventListener('click', () => {
+  if (bookingTourIndex < bookingTourSteps.length - 1) {
+    bookingTourIndex += 1;
+    renderBookingTourStep();
+    return;
+  }
+  closeBookingTour();
+  $('booking-calendar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+$('bookingTourModal')?.addEventListener('click', (event) => {
+  if (event.target === $('bookingTourModal')) closeBookingTour();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !$('bookingTourModal')?.hidden) closeBookingTour();
+});
+
 setInterval(updateHoldPresentation, 1000);
 setInterval(refreshCheckoutHold, 15000);
 window.addEventListener('focus', refreshCheckoutHold);
